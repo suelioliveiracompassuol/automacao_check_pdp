@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDP Feature Monitor</title>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --surface: #161b22;
+            --surface2: #21262d;
+            --border: #30363d;
+            --text: #c9d1d9;
+            --muted: #8b949e;
+            --accent: #58a6ff;
+            --accent2: #388bfd;
+            --green: #3fb950;
+            --yellow: #d29922;
+            --red: #f85149;
+            --purple: #bc8cff
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px 16px
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 8px
+        }
+
+        header h1 {
+            font-size: 20px;
+            white-space: nowrap
+        }
+
+        header .links {
+            display: flex;
+            gap: 12px;
+            font-size: 12px
+        }
+
+        header a {
+            color: var(--muted);
+            text-decoration: none
+        }
+
+        header a:hover {
+            color: var(--accent)
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 14px
+        }
+
+        .card h2 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px
+        }
+
+        .token-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 6px
+        }
+
+        input[type="password"] {
+            flex: 1;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            outline: none
+        }
+
+        input:focus {
+            border-color: var(--accent)
+        }
+
+        .hint {
+            font-size: 11px;
+            color: var(--muted);
+            line-height: 1.5
+        }
+
+        .hint a {
+            color: var(--accent)
+        }
+
+        .hint code {
+            background: var(--surface2);
+            padding: 1px 4px;
+            border-radius: 3px;
+            font-size: 10px
+        }
+
+        button {
+            background: var(--accent);
+            color: #0d1117;
+            border: none;
+            padding: 7px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background .15s
+        }
+
+        button:hover {
+            background: var(--accent2)
+        }
+
+        button:disabled {
+            opacity: .5;
+            cursor: not-allowed
+        }
+
+        .btn-sm {
+            padding: 3px 8px;
+            font-size: 11px;
+            font-weight: 500
+        }
+
+        .btn-ghost {
+            background: var(--surface2);
+            color: var(--text);
+            border: 1px solid var(--border)
+        }
+
+        .btn-ghost:hover {
+            border-color: var(--accent);
+            color: var(--accent)
+        }
+
+        /* Matrix table */
+        .matrix-wrap {
+            overflow-x: auto;
+            margin: 12px 0
+        }
+
+        .matrix {
+            border-collapse: collapse;
+            font-size: 12px;
+            width: 100%;
+            min-width: 700px
+        }
+
+        .matrix th,
+        .matrix td {
+            padding: 6px 8px;
+            border: 1px solid var(--border);
+            text-align: center;
+            white-space: nowrap
+        }
+
+        .matrix th {
+            background: var(--surface2);
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 1
+        }
+
+        .matrix th.feature-col {
+            text-align: left;
+            min-width: 160px
+        }
+
+        .matrix th.op-col {
+            writing-mode: vertical-lr;
+            transform: rotate(180deg);
+            min-width: 36px;
+            padding: 10px 4px;
+            font-size: 11px;
+            cursor: pointer
+        }
+
+        .matrix th.op-col:hover {
+            color: var(--accent)
+        }
+
+        .matrix th.op-col.op-selected {
+            color: var(--green);
+            background: rgba(63, 185, 80, .08)
+        }
+
+        .matrix td.feature-name {
+            text-align: left;
+            font-weight: 500
+        }
+
+        .matrix td.cell-avail {
+            background: rgba(63, 185, 80, .06)
+        }
+
+        .matrix td.cell-unavail {
+            background: rgba(255, 255, 255, .02);
+            color: var(--border)
+        }
+
+        .matrix td.cell-avail:hover {
+            background: rgba(63, 185, 80, .15)
+        }
+
+        .matrix input[type="checkbox"] {
+            width: 14px;
+            height: 14px;
+            accent-color: var(--green);
+            cursor: pointer
+        }
+
+        .matrix input[type="checkbox"]:disabled {
+            opacity: .25;
+            cursor: default
+        }
+
+        .group-row td {
+            background: var(--surface2) !important;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            color: var(--muted);
+            text-align: left !important;
+            padding: 8px
+        }
+
+        /* Operation select bar */
+        .op-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 12px
+        }
+
+        .op-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 4px 10px;
+            font-size: 11px;
+            cursor: pointer;
+            user-select: none;
+            transition: .15s
+        }
+
+        .op-chip:hover {
+            border-color: var(--accent)
+        }
+
+        .op-chip.active {
+            border-color: var(--green);
+            color: var(--green);
+            background: rgba(63, 185, 80, .1)
+        }
+
+        .op-chip .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--border)
+        }
+
+        .op-chip.active .dot {
+            background: var(--green)
+        }
+
+        /* Actions */
+        .actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 14px
+        }
+
+        #run-status {
+            font-size: 12px;
+            color: var(--muted)
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 13px;
+            height: 13px;
+            border: 2px solid rgba(0, 0, 0, .3);
+            border-top-color: #0d1117;
+            border-radius: 50%;
+            animation: spin .7s linear infinite;
+            vertical-align: middle;
+            margin-right: 4px
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        /* Runs table */
+        .runs-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px
+        }
+
+        .runs-table th {
+            text-align: left;
+            padding: 6px 10px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--muted);
+            border-bottom: 1px solid var(--border)
+        }
+
+        .runs-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid var(--border)
+        }
+
+        .runs-table tr:last-child td {
+            border-bottom: none
+        }
+
+        .runs-table tr:hover td {
+            background: rgba(255, 255, 255, .02)
+        }
+
+        .runs-table a {
+            color: var(--accent);
+            text-decoration: none
+        }
+
+        .runs-table a:hover {
+            text-decoration: underline
+        }
+
+        .status-chip {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 999px;
+            text-transform: uppercase;
+            letter-spacing: .4px
+        }
+
+        .status-ok {
+            color: #0b3d17;
+            background: rgba(63, 185, 80, .85)
+        }
+
+        .status-bad {
+            color: #3f0e0e;
+            background: rgba(248, 81, 73, .85)
+        }
+
+        .pager {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-top: 10px;
+            flex-wrap: wrap
+        }
+
+        .pager-info {
+            color: var(--muted);
+            font-size: 11px
+        }
+
+        .pager-actions {
+            display: flex;
+            gap: 6px
+        }
+
+        .dot-s {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 4px
+        }
+
+        .dot-success {
+            background: var(--green)
+        }
+
+        .dot-failure {
+            background: var(--red)
+        }
+
+        .dot-in_progress {
+            background: var(--yellow);
+            animation: pulse 1.4s infinite
+        }
+
+        .dot-queued,
+        .dot-waiting {
+            background: var(--muted)
+        }
+
+        .dot-cancelled {
+            background: #555
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: .3
+            }
+        }
+
+        .empty {
+            text-align: center;
+            padding: 24px;
+            color: var(--muted);
+            font-size: 13px
+        }
+
+        .preview {
+            font-size: 11px;
+            color: var(--muted);
+            background: var(--surface2);
+            border-radius: 5px;
+            padding: 8px 12px;
+            margin-top: 10px;
+            font-family: monospace;
+            word-break: break-all;
+            white-space: pre-wrap
+        }
+
+        .report-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            font-size: 13px;
+            flex-wrap: wrap
+        }
+
+        .report-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            background: rgba(88, 166, 255, .1);
+            border: 1px solid var(--accent);
+            border-radius: 5px;
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 600
+        }
+
+        .report-link:hover {
+            background: rgba(88, 166, 255, .2)
+        }
+
+        #toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13px;
+            max-width: 300px;
+            transform: translateY(80px);
+            opacity: 0;
+            transition: .25s;
+            z-index: 1000
+        }
+
+        #toast.show {
+            transform: translateY(0);
+            opacity: 1
+        }
+
+        #toast.t-ok {
+            border-color: var(--green);
+            color: var(--green)
+        }
+
+        #toast.t-err {
+            border-color: var(--red);
+            color: var(--red)
+        }
+
+        #toast.t-info {
+            border-color: var(--accent);
+            color: var(--accent)
+        }
+
+        .sel-row {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 10px;
+            flex-wrap: wrap
+        }
+
+        @media(max-width:600px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <header>
+            <h1>🔍 PDP Feature Monitor</h1>
+            <div class="links">
+                <a href="https://github.com/sucorrea/Automacao_check_pdp" target="_blank">📂 Repositório</a>
+                <a href="https://github.com/sucorrea/Automacao_check_pdp/actions" target="_blank">▶ Actions</a>
+            </div>
+        </header>
+
+        <!-- Token -->
+        <div class="card">
+            <h2>🔑 Token GitHub</h2>
+            <div class="token-row">
+                <input type="password" id="gh-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" />
+                <button class="btn-ghost btn-sm" onclick="saveToken()">Salvar</button>
+                <button class="btn-ghost btn-sm" onclick="clearToken()">Limpar</button>
+            </div>
+            <p class="hint">Salvo no localStorage. Escopo necessário: <code>workflow</code>. <a
+                    href="https://github.com/settings/tokens/new?scopes=workflow&description=PDP+Monitor"
+                    target="_blank">Criar token →</a></p>
+        </div>
+
+        <!-- Operations selector -->
+        <div class="card">
+            <h2>🌐 Operações a monitorar</h2>
+            <div class="sel-row">
+                <button class="btn-ghost btn-sm" onclick="toggleAllOps(true)">Todas</button>
+                <button class="btn-ghost btn-sm" onclick="toggleAllOps(false)">Nenhuma</button>
+            </div>
+            <div class="op-bar" id="op-bar"></div>
+        </div>
+
+        <!-- Feature matrix -->
+        <div class="card">
+            <h2>⚙️ Features por operação</h2>
+            <p class="hint" style="margin-bottom:10px">✅ = feature disponível e selecionada &nbsp; — = não disponível
+                para esta operação. Clique no cabeçalho da coluna para marcar/desmarcar toda a operação.</p>
+            <div class="sel-row">
+                <button class="btn-ghost btn-sm" onclick="checkAllAvail()">Marcar todas disponíveis</button>
+                <button class="btn-ghost btn-sm" onclick="uncheckAll()">Desmarcar tudo</button>
+            </div>
+            <div class="matrix-wrap">
+                <table class="matrix" id="matrix"></table>
+            </div>
+            <div class="preview" id="preview"></div>
+        </div>
+
+        <!-- Run -->
+        <div class="actions">
+            <button id="run-btn" onclick="triggerRun()">▶ Executar Monitoramento</button>
+            <button class="btn-ghost" onclick="loadRuns()">↻ Atualizar</button>
+            <span id="run-status"></span>
+        </div>
+
+        <!-- Last report -->
+        <div class="card" id="report-card" style="display:none;padding:12px 16px">
+            <div class="report-bar">
+                <span>📊 Último relatório</span>
+                <div style="display:flex;gap:6px">
+                    <a class="report-link" id="link-html" href="#" target="_blank">📄 HTML</a>
+                    <a class="report-link" id="link-json" href="#" target="_blank">{ } JSON</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Published reports history -->
+        <div class="card">
+            <h2>🗂️ Relatórios Publicados</h2>
+            <div id="published-reports-box">
+                <div class="empty">Carregando relatórios publicados...</div>
+            </div>
+        </div>
+
+        <!-- Runs -->
+        <div class="card">
+            <h2>📋 Execuções Recentes</h2>
+            <div id="runs-box">
+                <div class="empty">Insira um token para ver execuções.</div>
+            </div>
+        </div>
+
+    </div>
+    <div id="toast"></div>
+
+    <script>
+        // ─── Data (mirrors src/config.ts DOMAINS) ───
+        const OPS = [
+            { key: 'natura-BR', label: 'Natura BR', icon: '🌿', features: ['reviews', 'reviewFilter', 'reviewSort', 'reviewPhotos', 'reviewRecommendation', 'aiReviewSummary', 'brandShowcase', 'recommendationShowcase', 'shopTheSet', 'description', 'olfactiveNotes', 'usageTips', 'ingredients', 'images', 'pricing', 'shipping', 'rating'] },
+            { key: 'natura-AR', label: 'Natura AR', icon: '🌿', features: ['reviews', 'reviewFilter', 'reviewSort', 'reviewPhotos', 'reviewRecommendation', 'brandShowcase', 'recommendationShowcase', 'description', 'olfactiveNotes', 'usageTips', 'ingredients', 'images', 'pricing', 'shipping', 'rating'] },
+            { key: 'natura-CL', label: 'Natura CL', icon: '🌿', features: ['reviews', 'reviewFilter', 'reviewSort', 'reviewPhotos', 'reviewRecommendation', 'brandShowcase', 'recommendationShowcase', 'description', 'olfactiveNotes', 'usageTips', 'ingredients', 'images', 'pricing', 'shipping', 'rating'] },
+            { key: 'natura-CO', label: 'Natura CO', icon: '🌿', features: ['reviews', 'reviewFilter', 'reviewSort', 'reviewPhotos', 'reviewRecommendation', 'brandShowcase', 'recommendationShowcase', 'description', 'olfactiveNotes', 'usageTips', 'ingredients', 'images', 'pricing', 'shipping', 'rating'] },
+            { key: 'natura-MX', label: 'Natura MX', icon: '🌿', features: ['reviews', 'reviewFilter', 'reviewSort', 'reviewPhotos', 'reviewRecommendation', 'brandShowcase', 'recommendationShowcase', 'description', 'olfactiveNotes', 'usageTips', 'ingredients', 'images', 'pricing', 'shipping', 'rating'] },
+            { key: 'natura-PE', label: 'Natura PE', icon: '🌿', features: ['reviews', 'reviewFilter', 'reviewSort', 'reviewPhotos', 'reviewRecommendation', 'brandShowcase', 'recommendationShowcase', 'description', 'olfactiveNotes', 'usageTips', 'ingredients', 'images', 'pricing', 'shipping', 'rating'] },
+            { key: 'natura-BR-social', label: 'Natura BR Social', icon: '🛒', features: ['reviews', 'reviewFilter', 'reviewSort', 'reviewPhotos', 'reviewRecommendation', 'description', 'usageTips', 'ingredients', 'images', 'pricing', 'shipping', 'rating'] },
+            { key: 'avon-BR', label: 'Avon BR', icon: '💄', features: ['reviews', 'reviewFilter', 'reviewSort', 'reviewPhotos', 'reviewRecommendation', 'description', 'usageTips', 'ingredients', 'images', 'pricing', 'shipping', 'rating'] },
+            { key: 'avon-BR-social', label: 'Avon BR Social', icon: '💄', features: ['reviews', 'reviewFilter', 'reviewSort', 'reviewPhotos', 'reviewRecommendation', 'description', 'usageTips', 'ingredients', 'images', 'pricing', 'shipping', 'rating'] },
+            { key: 'avon-AR', label: 'Avon AR', icon: '💄', features: ['brandShowcase', 'description', 'olfactiveNotes', 'usageTips', 'ingredients', 'images', 'pricing', 'shipping'] },
+            { key: 'avon-MX', label: 'Avon MX', icon: '💄', features: ['brandShowcase', 'description', 'olfactiveNotes', 'usageTips', 'ingredients', 'images', 'pricing', 'shipping'] },
+        ];
+
+        const FEATURE_GROUPS = [
+            {
+                group: '⭐ Avaliações & Rating', features: [
+                    { key: 'reviews', label: 'Avaliações' },
+                    { key: 'reviewFilter', label: 'Filtro de avaliações' },
+                    { key: 'reviewSort', label: 'Ordenação' },
+                    { key: 'reviewPhotos', label: 'Fotos nas avaliações' },
+                    { key: 'reviewRecommendation', label: '% Recomendação' },
+                    { key: 'aiReviewSummary', label: 'Resumo por IA' },
+                    { key: 'rating', label: 'Nota/Rating' },
+                ]
+            },
+            {
+                group: '🛍️ Vitrines', features: [
+                    { key: 'brandShowcase', label: 'Mais da marca' },
+                    { key: 'recommendationShowcase', label: 'Recomendações' },
+                    { key: 'shopTheSet', label: 'Shop the Set' },
+                ]
+            },
+            {
+                group: '📝 Conteúdo', features: [
+                    { key: 'description', label: 'Descrição' },
+                    { key: 'olfactiveNotes', label: 'Gota olfativa' },
+                    { key: 'usageTips', label: 'Dicas de uso' },
+                    { key: 'ingredients', label: 'Ingredientes' },
+                ]
+            },
+            {
+                group: '🖼️ Mídia & Comercial', features: [
+                    { key: 'images', label: 'Imagens' },
+                    { key: 'pricing', label: 'Preço' },
+                    { key: 'shipping', label: 'Frete' },
+                ]
+            },
+        ];
+
+        const REPO = 'sucorrea/Automacao_check_pdp';
+        const WORKFLOW = 'pdp-check.yml';
+        const BRANCH = 'master';
+        const PAGES = 'https://sucorrea.github.io/Automacao_check_pdp';
+        const REPORTS_INDEX_URL = `${PAGES}/reports/index.json`;
+        const REPORTS_PAGE_SIZE = 10;
+
+        // ─── State ───
+        const selectedOps = new Set(OPS.map(o => o.key));
+        // Track checkbox states: { "natura-BR|reviews": true, ... }
+        const cbState = {};
+        let publishedReportsAll = [];
+        let publishedReportsPage = 1;
+
+        function getToken() { return localStorage.getItem('gh_pdp_token') || ''; }
+        function saveToken() {
+            const v = document.getElementById('gh-token').value.trim();
+            if (!v) return toast('Token vazio', 'err');
+            localStorage.setItem('gh_pdp_token', v);
+            toast('Token salvo ✓', 'ok');
+            loadRuns();
+        }
+        function clearToken() {
+            localStorage.removeItem('gh_pdp_token');
+            document.getElementById('gh-token').value = '';
+            document.getElementById('runs-box').innerHTML = '<div class="empty">Insira um token.</div>';
+            toast('Token removido', 'info');
+        }
+
+        // ─── Render operations bar ───
+        function renderOps() {
+            document.getElementById('op-bar').innerHTML = OPS.map(o =>
+                `<span class="op-chip ${selectedOps.has(o.key) ? 'active' : ''}" data-key="${o.key}" onclick="toggleOp('${o.key}')"><span class="dot"></span>${o.icon} ${o.label}</span>`
+            ).join('');
+            renderMatrix();
+        }
+
+        function toggleOp(key) {
+            selectedOps.has(key) ? selectedOps.delete(key) : selectedOps.add(key);
+            renderOps();
+        }
+        function toggleAllOps(on) {
+            OPS.forEach(o => on ? selectedOps.add(o.key) : selectedOps.delete(o.key));
+            renderOps();
+        }
+
+        function cbKey(op, feat) { return op + '|' + feat; }
+
+        // ─── Render feature × operation matrix ───
+        function renderMatrix() {
+            const activeOps = OPS.filter(o => selectedOps.has(o.key));
+            if (!activeOps.length) {
+                document.getElementById('matrix').innerHTML = '<tr><td class="empty" style="padding:24px">Selecione ao menos uma operação acima.</td></tr>';
+                updatePreview();
+                return;
+            }
+
+            let html = '<thead><tr><th class="feature-col">Feature</th>';
+            for (const op of activeOps) {
+                html += `<th class="op-col" onclick="toggleOpColumn('${op.key}')" title="Marcar/desmarcar ${op.label}">${op.icon} ${op.label}</th>`;
+            }
+            html += '</tr></thead><tbody>';
+
+            for (const grp of FEATURE_GROUPS) {
+                const groupHasFeature = grp.features.some(f => activeOps.some(o => o.features.includes(f.key)));
+                if (!groupHasFeature) continue;
+
+                html += `<tr class="group-row"><td colspan="${activeOps.length + 1}">${grp.group}</td></tr>`;
+                for (const feat of grp.features) {
+                    if (!activeOps.some(o => o.features.includes(feat.key))) continue;
+
+                    html += `<tr><td class="feature-name">${feat.label}</td>`;
+                    for (const op of activeOps) {
+                        const avail = op.features.includes(feat.key);
+                        if (avail) {
+                            const k = cbKey(op.key, feat.key);
+                            const checked = cbState[k] !== undefined ? cbState[k] : true;
+                            html += `<td class="cell-avail"><input type="checkbox" data-op="${op.key}" data-feat="${feat.key}" ${checked ? 'checked' : ''} onchange="onCbChange(this)"></td>`;
+                        } else {
+                            html += `<td class="cell-unavail">—</td>`;
+                        }
+                    }
+                    html += '</tr>';
+                }
+            }
+            html += '</tbody>';
+            document.getElementById('matrix').innerHTML = html;
+            updateColumnHighlights();
+            updatePreview();
+        }
+
+        function onCbChange(el) {
+            cbState[cbKey(el.dataset.op, el.dataset.feat)] = el.checked;
+            updateColumnHighlights();
+            updatePreview();
+        }
+
+        function toggleOpColumn(opKey) {
+            const cbs = document.querySelectorAll(`input[data-op="${opKey}"]`);
+            const allChecked = Array.from(cbs).every(cb => cb.checked);
+            cbs.forEach(cb => { cb.checked = !allChecked; cbState[cbKey(opKey, cb.dataset.feat)] = !allChecked; });
+            updateColumnHighlights();
+            updatePreview();
+        }
+
+        function checkAllAvail() {
+            document.querySelectorAll('.matrix input[type="checkbox"]').forEach(cb => { cb.checked = true; cbState[cbKey(cb.dataset.op, cb.dataset.feat)] = true; });
+            updateColumnHighlights();
+            updatePreview();
+        }
+        function uncheckAll() {
+            document.querySelectorAll('.matrix input[type="checkbox"]').forEach(cb => { cb.checked = false; cbState[cbKey(cb.dataset.op, cb.dataset.feat)] = false; });
+            updateColumnHighlights();
+            updatePreview();
+        }
+
+        function updateColumnHighlights() {
+            document.querySelectorAll('.op-col').forEach(th => {
+                const m = th.getAttribute('onclick')?.match(/'([^']+)'/);
+                if (!m) return;
+                const cbs = document.querySelectorAll(`input[data-op="${m[1]}"]`);
+                th.classList.toggle('op-selected', cbs.length > 0 && Array.from(cbs).every(c => c.checked));
+            });
+        }
+
+        // ─── Build filter values ───
+        function getSelections() {
+            const ops = new Set();
+            const feats = new Set();
+            document.querySelectorAll('.matrix input[type="checkbox"]:checked').forEach(cb => {
+                ops.add(cb.dataset.op);
+                feats.add(cb.dataset.feat);
+            });
+            return { ops: [...ops], feats: [...feats] };
+        }
+
+        function updatePreview() {
+            const { ops, feats } = getSelections();
+            const totalActiveOps = OPS.filter(o => selectedOps.has(o.key)).length;
+            const allFeatKeys = new Set(FEATURE_GROUPS.flatMap(g => g.features.map(f => f.key)));
+            const allOps = ops.length >= totalActiveOps && totalActiveOps > 0;
+            const allFeats = feats.length >= allFeatKeys.size;
+            const oStr = allOps ? '(todas as operações ativas)' : ops.join(', ') || '(nenhuma)';
+            const fStr = allFeats ? '(todas as features)' : feats.join(', ') || '(nenhuma)';
+            document.getElementById('preview').textContent =
+                `📡 Envio para o workflow:\noperations_filter: ${allOps ? '' : ops.join(',')}\nfeatures_filter: ${allFeats ? '' : feats.join(',')}\n\nResumo: ${ops.length} operação(ões) × ${feats.length} feature(s)`;
+        }
+
+        // ─── Trigger workflow ───
+        async function triggerRun() {
+            const token = getToken();
+            if (!token) return toast('Insira um token', 'err');
+
+            const { ops, feats } = getSelections();
+            if (!ops.length || !feats.length) return toast('Marque ao menos uma feature + operação', 'err');
+
+            const totalActiveOps = OPS.filter(o => selectedOps.has(o.key)).length;
+            const allFeatKeys = new Set(FEATURE_GROUPS.flatMap(g => g.features.map(f => f.key)));
+            const allOps = ops.length >= totalActiveOps;
+            const allFeats = feats.length >= allFeatKeys.size;
+
+            const btn = document.getElementById('run-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span>Disparando...';
+
+            try {
+                const res = await fetch(`https://api.github.com/repos/${REPO}/actions/workflows/${WORKFLOW}/dispatches`, {
+                    method: 'POST',
+                    headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        ref: BRANCH,
+                        inputs: {
+                            features_filter: allFeats ? '' : feats.join(','),
+                            operations_filter: allOps ? '' : ops.join(','),
+                        }
+                    })
+                });
+                if (res.status === 204) {
+                    toast('✅ Monitoramento disparado!', 'ok');
+                    document.getElementById('run-status').textContent = '⏳ Iniciando...';
+                    setTimeout(loadRuns, 4000);
+                } else {
+                    const d = await res.json().catch(() => ({}));
+                    toast(`Erro: ${d.message || res.statusText}`, 'err');
+                }
+            } catch (e) {
+                toast(`Rede: ${e.message}`, 'err');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '▶ Executar Monitoramento';
+            }
+        }
+
+        // ─── Load recent runs ───
+        async function loadRuns() {
+            const token = getToken();
+            if (!token) return;
+            const box = document.getElementById('runs-box');
+            box.innerHTML = '<div class="empty">Carregando...</div>';
+            try {
+                const res = await fetch(`https://api.github.com/repos/${REPO}/actions/workflows/${WORKFLOW}/runs?per_page=10`, {
+                    headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' }
+                });
+                if (!res.ok) { const d = await res.json().catch(() => ({})); box.innerHTML = `<div class="empty" style="color:var(--red)">Erro: ${d.message || 'Falha'}</div>`; return; }
+                const data = await res.json();
+                renderRuns(data.workflow_runs || []);
+                checkReport();
+            } catch (e) { box.innerHTML = `<div class="empty" style="color:var(--red)">${e.message}</div>`; }
+        }
+
+        function renderRuns(runs) {
+            const box = document.getElementById('runs-box');
+            if (!runs.length) { box.innerHTML = '<div class="empty">Nenhuma execução.</div>'; return; }
+            const rows = runs.map(r => {
+                const st = r.conclusion || r.status;
+                const dt = new Date(r.created_at).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+                const dur = r.updated_at ? Math.round((new Date(r.updated_at) - new Date(r.created_at)) / 1000) + 's' : '-';
+                const ev = r.event === 'schedule' ? '⏰ Agendado' : r.event === 'workflow_dispatch' ? '▶ Manual' : r.event;
+                return `<tr><td><span class="dot-s dot-${st}"></span>${st}</td><td>#${r.run_number}</td><td>${ev}</td><td>${dt}</td><td>${dur}</td><td><a href="${r.html_url}" target="_blank">Abrir ↗</a></td></tr>`;
+            }).join('');
+            box.innerHTML = `<table class="runs-table"><thead><tr><th>Status</th><th>Run</th><th>Tipo</th><th>Data</th><th>Duração</th><th></th></tr></thead><tbody>${rows}</tbody></table>`;
+            document.getElementById('run-status').textContent = `Atualizado ${new Date().toLocaleTimeString('pt-BR')}`;
+        }
+
+        async function checkReport() {
+            try {
+                const r = await fetch(`${PAGES}/last-report.html`, { method: 'HEAD' });
+                if (r.ok) {
+                    document.getElementById('link-html').href = `${PAGES}/last-report.html`;
+                    document.getElementById('link-json').href = `${PAGES}/last-report.json`;
+                    document.getElementById('report-card').style.display = 'block';
+                }
+            } catch { }
+        }
+
+        function formatDurationMs(ms) {
+            if (!Number.isFinite(ms)) return '-';
+            if (ms < 1000) return `${ms}ms`;
+            return `${(ms / 1000).toFixed(1)}s`;
+        }
+
+        function formatDateTime(value) {
+            if (!value) return '-';
+            const d = new Date(value);
+            if (Number.isNaN(d.getTime())) return '-';
+            return d.toLocaleString('pt-BR');
+        }
+
+        function statusClassFromSummary(summary) {
+            const hasProblem = (summary?.failed || 0) > 0 || (summary?.errors || 0) > 0;
+            return hasProblem ? 'status-bad' : 'status-ok';
+        }
+
+        function statusLabelFromSummary(summary) {
+            const hasProblem = (summary?.failed || 0) > 0 || (summary?.errors || 0) > 0;
+            return hasProblem ? 'falhou' : 'ok';
+        }
+
+        function renderPublishedReports(reports) {
+            const box = document.getElementById('published-reports-box');
+
+            if (!Array.isArray(reports) || reports.length === 0) {
+                box.innerHTML = '<div class="empty">Nenhum relatório publicado ainda.</div>';
+                return;
+            }
+
+            const totalReports = reports.length;
+            const totalPages = Math.max(1, Math.ceil(totalReports / REPORTS_PAGE_SIZE));
+            const page = Math.min(Math.max(1, publishedReportsPage), totalPages);
+            publishedReportsPage = page;
+            const startIndex = (page - 1) * REPORTS_PAGE_SIZE;
+            const pageReports = reports.slice(startIndex, startIndex + REPORTS_PAGE_SIZE);
+
+            const rows = pageReports.map((report) => {
+                const htmlUrl = `${PAGES}/${report.htmlPath}`;
+                const jsonUrl = `${PAGES}/${report.jsonPath}`;
+                const summary = report.summary || {};
+                const total = summary.total ?? '-';
+                const passed = summary.passed ?? '-';
+                const failed = summary.failed ?? '-';
+                const errors = summary.errors ?? '-';
+
+                return `
+                                    <tr>
+                                        <td>${report.runId || '-'}</td>
+                                        <td>${formatDateTime(report.startTime)}</td>
+                                        <td>${formatDurationMs(report.durationMs)}</td>
+                                        <td><span class="status-chip ${statusClassFromSummary(summary)}">${statusLabelFromSummary(summary)}</span></td>
+                                        <td>${total}</td>
+                                        <td>${passed}</td>
+                                        <td>${failed}</td>
+                                        <td>${errors}</td>
+                                        <td>
+                                            <a href="${htmlUrl}" target="_blank" rel="noopener">Abrir HTML</a>
+                                            &nbsp;|&nbsp;
+                                            <a href="${htmlUrl}" download>Baixar HTML</a>
+                                            &nbsp;|&nbsp;
+                                            <a href="${jsonUrl}" target="_blank" rel="noopener">Abrir JSON</a>
+                                            &nbsp;|&nbsp;
+                                            <a href="${jsonUrl}" download>Baixar JSON</a>
+                                        </td>
+                                    </tr>
+                                `;
+            }).join('');
+
+            box.innerHTML = `
+                            <table class="runs-table">
+                                <thead>
+                                    <tr>
+                                        <th>Run</th>
+                                        <th>Data</th>
+                                        <th>Duração</th>
+                                        <th>Status</th>
+                                        <th>Total</th>
+                                        <th>Passou</th>
+                                        <th>Falhou</th>
+                                        <th>Erros</th>
+                                        <th>Relatórios</th>
+                                    </tr>
+                                </thead>
+                                <tbody>${rows}</tbody>
+                            </table>
+                            <div class="pager">
+                                <span class="pager-info">Mostrando ${startIndex + 1}-${Math.min(startIndex + REPORTS_PAGE_SIZE, totalReports)} de ${totalReports} relatório(s)</span>
+                                <div class="pager-actions">
+                                    <button class="btn-ghost btn-sm" onclick="changePublishedReportsPage(-1)" ${page <= 1 ? 'disabled' : ''}>◀ Anterior</button>
+                                    <button class="btn-ghost btn-sm" onclick="changePublishedReportsPage(1)" ${page >= totalPages ? 'disabled' : ''}>Próxima ▶</button>
+                                </div>
+                            </div>
+                        `;
+        }
+
+        function changePublishedReportsPage(delta) {
+            const nextPage = publishedReportsPage + delta;
+            const maxPage = Math.max(1, Math.ceil(publishedReportsAll.length / REPORTS_PAGE_SIZE));
+            if (nextPage < 1 || nextPage > maxPage) return;
+            publishedReportsPage = nextPage;
+            renderPublishedReports(publishedReportsAll);
+        }
+
+        async function loadPublishedReports() {
+            const box = document.getElementById('published-reports-box');
+            box.innerHTML = '<div class="empty">Carregando relatórios publicados...</div>';
+
+            try {
+                const res = await fetch(REPORTS_INDEX_URL, { cache: 'no-store' });
+                if (!res.ok) {
+                    box.innerHTML = '<div class="empty">Ainda não há índice de relatórios publicado.</div>';
+                    return;
+                }
+
+                const payload = await res.json();
+                publishedReportsAll = Array.isArray(payload.reports) ? payload.reports : [];
+                publishedReportsPage = 1;
+                renderPublishedReports(publishedReportsAll);
+            } catch {
+                box.innerHTML = '<div class="empty">Não foi possível carregar relatórios publicados.</div>';
+            }
+        }
+
+        // ─── Toast ───
+        let tt;
+        function toast(msg, type = 'info') {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.className = `show t-${type === 'ok' ? 'ok' : type === 'err' ? 'err' : 'info'}`;
+            clearTimeout(tt);
+            tt = setTimeout(() => t.className = '', 3500);
+        }
+
+        // ─── Init ───
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize all available features as checked
+            OPS.forEach(op => op.features.forEach(f => cbState[cbKey(op.key, f)] = true));
+            renderOps();
+            loadPublishedReports();
+            const t = getToken();
+            if (t) { document.getElementById('gh-token').value = t; loadRuns(); }
+            setInterval(() => { if (document.visibilityState === 'visible' && getToken()) loadRuns(); }, 30000);
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1564 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - navigation [ref=e3]:
+      - list [ref=e4]:
+        - listitem [ref=e5]:
+          - button "Sobre Natura, botón desplegable" [ref=e6] [cursor=pointer]:
+            - text: Sobre Natura
+            - generic [ref=e8]: 
+        - listitem [ref=e9]:
+          - button "Revista Natura"
+        - listitem [ref=e10]:
+          - button "Consultoría, botón desplegable" [ref=e11] [cursor=pointer]:
+            - text: Consultoría
+            - generic [ref=e13]: 
+        - listitem [ref=e14]:
+          - button "Quiero Vender, botón desplegable" [ref=e15] [cursor=pointer]:
+            - text: Quiero Vender
+            - generic [ref=e17]: 
+        - listitem [ref=e18]:
+          - button "Ayuda, botón desplegable" [ref=e19] [cursor=pointer]:
+            - text: Ayuda
+            - generic [ref=e21]: 
+        - listitem [ref=e22]:
+          - button "BLOG"
+    - generic: 
+  - banner [ref=e23]:
+    - generic [ref=e26]:
+      - generic [ref=e27]:
+        - link "imatipo Natura compuesto por 1 símbolo em forma de flor, junto con el nombre de la marca en colores naranja y amarillo.":
+          - /url: /
+          - img
+        - generic [ref=e29]:
+          - textbox "digitá lo que deseas encontrar, campo de texto" [ref=e30]:
+            - /placeholder: ¿qué buscás hoy?
+          - button "buscar" [ref=e32] [cursor=pointer]:
+            - generic [ref=e34]: 
+        - generic [ref=e35]:
+          - link "header.accessibility.favorites":
+            - /url: /mis-datos/favoritos
+            - generic:
+              - generic: 
+            - text: favoritos
+          - generic [ref=e36]:
+            - generic [ref=e38]: 
+            - text: ingresar
+          - button "Mi bolsa de compras" [ref=e39] [cursor=pointer]:
+            - generic [ref=e41]: 
+            - generic [ref=e42]: "0"
+      - generic [ref=e43]:
+        - separator [ref=e45]
+        - navigation [ref=e46]:
+          - list [ref=e49]:
+            - listitem [ref=e50]:
+              - link "hot sale 🔥":
+                - /url: /c/hot-sale
+                - generic: hot sale 🔥
+            - listitem [ref=e51]:
+              - link "perfumería":
+                - /url: /c/perfumeria
+                - generic: perfumería
+            - listitem [ref=e52]:
+              - link "repuestos":
+                - /url: /c/repuestos
+                - generic: repuestos
+            - listitem [ref=e53]:
+              - link "cuidados corporales":
+                - /url: /c/cuidados-diarios
+                - generic: cuidados corporales
+            - listitem [ref=e54]:
+              - link "cabello":
+                - /url: /c/cabello
+                - generic: cabello
+            - listitem [ref=e55]:
+              - link "rostro":
+                - /url: /c/rostro
+                - generic: rostro
+            - listitem [ref=e56]:
+              - link "maquillaje":
+                - /url: /c/maquillaje
+                - generic: maquillaje
+            - listitem [ref=e57]:
+              - link "hombres":
+                - /url: /c/hombre
+                - generic: hombres
+            - listitem [ref=e58]:
+              - link "infantil":
+                - /url: /c/infantil
+                - generic: infantil
+            - listitem [ref=e59]:
+              - link "hogar":
+                - /url: /c/hogar
+                - generic: hogar
+            - listitem [ref=e60]:
+              - link "marcas":
+                - /url: /c/marcas
+                - generic: marcas
+            - listitem [ref=e61]:
+              - link "regalos":
+                - /url: /c/regalo
+                - generic: regalos
+            - listitem [ref=e62]:
+              - link "click sale":
+                - /url: /c/click-sale
+                - generic: click sale
+        - navigation:
+          - list:
+            - listitem:
+              - link:
+                - /url: /c/perfumeria-para-quien
+                - text: para quién
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-femenina
+                    - text: femenina
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-masculina
+                    - text: masculina
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-unisex
+                    - text: unisex
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-infantil
+                    - text: infantil
+            - listitem:
+              - link:
+                - /url: /c/perfumeria-tipo
+                - text: tipo
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-body-splash
+                    - text: body splash
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-colonia
+                    - text: colonia
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-eau-de-toilette
+                    - text: eau de toilette
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-eau-de-parfum
+                    - text: eau de parfum
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-premium
+                    - text: premium
+            - listitem:
+              - link:
+                - /url: /c/perfumeria-ocasion-de-uso
+                - text: ocasión de uso
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-ocasion-dia
+                    - text: día
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-ocasion-noche
+                    - text: noche
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-ocasion-ocasiones-especiales
+                    - text: ocasiones especiales
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-ocasion-miniatura
+                    - text: miniatura
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-hogar
+                    - text: hogar
+            - listitem:
+              - link:
+                - /url: /c/perfumeria-familia-olfativa
+                - text: familia olfativa
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-familia-floral
+                    - text: floral
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-familia-frutal
+                    - text: frutal
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-familia-amaderado
+                    - text: amaderado
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-familia-citrico
+                    - text: cítrico
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-familia-dulce
+                    - text: dulce
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-familia-aromatico
+                    - text: aromático
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-familia-chipre
+                    - text: chipre
+            - listitem:
+              - link:
+                - /url: /c/perfumeria-marcas
+                - text: marcas
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-kaiak
+                    - text: kaiak
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-humor
+                    - text: humor
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-essencial
+                    - text: essencial
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-tododia
+                    - text: tododia
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-homem
+                    - text: homem
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-ekos
+                    - text: ekos
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-kriska
+                    - text: kriska
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-ilia
+                    - text: ilía
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-una
+                    - text: una
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-luna
+                    - text: luna
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-nature
+                    - text: naturé
+                - listitem:
+                  - link:
+                    - /url: /c/alta-perfumeria
+                    - text: alta perfumeria
+            - listitem:
+              - link:
+                - /url: /c/perfumeria-repuesto
+                - text: repuesto
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/repuestos-perfumeria-unisex
+                    - text: unisex
+                - listitem:
+                  - link:
+                    - /url: /c/repuestos-perfumeria-femenina
+                    - text: femenina
+                - listitem:
+                  - link:
+                    - /url: /c/repuestos-perfumeria-masculina
+                    - text: masculina
+                - listitem:
+                  - link:
+                    - /url: /c/repuestos-perfumeria-infantil
+                    - text: infantil
+            - listitem:
+              - link:
+                - /url: /c/perfumeria-natura-asesor-perfumeria
+                - text: asesor perfumería
+        - navigation:
+          - list:
+            - listitem:
+              - link:
+                - /url: /c/repuesto-perfumeria
+                - text: perfumeria
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-repuesto-unisex
+                    - text: unisex
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-repuestos-femenina
+                    - text: femenina
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-repuestos-masculina
+                    - text: masculina
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-repuestos-infantil
+                    - text: infantil
+            - listitem:
+              - link:
+                - /url: /c/repuestos-cuidados-diarios
+                - text: cuidados diarios
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-repuestos-jabones
+                    - text: jabones
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-repuestos-hidratantes
+                    - text: hidratantes
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-repuestos-desodorantes
+                    - text: desodorantes
+            - listitem:
+              - link:
+                - /url: /c/repuestos-cabello
+                - text: cabellos
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/repuesto-shampoo
+                    - text: shampoo
+                - listitem:
+                  - link:
+                    - /url: /c/repuestos-acondicionador
+                    - text: acondicionador
+                - listitem:
+                  - link:
+                    - /url: /c/repuesto-crema-para-peinar
+                    - text: crema para peinar
+                - listitem:
+                  - link:
+                    - /url: /c/repuestos-tratamiento
+                    - text: tratamiento
+            - listitem:
+              - link:
+                - /url: /c/repuestos-rostro
+                - text: rostro
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/repuesto-rostro-limpieza
+                    - text: limpieza
+                - listitem:
+                  - link:
+                    - /url: /c/repuestos-rostro-tratamiento
+                    - text: tratamiento
+                - listitem:
+                  - link:
+                    - /url: /c/repuesto-rostro-hidratacion
+                    - text: hidratación
+            - listitem:
+              - link:
+                - /url: /c/repuestos-maquillaje
+                - text: maquillaje
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/repuestos-maquillaje-rostro
+                    - text: para el rostro
+                - listitem:
+                  - link:
+                    - /url: /c/repuestos-maquillaje-ojos
+                    - text: para ojos
+        - navigation:
+          - list:
+            - listitem:
+              - link:
+                - /url: /c/cuidados-diarios-hidratante
+                - text: hidratantes
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-hidratante-corporal
+                    - text: para el cuerpo
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-hidratante-manos-pies
+                    - text: para manos y pies
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-hidratante-labial
+                    - text: para labios
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-hidratante-infantil
+                    - text: para bebés y niños
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-hidratante-embarazadas
+                    - text: para embarazadas
+            - listitem:
+              - link:
+                - /url: /c/cuidados-diarios-jabon
+                - text: jabones
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-jabon-barra
+                    - text: en barra
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-jabon-liquido
+                    - text: líquido
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-jabon-exfoliante
+                    - text: exfoliante
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-jabon-infantil
+                    - text: infantil
+            - listitem:
+              - link:
+                - /url: /c/cuidados-diarios-desodorante
+                - text: desodorante
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-desodorante-spray
+                    - text: en spray
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-desodorante-roll-on
+                    - text: roll on
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-desodorante-crema
+                    - text: en crema
+            - listitem:
+              - link:
+                - /url: /c/cuidados-diarios-proteccion-solar
+                - text: protector solar
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-protector-solar-corporal
+                    - text: corporal
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-protector-solar-facial
+                    - text: facial
+            - listitem:
+              - link:
+                - /url: /c/cuidados-diarios-aceite-corporal
+                - text: aceite corporal
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-aceite-corporal-embarazadas-infantil
+                    - text: para embarazadas y bebés
+            - listitem:
+              - link:
+                - /url: /c/cuidados-diarios-marcas
+                - text: marcas
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-tododia
+                    - text: tododia
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-ekos
+                    - text: ekos
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-kaiak
+                    - text: kaiak
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-humor
+                    - text: humor
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-homem
+                    - text: homem
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-nature
+                    - text: naturé
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-natura-solar
+                    - text: natura Solar
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-mama-y-bebe
+                    - text: mamá y Bebé
+            - listitem:
+              - link:
+                - /url: /c/cuidados-diarios-repuestos
+                - text: repuestos
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/repuestos-jabones
+                    - text: jabones
+                - listitem:
+                  - link:
+                    - /url: /c/repuestos-hidratantes-corporales
+                    - text: hidratantes
+                - listitem:
+                  - link:
+                    - /url: /c/repuestos-desodorante
+                    - text: desodorantes
+        - navigation:
+          - list:
+            - listitem:
+              - link:
+                - /url: /c/cabello-marcas
+                - text: marcas
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/cabello-lumina
+                    - text: lumina
+                - listitem:
+                  - link:
+                    - /url: /c/cabello-tododia
+                    - text: tododia
+                - listitem:
+                  - link:
+                    - /url: /c/cabello-ekos
+                    - text: ekos
+                - listitem:
+                  - link:
+                    - /url: /c/cabello-nature
+                    - text: naturé
+                - listitem:
+                  - link:
+                    - /url: /c/cabello-homem
+                    - text: homem
+                - listitem:
+                  - link:
+                    - /url: /c/cabello-mama-y-bebe
+                    - text: mamá y bebé
+                - listitem:
+                  - link:
+                    - /url: /c/cabello-biome
+                    - text: biome
+            - listitem:
+              - link:
+                - /url: /c/cabello-productos
+                - text: tipo de producto
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/cabello-shampoo
+                    - text: shampoo
+                - listitem:
+                  - link:
+                    - /url: /c/cabello-acondicionador
+                    - text: acondicionador
+                - listitem:
+                  - link:
+                    - /url: /c/cabello-crema-para-peinar
+                    - text: crema para peinar
+                - listitem:
+                  - link:
+                    - /url: /c/cabello-tratamientos
+                    - text: tratamiento
+                - listitem:
+                  - link:
+                    - /url: /c/cabello-finalizador
+                    - text: finalizador
+            - listitem:
+              - link:
+                - /url: /c/cabello-tipos
+                - text: tipo de cabello
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/cabello-lisos
+                    - text: lisos
+                - listitem:
+                  - link:
+                    - /url: /c/cabello-rizado
+                    - text: rizados
+                - listitem:
+                  - link:
+                    - /url: /c/cabello-danado
+                    - text: dañados
+                - listitem:
+                  - link:
+                    - /url: /c/cabello-oleosos
+                    - text: oleosos
+                - listitem:
+                  - link:
+                    - /url: /c/cabello-secos
+                    - text: secos
+                - listitem:
+                  - link:
+                    - /url: /c/cabello-fragiles-y-quebradizos
+                    - text: frágiles y quebradizos
+            - listitem:
+              - link:
+                - /url: /c/cabello-repuestos
+                - text: repuestos
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/shampoo-repuesto
+                    - text: shampoo
+                - listitem:
+                  - link:
+                    - /url: /c/acondicionador-repuesto
+                    - text: acondicionador
+                - listitem:
+                  - link:
+                    - /url: /c/crema-para-peinar-repuesto
+                    - text: crema para peinar
+                - listitem:
+                  - link:
+                    - /url: /c/tratamiento-repuesto
+                    - text: tratamiento
+        - navigation:
+          - list:
+            - listitem:
+              - link:
+                - /url: /c/rostro-tipos-de-piel
+                - text: tipo de piel
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/rostro-todo-tipo-piel
+                    - text: todo tipo de piel
+                - listitem:
+                  - link:
+                    - /url: /c/rostro-piel-normal-a-seca
+                    - text: normal a seca
+                - listitem:
+                  - link:
+                    - /url: /c/rostro-piel-mixta-a-oleosa
+                    - text: mixta a oleosa
+            - listitem:
+              - link:
+                - /url: /c/rostro-rutina-skincare
+                - text: rutina skincare
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/rostro-skincare-limpieza
+                    - text: limpieza
+                - listitem:
+                  - link:
+                    - /url: /c/rostro-skincare-tratamiento
+                    - text: tratamiento
+                - listitem:
+                  - link:
+                    - /url: /c/rostro-skincare-hidratacion
+                    - text: hidratación
+                - listitem:
+                  - link:
+                    - /url: /c/rostro-skincare-protector-solar
+                    - text: protector solar
+            - listitem:
+              - link:
+                - /url: /c/rostro-necesidades
+                - text: necesidades
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/rostro-antimanchas
+                    - text: antimanchas
+                - listitem:
+                  - link:
+                    - /url: /c/rostro-antioleosidad
+                    - text: antioleosidad
+                - listitem:
+                  - link:
+                    - /url: /c/rostro-piel-deshidratada
+                    - text: hidratación
+                - listitem:
+                  - link:
+                    - /url: /c/rostro-lineas-finas-arrugas
+                    - text: arrugas y líneas finas
+                - listitem:
+                  - link:
+                    - /url: /c/rostro-firmeza
+                    - text: firmeza
+                - listitem:
+                  - link:
+                    - /url: /c/rostro-contorno-ojos
+                    - text: contorno de ojos
+            - listitem:
+              - link:
+                - /url: /c/rostro-marcas
+                - text: marcas
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/rostro-chronos-derma
+                    - text: chronos Derma
+                - listitem:
+                  - link:
+                    - /url: /c/rostro-faces
+                    - text: faces
+                - listitem:
+                  - link:
+                    - /url: /c/rostro-homem
+                    - text: homem
+            - listitem:
+              - link:
+                - /url: /c/rostro-repuestos
+                - text: repuestos
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/rostro-limpieza-repuesto
+                    - text: limpieza
+                - listitem:
+                  - link:
+                    - /url: /c/rostro-tratamiento-repuesto
+                    - text: tratamiento
+                - listitem:
+                  - link:
+                    - /url: /c/rostro-hidratacion-repuesto
+                    - text: hidratación
+        - navigation:
+          - list:
+            - listitem:
+              - link:
+                - /url: /c/maquillaje-descubri-tu-tono
+                - text: descubrí tu tono
+            - listitem:
+              - link:
+                - /url: /c/maquillaje-rostro
+                - text: para el rostro
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-primer
+                    - text: primer facial
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-base
+                    - text: base
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-corrector
+                    - text: corrector
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-rubor
+                    - text: rubor
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-iluminador
+                    - text: iluminador
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-polvo-compacto
+                    - text: polvo compacto
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-bruma-fijadora
+                    - text: bruma fijadora
+            - listitem:
+              - link:
+                - /url: /c/maquillaje-ojos
+                - text: para ojos
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-sombra
+                    - text: sombra
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-delineador
+                    - text: delineador
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-mascara-pestanas
+                    - text: máscara para pestanãs
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-cejas
+                    - text: cejas
+            - listitem:
+              - link:
+                - /url: /c/maquillaje-labios
+                - text: para labios
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-labial-liquido
+                    - text: labial liquido
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-labial-barra
+                    - text: labial en barra
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-gloss
+                    - text: gloss
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-lapiz
+                    - text: delineador
+            - listitem:
+              - link:
+                - /url: /c/maquillaje-unas
+                - text: para uñas
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-unas-base
+                    - text: base de uñas
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-unas-esmalte
+                    - text: esmalte
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-unas-top-coat
+                    - text: top coat
+            - listitem:
+              - link:
+                - /url: /c/maquillaje-pincel-y-accesorio
+                - text: brochas y accesorios
+            - listitem:
+              - link:
+                - /url: /c/maquillaje-marcas
+                - text: marcas
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-una
+                    - text: una
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-faces
+                    - text: faces
+            - listitem:
+              - link:
+                - /url: /c/maquillaje-repuestos
+                - text: repuestos
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-ojos-repuestos
+                    - text: para ojos
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-rostro-repuestos
+                    - text: para el rostro
+        - navigation:
+          - list:
+            - listitem:
+              - link:
+                - /url: /c/hombre-cuidados-diarios
+                - text: cuidados diarios
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/hombre-jabon
+                    - text: jabón
+                - listitem:
+                  - link:
+                    - /url: /c/hombre-desodorante
+                    - text: desodorante
+                - listitem:
+                  - link:
+                    - /url: /c/hombres-hidratantes-corporales
+                    - text: hidratantes corporales
+            - listitem:
+              - link:
+                - /url: /c/hombre-cabello
+                - text: cabello
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/hombre-shampoo
+                    - text: shampoo
+                - listitem:
+                  - link:
+                    - /url: /c/hombre-finalizador-capilar
+                    - text: finalizador capilar
+            - listitem:
+              - link:
+                - /url: /c/hombre-rostro
+                - text: rostro
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/hombre-barba
+                    - text: barba
+        - navigation:
+          - list:
+            - listitem:
+              - link:
+                - /url: /c/infantil-cuerpo-y-bano
+                - text: cuidado corporal
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/infantil-cuerpo-y-bano-jabon
+                    - text: jabón
+                - listitem:
+                  - link:
+                    - /url: /c/infantil-cuerpo-y-bano-hidratante
+                    - text: hidratante
+                - listitem:
+                  - link:
+                    - /url: /c/infantil-cuerpo-y-bano-toallas-humedas
+                    - text: toallitas húmedas
+                - listitem:
+                  - link:
+                    - /url: /c/infantil-cuerpo-y-bano-aceite-para-masajes
+                    - text: aceite para masajes
+            - listitem:
+              - link:
+                - /url: /c/infantil-cabello
+                - text: cabello
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/infantil-shampoo
+                    - text: shampoo
+                - listitem:
+                  - link:
+                    - /url: /c/infantil-acondicionador
+                    - text: acondicionador
+            - listitem:
+              - link:
+                - /url: /c/infantil-perfumeria
+                - text: perfumería
+            - listitem:
+              - link:
+                - /url: /c/infatil-edad
+                - text: edad
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/infantil-bebes
+                    - text: bebés (0 - 3 años)
+                - listitem:
+                  - link:
+                    - /url: /c/infantil-ninos-y-ninas
+                    - text: niños y niñas (3+ años)
+            - listitem:
+              - link:
+                - /url: /c/infantil-marcas
+                - text: marcas
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/infantil-nature
+                    - text: naturé
+                - listitem:
+                  - link:
+                    - /url: /c/nfantil-mama-y-bebe
+                    - text: mamá y Bebé
+        - navigation:
+          - list:
+            - listitem:
+              - link:
+                - /url: /c/cuidados-corporal
+                - text: cuidado corporal
+            - listitem:
+              - link:
+                - /url: /c/fragancias-para-el-hogar
+                - text: fragancias para el hogar
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/difusores
+                    - text: difusores
+                - listitem:
+                  - link:
+                    - /url: /c/velas
+                    - text: velas
+        - navigation:
+          - list:
+            - listitem:
+              - link:
+                - /url: /c/biome
+                - text: biome
+            - listitem:
+              - link:
+                - /url: /c/chronos
+                - text: chronos derma
+            - listitem:
+              - link:
+                - /url: /c/creer-para-ver
+                - text: creer para ver
+            - listitem:
+              - link:
+                - /url: /c/ekos
+                - text: ekos
+            - listitem:
+              - link:
+                - /url: /c/essencial
+                - text: essencial
+            - listitem:
+              - link:
+                - /url: /c/kaiak
+                - text: kaiak
+            - listitem:
+              - link:
+                - /url: /c/lumina
+                - text: lumina
+            - listitem:
+              - link:
+                - /url: /c/luna
+                - text: luna
+            - listitem:
+              - link:
+                - /url: /c/mama-y-bebe
+                - text: mamá y bebé
+            - listitem:
+              - link:
+                - /url: /c/tododia
+                - text: tododia
+            - listitem:
+              - link:
+                - /url: /c/una
+                - text: una
+            - listitem:
+              - link:
+                - /url: /c/faces
+                - text: faces
+            - listitem:
+              - link:
+                - /url: /c/bothanica
+                - text: bothanica
+            - listitem:
+              - link:
+                - /url: /c/humor
+                - text: humor
+            - listitem:
+              - link:
+                - /url: /c/natura-solar
+                - text: natura solar
+            - listitem:
+              - link:
+                - /url: /c/tododia-cabellos
+                - text: tododia cabellos
+        - navigation:
+          - list:
+            - listitem:
+              - link:
+                - /url: /c/regalo-precio
+                - text: precio
+            - listitem:
+              - link:
+                - /url: /c/regalo-para-quien
+                - text: para quién
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/regalo-todos
+                    - text: regalos para todos
+                - listitem:
+                  - link:
+                    - /url: /c/regalo-masculino
+                    - text: regalo para hombre
+                - listitem:
+                  - link:
+                    - /url: /c/regalo-femenino
+                    - text: regalo para mujer
+                - listitem:
+                  - link:
+                    - /url: /c/regalo-infantil
+                    - text: regalo para niños
+            - listitem:
+              - link:
+                - /url: /c/regalo-arma-tu-regalo
+                - text: armá tu regalo
+  - generic [ref=e63]:
+    - text:  
+    - generic [ref=e64]:
+      - generic [ref=e66]:
+        - generic [ref=e67]:
+          - banner [ref=e69]
+          - banner [ref=e71]
+          - banner [ref=e73]
+        - button "Próximo item, botón, carrusel con 0 itens" [ref=e74] [cursor=pointer]:
+          - generic [ref=e76]: 
+        - button "Item anterior, botón, carrusel con 0 itens" [ref=e77] [cursor=pointer]:
+          - generic [ref=e79]: 
+      - generic [ref=e81]:
+        - generic [ref=e82]:
+          - heading "Eau de Parfum Masculino Homem Potence 100ml" [level=1] [ref=e84]
+          - button "agregar a mis favoritos" [ref=e86] [cursor=pointer]:
+            - img [ref=e87]
+            - generic [ref=e90]: Loading...
+            - generic [ref=e92]: 
+        - generic [ref=e93]:
+          - paragraph [ref=e94]: Homem Potence EDP 100 ml
+          - paragraph [ref=e95]: cod. NATARG-81950
+        - generic [ref=e96]:
+          - button "etiqueta Homem" [ref=e97] [cursor=pointer]:
+            - generic [ref=e98]: etiqueta Homem
+            - generic [ref=e99]: Homem
+          - button "etiqueta masculino" [ref=e100] [cursor=pointer]:
+            - generic [ref=e101]: etiqueta masculino
+            - generic [ref=e102]: masculino
+          - button "etiqueta amaderado" [ref=e103] [cursor=pointer]:
+            - generic [ref=e104]: etiqueta amaderado
+            - generic [ref=e105]: amaderado
+          - button "etiqueta Potence" [ref=e106] [cursor=pointer]:
+            - generic [ref=e107]: etiqueta Potence
+            - generic [ref=e108]: Potence
+          - button "etiqueta eau de parfum" [ref=e109] [cursor=pointer]:
+            - generic [ref=e110]: etiqueta eau de parfum
+            - generic [ref=e111]: eau de parfum
+          - button "etiqueta ocasiones especiales" [ref=e112] [cursor=pointer]:
+            - generic [ref=e113]: etiqueta ocasiones especiales
+            - generic [ref=e114]: ocasiones especiales
+        - list [ref=e115]:
+          - listitem "Intensidad alta" [ref=e116]:
+            - generic [ref=e118]: 
+            - generic [ref=e119]: intensidad alta
+          - listitem "Ocasiones especiales" [ref=e120]:
+            - generic [ref=e122]: 
+            - generic [ref=e123]: ocasiones especiales
+          - listitem "producto vegano" [ref=e124]:
+            - generic [ref=e126]: 
+            - generic [ref=e127]: producto vegano
+          - listitem "Amaderado intenso" [ref=e128]:
+            - generic [ref=e130]: 
+            - generic [ref=e131]: amaderado intenso
+        - generic [ref=e137]:
+          - generic [ref=e138]:
+            - heading "descripción" [level=2] [ref=e139]:
+              - button "descripción" [expanded] [ref=e140] [cursor=pointer]:
+                - text: descripción
+                - generic [ref=e142]: 
+            - region "descripción" [ref=e143]:
+              - generic [ref=e144]:
+                - paragraph [ref=e149]: tu forma de provocar
+                - list [ref=e154]:
+                  - listitem [ref=e155]: • ingredientes naturales de la biodiversidad brasileña
+                  - listitem [ref=e156]: • notas de cumarú con un toque amaderado intenso
+                  - listitem [ref=e157]: • toque picante
+                  - listitem [ref=e158]: • fragancia atrevida para el hombre que sabe lo que quiere
+          - generic [ref=e159]:
+            - heading "gota olfativa" [level=2] [ref=e160]:
+              - button "gota olfativa" [ref=e161] [cursor=pointer]:
+                - text: gota olfativa
+                - generic [ref=e163]: 
+            - region "gota olfativa" [ref=e164]:
+              - generic [ref=e165]:
+                - generic [ref=e167]:
+                  - generic [ref=e170]: 
+                  - generic [ref=e171]: "familia olfativa: amaderado"
+                - generic [ref=e173]:
+                  - generic [ref=e176]: 
+                  - generic [ref=e177]: cruelty free
+                - generic [ref=e179]:
+                  - generic [ref=e182]: 
+                  - generic [ref=e183]: vegano
+                - generic [ref=e185]:
+                  - generic [ref=e188]: 
+                  - generic [ref=e189]: "ocasión: ocasiones especiales"
+          - generic [ref=e190]:
+            - heading "cómo usar" [level=2] [ref=e191]:
+              - button "cómo usar" [ref=e192] [cursor=pointer]:
+                - text: cómo usar
+                - generic [ref=e194]: 
+            - region "cómo usar" [ref=e195]:
+              - generic [ref=e199]: cada persona tiene una forma única de perfumarse. pero si querés aprovechar todo el potencial de esta fragancia, aplicala en zonas como las muñecas, el cuello y detrás de las orejas.
+          - generic [ref=e200]:
+            - heading "ingredientes" [level=2] [ref=e201]:
+              - button "ingredientes" [ref=e202] [cursor=pointer]:
+                - text: ingredientes
+                - generic [ref=e204]: 
+            - region "ingredientes" [ref=e205]:
+              - generic [ref=e209]: ALCOHOL, PERFUME, AGUA, METOXICINAMATO DE ETILHEXILO, ACETATO DE TOCOFERILO, DIETILAMINO HYDROXIBENZOILO, BENZOATO DE HEXILO, BENZOATO DENATONIO, BHT, CI 60730, CI 14700, CI 17200, CLORURO DE SODIO, LIMONENO, CUMARINA, LINALOOL, BUTILFENIL METILPROPIONAL, ALFAISOMETIL IONONA, CITRONELOL, CITRAL, CINAMIL ALCOHOL, GERANIOL, HYDROXICTRONELAL, ISOEUGENOL.
+    - generic [ref=e211]:
+      - generic [ref=e212]:
+        - link "inicio":
+          - /url: /
+        - generic [ref=e213]: •
+      - generic [ref=e214]:
+        - link "perfumería":
+          - /url: /c/perfumeria
+        - generic [ref=e215]: •
+      - generic [ref=e216]:
+        - link "para quién":
+          - /url: /c/perfumeria-para-quien
+        - generic [ref=e217]: •
+      - generic [ref=e218]: detalles del producto
+  - generic [ref=e220]:
+    - generic [ref=e221]:
+      - heading "más productos de la marca" [level=2] [ref=e222]
+      - link "explorar más productos de este carrusel":
+        - /url: /c/homem
+        - generic "explorar"
+        - generic:
+          - generic: 
+    - generic [ref=e226]:
+      - generic [ref=e227]:
+        - generic [ref=e228]:
+          - generic [ref=e231]:
+            - generic [ref=e232] [cursor=pointer]:
+              - img [ref=e233]
+              - group [ref=e234]:
+                - generic "Para ellos" [ref=e235]:
+                  - generic [ref=e236]: Para ellos
+              - button "agregar a mis favoritos" [ref=e237]:
+                - img [ref=e238]
+                - generic [ref=e241]: Loading...
+                - generic [ref=e243]: 
+            - generic [ref=e244]:
+              - generic [ref=e245]:
+                - generic [ref=e246]:
+                  - heading "marca Homem" [level=3] [ref=e247]: Homem
+                  - generic "avaliação 4.9 estrelas de 5" [ref=e248]:
+                    - generic [ref=e250]: 
+                    - generic [ref=e251]: "4.9"
+                - link "Eau de Parfum Masculino Homem Potence 100ml":
+                  - /url: /p/homem-potence-edp-100-ml/NATARG-81950?position=1&listTitle=brand+showcase+-+m%C3%A1s+productos+de+la+marca
+                  - heading "Eau de Parfum Masculino Homem Potence 100ml" [level=4]
+                - link "valor de . por $ 55.790,00. 30 por ciento de descuento.":
+                  - /url: /p/homem-potence-edp-100-ml/NATARG-81950?position=1&listTitle=brand+showcase+-+m%C3%A1s+productos+de+la+marca
+                  - generic:
+                    - generic:
+                      - paragraph: $ 79.700,00
+                      - generic:
+                        - generic: $ 55.790,00
+                        - generic:
+                          - generic: etiqueta -30%
+                          - generic: "-30%"
+                    - generic: precio sin impuestos nacionales $46.107,44
+              - button "agregar a mi bolsa" [ref=e252] [cursor=pointer]
+          - generic [ref=e255]:
+            - generic [ref=e256] [cursor=pointer]:
+              - img [ref=e257]
+              - group [ref=e258]:
+                - generic "Para ellos" [ref=e259]:
+                  - generic [ref=e260]: Para ellos
+              - button "agregar a mis favoritos" [ref=e261]:
+                - img [ref=e262]
+                - generic [ref=e265]: Loading...
+                - generic [ref=e267]: 
+            - generic [ref=e268]:
+              - generic [ref=e269]:
+                - generic [ref=e270]:
+                  - heading "marca Homem" [level=3] [ref=e271]: Homem
+                  - generic "avaliação 5.0 estrelas de 5" [ref=e272]:
+                    - generic [ref=e274]: 
+                    - generic [ref=e275]: "5.0"
+                - link "Eau de Parfum Masculino Homem Cor.Agio 100ml":
+                  - /url: /p/homem-coragio-masculino--eau-de-parfum-100-ml/NATARG-186?position=2&listTitle=brand+showcase+-+m%C3%A1s+productos+de+la+marca
+                  - heading "Eau de Parfum Masculino Homem Cor.Agio 100ml" [level=4]
+                - link "valor de . por $ 68.460,00. 30 por ciento de descuento.":
+                  - /url: /p/homem-coragio-masculino--eau-de-parfum-100-ml/NATARG-186?position=2&listTitle=brand+showcase+-+m%C3%A1s+productos+de+la+marca
+                  - generic:
+                    - generic:
+                      - paragraph: $ 97.800,00
+                      - generic:
+                        - generic: $ 68.460,00
+                        - generic:
+                          - generic: etiqueta -30%
+                          - generic: "-30%"
+                    - generic: precio sin impuestos nacionales $56.578,51
+              - button "agregar a mi bolsa" [ref=e276] [cursor=pointer]
+          - generic [ref=e279]:
+            - generic [ref=e280] [cursor=pointer]:
+              - img [ref=e281]
+              - group [ref=e282]:
+                - generic "Para ellos" [ref=e283]:
+                  - generic [ref=e284]: Para ellos
+              - button "agregar a mis favoritos" [ref=e285]:
+                - img [ref=e286]
+                - generic [ref=e289]: Loading...
+                - generic [ref=e291]: 
+            - generic [ref=e292]:
+              - generic [ref=e293]:
+                - generic [ref=e294]:
+                  - heading "marca Homem" [level=3] [ref=e295]: Homem
+                  - generic "avaliação 4.0 estrelas de 5" [ref=e296]:
+                    - generic [ref=e298]: 
+                    - generic [ref=e299]: "4.0"
+                - link "Eau de Parfum Masculino Homem Essence 100ml":
+                  - /url: /p/homem-essence-edp-100-ml/NATARG-59848?position=3&listTitle=brand+showcase+-+m%C3%A1s+productos+de+la+marca
+                  - heading "Eau de Parfum Masculino Homem Essence 100ml" [level=4]
+                - link "valor de . por $ 47.820,00. 40 por ciento de descuento.":
+                  - /url: /p/homem-essence-edp-100-ml/NATARG-59848?position=3&listTitle=brand+showcase+-+m%C3%A1s+productos+de+la+marca
+                  - generic:
+                    - generic:
+                      - paragraph: $ 79.700,00
+                      - generic:
+                        - generic: $ 47.820,00
+                        - generic:
+                          - generic: etiqueta -40%
+                          - generic: "-40%"
+                    - generic: precio sin impuestos nacionales $39.520,66
+              - button "agregar a mi bolsa" [ref=e300] [cursor=pointer]
+          - generic [ref=e303]:
+            - generic [ref=e304] [cursor=pointer]:
+              - img [ref=e305]
+              - group [ref=e306]:
+                - generic "Para ellos" [ref=e307]:
+                  - generic [ref=e308]: Para ellos
+              - button "agregar a mis favoritos" [ref=e309]:
+                - img [ref=e310]
+                - generic [ref=e313]: Loading...
+                - generic [ref=e315]: 
+            - generic [ref=e316]:
+              - generic [ref=e317]:
+                - generic [ref=e318]:
+                  - heading "marca Homem" [level=3] [ref=e319]: Homem
+                  - generic "avaliação 4.8 estrelas de 5" [ref=e320]:
+                    - generic [ref=e322]: 
+                    - generic [ref=e323]: "4.8"
+                - link "Eau de Parfum Masculino Homem Tato 100ml":
+                  - /url: /p/homem-tato-100-ml/NATARG-109164?position=4&listTitle=brand+showcase+-+m%C3%A1s+productos+de+la+marca
+                  - heading "Eau de Parfum Masculino Homem Tato 100ml" [level=4]
+                - link "valor de . por $ 55.790,00. 30 por ciento de descuento.":
+                  - /url: /p/homem-tato-100-ml/NATARG-109164?position=4&listTitle=brand+showcase+-+m%C3%A1s+productos+de+la+marca
+                  - generic:
+                    - generic:
+                      - paragraph: $ 79.700,00
+                      - generic:
+                        - generic: $ 55.790,00
+                        - generic:
+                          - generic: etiqueta -30%
+                          - generic: "-30%"
+                    - generic: precio sin impuestos nacionales $46.107,44
+              - button "agregar a mi bolsa" [ref=e324] [cursor=pointer]
+          - generic [ref=e327]:
+            - generic [ref=e328] [cursor=pointer]:
+              - img [ref=e329]
+              - button "agregar a mis favoritos" [ref=e330]:
+                - img [ref=e331]
+                - generic [ref=e334]: Loading...
+                - generic [ref=e336]: 
+            - generic [ref=e337]:
+              - generic [ref=e338]:
+                - heading "marca Homem" [level=3] [ref=e340]: Homem
+                - link "Desodorante Antitranspirante Roll On Homem Clásico 75 ml":
+                  - /url: /p/desodorante-antitranspirante-roll-on-clasico-homem-75-ml/NATARG-150225?position=5&listTitle=brand+showcase+-+m%C3%A1s+productos+de+la+marca
+                  - heading "Desodorante Antitranspirante Roll On Homem Clásico 75 ml" [level=4]
+                - link "valor de . por $ 5.795,00. 5 por ciento de descuento.":
+                  - /url: /p/desodorante-antitranspirante-roll-on-clasico-homem-75-ml/NATARG-150225?position=5&listTitle=brand+showcase+-+m%C3%A1s+productos+de+la+marca
+                  - generic:
+                    - generic:
+                      - paragraph: $ 6.100,00
+                      - generic:
+                        - generic: $ 5.795,00
+                        - generic:
+                          - generic: etiqueta -5%
+                          - generic: "-5%"
+                    - generic: precio sin impuestos nacionales $4.789,26
+              - button "agregar a mi bolsa" [ref=e341] [cursor=pointer]
+          - generic [ref=e344]:
+            - generic [ref=e345] [cursor=pointer]:
+              - img [ref=e346]
+              - button "agregar a mis favoritos" [ref=e347]:
+                - img [ref=e348]
+                - generic [ref=e351]: Loading...
+                - generic [ref=e353]: 
+            - generic [ref=e354]:
+              - generic [ref=e355]:
+                - heading "marca Homem" [level=3] [ref=e357]: Homem
+                - link "Jabones en Barra Cremosos de Cuerpo y Barba Homem 3 x 110 g c/u":
+                  - /url: /p/jabon-de-tocador-en-barra-cuerpo-y-barba-homem-1-caja-de-3-unidades-de-110-g-cu/NATARG-151023?position=6&listTitle=brand+showcase+-+m%C3%A1s+productos+de+la+marca
+                  - heading "Jabones en Barra Cremosos de Cuerpo y Barba Homem 3 x 110 g c/u" [level=4]
+                - link "valor de . por $ 12.480,00. 20 por ciento de descuento.":
+                  - /url: /p/jabon-de-tocador-en-barra-cuerpo-y-barba-homem-1-caja-de-3-unidades-de-110-g-cu/NATARG-151023?position=6&listTitle=brand+showcase+-+m%C3%A1s+productos+de+la+marca
+                  - generic:
+                    - generic:
+                      - paragraph: $ 15.600,00
+                      - generic:
+                        - generic: $ 12.480,00
+                        - generic:
+                          - generic: etiqueta -20%
+                          - generic: "-20%"
+                    - generic: precio sin impuestos nacionales $10.314,05
+              - button "agregar a mi bolsa" [ref=e358] [cursor=pointer]
+          - generic [ref=e361]:
+            - generic [ref=e362] [cursor=pointer]:
+              - img [ref=e363]
+              - button "agregar a mis favoritos" [ref=e364]:
+                - img [ref=e365]
+                - generic [ref=e368]: Loading...
+                - generic [ref=e370]: 
+            - generic [ref=e371]:
+              - generic [ref=e372]:
+                - heading "marca Homem" [level=3] [ref=e374]: Homem
+                - link "Desodorante Antitranspirante Roll On Homem Sin Perfume 75 ml":
+                  - /url: /p/desodorante-antitranspirante-roll-on-sin-perfume-homem-75-ml/NATARG-150223?position=7&listTitle=brand+showcase+-+m%C3%A1s+productos+de+la+marca
+                  - heading "Desodorante Antitranspirante Roll On Homem Sin Perfume 75 ml" [level=4]
+                - link "valor de . por $ 5.185,00. 15 por ciento de descuento.":
+                  - /url: /p/desodorante-antitranspirante-roll-on-sin-perfume-homem-75-ml/NATARG-150223?position=7&listTitle=brand+showcase+-+m%C3%A1s+productos+de+la+marca
+                  - generic:
+                    - generic:
+                      - paragraph: $ 6.100,00
+                      - generic:
+                        - generic: $ 5.185,00
+                        - generic:
+                          - generic: etiqueta -15%
+                          - generic: "-15%"
+                    - generic: precio sin impuestos nacionales $4.285,12
+              - button "agregar a mi bolsa" [ref=e375] [cursor=pointer]
+          - generic [ref=e378]:
+            - generic [ref=e379] [cursor=pointer]:
+              - img [ref=e380]
+              - button "agregar a mis favoritos" [ref=e381]:
+                - img [ref=e382]
+                - generic [ref=e385]: Loading...
+                - generic [ref=e387]: 
+            - generic [ref=e388]:
+              - generic [ref=e389]:
+                - generic [ref=e390]:
+                  - heading "marca Homem" [level=3] [ref=e391]: Homem
+                  - generic "avaliação 4.5 estrelas de 5" [ref=e392]:
+                    - generic [ref=e394]: 
+                    - generic [ref=e395]: "4.5"
+                - link "Eau de Toilette Masculino Homem Clásico 100ml":
+                  - /url: /p/homem-clasico-edp-100-ml/NATARG-57351?position=8&listTitle=brand+showcase+-+m%C3%A1s+productos+de+la+marca
+                  - heading "Eau de Toilette Masculino Homem Clásico 100ml" [level=4]
+                - link "valor de . por $ 49.700,00. 30 por ciento de descuento.":
+                  - /url: /p/homem-clasico-edp-100-ml/NATARG-57351?position=8&listTitle=brand+showcase+-+m%C3%A1s+productos+de+la+marca
+                  - generic:
+                    - generic:
+                      - paragraph: $ 71.000,00
+                      - generic:
+                        - generic: $ 49.700,00
+                        - generic:
+                          - generic: etiqueta -30%
+                          - generic: "-30%"
+                    - generic: precio sin impuestos nacionales $41.074,38
+              - button "agregar a mi bolsa" [ref=e396] [cursor=pointer]
+          - generic [ref=e399]:
+            - generic [ref=e400] [cursor=pointer]:
+              - img [ref=e401]
+              - button "agregar a mis favoritos" [ref=e402]:
+                - img [ref=e403]
+                - generic [ref=e406]: Loading...
+                - generic [ref=e408]: 
+            - generic [ref=e409]:
+              - generic [ref=e410]:
+                - generic [ref=e411]:
+                  - heading "marca Homem" [level=3] [ref=e412]: Homem
+                  - generic "avaliação 3.0 estrelas de 5" [ref=e413]:
+                    - generic [ref=e415]: 
+                    - generic [ref=e416]: "3.0"
+                - link "Balm Post Barba Multifuncional Homem 75 ml":
+                  - /url: /p/balsamo-post-barba-homem-75-ml/NATARG-151022?position=9&listTitle=brand+showcase+-+m%C3%A1s+productos+de+la+marca
+                  - heading "Balm Post Barba Multifuncional Homem 75 ml" [level=4]
+                - link "valor de . por $ 9.090,00. 10 por ciento de descuento.":
+                  - /url: /p/balsamo-post-barba-homem-75-ml/NATARG-151022?position=9&listTitle=brand+showcase+-+m%C3%A1s+productos+de+la+marca
+                  - generic:
+                    - generic:
+                      - paragraph: $ 10.100,00
+                      - generic:
+                        - generic: $ 9.090,00
+                        - generic:
+                          - generic: etiqueta -10%
+                          - generic: "-10%"
+                    - generic: precio sin impuestos nacionales $7.512,40
+              - button "agregar a mi bolsa" [ref=e417] [cursor=pointer]
+          - generic [ref=e420]:
+            - generic [ref=e421] [cursor=pointer]:
+              - img [ref=e422]
+              - button "agregar a mis favoritos" [ref=e423]:
+                - img [ref=e424]
+                - generic [ref=e427]: Loading...
+                - generic [ref=e429]: 
+            - generic [ref=e430]:
+              - generic [ref=e431]:
+                - generic [ref=e432]:
+                  - heading "marca Homem" [level=3] [ref=e433]: Homem
+                  - generic "avaliação 4.7 estrelas de 5" [ref=e434]:
+                    - generic [ref=e436]: 
+                    - generic [ref=e437]: "4.7"
+                - link "Shampoo 2 en 1 Homem 300ml":
+                  - /url: /p/shampoo-2-en-1-homem-300-ml/NATARG-151018?position=10&listTitle=brand+showcase+-+m%C3%A1s+productos+de+la+marca
+                  - heading "Shampoo 2 en 1 Homem 300ml" [level=4]
+                - link "valor de . por $ 9.630,00. 10 por ciento de descuento.":
+                  - /url: /p/shampoo-2-en-1-homem-300-ml/NATARG-151018?position=10&listTitle=brand+showcase+-+m%C3%A1s+productos+de+la+marca
+                  - generic:
+                    - generic:
+                      - paragraph: $ 10.700,00
+                      - generic:
+                        - generic: $ 9.630,00
+                        - generic:
+                          - generic: etiqueta -10%
+                          - generic: "-10%"
+                    - generic: precio sin impuestos nacionales $7.958,68
+              - button "agregar a mi bolsa" [ref=e438] [cursor=pointer]
+          - generic [ref=e441]:
+            - generic [ref=e442] [cursor=pointer]:
+              - img [ref=e443]
+              - group [ref=e444]:
+                - generic "Para ellos" [ref=e445]:
+                  - generic [ref=e446]: Para ellos
+              - button "agregar a mis favoritos" [ref=e447]:
+                - img [ref=e448]
+                - generic [ref=e451]: Loading...
+                - generic [ref=e453]: 
+            - generic [ref=e454]:
+              - generic [ref=e455]:
+                - generic [ref=e456]:
+                  - heading "marca Homem" [level=3] [ref=e457]: Homem
+                  - generic "avaliação 4.0 estrelas de 5" [ref=e458]:
+                    - generic [ref=e460]: 
+                    - generic [ref=e461]: "4.0"
+                - link "Eau de Parfum Masculino Homem Elo 100ml":
+                  - /url: /p/homem-elo-eau-de-parfum-masculino-100-ml/NATARG-135068?position=11&listTitle=brand+showcase+-+m%C3%A1s+productos+de+la+marca
+                  - heading "Eau de Parfum Masculino Homem Elo 100ml" [level=4]
+                - link "valor de . por $ 55.790,00. 30 por ciento de descuento.":
+                  - /url: /p/homem-elo-eau-de-parfum-masculino-100-ml/NATARG-135068?position=11&listTitle=brand+showcase+-+m%C3%A1s+productos+de+la+marca
+                  - generic:
+                    - generic:
+                      - paragraph: $ 79.700,00
+                      - generic:
+                        - generic: $ 55.790,00
+                        - generic:
+                          - generic: etiqueta -30%
+                          - generic: "-30%"
+                    - generic: precio sin impuestos nacionales $46.107,44
+              - button "agregar a mi bolsa" [ref=e462] [cursor=pointer]
+          - generic [ref=e465]:
+            - generic [ref=e466] [cursor=pointer]:
+              - img [ref=e467]
+              - button "agregar a mis favoritos" [ref=e468]:
+                - img [ref=e469]
+                - generic [ref=e472]: Loading...
+                - generic [ref=e474]: 
+            - generic [ref=e475]:
+              - generic [ref=e476]:
+                - heading "marca Homem" [level=3] [ref=e478]: Homem
+                - link "Crema de Barbear Multifuncional Homem 75 ml":
+                  - /url: /p/crema-de-afeitar-multifuncional-homem-75-ml/NATARG-151021?position=12&listTitle=brand+showcase+-+m%C3%A1s+productos+de+la+marca
+                  - heading "Crema de Barbear Multifuncional Homem 75 ml" [level=4]
+                - link "valor de . por $ 6.660,00. 10 por ciento de descuento.":
+                  - /url: /p/crema-de-afeitar-multifuncional-homem-75-ml/NATARG-151021?position=12&listTitle=brand+showcase+-+m%C3%A1s+productos+de+la+marca
+                  - generic:
+                    - generic:
+                      - paragraph: $ 7.400,00
+                      - generic:
+                        - generic: $ 6.660,00
+                        - generic:
+                          - generic: etiqueta -10%
+                          - generic: "-10%"
+                    - generic: precio sin impuestos nacionales $5.504,13
+              - button "agregar a mi bolsa" [ref=e479] [cursor=pointer]
+        - text:  
+      - button "escaparate de productos anterior" [disabled] [ref=e480]:
+        - generic [ref=e482]: 
+        - generic [ref=e483]: escaparate de productos anterior
+      - button "próxima presentación de productos" [disabled] [ref=e484]:
+        - generic [ref=e486]: 
+        - generic [ref=e487]: próxima presentación de productos

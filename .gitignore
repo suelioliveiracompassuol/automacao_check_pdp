@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Reports (generated at runtime)
+/reports/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/
+
+# Logs
+*.log
+npm-debug.log*
+
+ncf-ssr/
+debug-**
+test-**
+.vscode
+
+# Force git to see changes

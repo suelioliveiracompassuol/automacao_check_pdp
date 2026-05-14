@@ -1,0 +1,34 @@
+{
+  "name": "pdp-feature-monitor",
+  "version": "1.0.0",
+  "description": "Automated PDP feature monitoring for Natura/Avon sites",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "check": "tsc && node dist/index.js",
+    "check:headed": "tsc && HEADLESS=false node dist/index.js",
+    "explore": "tsc && node dist/explore.js",
+    "explore:headed": "tsc && HEADLESS=false node dist/explore.js",
+    "test": "npx playwright test",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix"
+  },
+  "keywords": [
+    "playwright",
+    "monitoring",
+    "pdp",
+    "natura",
+    "avon"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.44.0",
+    "@types/node": "^20.19.40",
+    "eslint": "^10.3.0",
+    "eslint-plugin-playwright": "^2.10.2",
+    "typescript": "^5.4.0",
+    "typescript-eslint": "^8.59.2"
+  }
+}

@@ -1,0 +1,2527 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - navigation [ref=e3]:
+      - list [ref=e4]:
+        - listitem [ref=e5]:
+          - button "Sobre Natura, botón desplegable" [ref=e6] [cursor=pointer]:
+            - text: Sobre Natura
+            - generic [ref=e8]: 
+        - listitem [ref=e9]:
+          - button "Revista Natura"
+        - listitem [ref=e10]:
+          - button "Consultoría, botón desplegable" [ref=e11] [cursor=pointer]:
+            - text: Consultoría
+            - generic [ref=e13]: 
+        - listitem [ref=e14]:
+          - button "Quiero Vender, botón desplegable" [ref=e15] [cursor=pointer]:
+            - text: Quiero Vender
+            - generic [ref=e17]: 
+        - listitem [ref=e18]:
+          - button "Ayuda, botón desplegable" [ref=e19] [cursor=pointer]:
+            - text: Ayuda
+            - generic [ref=e21]: 
+        - listitem [ref=e22]:
+          - button "BLOG"
+    - generic [ref=e24]:
+      - link "encontrá una tienda Natura":
+        - /url: /encontra-natura
+        - generic:
+          - generic:
+            - generic: 
+        - text: Encontrá Natura
+  - banner [ref=e25]:
+    - text:     
+    - generic [ref=e28]:
+      - generic [ref=e29]:
+        - link "imatipo Natura compuesto por 1 símbolo em forma de flor, junto con el nombre de la marca en colores naranja y amarillo.":
+          - /url: /
+          - heading "Natura Argentina" [level=1]
+          - img
+        - generic [ref=e31]:
+          - textbox "digitá lo que deseas encontrar, campo de texto" [ref=e32]:
+            - /placeholder: ¿qué buscás hoy?
+          - button "buscar" [ref=e34] [cursor=pointer]:
+            - generic [ref=e36]: 
+        - generic [ref=e37]:
+          - link "header.accessibility.favorites":
+            - /url: /mis-datos/favoritos
+            - generic:
+              - generic: 
+            - text: favoritos
+          - generic [ref=e38]:
+            - generic [ref=e40]: 
+            - text: ingresar
+          - button "Mi bolsa de compras" [ref=e41] [cursor=pointer]:
+            - generic [ref=e43]: 
+            - generic [ref=e44]: "0"
+      - generic [ref=e45]:
+        - separator [ref=e47]
+        - navigation [ref=e48]:
+          - list [ref=e51]:
+            - listitem [ref=e52]:
+              - link "hot sale 🔥":
+                - /url: /c/hot-sale
+                - generic: hot sale 🔥
+            - listitem [ref=e53]:
+              - link "perfumería":
+                - /url: /c/perfumeria
+                - generic: perfumería
+            - listitem [ref=e54]:
+              - link "repuestos":
+                - /url: /c/repuestos
+                - generic: repuestos
+            - listitem [ref=e55]:
+              - link "cuidados corporales":
+                - /url: /c/cuidados-diarios
+                - generic: cuidados corporales
+            - listitem [ref=e56]:
+              - link "cabello":
+                - /url: /c/cabello
+                - generic: cabello
+            - listitem [ref=e57]:
+              - link "rostro":
+                - /url: /c/rostro
+                - generic: rostro
+            - listitem [ref=e58]:
+              - link "maquillaje":
+                - /url: /c/maquillaje
+                - generic: maquillaje
+            - listitem [ref=e59]:
+              - link "hombres":
+                - /url: /c/hombre
+                - generic: hombres
+            - listitem [ref=e60]:
+              - link "infantil":
+                - /url: /c/infantil
+                - generic: infantil
+            - listitem [ref=e61]:
+              - link "hogar":
+                - /url: /c/hogar
+                - generic: hogar
+            - listitem [ref=e62]:
+              - link "marcas":
+                - /url: /c/marcas
+                - generic: marcas
+            - listitem [ref=e63]:
+              - link "regalos":
+                - /url: /c/regalo
+                - generic: regalos
+            - listitem [ref=e64]:
+              - link "click sale":
+                - /url: /c/click-sale
+                - generic: click sale
+        - navigation:
+          - list:
+            - listitem:
+              - link:
+                - /url: /c/perfumeria-para-quien
+                - text: para quién
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-femenina
+                    - text: femenina
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-masculina
+                    - text: masculina
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-unisex
+                    - text: unisex
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-infantil
+                    - text: infantil
+            - listitem:
+              - link:
+                - /url: /c/perfumeria-tipo
+                - text: tipo
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-body-splash
+                    - text: body splash
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-colonia
+                    - text: colonia
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-eau-de-toilette
+                    - text: eau de toilette
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-eau-de-parfum
+                    - text: eau de parfum
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-premium
+                    - text: premium
+            - listitem:
+              - link:
+                - /url: /c/perfumeria-ocasion-de-uso
+                - text: ocasión de uso
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-ocasion-dia
+                    - text: día
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-ocasion-noche
+                    - text: noche
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-ocasion-ocasiones-especiales
+                    - text: ocasiones especiales
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-ocasion-miniatura
+                    - text: miniatura
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-hogar
+                    - text: hogar
+            - listitem:
+              - link:
+                - /url: /c/perfumeria-familia-olfativa
+                - text: familia olfativa
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-familia-floral
+                    - text: floral
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-familia-frutal
+                    - text: frutal
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-familia-amaderado
+                    - text: amaderado
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-familia-citrico
+                    - text: cítrico
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-familia-dulce
+                    - text: dulce
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-familia-aromatico
+                    - text: aromático
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-familia-chipre
+                    - text: chipre
+            - listitem:
+              - link:
+                - /url: /c/perfumeria-marcas
+                - text: marcas
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-kaiak
+                    - text: kaiak
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-humor
+                    - text: humor
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-essencial
+                    - text: essencial
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-tododia
+                    - text: tododia
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-homem
+                    - text: homem
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-ekos
+                    - text: ekos
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-kriska
+                    - text: kriska
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-ilia
+                    - text: ilía
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-una
+                    - text: una
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-luna
+                    - text: luna
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-nature
+                    - text: naturé
+                - listitem:
+                  - link:
+                    - /url: /c/alta-perfumeria
+                    - text: alta perfumeria
+            - listitem:
+              - link:
+                - /url: /c/perfumeria-repuesto
+                - text: repuesto
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/repuestos-perfumeria-unisex
+                    - text: unisex
+                - listitem:
+                  - link:
+                    - /url: /c/repuestos-perfumeria-femenina
+                    - text: femenina
+                - listitem:
+                  - link:
+                    - /url: /c/repuestos-perfumeria-masculina
+                    - text: masculina
+                - listitem:
+                  - link:
+                    - /url: /c/repuestos-perfumeria-infantil
+                    - text: infantil
+            - listitem:
+              - link:
+                - /url: /c/perfumeria-natura-asesor-perfumeria
+                - text: asesor perfumería
+        - navigation:
+          - list:
+            - listitem:
+              - link:
+                - /url: /c/repuesto-perfumeria
+                - text: perfumeria
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-repuesto-unisex
+                    - text: unisex
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-repuestos-femenina
+                    - text: femenina
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-repuestos-masculina
+                    - text: masculina
+                - listitem:
+                  - link:
+                    - /url: /c/perfumeria-repuestos-infantil
+                    - text: infantil
+            - listitem:
+              - link:
+                - /url: /c/repuestos-cuidados-diarios
+                - text: cuidados diarios
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-repuestos-jabones
+                    - text: jabones
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-repuestos-hidratantes
+                    - text: hidratantes
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-repuestos-desodorantes
+                    - text: desodorantes
+            - listitem:
+              - link:
+                - /url: /c/repuestos-cabello
+                - text: cabellos
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/repuesto-shampoo
+                    - text: shampoo
+                - listitem:
+                  - link:
+                    - /url: /c/repuestos-acondicionador
+                    - text: acondicionador
+                - listitem:
+                  - link:
+                    - /url: /c/repuesto-crema-para-peinar
+                    - text: crema para peinar
+                - listitem:
+                  - link:
+                    - /url: /c/repuestos-tratamiento
+                    - text: tratamiento
+            - listitem:
+              - link:
+                - /url: /c/repuestos-rostro
+                - text: rostro
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/repuesto-rostro-limpieza
+                    - text: limpieza
+                - listitem:
+                  - link:
+                    - /url: /c/repuestos-rostro-tratamiento
+                    - text: tratamiento
+                - listitem:
+                  - link:
+                    - /url: /c/repuesto-rostro-hidratacion
+                    - text: hidratación
+            - listitem:
+              - link:
+                - /url: /c/repuestos-maquillaje
+                - text: maquillaje
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/repuestos-maquillaje-rostro
+                    - text: para el rostro
+                - listitem:
+                  - link:
+                    - /url: /c/repuestos-maquillaje-ojos
+                    - text: para ojos
+        - navigation:
+          - list:
+            - listitem:
+              - link:
+                - /url: /c/cuidados-diarios-hidratante
+                - text: hidratantes
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-hidratante-corporal
+                    - text: para el cuerpo
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-hidratante-manos-pies
+                    - text: para manos y pies
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-hidratante-labial
+                    - text: para labios
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-hidratante-infantil
+                    - text: para bebés y niños
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-hidratante-embarazadas
+                    - text: para embarazadas
+            - listitem:
+              - link:
+                - /url: /c/cuidados-diarios-jabon
+                - text: jabones
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-jabon-barra
+                    - text: en barra
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-jabon-liquido
+                    - text: líquido
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-jabon-exfoliante
+                    - text: exfoliante
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-jabon-infantil
+                    - text: infantil
+            - listitem:
+              - link:
+                - /url: /c/cuidados-diarios-desodorante
+                - text: desodorante
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-desodorante-spray
+                    - text: en spray
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-desodorante-roll-on
+                    - text: roll on
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-desodorante-crema
+                    - text: en crema
+            - listitem:
+              - link:
+                - /url: /c/cuidados-diarios-proteccion-solar
+                - text: protector solar
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-protector-solar-corporal
+                    - text: corporal
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-protector-solar-facial
+                    - text: facial
+            - listitem:
+              - link:
+                - /url: /c/cuidados-diarios-aceite-corporal
+                - text: aceite corporal
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-aceite-corporal-embarazadas-infantil
+                    - text: para embarazadas y bebés
+            - listitem:
+              - link:
+                - /url: /c/cuidados-diarios-marcas
+                - text: marcas
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-tododia
+                    - text: tododia
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-ekos
+                    - text: ekos
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-kaiak
+                    - text: kaiak
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-humor
+                    - text: humor
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-homem
+                    - text: homem
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-nature
+                    - text: naturé
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-natura-solar
+                    - text: natura Solar
+                - listitem:
+                  - link:
+                    - /url: /c/cuidados-diarios-mama-y-bebe
+                    - text: mamá y Bebé
+            - listitem:
+              - link:
+                - /url: /c/cuidados-diarios-repuestos
+                - text: repuestos
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/repuestos-jabones
+                    - text: jabones
+                - listitem:
+                  - link:
+                    - /url: /c/repuestos-hidratantes-corporales
+                    - text: hidratantes
+                - listitem:
+                  - link:
+                    - /url: /c/repuestos-desodorante
+                    - text: desodorantes
+        - navigation:
+          - list:
+            - listitem:
+              - link:
+                - /url: /c/cabello-marcas
+                - text: marcas
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/cabello-lumina
+                    - text: lumina
+                - listitem:
+                  - link:
+                    - /url: /c/cabello-tododia
+                    - text: tododia
+                - listitem:
+                  - link:
+                    - /url: /c/cabello-ekos
+                    - text: ekos
+                - listitem:
+                  - link:
+                    - /url: /c/cabello-nature
+                    - text: naturé
+                - listitem:
+                  - link:
+                    - /url: /c/cabello-homem
+                    - text: homem
+                - listitem:
+                  - link:
+                    - /url: /c/cabello-mama-y-bebe
+                    - text: mamá y bebé
+                - listitem:
+                  - link:
+                    - /url: /c/cabello-biome
+                    - text: biome
+            - listitem:
+              - link:
+                - /url: /c/cabello-productos
+                - text: tipo de producto
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/cabello-shampoo
+                    - text: shampoo
+                - listitem:
+                  - link:
+                    - /url: /c/cabello-acondicionador
+                    - text: acondicionador
+                - listitem:
+                  - link:
+                    - /url: /c/cabello-crema-para-peinar
+                    - text: crema para peinar
+                - listitem:
+                  - link:
+                    - /url: /c/cabello-tratamientos
+                    - text: tratamiento
+                - listitem:
+                  - link:
+                    - /url: /c/cabello-finalizador
+                    - text: finalizador
+            - listitem:
+              - link:
+                - /url: /c/cabello-tipos
+                - text: tipo de cabello
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/cabello-lisos
+                    - text: lisos
+                - listitem:
+                  - link:
+                    - /url: /c/cabello-rizado
+                    - text: rizados
+                - listitem:
+                  - link:
+                    - /url: /c/cabello-danado
+                    - text: dañados
+                - listitem:
+                  - link:
+                    - /url: /c/cabello-oleosos
+                    - text: oleosos
+                - listitem:
+                  - link:
+                    - /url: /c/cabello-secos
+                    - text: secos
+                - listitem:
+                  - link:
+                    - /url: /c/cabello-fragiles-y-quebradizos
+                    - text: frágiles y quebradizos
+            - listitem:
+              - link:
+                - /url: /c/cabello-repuestos
+                - text: repuestos
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/shampoo-repuesto
+                    - text: shampoo
+                - listitem:
+                  - link:
+                    - /url: /c/acondicionador-repuesto
+                    - text: acondicionador
+                - listitem:
+                  - link:
+                    - /url: /c/crema-para-peinar-repuesto
+                    - text: crema para peinar
+                - listitem:
+                  - link:
+                    - /url: /c/tratamiento-repuesto
+                    - text: tratamiento
+        - navigation:
+          - list:
+            - listitem:
+              - link:
+                - /url: /c/rostro-tipos-de-piel
+                - text: tipo de piel
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/rostro-todo-tipo-piel
+                    - text: todo tipo de piel
+                - listitem:
+                  - link:
+                    - /url: /c/rostro-piel-normal-a-seca
+                    - text: normal a seca
+                - listitem:
+                  - link:
+                    - /url: /c/rostro-piel-mixta-a-oleosa
+                    - text: mixta a oleosa
+            - listitem:
+              - link:
+                - /url: /c/rostro-rutina-skincare
+                - text: rutina skincare
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/rostro-skincare-limpieza
+                    - text: limpieza
+                - listitem:
+                  - link:
+                    - /url: /c/rostro-skincare-tratamiento
+                    - text: tratamiento
+                - listitem:
+                  - link:
+                    - /url: /c/rostro-skincare-hidratacion
+                    - text: hidratación
+                - listitem:
+                  - link:
+                    - /url: /c/rostro-skincare-protector-solar
+                    - text: protector solar
+            - listitem:
+              - link:
+                - /url: /c/rostro-necesidades
+                - text: necesidades
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/rostro-antimanchas
+                    - text: antimanchas
+                - listitem:
+                  - link:
+                    - /url: /c/rostro-antioleosidad
+                    - text: antioleosidad
+                - listitem:
+                  - link:
+                    - /url: /c/rostro-piel-deshidratada
+                    - text: hidratación
+                - listitem:
+                  - link:
+                    - /url: /c/rostro-lineas-finas-arrugas
+                    - text: arrugas y líneas finas
+                - listitem:
+                  - link:
+                    - /url: /c/rostro-firmeza
+                    - text: firmeza
+                - listitem:
+                  - link:
+                    - /url: /c/rostro-contorno-ojos
+                    - text: contorno de ojos
+            - listitem:
+              - link:
+                - /url: /c/rostro-marcas
+                - text: marcas
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/rostro-chronos-derma
+                    - text: chronos Derma
+                - listitem:
+                  - link:
+                    - /url: /c/rostro-faces
+                    - text: faces
+                - listitem:
+                  - link:
+                    - /url: /c/rostro-homem
+                    - text: homem
+            - listitem:
+              - link:
+                - /url: /c/rostro-repuestos
+                - text: repuestos
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/rostro-limpieza-repuesto
+                    - text: limpieza
+                - listitem:
+                  - link:
+                    - /url: /c/rostro-tratamiento-repuesto
+                    - text: tratamiento
+                - listitem:
+                  - link:
+                    - /url: /c/rostro-hidratacion-repuesto
+                    - text: hidratación
+        - navigation:
+          - list:
+            - listitem:
+              - link:
+                - /url: /c/maquillaje-descubri-tu-tono
+                - text: descubrí tu tono
+            - listitem:
+              - link:
+                - /url: /c/maquillaje-rostro
+                - text: para el rostro
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-primer
+                    - text: primer facial
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-base
+                    - text: base
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-corrector
+                    - text: corrector
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-rubor
+                    - text: rubor
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-iluminador
+                    - text: iluminador
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-polvo-compacto
+                    - text: polvo compacto
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-bruma-fijadora
+                    - text: bruma fijadora
+            - listitem:
+              - link:
+                - /url: /c/maquillaje-ojos
+                - text: para ojos
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-sombra
+                    - text: sombra
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-delineador
+                    - text: delineador
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-mascara-pestanas
+                    - text: máscara para pestanãs
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-cejas
+                    - text: cejas
+            - listitem:
+              - link:
+                - /url: /c/maquillaje-labios
+                - text: para labios
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-labial-liquido
+                    - text: labial liquido
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-labial-barra
+                    - text: labial en barra
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-gloss
+                    - text: gloss
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-lapiz
+                    - text: delineador
+            - listitem:
+              - link:
+                - /url: /c/maquillaje-unas
+                - text: para uñas
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-unas-base
+                    - text: base de uñas
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-unas-esmalte
+                    - text: esmalte
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-unas-top-coat
+                    - text: top coat
+            - listitem:
+              - link:
+                - /url: /c/maquillaje-pincel-y-accesorio
+                - text: brochas y accesorios
+            - listitem:
+              - link:
+                - /url: /c/maquillaje-marcas
+                - text: marcas
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-una
+                    - text: una
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-faces
+                    - text: faces
+            - listitem:
+              - link:
+                - /url: /c/maquillaje-repuestos
+                - text: repuestos
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-ojos-repuestos
+                    - text: para ojos
+                - listitem:
+                  - link:
+                    - /url: /c/maquillaje-rostro-repuestos
+                    - text: para el rostro
+        - navigation:
+          - list:
+            - listitem:
+              - link:
+                - /url: /c/hombre-cuidados-diarios
+                - text: cuidados diarios
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/hombre-jabon
+                    - text: jabón
+                - listitem:
+                  - link:
+                    - /url: /c/hombre-desodorante
+                    - text: desodorante
+                - listitem:
+                  - link:
+                    - /url: /c/hombres-hidratantes-corporales
+                    - text: hidratantes corporales
+            - listitem:
+              - link:
+                - /url: /c/hombre-cabello
+                - text: cabello
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/hombre-shampoo
+                    - text: shampoo
+                - listitem:
+                  - link:
+                    - /url: /c/hombre-finalizador-capilar
+                    - text: finalizador capilar
+            - listitem:
+              - link:
+                - /url: /c/hombre-rostro
+                - text: rostro
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/hombre-barba
+                    - text: barba
+        - navigation:
+          - list:
+            - listitem:
+              - link:
+                - /url: /c/infantil-cuerpo-y-bano
+                - text: cuidado corporal
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/infantil-cuerpo-y-bano-jabon
+                    - text: jabón
+                - listitem:
+                  - link:
+                    - /url: /c/infantil-cuerpo-y-bano-hidratante
+                    - text: hidratante
+                - listitem:
+                  - link:
+                    - /url: /c/infantil-cuerpo-y-bano-toallas-humedas
+                    - text: toallitas húmedas
+                - listitem:
+                  - link:
+                    - /url: /c/infantil-cuerpo-y-bano-aceite-para-masajes
+                    - text: aceite para masajes
+            - listitem:
+              - link:
+                - /url: /c/infantil-cabello
+                - text: cabello
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/infantil-shampoo
+                    - text: shampoo
+                - listitem:
+                  - link:
+                    - /url: /c/infantil-acondicionador
+                    - text: acondicionador
+            - listitem:
+              - link:
+                - /url: /c/infantil-perfumeria
+                - text: perfumería
+            - listitem:
+              - link:
+                - /url: /c/infatil-edad
+                - text: edad
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/infantil-bebes
+                    - text: bebés (0 - 3 años)
+                - listitem:
+                  - link:
+                    - /url: /c/infantil-ninos-y-ninas
+                    - text: niños y niñas (3+ años)
+            - listitem:
+              - link:
+                - /url: /c/infantil-marcas
+                - text: marcas
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/infantil-nature
+                    - text: naturé
+                - listitem:
+                  - link:
+                    - /url: /c/nfantil-mama-y-bebe
+                    - text: mamá y Bebé
+        - navigation:
+          - list:
+            - listitem:
+              - link:
+                - /url: /c/cuidados-corporal
+                - text: cuidado corporal
+            - listitem:
+              - link:
+                - /url: /c/fragancias-para-el-hogar
+                - text: fragancias para el hogar
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/difusores
+                    - text: difusores
+                - listitem:
+                  - link:
+                    - /url: /c/velas
+                    - text: velas
+        - navigation:
+          - list:
+            - listitem:
+              - link:
+                - /url: /c/biome
+                - text: biome
+            - listitem:
+              - link:
+                - /url: /c/chronos
+                - text: chronos derma
+            - listitem:
+              - link:
+                - /url: /c/creer-para-ver
+                - text: creer para ver
+            - listitem:
+              - link:
+                - /url: /c/ekos
+                - text: ekos
+            - listitem:
+              - link:
+                - /url: /c/essencial
+                - text: essencial
+            - listitem:
+              - link:
+                - /url: /c/kaiak
+                - text: kaiak
+            - listitem:
+              - link:
+                - /url: /c/lumina
+                - text: lumina
+            - listitem:
+              - link:
+                - /url: /c/luna
+                - text: luna
+            - listitem:
+              - link:
+                - /url: /c/mama-y-bebe
+                - text: mamá y bebé
+            - listitem:
+              - link:
+                - /url: /c/tododia
+                - text: tododia
+            - listitem:
+              - link:
+                - /url: /c/una
+                - text: una
+            - listitem:
+              - link:
+                - /url: /c/faces
+                - text: faces
+            - listitem:
+              - link:
+                - /url: /c/bothanica
+                - text: bothanica
+            - listitem:
+              - link:
+                - /url: /c/humor
+                - text: humor
+            - listitem:
+              - link:
+                - /url: /c/natura-solar
+                - text: natura solar
+            - listitem:
+              - link:
+                - /url: /c/tododia-cabellos
+                - text: tododia cabellos
+        - navigation:
+          - list:
+            - listitem:
+              - link:
+                - /url: /c/regalo-precio
+                - text: precio
+            - listitem:
+              - link:
+                - /url: /c/regalo-para-quien
+                - text: para quién
+              - list:
+                - listitem:
+                  - link:
+                    - /url: /c/regalo-todos
+                    - text: regalos para todos
+                - listitem:
+                  - link:
+                    - /url: /c/regalo-masculino
+                    - text: regalo para hombre
+                - listitem:
+                  - link:
+                    - /url: /c/regalo-femenino
+                    - text: regalo para mujer
+                - listitem:
+                  - link:
+                    - /url: /c/regalo-infantil
+                    - text: regalo para niños
+            - listitem:
+              - link:
+                - /url: /c/regalo-arma-tu-regalo
+                - text: armá tu regalo
+  - generic [ref=e65]:
+    - generic [ref=e66]:
+      - generic [ref=e68]:
+        - generic [ref=e69]:
+          - button [ref=e71] [cursor=pointer]:
+            - img [ref=e75]
+            - generic [ref=e76]:
+              - paragraph [ref=e77]
+              - contentinfo [ref=e78]:
+                - heading [level=2] [ref=e79]: logueate y aprovechá HOT SALE Natura
+                - heading [level=3] [ref=e80]: ¡Hasta 65% OFF y 3 y 6 cuotas sin interés a partir de $90.000
+                - link:
+                  - /url: /c/primera-compra?iprom_id=ne_home_bannerprincipal&iprom_name=hot-sale_AR-LOGUEO_65_HS_CUOTAS_BTOP_DESK&iprom_creative=cat_comprar_primera-compra&iprom_pos=1
+                  - text: comprar
+          - button [ref=e82] [cursor=pointer]
+          - button [ref=e85] [cursor=pointer]
+          - button [ref=e88] [cursor=pointer]
+          - button [ref=e91] [cursor=pointer]
+        - button "Próximo item, botón, carrusel con 0 itens" [ref=e93] [cursor=pointer]:
+          - generic [ref=e95]: 
+        - button "Item anterior, botón, carrusel con 0 itens" [ref=e96] [cursor=pointer]:
+          - generic [ref=e98]: 
+        - generic [ref=e99]:
+          - button [ref=e100] [cursor=pointer]
+          - button [ref=e101] [cursor=pointer]
+          - button [ref=e102] [cursor=pointer]
+      - button "consultar condiciones" [ref=e103] [cursor=pointer]
+    - generic [ref=e105]:
+      - heading "si lo dudás, alguien más se lo lleva" [level=2] [ref=e107]
+      - generic [ref=e108]:
+        - button "perfumería ver todo" [ref=e110] [cursor=pointer]:
+          - img "perfumería" [ref=e111]
+          - generic [ref=e113]:
+            - generic:
+              - heading [level=3]
+              - paragraph
+            - link "ver todo":
+              - /url: /c/solo-x-hoy
+              - button "ver todo"
+        - generic [ref=e114]:
+          - generic [ref=e116]:
+            - generic [ref=e117]:
+              - button "etiqueta perfumería" [ref=e119] [cursor=pointer]:
+                - generic [ref=e120]: etiqueta perfumería
+                - generic [ref=e121]: perfumería
+              - button "etiqueta rutina de cuidado" [ref=e123] [cursor=pointer]:
+                - generic [ref=e124]: etiqueta rutina de cuidado
+                - generic [ref=e125]: rutina de cuidado
+            - text:  
+          - generic [ref=e127]:
+            - generic [ref=e128]:
+              - generic [ref=e129]:
+                - generic [ref=e132]:
+                  - generic [ref=e133] [cursor=pointer]:
+                    - img [ref=e134]
+                    - button "agregar a mis favoritos" [ref=e135]:
+                      - img [ref=e136]
+                      - generic [ref=e139]: Loading...
+                      - generic [ref=e141]: 
+                  - generic [ref=e142]:
+                    - generic [ref=e143]:
+                      - generic [ref=e144]:
+                        - heading "marca Kaiak" [level=3] [ref=e145]: Kaiak
+                        - generic "avaliação 4.8 estrelas de 5" [ref=e146]:
+                          - generic [ref=e148]: 
+                          - generic [ref=e149]: "4.8"
+                      - link "Eau de Toilette Femenino Kaiak Aero 100ml":
+                        - /url: /p/eau-de-toilette-kaiak-aero-femenino-100-ml/NATARG-111178?position=1&listTitle=tab+showcase+-+si+lo+dud%C3%A1s%2C+alguien+m%C3%A1s+se+lo+lleva
+                        - heading "Eau de Toilette Femenino Kaiak Aero 100ml" [level=4]
+                      - link "valor de . por $ 47.100,00. 25 por ciento de descuento.":
+                        - /url: /p/eau-de-toilette-kaiak-aero-femenino-100-ml/NATARG-111178?position=1&listTitle=tab+showcase+-+si+lo+dud%C3%A1s%2C+alguien+m%C3%A1s+se+lo+lleva
+                        - generic:
+                          - generic:
+                            - paragraph: $ 62.800,00
+                            - generic:
+                              - generic: $ 47.100,00
+                              - generic:
+                                - generic: etiqueta -25%
+                                - generic: "-25%"
+                          - generic: precio sin impuestos nacionales $33.735,54
+                    - button "agregar a mi bolsa" [ref=e150] [cursor=pointer]
+                - generic [ref=e153]:
+                  - generic [ref=e154] [cursor=pointer]:
+                    - img [ref=e155]
+                    - button "agregar a mis favoritos" [ref=e156]:
+                      - img [ref=e157]
+                      - generic [ref=e160]: Loading...
+                      - generic [ref=e162]: 
+                  - generic [ref=e163]:
+                    - generic [ref=e164]:
+                      - generic [ref=e165]:
+                        - heading "marca Kaiak" [level=3] [ref=e166]: Kaiak
+                        - generic "avaliação 5.0 estrelas de 5" [ref=e167]:
+                          - generic [ref=e169]: 
+                          - generic [ref=e170]: "5.0"
+                      - link "Eau de Toilette Masculino Kaiak Aero 100ml":
+                        - /url: /p/eau-de-toilette-kaiak-aero-masculino-100-ml/NATARG-111174?position=2&listTitle=tab+showcase+-+si+lo+dud%C3%A1s%2C+alguien+m%C3%A1s+se+lo+lleva
+                        - heading "Eau de Toilette Masculino Kaiak Aero 100ml" [level=4]
+                      - link "valor de . por $ 47.100,00. 25 por ciento de descuento.":
+                        - /url: /p/eau-de-toilette-kaiak-aero-masculino-100-ml/NATARG-111174?position=2&listTitle=tab+showcase+-+si+lo+dud%C3%A1s%2C+alguien+m%C3%A1s+se+lo+lleva
+                        - generic:
+                          - generic:
+                            - paragraph: $ 62.800,00
+                            - generic:
+                              - generic: $ 47.100,00
+                              - generic:
+                                - generic: etiqueta -25%
+                                - generic: "-25%"
+                          - generic: precio sin impuestos nacionales $33.735,54
+                    - button "agregar a mi bolsa" [ref=e171] [cursor=pointer]
+                - generic [ref=e174]:
+                  - generic [ref=e175] [cursor=pointer]:
+                    - img [ref=e176]
+                    - button "agregar a mis favoritos" [ref=e177]:
+                      - img [ref=e178]
+                      - generic [ref=e181]: Loading...
+                      - generic [ref=e183]: 
+                  - generic [ref=e184]:
+                    - generic [ref=e185]:
+                      - generic [ref=e186]:
+                        - heading "marca Essencial" [level=3] [ref=e187]: Essencial
+                        - generic "avaliação 4.3 estrelas de 5" [ref=e188]:
+                          - generic [ref=e190]: 
+                          - generic [ref=e191]: "4.3"
+                      - link "Eau de Parfum Femenino Essencial Atrai 100ml":
+                        - /url: /p/essencial-atrai-femenino-100-ml/NATARG-177399?position=3&listTitle=tab+showcase+-+si+lo+dud%C3%A1s%2C+alguien+m%C3%A1s+se+lo+lleva
+                        - heading "Eau de Parfum Femenino Essencial Atrai 100ml" [level=4]
+                      - link "valor de . por $ 61.260,00. 40 por ciento de descuento.":
+                        - /url: /p/essencial-atrai-femenino-100-ml/NATARG-177399?position=3&listTitle=tab+showcase+-+si+lo+dud%C3%A1s%2C+alguien+m%C3%A1s+se+lo+lleva
+                        - generic:
+                          - generic:
+                            - paragraph: $ 102.100,00
+                            - generic:
+                              - generic: $ 61.260,00
+                              - generic:
+                                - generic: etiqueta -40%
+                                - generic: "-40%"
+                          - generic: precio sin impuestos nacionales $59.066,12
+                    - button "agregar a mi bolsa" [ref=e192] [cursor=pointer]
+                - generic [ref=e195]:
+                  - generic [ref=e196] [cursor=pointer]:
+                    - img [ref=e197]
+                    - group [ref=e198]:
+                      - generic "Para ellas" [ref=e199]:
+                        - generic [ref=e200]: Para ellas
+                    - button "agregar a mis favoritos" [ref=e201]:
+                      - img [ref=e202]
+                      - generic [ref=e205]: Loading...
+                      - generic [ref=e207]: 
+                  - generic [ref=e208]:
+                    - generic [ref=e209]:
+                      - heading "marca Una" [level=3] [ref=e211]: Una
+                      - link "Eau de Parfum Femenino Una Celebrar 50ml":
+                        - /url: /p/una-celebrar-eau-de-parfum-femenino-50-ml/NATARG-177713?position=4&listTitle=tab+showcase+-+si+lo+dud%C3%A1s%2C+alguien+m%C3%A1s+se+lo+lleva
+                        - heading "Eau de Parfum Femenino Una Celebrar 50ml" [level=4]
+                      - link "valor de . por $ 66.360,00. 40 por ciento de descuento.":
+                        - /url: /p/una-celebrar-eau-de-parfum-femenino-50-ml/NATARG-177713?position=4&listTitle=tab+showcase+-+si+lo+dud%C3%A1s%2C+alguien+m%C3%A1s+se+lo+lleva
+                        - generic:
+                          - generic:
+                            - paragraph: $ 110.600,00
+                            - generic:
+                              - generic: $ 66.360,00
+                              - generic:
+                                - generic: etiqueta -40%
+                                - generic: "-40%"
+                          - generic: precio sin impuestos nacionales $59.413,22
+                    - button "agregar a mi bolsa" [ref=e212] [cursor=pointer]
+                - generic [ref=e215]:
+                  - generic [ref=e216] [cursor=pointer]:
+                    - img [ref=e217]
+                    - group [ref=e218]:
+                      - generic "Para ellas" [ref=e219]:
+                        - generic [ref=e220]: Para ellas
+                    - button "agregar a mis favoritos" [ref=e221]:
+                      - img [ref=e222]
+                      - generic [ref=e225]: Loading...
+                      - generic [ref=e227]: 
+                  - generic [ref=e228]:
+                    - generic [ref=e229]:
+                      - generic [ref=e230]:
+                        - heading "marca Kaiak" [level=3] [ref=e231]: Kaiak
+                        - generic "avaliação 4.8 estrelas de 5" [ref=e232]:
+                          - generic [ref=e234]: 
+                          - generic [ref=e235]: "4.8"
+                      - link "Eau de Toilette Femenino Kaiak Sonar 100ml":
+                        - /url: /p/kaiak-sonar-eau-de-toilette-femenino/NATARG-156229?position=5&listTitle=tab+showcase+-+si+lo+dud%C3%A1s%2C+alguien+m%C3%A1s+se+lo+lleva
+                        - heading "Eau de Toilette Femenino Kaiak Sonar 100ml" [level=4]
+                      - link "valor de . por $ 45.216,00. 28 por ciento de descuento.":
+                        - /url: /p/kaiak-sonar-eau-de-toilette-femenino/NATARG-156229?position=5&listTitle=tab+showcase+-+si+lo+dud%C3%A1s%2C+alguien+m%C3%A1s+se+lo+lleva
+                        - generic:
+                          - generic:
+                            - paragraph: $ 62.800,00
+                            - generic:
+                              - generic: $ 45.216,00
+                              - generic:
+                                - generic: etiqueta -28%
+                                - generic: "-28%"
+                          - generic: precio sin impuestos nacionales $33.735,54
+                    - button "agregar a mi bolsa" [ref=e236] [cursor=pointer]
+                - generic [ref=e239]:
+                  - generic [ref=e240] [cursor=pointer]:
+                    - img [ref=e241]
+                    - button "agregar a mis favoritos" [ref=e242]:
+                      - img [ref=e243]
+                      - generic [ref=e246]: Loading...
+                      - generic [ref=e248]: 
+                  - generic [ref=e249]:
+                    - generic [ref=e250]:
+                      - generic [ref=e251]:
+                        - heading "marca Kaiak" [level=3] [ref=e252]: Kaiak
+                        - generic "avaliação 4.7 estrelas de 5" [ref=e253]:
+                          - generic [ref=e255]: 
+                          - generic [ref=e256]: "4.7"
+                      - link "Eau de Toilette Masculino Kaiak Sonar 100ml":
+                        - /url: /p/kaiak-sonar-eau-de-toilette-masculino/NATARG-156226?position=6&listTitle=tab+showcase+-+si+lo+dud%C3%A1s%2C+alguien+m%C3%A1s+se+lo+lleva
+                        - heading "Eau de Toilette Masculino Kaiak Sonar 100ml" [level=4]
+                      - link "valor de . por $ 45.216,00. 28 por ciento de descuento.":
+                        - /url: /p/kaiak-sonar-eau-de-toilette-masculino/NATARG-156226?position=6&listTitle=tab+showcase+-+si+lo+dud%C3%A1s%2C+alguien+m%C3%A1s+se+lo+lleva
+                        - generic:
+                          - generic:
+                            - paragraph: $ 62.800,00
+                            - generic:
+                              - generic: $ 45.216,00
+                              - generic:
+                                - generic: etiqueta -28%
+                                - generic: "-28%"
+                          - generic: precio sin impuestos nacionales $33.735,54
+                    - button "agregar a mi bolsa" [ref=e257] [cursor=pointer]
+                - generic [ref=e260]:
+                  - generic [ref=e261] [cursor=pointer]:
+                    - img [ref=e262]
+                    - group [ref=e263]:
+                      - generic "Para ellas" [ref=e264]:
+                        - generic [ref=e265]: Para ellas
+                    - button "agregar a mis favoritos" [ref=e266]:
+                      - img [ref=e267]
+                      - generic [ref=e270]: Loading...
+                      - generic [ref=e272]: 
+                  - generic [ref=e273]:
+                    - generic [ref=e274]:
+                      - generic [ref=e275]:
+                        - heading "marca Kaiak" [level=3] [ref=e276]: Kaiak
+                        - generic "avaliação 4.5 estrelas de 5" [ref=e277]:
+                          - generic [ref=e279]: 
+                          - generic [ref=e280]: "4.5"
+                      - link "Eau de Toilette Femenino Kaiak Aventura 100ml":
+                        - /url: /p/kaiak-aventura-femenino/NATARG-111177?position=7&listTitle=tab+showcase+-+si+lo+dud%C3%A1s%2C+alguien+m%C3%A1s+se+lo+lleva
+                        - heading "Eau de Toilette Femenino Kaiak Aventura 100ml" [level=4]
+                      - link "valor de . por $ 43.960,00. 30 por ciento de descuento.":
+                        - /url: /p/kaiak-aventura-femenino/NATARG-111177?position=7&listTitle=tab+showcase+-+si+lo+dud%C3%A1s%2C+alguien+m%C3%A1s+se+lo+lleva
+                        - generic:
+                          - generic:
+                            - paragraph: $ 62.800,00
+                            - generic:
+                              - generic: $ 43.960,00
+                              - generic:
+                                - generic: etiqueta -30%
+                                - generic: "-30%"
+                          - generic: precio sin impuestos nacionales $33.735,54
+                    - button "agregar a mi bolsa" [ref=e281] [cursor=pointer]
+                - generic [ref=e284]:
+                  - generic [ref=e285] [cursor=pointer]:
+                    - img [ref=e286]
+                    - group [ref=e287]:
+                      - generic "Para ellos" [ref=e288]:
+                        - generic [ref=e289]: Para ellos
+                    - button "agregar a mis favoritos" [ref=e290]:
+                      - img [ref=e291]
+                      - generic [ref=e294]: Loading...
+                      - generic [ref=e296]: 
+                  - generic [ref=e297]:
+                    - generic [ref=e298]:
+                      - generic [ref=e299]:
+                        - heading "marca Kaiak" [level=3] [ref=e300]: Kaiak
+                        - generic "avaliação 4.8 estrelas de 5" [ref=e301]:
+                          - generic [ref=e303]: 
+                          - generic [ref=e304]: "4.8"
+                      - link "Eau de Toilette Masculino Kaiak Aventura 100ml":
+                        - /url: /p/kaiak-aventura-masculino/NATARG-111173?position=8&listTitle=tab+showcase+-+si+lo+dud%C3%A1s%2C+alguien+m%C3%A1s+se+lo+lleva
+                        - heading "Eau de Toilette Masculino Kaiak Aventura 100ml" [level=4]
+                      - link "valor de . por $ 45.216,00. 28 por ciento de descuento.":
+                        - /url: /p/kaiak-aventura-masculino/NATARG-111173?position=8&listTitle=tab+showcase+-+si+lo+dud%C3%A1s%2C+alguien+m%C3%A1s+se+lo+lleva
+                        - generic:
+                          - generic:
+                            - paragraph: $ 62.800,00
+                            - generic:
+                              - generic: $ 45.216,00
+                              - generic:
+                                - generic: etiqueta -28%
+                                - generic: "-28%"
+                          - generic: precio sin impuestos nacionales $33.735,54
+                    - button "agregar a mi bolsa" [ref=e305] [cursor=pointer]
+                - generic [ref=e308]:
+                  - generic [ref=e309] [cursor=pointer]:
+                    - img [ref=e310]
+                    - group [ref=e311]:
+                      - generic "Lanzamiento" [ref=e312]:
+                        - generic [ref=e313]: Lanzamiento
+                    - button "agregar a mis favoritos" [ref=e314]:
+                      - img [ref=e315]
+                      - generic [ref=e318]: Loading...
+                      - generic [ref=e320]: 
+                  - generic [ref=e321]:
+                    - generic [ref=e322]:
+                      - generic [ref=e323]:
+                        - heading "marca Kaiak" [level=3] [ref=e324]: Kaiak
+                        - generic "avaliação 5.0 estrelas de 5" [ref=e325]:
+                          - generic [ref=e327]: 
+                          - generic [ref=e328]: "5.0"
+                      - link "Kaiak Pulso EDT Masculino 100 ml":
+                        - /url: /p/kaiak-pulso-eau-de-toilette-masculino-100-ml/NATARG-166855?position=9&listTitle=tab+showcase+-+si+lo+dud%C3%A1s%2C+alguien+m%C3%A1s+se+lo+lleva
+                        - heading "Kaiak Pulso EDT Masculino 100 ml" [level=4]
+                      - link "valor de . por $ 47.100,00. 25 por ciento de descuento.":
+                        - /url: /p/kaiak-pulso-eau-de-toilette-masculino-100-ml/NATARG-166855?position=9&listTitle=tab+showcase+-+si+lo+dud%C3%A1s%2C+alguien+m%C3%A1s+se+lo+lleva
+                        - generic:
+                          - generic:
+                            - paragraph: $ 62.800,00
+                            - generic:
+                              - generic: $ 47.100,00
+                              - generic:
+                                - generic: etiqueta -25%
+                                - generic: "-25%"
+                          - generic: precio sin impuestos nacionales $33.735,54
+                    - button "agregar a mi bolsa" [ref=e329] [cursor=pointer]
+                - generic [ref=e332]:
+                  - generic [ref=e333] [cursor=pointer]:
+                    - img [ref=e334]
+                    - group [ref=e335]:
+                      - generic "Para ellas" [ref=e336]:
+                        - generic [ref=e337]: Para ellas
+                    - button "agregar a mis favoritos" [ref=e338]:
+                      - img [ref=e339]
+                      - generic [ref=e342]: Loading...
+                      - generic [ref=e344]: 
+                  - generic [ref=e345]:
+                    - generic [ref=e346]:
+                      - generic [ref=e347]:
+                        - heading "marca Ekos" [level=3] [ref=e348]: Ekos
+                        - generic "avaliação 4.9 estrelas de 5" [ref=e349]:
+                          - generic [ref=e351]: 
+                          - generic [ref=e352]: "4.9"
+                      - link "Frescor Pitanga Eau de Toilette Ekos 150ml":
+                        - /url: /p/ekos-frescor-pitanga-eau-de-toilette-150ml/NATARG-73573?position=10&listTitle=tab+showcase+-+si+lo+dud%C3%A1s%2C+alguien+m%C3%A1s+se+lo+lleva
+                        - heading "Frescor Pitanga Eau de Toilette Ekos 150ml" [level=4]
+                      - link "valor de . por $ 34.125,00. 25 por ciento de descuento.":
+                        - /url: /p/ekos-frescor-pitanga-eau-de-toilette-150ml/NATARG-73573?position=10&listTitle=tab+showcase+-+si+lo+dud%C3%A1s%2C+alguien+m%C3%A1s+se+lo+lleva
+                        - generic:
+                          - generic:
+                            - paragraph: $ 45.500,00
+                            - generic:
+                              - generic: $ 34.125,00
+                              - generic:
+                                - generic: etiqueta -25%
+                                - generic: "-25%"
+                          - generic: precio sin impuestos nacionales $30.082,64
+                    - button "agregar a mi bolsa" [ref=e353] [cursor=pointer]
+                - generic [ref=e356]:
+                  - generic [ref=e357] [cursor=pointer]:
+                    - img [ref=e358]
+                    - button "agregar a mis favoritos" [ref=e359]:
+                      - img [ref=e360]
+                      - generic [ref=e363]: Loading...
+                      - generic [ref=e365]: 
+                  - generic [ref=e366]:
+                    - generic [ref=e367]:
+                      - generic [ref=e368]:
+                        - heading "marca Essencial" [level=3] [ref=e369]: Essencial
+                        - generic "avaliação 5.0 estrelas de 5" [ref=e370]:
+                          - generic [ref=e372]: 
+                          - generic [ref=e373]: "5.0"
+                      - link "Essencial Ato Eau De Parfum Masculino":
+                        - /url: /p/essencial-ato-eau-de-parfum-masculino-100-ml/NATARG-139237?position=11&listTitle=tab+showcase+-+si+lo+dud%C3%A1s%2C+alguien+m%C3%A1s+se+lo+lleva
+                        - heading "Essencial Ato Eau De Parfum Masculino" [level=4]
+                      - generic [ref=e374]:
+                        - heading "producto agotado" [level=4] [ref=e375]
+                        - generic [ref=e376]: pero no por mucho tiempo, te avisaremos cuando llegue
+                    - button "avisame" [ref=e377] [cursor=pointer]
+                - generic [ref=e380]:
+                  - generic [ref=e381] [cursor=pointer]:
+                    - img [ref=e382]
+                    - button "agregar a mis favoritos" [ref=e383]:
+                      - img [ref=e384]
+                      - generic [ref=e387]: Loading...
+                      - generic [ref=e389]: 
+                  - generic [ref=e390]:
+                    - generic [ref=e391]:
+                      - generic [ref=e392]:
+                        - heading "marca Homem" [level=3] [ref=e393]: Homem
+                        - generic "avaliação 5.0 estrelas de 5" [ref=e394]:
+                          - generic [ref=e396]: 
+                          - generic [ref=e397]: "5.0"
+                      - link "Eau de Parfum Masculino Homem Neo 100ml":
+                        - /url: /p/natura-homem-neo-eau-de-parfum-100-ml/NATARG-118460?position=12&listTitle=tab+showcase+-+si+lo+dud%C3%A1s%2C+alguien+m%C3%A1s+se+lo+lleva
+                        - heading "Eau de Parfum Masculino Homem Neo 100ml" [level=4]
+                      - link "valor de . por $ 47.820,00. 40 por ciento de descuento.":
+                        - /url: /p/natura-homem-neo-eau-de-parfum-100-ml/NATARG-118460?position=12&listTitle=tab+showcase+-+si+lo+dud%C3%A1s%2C+alguien+m%C3%A1s+se+lo+lleva
+                        - generic:
+                          - generic:
+                            - paragraph: $ 79.700,00
+                            - generic:
+                              - generic: $ 47.820,00
+                              - generic:
+                                - generic: etiqueta -40%
+                                - generic: "-40%"
+                          - generic: precio sin impuestos nacionales $46.107,44
+                    - button "agregar a mi bolsa" [ref=e398] [cursor=pointer]
+              - text:  
+            - button "escaparate de productos anterior" [disabled] [ref=e399]:
+              - generic [ref=e401]: 
+              - generic [ref=e402]: escaparate de productos anterior
+            - button "próxima presentación de productos" [disabled] [ref=e403]:
+              - generic [ref=e405]: 
+              - generic [ref=e406]: próxima presentación de productos
+    - complementary [ref=e408]:
+      - heading "encontrá lo que estabas buscando" [level=2] [ref=e410]
+      - navigation "menú de atajos" [ref=e411]:
+        - generic [ref=e412]:
+          - generic [ref=e413]:
+            - generic [ref=e414]:
+              - link "1 de 8 opciones, hot sale 🔥":
+                - /url: /c/hot-sale
+                - generic [ref=e415] [cursor=pointer]:
+                  - img "hot sale 🔥" [ref=e416]
+                  - generic [ref=e417]: hot sale 🔥
+            - generic [ref=e418]:
+              - link "2 de 8 opciones, kits Natura":
+                - /url: /c/kits-natura
+                - generic [ref=e419] [cursor=pointer]:
+                  - img "kits Natura" [ref=e420]
+                  - generic [ref=e421]: kits Natura
+            - generic [ref=e422]:
+              - link "3 de 8 opciones, nuevos":
+                - /url: /c/lanzamientos
+                - generic [ref=e423] [cursor=pointer]:
+                  - img "nuevos" [ref=e424]
+                  - generic [ref=e425]: nuevos
+            - generic [ref=e426]:
+              - link "4 de 8 opciones, cremas":
+                - /url: /c/cuidados-diarios-hidratante
+                - generic [ref=e427] [cursor=pointer]:
+                  - img "cremas" [ref=e428]
+                  - generic [ref=e429]: cremas
+            - generic [ref=e430]:
+              - link "5 de 8 opciones, jabones":
+                - /url: /c/cuidados-diarios-jabon
+                - generic [ref=e431] [cursor=pointer]:
+                  - img "jabones" [ref=e432]
+                  - generic [ref=e433]: jabones
+            - generic [ref=e434]:
+              - link "6 de 8 opciones, body splash":
+                - /url: /c/perfumeria-body-splash
+                - generic [ref=e435] [cursor=pointer]:
+                  - img "body splash" [ref=e436]
+                  - generic [ref=e437]: body splash
+            - generic [ref=e438]:
+              - link "7 de 8 opciones, perfumería":
+                - /url: /c/perfumeria
+                - generic [ref=e439] [cursor=pointer]:
+                  - img "perfumería" [ref=e440]
+                  - generic [ref=e441]: perfumería
+            - generic [ref=e442]:
+              - link "8 de 8 opciones, desodorantes":
+                - /url: /c/cuidados-diarios-desodorante
+                - generic [ref=e443] [cursor=pointer]:
+                  - img "desodorantes" [ref=e444]
+                  - generic [ref=e445]: desodorantes
+          - button "Próximo item, botón, carrusel con 0 itens" [ref=e446] [cursor=pointer]:
+            - generic [ref=e448]: 
+          - button "Item anterior, botón, carrusel con 0 itens" [ref=e449] [cursor=pointer]:
+            - generic [ref=e451]: 
+          - generic [ref=e452]:
+            - button [ref=e453] [cursor=pointer]
+            - button [ref=e454] [cursor=pointer]
+            - button [ref=e455] [cursor=pointer]
+    - generic [ref=e457]:
+      - heading "seleccionados para vos con hasta 65%OFF" [level=2] [ref=e459]
+      - generic [ref=e460]:
+        - generic [ref=e462]:
+          - img "para vos" [ref=e463]
+          - generic [ref=e464]:
+            - generic:
+              - generic:
+                - heading [level=3]
+        - generic [ref=e465]:
+          - generic [ref=e467]:
+            - generic [ref=e468]:
+              - button "etiqueta más vendidos" [ref=e470] [cursor=pointer]:
+                - generic [ref=e471]: etiqueta más vendidos
+                - generic [ref=e472]: más vendidos
+              - button "etiqueta perfumería" [ref=e474] [cursor=pointer]:
+                - generic [ref=e475]: etiqueta perfumería
+                - generic [ref=e476]: perfumería
+              - button "etiqueta cuidados corporales" [ref=e478] [cursor=pointer]:
+                - generic [ref=e479]: etiqueta cuidados corporales
+                - generic [ref=e480]: cuidados corporales
+              - button "etiqueta cuidado capilar" [ref=e482] [cursor=pointer]:
+                - generic [ref=e483]: etiqueta cuidado capilar
+                - generic [ref=e484]: cuidado capilar
+            - text:  
+          - generic [ref=e486]:
+            - generic [ref=e487]:  
+            - button "escaparate de productos anterior" [disabled] [ref=e488]:
+              - generic [ref=e490]: 
+              - generic [ref=e491]: escaparate de productos anterior
+            - button "próxima presentación de productos" [disabled] [ref=e492]:
+              - generic [ref=e494]: 
+              - generic [ref=e495]: próxima presentación de productos
+    - region "carrusel de banners" [ref=e497]:
+      - heading "lo que no te podés perder en HOT SALE" [level=2] [ref=e498]
+      - button "banner anterior" [ref=e499] [cursor=pointer]:
+        - generic [ref=e501]: 
+      - button "siguiente banner" [ref=e502] [cursor=pointer]:
+        - generic [ref=e504]: 
+      - generic [ref=e506]:
+        - group [ref=e508]:
+          - generic "imagen del banner" [ref=e509]:
+            - button [ref=e510] [cursor=pointer]:
+              - img [ref=e512]
+        - group [ref=e514]:
+          - generic "imagen del banner" [ref=e515]:
+            - button [ref=e516] [cursor=pointer]
+        - group [ref=e518]:
+          - generic "imagen del banner" [ref=e519]:
+            - button [ref=e520] [cursor=pointer]
+        - group [ref=e522]:
+          - generic "imagen del banner" [ref=e523]:
+            - button [ref=e524] [cursor=pointer]
+        - group [ref=e526]:
+          - generic "imagen del banner" [ref=e527]:
+            - button [ref=e528] [cursor=pointer]
+        - group [ref=e530]:
+          - generic "imagen del banner" [ref=e531]:
+            - button [ref=e532] [cursor=pointer]
+        - group [ref=e534]:
+          - generic "imagen del banner" [ref=e535]:
+            - button [ref=e536] [cursor=pointer]
+        - group [ref=e538]:
+          - generic "imagen del banner" [ref=e539]:
+            - button [ref=e540] [cursor=pointer]
+    - generic [ref=e542]:
+      - heading "tu perfume con hasta 45%OFF" [level=2] [ref=e544]
+      - generic [ref=e545]:
+        - button "Kaiak ver todo" [ref=e547] [cursor=pointer]:
+          - img "Kaiak" [ref=e548]
+          - generic [ref=e550]:
+            - generic:
+              - heading [level=3]
+              - paragraph
+            - link "ver todo":
+              - /url: /c/kaiak
+              - button "ver todo"
+        - generic [ref=e551]:
+          - generic [ref=e553]:
+            - generic [ref=e554]:
+              - button "etiqueta Kaiak" [ref=e556] [cursor=pointer]:
+                - generic [ref=e557]: etiqueta Kaiak
+                - generic [ref=e558]: Kaiak
+              - button "etiqueta Humor" [ref=e560] [cursor=pointer]:
+                - generic [ref=e561]: etiqueta Humor
+                - generic [ref=e562]: Humor
+              - button "etiqueta Essencial" [ref=e564] [cursor=pointer]:
+                - generic [ref=e565]: etiqueta Essencial
+                - generic [ref=e566]: Essencial
+              - button "etiqueta Ekos" [ref=e568] [cursor=pointer]:
+                - generic [ref=e569]: etiqueta Ekos
+                - generic [ref=e570]: Ekos
+            - text:  
+          - generic [ref=e572]:
+            - generic [ref=e573]:
+              - generic [ref=e574]:
+                - generic [ref=e577]:
+                  - generic [ref=e578] [cursor=pointer]:
+                    - img [ref=e579]
+                    - group [ref=e580]:
+                      - generic "¡sólo por hoy!" [ref=e581]:
+                        - generic [ref=e582]: ¡sólo por hoy!
+                    - button "agregar a mis favoritos" [ref=e583]:
+                      - img [ref=e584]
+                      - generic [ref=e587]: Loading...
+                      - generic [ref=e589]: 
+                  - generic [ref=e590]:
+                    - generic [ref=e591]:
+                      - generic [ref=e592]:
+                        - heading "marca Kaiak" [level=3] [ref=e593]: Kaiak
+                        - generic "avaliação 4.5 estrelas de 5" [ref=e594]:
+                          - generic [ref=e596]: 
+                          - generic [ref=e597]: "4.5"
+                      - link "Eau de Toilette Masculino Kaiak Urbe 100ml":
+                        - /url: /p/kaiak-urbe-masculino/NATARG-111172?position=1&listTitle=tab+showcase+-+tu+perfume+con+hasta+45%25OFF
+                        - heading "Eau de Toilette Masculino Kaiak Urbe 100ml" [level=4]
+                      - link "valor de . por $ 36.480,00. 43 por ciento de descuento.":
+                        - /url: /p/kaiak-urbe-masculino/NATARG-111172?position=1&listTitle=tab+showcase+-+tu+perfume+con+hasta+45%25OFF
+                        - generic:
+                          - generic:
+                            - paragraph: $ 64.000,00
+                            - generic:
+                              - generic: $ 36.480,00
+                              - generic:
+                                - generic: etiqueta -43%
+                                - generic: "-43%"
+                          - generic: precio sin impuestos nacionales $33.735,54
+                    - button "agregar a mi bolsa" [ref=e598] [cursor=pointer]
+                - generic [ref=e601]:
+                  - generic [ref=e602] [cursor=pointer]:
+                    - img [ref=e603]
+                    - group [ref=e604]:
+                      - generic "¡sólo por hoy!" [ref=e605]:
+                        - generic [ref=e606]: ¡sólo por hoy!
+                    - button "agregar a mis favoritos" [ref=e607]:
+                      - img [ref=e608]
+                      - generic [ref=e611]: Loading...
+                      - generic [ref=e613]: 
+                  - generic [ref=e614]:
+                    - generic [ref=e615]:
+                      - generic [ref=e616]:
+                        - heading "marca Kaiak" [level=3] [ref=e617]: Kaiak
+                        - generic "avaliação 5.0 estrelas de 5" [ref=e618]:
+                          - generic [ref=e620]: 
+                          - generic [ref=e621]: "5.0"
+                      - link "Eau de Toilette Femenino Kaiak Clásico 100ml":
+                        - /url: /p/kaiak-clasico-femenino/NATARG-111176?position=2&listTitle=tab+showcase+-+tu+perfume+con+hasta+45%25OFF
+                        - heading "Eau de Toilette Femenino Kaiak Clásico 100ml" [level=4]
+                      - link "valor de . por $ 31.400,00. 50 por ciento de descuento.":
+                        - /url: /p/kaiak-clasico-femenino/NATARG-111176?position=2&listTitle=tab+showcase+-+tu+perfume+con+hasta+45%25OFF
+                        - generic:
+                          - generic:
+                            - paragraph: $ 62.800,00
+                            - generic:
+                              - generic: $ 31.400,00
+                              - generic:
+                                - generic: etiqueta -50%
+                                - generic: "-50%"
+                          - generic: precio sin impuestos nacionales $33.735,54
+                    - button "agregar a mi bolsa" [ref=e622] [cursor=pointer]
+                - generic [ref=e625]:
+                  - generic [ref=e626] [cursor=pointer]:
+                    - img [ref=e627]
+                    - group [ref=e628]:
+                      - generic "¡sólo por hoy!" [ref=e629]:
+                        - generic [ref=e630]: ¡sólo por hoy!
+                    - button "agregar a mis favoritos" [ref=e631]:
+                      - img [ref=e632]
+                      - generic [ref=e635]: Loading...
+                      - generic [ref=e637]: 
+                  - generic [ref=e638]:
+                    - generic [ref=e639]:
+                      - generic [ref=e640]:
+                        - heading "marca Kaiak" [level=3] [ref=e641]: Kaiak
+                        - generic "avaliação 4.5 estrelas de 5" [ref=e642]:
+                          - generic [ref=e644]: 
+                          - generic [ref=e645]: "4.5"
+                      - link "Eau de Toilette Masculino Kaiak Oceano 100ml":
+                        - /url: /p/kaiak-oceano-edt-masculino-100-ml/NATARG-111175?position=3&listTitle=tab+showcase+-+tu+perfume+con+hasta+45%25OFF
+                        - heading "Eau de Toilette Masculino Kaiak Oceano 100ml" [level=4]
+                      - link "valor de . por $ 35.168,00. 44 por ciento de descuento.":
+                        - /url: /p/kaiak-oceano-edt-masculino-100-ml/NATARG-111175?position=3&listTitle=tab+showcase+-+tu+perfume+con+hasta+45%25OFF
+                        - generic:
+                          - generic:
+                            - paragraph: $ 62.800,00
+                            - generic:
+                              - generic: $ 35.168,00
+                              - generic:
+                                - generic: etiqueta -44%
+                                - generic: "-44%"
+                          - generic: precio sin impuestos nacionales $36.330,58
+                    - button "agregar a mi bolsa" [ref=e646] [cursor=pointer]
+                - generic [ref=e649]:
+                  - generic [ref=e650] [cursor=pointer]:
+                    - img [ref=e651]
+                    - group [ref=e652]:
+                      - generic "Para ellas" [ref=e653]:
+                        - generic [ref=e654]: Para ellas
+                    - button "agregar a mis favoritos" [ref=e655]:
+                      - img [ref=e656]
+                      - generic [ref=e659]: Loading...
+                      - generic [ref=e661]: 
+                  - generic [ref=e662]:
+                    - generic [ref=e663]:
+                      - generic [ref=e664]:
+                        - heading "marca Kaiak" [level=3] [ref=e665]: Kaiak
+                        - generic "avaliação 4.5 estrelas de 5" [ref=e666]:
+                          - generic [ref=e668]: 
+                          - generic [ref=e669]: "4.5"
+                      - link "Eau de Toilette Femenino Kaiak Aventura 100ml":
+                        - /url: /p/kaiak-aventura-femenino/NATARG-111177?position=4&listTitle=tab+showcase+-+tu+perfume+con+hasta+45%25OFF
+                        - heading "Eau de Toilette Femenino Kaiak Aventura 100ml" [level=4]
+                      - link "valor de . por $ 43.960,00. 30 por ciento de descuento.":
+                        - /url: /p/kaiak-aventura-femenino/NATARG-111177?position=4&listTitle=tab+showcase+-+tu+perfume+con+hasta+45%25OFF
+                        - generic:
+                          - generic:
+                            - paragraph: $ 62.800,00
+                            - generic:
+                              - generic: $ 43.960,00
+                              - generic:
+                                - generic: etiqueta -30%
+                                - generic: "-30%"
+                          - generic: precio sin impuestos nacionales $33.735,54
+                    - button "agregar a mi bolsa" [ref=e670] [cursor=pointer]
+                - generic [ref=e673]:
+                  - generic [ref=e674] [cursor=pointer]:
+                    - img [ref=e675]
+                    - group [ref=e676]:
+                      - generic "Para ellos" [ref=e677]:
+                        - generic [ref=e678]: Para ellos
+                    - button "agregar a mis favoritos" [ref=e679]:
+                      - img [ref=e680]
+                      - generic [ref=e683]: Loading...
+                      - generic [ref=e685]: 
+                  - generic [ref=e686]:
+                    - generic [ref=e687]:
+                      - generic [ref=e688]:
+                        - heading "marca Kaiak" [level=3] [ref=e689]: Kaiak
+                        - generic "avaliação 4.8 estrelas de 5" [ref=e690]:
+                          - generic [ref=e692]: 
+                          - generic [ref=e693]: "4.8"
+                      - link "Eau de Toilette Masculino Kaiak Aventura 100ml":
+                        - /url: /p/kaiak-aventura-masculino/NATARG-111173?position=5&listTitle=tab+showcase+-+tu+perfume+con+hasta+45%25OFF
+                        - heading "Eau de Toilette Masculino Kaiak Aventura 100ml" [level=4]
+                      - link "valor de . por $ 45.216,00. 28 por ciento de descuento.":
+                        - /url: /p/kaiak-aventura-masculino/NATARG-111173?position=5&listTitle=tab+showcase+-+tu+perfume+con+hasta+45%25OFF
+                        - generic:
+                          - generic:
+                            - paragraph: $ 62.800,00
+                            - generic:
+                              - generic: $ 45.216,00
+                              - generic:
+                                - generic: etiqueta -28%
+                                - generic: "-28%"
+                          - generic: precio sin impuestos nacionales $33.735,54
+                    - button "agregar a mi bolsa" [ref=e694] [cursor=pointer]
+                - generic [ref=e697]:
+                  - generic [ref=e698] [cursor=pointer]:
+                    - img [ref=e699]
+                    - group [ref=e700]:
+                      - generic "¡sólo por hoy!" [ref=e701]:
+                        - generic [ref=e702]: ¡sólo por hoy!
+                    - button "agregar a mis favoritos" [ref=e703]:
+                      - img [ref=e704]
+                      - generic [ref=e707]: Loading...
+                      - generic [ref=e709]: 
+                  - generic [ref=e710]:
+                    - generic [ref=e711]:
+                      - generic [ref=e712]:
+                        - heading "marca Kaiak" [level=3] [ref=e713]: Kaiak
+                        - generic "avaliação 4.9 estrelas de 5" [ref=e714]:
+                          - generic [ref=e716]: 
+                          - generic [ref=e717]: "4.9"
+                      - link "Eau de Toilette Masculino Kaiak Clásico 100ml":
+                        - /url: /p/kaiak-clasico-eau-de-toilette-masculino-100-ml/NATARG-111171?position=6&listTitle=tab+showcase+-+tu+perfume+con+hasta+45%25OFF
+                        - heading "Eau de Toilette Masculino Kaiak Clásico 100ml" [level=4]
+                      - link "valor de . por $ 31.400,00. 50 por ciento de descuento.":
+                        - /url: /p/kaiak-clasico-eau-de-toilette-masculino-100-ml/NATARG-111171?position=6&listTitle=tab+showcase+-+tu+perfume+con+hasta+45%25OFF
+                        - generic:
+                          - generic:
+                            - paragraph: $ 62.800,00
+                            - generic:
+                              - generic: $ 31.400,00
+                              - generic:
+                                - generic: etiqueta -50%
+                                - generic: "-50%"
+                          - generic: precio sin impuestos nacionales $31.140,50
+                    - button "agregar a mi bolsa" [ref=e718] [cursor=pointer]
+                - generic [ref=e721]:
+                  - generic [ref=e722] [cursor=pointer]:
+                    - img [ref=e723]
+                    - button "agregar a mis favoritos" [ref=e724]:
+                      - img [ref=e725]
+                      - generic [ref=e728]: Loading...
+                      - generic [ref=e730]: 
+                  - generic [ref=e731]:
+                    - generic [ref=e732]:
+                      - generic [ref=e733]:
+                        - heading "marca Kaiak" [level=3] [ref=e734]: Kaiak
+                        - generic "avaliação 5.0 estrelas de 5" [ref=e735]:
+                          - generic [ref=e737]: 
+                          - generic [ref=e738]: "5.0"
+                      - link "Eau de Toilette Masculino Kaiak Aero 100ml":
+                        - /url: /p/eau-de-toilette-kaiak-aero-masculino-100-ml/NATARG-111174?position=7&listTitle=tab+showcase+-+tu+perfume+con+hasta+45%25OFF
+                        - heading "Eau de Toilette Masculino Kaiak Aero 100ml" [level=4]
+                      - link "valor de . por $ 47.100,00. 25 por ciento de descuento.":
+                        - /url: /p/eau-de-toilette-kaiak-aero-masculino-100-ml/NATARG-111174?position=7&listTitle=tab+showcase+-+tu+perfume+con+hasta+45%25OFF
+                        - generic:
+                          - generic:
+                            - paragraph: $ 62.800,00
+                            - generic:
+                              - generic: $ 47.100,00
+                              - generic:
+                                - generic: etiqueta -25%
+                                - generic: "-25%"
+                          - generic: precio sin impuestos nacionales $33.735,54
+                    - button "agregar a mi bolsa" [ref=e739] [cursor=pointer]
+                - generic [ref=e742]:
+                  - generic [ref=e743] [cursor=pointer]:
+                    - img [ref=e744]
+                    - button "agregar a mis favoritos" [ref=e745]:
+                      - img [ref=e746]
+                      - generic [ref=e749]: Loading...
+                      - generic [ref=e751]: 
+                  - generic [ref=e752]:
+                    - generic [ref=e753]:
+                      - generic [ref=e754]:
+                        - heading "marca Kaiak" [level=3] [ref=e755]: Kaiak
+                        - generic "avaliação 4.7 estrelas de 5" [ref=e756]:
+                          - generic [ref=e758]: 
+                          - generic [ref=e759]: "4.7"
+                      - link "Eau de Toilette Masculino Kaiak Sonar 100ml":
+                        - /url: /p/kaiak-sonar-eau-de-toilette-masculino/NATARG-156226?position=8&listTitle=tab+showcase+-+tu+perfume+con+hasta+45%25OFF
+                        - heading "Eau de Toilette Masculino Kaiak Sonar 100ml" [level=4]
+                      - link "valor de . por $ 45.216,00. 28 por ciento de descuento.":
+                        - /url: /p/kaiak-sonar-eau-de-toilette-masculino/NATARG-156226?position=8&listTitle=tab+showcase+-+tu+perfume+con+hasta+45%25OFF
+                        - generic:
+                          - generic:
+                            - paragraph: $ 62.800,00
+                            - generic:
+                              - generic: $ 45.216,00
+                              - generic:
+                                - generic: etiqueta -28%
+                                - generic: "-28%"
+                          - generic: precio sin impuestos nacionales $33.735,54
+                    - button "agregar a mi bolsa" [ref=e760] [cursor=pointer]
+                - generic [ref=e763]:
+                  - generic [ref=e764] [cursor=pointer]:
+                    - img [ref=e765]
+                    - button "agregar a mis favoritos" [ref=e766]:
+                      - img [ref=e767]
+                      - generic [ref=e770]: Loading...
+                      - generic [ref=e772]: 
+                  - generic [ref=e773]:
+                    - generic [ref=e774]:
+                      - generic [ref=e775]:
+                        - heading "marca Kaiak" [level=3] [ref=e776]: Kaiak
+                        - generic "avaliação 4.8 estrelas de 5" [ref=e777]:
+                          - generic [ref=e779]: 
+                          - generic [ref=e780]: "4.8"
+                      - link "Eau de Toilette Femenino Kaiak Oceano 100ml":
+                        - /url: /p/kaiak-oceano-eau-de-toilette-femenino-100ml/NATARG-111179?position=9&listTitle=tab+showcase+-+tu+perfume+con+hasta+45%25OFF
+                        - heading "Eau de Toilette Femenino Kaiak Oceano 100ml" [level=4]
+                      - link "valor de . por $ 47.100,00. 25 por ciento de descuento.":
+                        - /url: /p/kaiak-oceano-eau-de-toilette-femenino-100ml/NATARG-111179?position=9&listTitle=tab+showcase+-+tu+perfume+con+hasta+45%25OFF
+                        - generic:
+                          - generic:
+                            - paragraph: $ 62.800,00
+                            - generic:
+                              - generic: $ 47.100,00
+                              - generic:
+                                - generic: etiqueta -25%
+                                - generic: "-25%"
+                          - generic: precio sin impuestos nacionales $33.735,54
+                    - button "agregar a mi bolsa" [ref=e781] [cursor=pointer]
+                - generic [ref=e784]:
+                  - generic [ref=e785] [cursor=pointer]:
+                    - img [ref=e786]
+                    - group [ref=e787]:
+                      - generic "Para ellas" [ref=e788]:
+                        - generic [ref=e789]: Para ellas
+                    - button "agregar a mis favoritos" [ref=e790]:
+                      - img [ref=e791]
+                      - generic [ref=e794]: Loading...
+                      - generic [ref=e796]: 
+                  - generic [ref=e797]:
+                    - generic [ref=e798]:
+                      - generic [ref=e799]:
+                        - heading "marca Kaiak" [level=3] [ref=e800]: Kaiak
+                        - generic "avaliação 4.8 estrelas de 5" [ref=e801]:
+                          - generic [ref=e803]: 
+                          - generic [ref=e804]: "4.8"
+                      - link "Eau de Toilette Femenino Kaiak Sonar 100ml":
+                        - /url: /p/kaiak-sonar-eau-de-toilette-femenino/NATARG-156229?position=10&listTitle=tab+showcase+-+tu+perfume+con+hasta+45%25OFF
+                        - heading "Eau de Toilette Femenino Kaiak Sonar 100ml" [level=4]
+                      - link "valor de . por $ 45.216,00. 28 por ciento de descuento.":
+                        - /url: /p/kaiak-sonar-eau-de-toilette-femenino/NATARG-156229?position=10&listTitle=tab+showcase+-+tu+perfume+con+hasta+45%25OFF
+                        - generic:
+                          - generic:
+                            - paragraph: $ 62.800,00
+                            - generic:
+                              - generic: $ 45.216,00
+                              - generic:
+                                - generic: etiqueta -28%
+                                - generic: "-28%"
+                          - generic: precio sin impuestos nacionales $33.735,54
+                    - button "agregar a mi bolsa" [ref=e805] [cursor=pointer]
+                - generic [ref=e808]:
+                  - generic [ref=e809] [cursor=pointer]:
+                    - img [ref=e810]
+                    - button "agregar a mis favoritos" [ref=e811]:
+                      - img [ref=e812]
+                      - generic [ref=e815]: Loading...
+                      - generic [ref=e817]: 
+                  - generic [ref=e818]:
+                    - generic [ref=e819]:
+                      - generic [ref=e820]:
+                        - heading "marca Kaiak" [level=3] [ref=e821]: Kaiak
+                        - generic "avaliação 5.0 estrelas de 5" [ref=e822]:
+                          - generic [ref=e824]: 
+                          - generic [ref=e825]: "5.0"
+                      - link "Eau de Toilette Femenino Kaiak Vital 100ml":
+                        - /url: /p/kaiak-vital-femenino-eau-de-toilette-100ml/NATARG-120616?position=11&listTitle=tab+showcase+-+tu+perfume+con+hasta+45%25OFF
+                        - heading "Eau de Toilette Femenino Kaiak Vital 100ml" [level=4]
+                      - link "valor de . por $ 50.240,00. 20 por ciento de descuento.":
+                        - /url: /p/kaiak-vital-femenino-eau-de-toilette-100ml/NATARG-120616?position=11&listTitle=tab+showcase+-+tu+perfume+con+hasta+45%25OFF
+                        - generic:
+                          - generic:
+                            - paragraph: $ 62.800,00
+                            - generic:
+                              - generic: $ 50.240,00
+                              - generic:
+                                - generic: etiqueta -20%
+                                - generic: "-20%"
+                          - generic: precio sin impuestos nacionales $41.520,66
+                    - button "agregar a mi bolsa" [ref=e826] [cursor=pointer]
+                - generic [ref=e829]:
+                  - generic [ref=e830] [cursor=pointer]:
+                    - img [ref=e831]
+                    - button "agregar a mis favoritos" [ref=e832]:
+                      - img [ref=e833]
+                      - generic [ref=e836]: Loading...
+                      - generic [ref=e838]: 
+                  - generic [ref=e839]:
+                    - generic [ref=e840]:
+                      - generic [ref=e841]:
+                        - heading "marca Kaiak" [level=3] [ref=e842]: Kaiak
+                        - generic "avaliação 4.8 estrelas de 5" [ref=e843]:
+                          - generic [ref=e845]: 
+                          - generic [ref=e846]: "4.8"
+                      - link "Eau de Toilette Femenino Kaiak Aero 100ml":
+                        - /url: /p/eau-de-toilette-kaiak-aero-femenino-100-ml/NATARG-111178?position=12&listTitle=tab+showcase+-+tu+perfume+con+hasta+45%25OFF
+                        - heading "Eau de Toilette Femenino Kaiak Aero 100ml" [level=4]
+                      - link "valor de . por $ 47.100,00. 25 por ciento de descuento.":
+                        - /url: /p/eau-de-toilette-kaiak-aero-femenino-100-ml/NATARG-111178?position=12&listTitle=tab+showcase+-+tu+perfume+con+hasta+45%25OFF
+                        - generic:
+                          - generic:
+                            - paragraph: $ 62.800,00
+                            - generic:
+                              - generic: $ 47.100,00
+                              - generic:
+                                - generic: etiqueta -25%
+                                - generic: "-25%"
+                          - generic: precio sin impuestos nacionales $33.735,54
+                    - button "agregar a mi bolsa" [ref=e847] [cursor=pointer]
+              - text:  
+            - button "escaparate de productos anterior" [disabled] [ref=e848]:
+              - generic [ref=e850]: 
+              - generic [ref=e851]: escaparate de productos anterior
+            - button "próxima presentación de productos" [disabled] [ref=e852]:
+              - generic [ref=e854]: 
+              - generic [ref=e855]: próxima presentación de productos
+    - generic [ref=e857]:
+      - heading "armá tu rutina con hasta 55%OFF" [level=2] [ref=e859]
+      - generic [ref=e860]:
+        - button "rutina completa ver todo" [ref=e862] [cursor=pointer]:
+          - img "rutina completa" [ref=e863]
+          - generic [ref=e865]:
+            - generic:
+              - heading [level=3]
+              - paragraph
+            - link "ver todo":
+              - /url: /c/kits-natura
+              - button "ver todo"
+        - generic [ref=e866]:
+          - generic [ref=e868]:
+            - generic [ref=e869]:
+              - button "etiqueta rutina completa" [ref=e871] [cursor=pointer]:
+                - generic [ref=e872]: etiqueta rutina completa
+                - generic [ref=e873]: rutina completa
+              - button "etiqueta rutina corporal" [ref=e875] [cursor=pointer]:
+                - generic [ref=e876]: etiqueta rutina corporal
+                - generic [ref=e877]: rutina corporal
+              - button "etiqueta rutina capilar" [ref=e879] [cursor=pointer]:
+                - generic [ref=e880]: etiqueta rutina capilar
+                - generic [ref=e881]: rutina capilar
+              - button "etiqueta rutina skincare" [ref=e883] [cursor=pointer]:
+                - generic [ref=e884]: etiqueta rutina skincare
+                - generic [ref=e885]: rutina skincare
+              - button "etiqueta rutina makeup" [ref=e887] [cursor=pointer]:
+                - generic [ref=e888]: etiqueta rutina makeup
+                - generic [ref=e889]: rutina makeup
+            - text:  
+          - generic [ref=e891]:
+            - generic [ref=e892]:
+              - generic [ref=e893]:
+                - generic [ref=e896]:
+                  - generic [ref=e897] [cursor=pointer]:
+                    - img [ref=e898]
+                    - button "agregar a mis favoritos" [ref=e899]:
+                      - img [ref=e900]
+                      - generic [ref=e903]: Loading...
+                      - generic [ref=e905]: 
+                  - generic [ref=e906]:
+                    - generic [ref=e907]:
+                      - generic [ref=e908]:
+                        - heading "marca Tododia" [level=3] [ref=e909]: Tododia
+                        - generic "avaliação 5.0 estrelas de 5" [ref=e910]:
+                          - generic [ref=e912]: 
+                          - generic [ref=e913]: "5.0"
+                      - link "Kit Tododia Amora Roja y Jabuticaba":
+                        - /url: /p/kit-tododia-amora-roja-y-jabuticaba/NATARG-245701?position=1&listTitle=tab+showcase+-+arm%C3%A1+tu+rutina+con+hasta+55%25OFF
+                        - heading "Kit Tododia Amora Roja y Jabuticaba" [level=4]
+                      - link "valor de . por $ 48.435,00. 25 por ciento de descuento.":
+                        - /url: /p/kit-tododia-amora-roja-y-jabuticaba/NATARG-245701?position=1&listTitle=tab+showcase+-+arm%C3%A1+tu+rutina+con+hasta+55%25OFF
+                        - generic:
+                          - generic:
+                            - paragraph: $ 64.580,00
+                            - generic:
+                              - generic: $ 48.435,00
+                              - generic:
+                                - generic: etiqueta -25%
+                                - generic: "-25%"
+                          - generic: precio sin impuestos nacionales $53.371,90
+                    - button "agregar a mi bolsa" [ref=e914] [cursor=pointer]
+                - generic [ref=e917]:
+                  - generic [ref=e918] [cursor=pointer]:
+                    - img [ref=e919]
+                    - button "agregar a mis favoritos" [ref=e920]:
+                      - img [ref=e921]
+                      - generic [ref=e924]: Loading...
+                      - generic [ref=e926]: 
+                  - generic [ref=e927]:
+                    - generic [ref=e928]:
+                      - heading "marca Chronos" [level=3] [ref=e930]: Chronos
+                      - link "Chronos Derma antiseñales 45+":
+                        - /url: /p/chronos-derma-antisenales-45/NATARG-255495?position=2&listTitle=tab+showcase+-+arm%C3%A1+tu+rutina+con+hasta+55%25OFF
+                        - heading "Chronos Derma antiseñales 45+" [level=4]
+                      - link "valor de . por $ 69.000,00. 25 por ciento de descuento.":
+                        - /url: /p/chronos-derma-antisenales-45/NATARG-255495?position=2&listTitle=tab+showcase+-+arm%C3%A1+tu+rutina+con+hasta+55%25OFF
+                        - generic:
+                          - generic:
+                            - paragraph: $ 92.000,00
+                            - generic:
+                              - generic: $ 69.000,00
+                              - generic:
+                                - generic: etiqueta -25%
+                                - generic: "-25%"
+                          - generic: precio sin impuestos nacionales $41.818,18
+                    - button "agregar a mi bolsa" [ref=e931] [cursor=pointer]
+                - generic [ref=e934]:
+                  - generic [ref=e935] [cursor=pointer]:
+                    - img [ref=e936]
+                    - button "agregar a mis favoritos" [ref=e937]:
+                      - img [ref=e938]
+                      - generic [ref=e941]: Loading...
+                      - generic [ref=e943]: 
+                  - generic [ref=e944]:
+                    - generic [ref=e945]:
+                      - generic [ref=e946]:
+                        - heading "marca Lumina" [level=3] [ref=e947]: Lumina
+                        - generic "avaliação 5.0 estrelas de 5" [ref=e948]:
+                          - generic [ref=e950]: 
+                          - generic [ref=e951]: "5.0"
+                      - 'link "Kit Lumina Anticaída Y Crecimiento: Repuestos Shampoo + Acondicionador"':
+                        - /url: /p/kit-lumina-anticaida-y-crecimiento-repuestos-shampoo--acondicionador/NATARG-215292?position=3&listTitle=tab+showcase+-+arm%C3%A1+tu+rutina+con+hasta+55%25OFF
+                        - 'heading "Kit Lumina Anticaída Y Crecimiento: Repuestos Shampoo + Acondicionador" [level=4]'
+                      - link "valor de . por $ 17.612,00. 15 por ciento de descuento.":
+                        - /url: /p/kit-lumina-anticaida-y-crecimiento-repuestos-shampoo--acondicionador/NATARG-215292?position=3&listTitle=tab+showcase+-+arm%C3%A1+tu+rutina+con+hasta+55%25OFF
+                        - generic:
+                          - generic:
+                            - paragraph: $ 20.720,00
+                            - generic:
+                              - generic: $ 17.612,00
+                              - generic:
+                                - generic: etiqueta -15%
+                                - generic: "-15%"
+                          - generic: precio sin impuestos nacionales $17.123,97
+                    - button "agregar a mi bolsa" [ref=e952] [cursor=pointer]
+                - generic [ref=e955]:
+                  - generic [ref=e956] [cursor=pointer]:
+                    - img [ref=e957]
+                    - button "agregar a mis favoritos" [ref=e958]:
+                      - img [ref=e959]
+                      - generic [ref=e962]: Loading...
+                      - generic [ref=e964]: 
+                  - generic [ref=e965]:
+                    - generic [ref=e966]:
+                      - heading "marca Chronos" [level=3] [ref=e968]: Chronos
+                      - link "Chronos Derma antiseñales 30+":
+                        - /url: /p/chronos-derma-antisenales-30/NATARG-255496?position=4&listTitle=tab+showcase+-+arm%C3%A1+tu+rutina+con+hasta+55%25OFF
+                        - heading "Chronos Derma antiseñales 30+" [level=4]
+                      - link "valor de . por $ 69.000,00. 25 por ciento de descuento.":
+                        - /url: /p/chronos-derma-antisenales-30/NATARG-255496?position=4&listTitle=tab+showcase+-+arm%C3%A1+tu+rutina+con+hasta+55%25OFF
+                        - generic:
+                          - generic:
+                            - paragraph: $ 92.000,00
+                            - generic:
+                              - generic: $ 69.000,00
+                              - generic:
+                                - generic: etiqueta -25%
+                                - generic: "-25%"
+                          - generic: precio sin impuestos nacionales $41.818,18
+                    - button "agregar a mi bolsa" [ref=e969] [cursor=pointer]
+                - generic [ref=e972]:
+                  - generic [ref=e973] [cursor=pointer]:
+                    - img [ref=e974]
+                    - button "agregar a mis favoritos" [ref=e975]:
+                      - img [ref=e976]
+                      - generic [ref=e979]: Loading...
+                      - generic [ref=e981]: 
+                  - generic [ref=e982]:
+                    - generic [ref=e983]:
+                      - heading "marca Ekos" [level=3] [ref=e985]: Ekos
+                      - link "Kit Hidratante para Cuidados Diarios y Manos Ekos Cacao":
+                        - /url: /p/kit-hidratante-para-cuidados-diarios-y-manos-ekos-cacao/NATARG-245767?position=5&listTitle=tab+showcase+-+arm%C3%A1+tu+rutina+con+hasta+55%25OFF
+                        - heading "Kit Hidratante para Cuidados Diarios y Manos Ekos Cacao" [level=4]
+                      - link "valor de . por $ 30.083,00. 25 por ciento de descuento.":
+                        - /url: /p/kit-hidratante-para-cuidados-diarios-y-manos-ekos-cacao/NATARG-245767?position=5&listTitle=tab+showcase+-+arm%C3%A1+tu+rutina+con+hasta+55%25OFF
+                        - generic:
+                          - generic:
+                            - paragraph: $ 40.110,00
+                            - generic:
+                              - generic: $ 30.083,00
+                              - generic:
+                                - generic: etiqueta -25%
+                                - generic: "-25%"
+                          - generic: precio sin impuestos nacionales $33.148,76
+                    - button "agregar a mi bolsa" [ref=e986] [cursor=pointer]
+                - generic [ref=e989]:
+                  - generic [ref=e990] [cursor=pointer]:
+                    - img [ref=e991]
+                    - button "agregar a mis favoritos" [ref=e992]:
+                      - img [ref=e993]
+                      - generic [ref=e996]: Loading...
+                      - generic [ref=e998]: 
+                  - generic [ref=e999]:
+                    - generic [ref=e1000]:
+                      - heading "marca Ekos" [level=3] [ref=e1002]: Ekos
+                      - link "Kit Ekos Pitanga Refresca y Hidrata":
+                        - /url: /p/kit-ekos-pitanga-refresca-y-hidrata/NATARG-231334?position=6&listTitle=tab+showcase+-+arm%C3%A1+tu+rutina+con+hasta+55%25OFF
+                        - heading "Kit Ekos Pitanga Refresca y Hidrata" [level=4]
+                      - link "valor de . por $ 26.295,00. 25 por ciento de descuento.":
+                        - /url: /p/kit-ekos-pitanga-refresca-y-hidrata/NATARG-231334?position=6&listTitle=tab+showcase+-+arm%C3%A1+tu+rutina+con+hasta+55%25OFF
+                        - generic:
+                          - generic:
+                            - paragraph: $ 35.060,00
+                            - generic:
+                              - generic: $ 26.295,00
+                              - generic:
+                                - generic: etiqueta -25%
+                                - generic: "-25%"
+                          - generic: precio sin impuestos nacionales $28.975,21
+                    - button "agregar a mi bolsa" [ref=e1003] [cursor=pointer]
+                - generic [ref=e1006]:
+                  - generic [ref=e1007] [cursor=pointer]:
+                    - img [ref=e1008]
+                    - group [ref=e1009]:
+                      - generic "Lanzamiento" [ref=e1010]:
+                        - generic [ref=e1011]: Lanzamiento
+                    - button "agregar a mis favoritos" [ref=e1012]:
+                      - img [ref=e1013]
+                      - generic [ref=e1016]: Loading...
+                      - generic [ref=e1018]: 
+                  - generic [ref=e1019]:
+                    - generic [ref=e1020]:
+                      - heading "marca Chronos Derma" [level=3] [ref=e1022]: Chronos Derma
+                      - link "Kit Ritual Antioleosidad Chronos Derma":
+                        - /url: /p/kit-ritual-antioleosidad-chronos-derma/NATARG-256093?position=7&listTitle=tab+showcase+-+arm%C3%A1+tu+rutina+con+hasta+55%25OFF
+                        - heading "Kit Ritual Antioleosidad Chronos Derma" [level=4]
+                      - link "valor de . por $ 76.440,00. 30 por ciento de descuento.":
+                        - /url: /p/kit-ritual-antioleosidad-chronos-derma/NATARG-256093?position=7&listTitle=tab+showcase+-+arm%C3%A1+tu+rutina+con+hasta+55%25OFF
+                        - generic:
+                          - generic:
+                            - paragraph: $ 109.200,00
+                            - generic:
+                              - generic: $ 76.440,00
+                              - generic:
+                                - generic: etiqueta -30%
+                                - generic: "-30%"
+                          - generic: precio sin impuestos nacionales $58.661,16
+                    - button "agregar a mi bolsa" [ref=e1023] [cursor=pointer]
+                - generic [ref=e1026]:
+                  - generic [ref=e1027] [cursor=pointer]:
+                    - img [ref=e1028]
+                    - button "agregar a mis favoritos" [ref=e1029]:
+                      - img [ref=e1030]
+                      - generic [ref=e1033]: Loading...
+                      - generic [ref=e1035]: 
+                  - generic [ref=e1036]:
+                    - generic [ref=e1037]:
+                      - heading "marca Ekos" [level=3] [ref=e1039]: Ekos
+                      - link "Kit Ekos Murumuru Shampoo y Acondicionador":
+                        - /url: /p/kit-ekos-murumuru-shampoo-y-acondicionador/NATARG-222638?position=8&listTitle=tab+showcase+-+arm%C3%A1+tu+rutina+con+hasta+55%25OFF
+                        - heading "Kit Ekos Murumuru Shampoo y Acondicionador" [level=4]
+                      - link "valor de . por $ 20.490,00. 25 por ciento de descuento.":
+                        - /url: /p/kit-ekos-murumuru-shampoo-y-acondicionador/NATARG-222638?position=8&listTitle=tab+showcase+-+arm%C3%A1+tu+rutina+con+hasta+55%25OFF
+                        - generic:
+                          - generic:
+                            - paragraph: $ 27.320,00
+                            - generic:
+                              - generic: $ 20.490,00
+                              - generic:
+                                - generic: etiqueta -25%
+                                - generic: "-25%"
+                          - generic: precio sin impuestos nacionales $22.578,51
+                    - button "agregar a mi bolsa" [ref=e1040] [cursor=pointer]
+                - generic [ref=e1043]:
+                  - generic [ref=e1044] [cursor=pointer]:
+                    - img [ref=e1045]
+                    - button "agregar a mis favoritos" [ref=e1046]:
+                      - img [ref=e1047]
+                      - generic [ref=e1050]: Loading...
+                      - generic [ref=e1052]: 
+                  - generic [ref=e1053]:
+                    - generic [ref=e1054]:
+                      - heading "marca Chronos" [level=3] [ref=e1056]: Chronos
+                      - link "Chronos Derma antiseñales 60+":
+                        - /url: /p/chronos-derma-antisenales-60/NATARG-255498?position=9&listTitle=tab+showcase+-+arm%C3%A1+tu+rutina+con+hasta+55%25OFF
+                        - heading "Chronos Derma antiseñales 60+" [level=4]
+                      - link "valor de . por $ 69.000,00. 25 por ciento de descuento.":
+                        - /url: /p/chronos-derma-antisenales-60/NATARG-255498?position=9&listTitle=tab+showcase+-+arm%C3%A1+tu+rutina+con+hasta+55%25OFF
+                        - generic:
+                          - generic:
+                            - paragraph: $ 92.000,00
+                            - generic:
+                              - generic: $ 69.000,00
+                              - generic:
+                                - generic: etiqueta -25%
+                                - generic: "-25%"
+                          - generic: precio sin impuestos nacionales $41.818,18
+                    - button "agregar a mi bolsa" [ref=e1057] [cursor=pointer]
+                - generic [ref=e1060]:
+                  - generic [ref=e1061] [cursor=pointer]:
+                    - img [ref=e1062]
+                    - button "agregar a mis favoritos" [ref=e1063]:
+                      - img [ref=e1064]
+                      - generic [ref=e1067]: Loading...
+                      - generic [ref=e1069]: 
+                  - generic [ref=e1070]:
+                    - generic [ref=e1071]:
+                      - heading "marca Lumina" [level=3] [ref=e1073]: Lumina
+                      - link "Kit Shampoo, Acondicionador y Máscara Lumina para Restauración y Liso Prolongado":
+                        - /url: /p/kit-shampoo-acondicionador-y-mascara-lumina-para-restauracion-y-liso-prolongado/NATARG-245700?position=10&listTitle=tab+showcase+-+arm%C3%A1+tu+rutina+con+hasta+55%25OFF
+                        - heading "Kit Shampoo, Acondicionador y Máscara Lumina para Restauración y Liso Prolongado" [level=4]
+                      - link "valor de . por $ 35.437,00. 15 por ciento de descuento.":
+                        - /url: /p/kit-shampoo-acondicionador-y-mascara-lumina-para-restauracion-y-liso-prolongado/NATARG-245700?position=10&listTitle=tab+showcase+-+arm%C3%A1+tu+rutina+con+hasta+55%25OFF
+                        - generic:
+                          - generic:
+                            - paragraph: $ 41.690,00
+                            - generic:
+                              - generic: $ 35.437,00
+                              - generic:
+                                - generic: etiqueta -15%
+                                - generic: "-15%"
+                          - generic: precio sin impuestos nacionales $34.454,55
+                    - button "agregar a mi bolsa" [ref=e1074] [cursor=pointer]
+                - generic [ref=e1077]:
+                  - generic [ref=e1078] [cursor=pointer]:
+                    - img [ref=e1079]
+                    - group [ref=e1080]:
+                      - generic "Para ellos" [ref=e1081]:
+                        - generic [ref=e1082]: Para ellos
+                    - button "agregar a mis favoritos" [ref=e1083]:
+                      - img [ref=e1084]
+                      - generic [ref=e1087]: Loading...
+                      - generic [ref=e1089]: 
+                  - generic [ref=e1090]:
+                    - generic [ref=e1091]:
+                      - heading "marca Homem" [level=3] [ref=e1093]: Homem
+                      - link "Kit Exclusivo Homem":
+                        - /url: /p/kit-exclusivo-homem/NATARG-223204?position=11&listTitle=tab+showcase+-+arm%C3%A1+tu+rutina+con+hasta+55%25OFF
+                        - heading "Kit Exclusivo Homem" [level=4]
+                      - link "valor de . por $ 81.603,00. 15 por ciento de descuento.":
+                        - /url: /p/kit-exclusivo-homem/NATARG-223204?position=11&listTitle=tab+showcase+-+arm%C3%A1+tu+rutina+con+hasta+55%25OFF
+                        - generic:
+                          - generic:
+                            - paragraph: $ 96.004,00
+                            - generic:
+                              - generic: $ 81.603,00
+                              - generic:
+                                - generic: etiqueta -15%
+                                - generic: "-15%"
+                          - generic: precio sin impuestos nacionales $63.473,55
+                    - button "agregar a mi bolsa" [ref=e1094] [cursor=pointer]
+              - text:  
+            - button "escaparate de productos anterior" [disabled] [ref=e1095]:
+              - generic [ref=e1097]: 
+              - generic [ref=e1098]: escaparate de productos anterior
+            - button "próxima presentación de productos" [disabled] [ref=e1099]:
+              - generic [ref=e1101]: 
+              - generic [ref=e1102]: próxima presentación de productos
+    - region "carrusel de banners" [ref=e1104]:
+      - heading "tus próximos favoritos" [level=2] [ref=e1105]
+      - button "banner anterior" [ref=e1106] [cursor=pointer]:
+        - generic [ref=e1108]: 
+      - button "siguiente banner" [ref=e1109] [cursor=pointer]:
+        - generic [ref=e1111]: 
+      - generic [ref=e1113]:
+        - group [ref=e1115]:
+          - generic "imagen del banner" [ref=e1116]:
+            - button [ref=e1117] [cursor=pointer]:
+              - img [ref=e1119]
+        - group [ref=e1121]:
+          - generic "imagen del banner" [ref=e1122]:
+            - button [ref=e1123] [cursor=pointer]
+        - group [ref=e1125]:
+          - generic "imagen del banner" [ref=e1126]:
+            - button [ref=e1127] [cursor=pointer]
+        - group [ref=e1129]:
+          - generic "imagen del banner" [ref=e1130]:
+            - button [ref=e1131] [cursor=pointer]
+        - group [ref=e1133]:
+          - generic "imagen del banner" [ref=e1134]:
+            - button [ref=e1135] [cursor=pointer]
+    - generic [ref=e1136]:
+      - button [ref=e1141] [cursor=pointer]:
+        - img [ref=e1145]
+        - generic [ref=e1146]:
+          - paragraph [ref=e1147]
+          - contentinfo [ref=e1148]:
+            - heading [level=2] [ref=e1149]: llegá al envío gratis
+            - heading [level=3] [ref=e1150]: superá los $65.000 y recibí tu pedido sin costo
+            - link:
+              - /url: /c/hot-sale
+              - text: comprar
+      - button "consultar condiciones" [ref=e1151] [cursor=pointer]
+    - generic [ref=e1157]:
+      - generic [ref=e1158]:
+        - generic [ref=e1160]:
+          - button "carrusel, 1 de 0, Ampollas Lumina" [ref=e1161] [cursor=pointer]:
+            - img [ref=e1163]
+          - generic [ref=e1167]:
+            - img "Ampolla reparacion instantanea cabellos secos o resecos Lumina 4 unidades de 20 ml c/u" [ref=e1168]
+            - generic "Ampolla reparacion instantanea cabellos secos o resecos Lumina 4 unidades de 20 ml c/u" [ref=e1169]
+            - generic [ref=e1170]:
+              - generic [ref=e1171]: $ 19.700,00
+              - generic [ref=e1172]: "-10%"
+            - generic [ref=e1174]: $ 17.730,00
+            - generic [ref=e1175]: valor de . por $ 17.730,00.
+            - button "agregar a la bolsa" [ref=e1177]:
+              - generic [ref=e1178]: etiqueta undefined
+              - generic [ref=e1180]: 
+        - generic [ref=e1182]:
+          - button [ref=e1183] [cursor=pointer]
+          - generic [ref=e1186]:
+            - img [ref=e1187]
+            - generic [ref=e1188]: Essencial Oud Eau De Parfum Femenino 100 ml
+            - generic [ref=e1189]: producto agotado
+            - generic [ref=e1190]: avísame cuando llegues
+            - button [ref=e1192] [cursor=pointer]:
+              - generic [ref=e1194]: 
+        - generic [ref=e1196]:
+          - button [ref=e1197] [cursor=pointer]
+          - generic [ref=e1200]:
+            - img [ref=e1201] [cursor=pointer]
+            - generic [ref=e1202]: Repuesto Crema Hidratante para el Cuerpo Ekos Castaña 400 ml
+            - generic [ref=e1203]:
+              - generic [ref=e1204]: $ 20.100,00
+              - generic [ref=e1205]: "-20%"
+            - generic [ref=e1207]: $ 16.080,00
+            - generic [ref=e1208]: valor de . por $ 16.080,00.
+            - button [ref=e1210] [cursor=pointer]:
+              - generic [ref=e1211]: etiqueta undefined
+              - generic [ref=e1213]: 
+        - generic [ref=e1215]:
+          - button [ref=e1216] [cursor=pointer]
+          - generic [ref=e1219]:
+            - img [ref=e1220]
+            - generic [ref=e1221]: Labial CC Hidratante FPS 25 Una Rojo 1 3,8 g
+            - generic [ref=e1222]:
+              - generic [ref=e1223]: $ 29.000,00
+              - generic [ref=e1224]: "-30%"
+            - generic [ref=e1226]: $ 20.300,00
+            - generic [ref=e1227]: valor de . por $ 20.300,00.
+            - button [ref=e1229]:
+              - generic [ref=e1230]: etiqueta undefined
+              - generic [ref=e1232]: 
+        - generic [ref=e1234]:
+          - button [ref=e1235] [cursor=pointer]
+          - generic [ref=e1238]:
+            - img [ref=e1239]
+            - generic [ref=e1240]: Base Serum Nude Me 30ml
+            - generic [ref=e1241]:
+              - generic [ref=e1242]: $ 54.600,00
+              - generic [ref=e1243]: "-30%"
+            - generic [ref=e1245]: $ 38.220,00
+            - generic [ref=e1246]: valor de . por $ 38.220,00.
+            - button [ref=e1248]:
+              - generic [ref=e1249]: etiqueta undefined
+              - generic [ref=e1251]: 
+        - generic [ref=e1253]:
+          - button [ref=e1254] [cursor=pointer]
+          - generic [ref=e1257]:
+            - img [ref=e1258]
+            - generic [ref=e1259]: Repuesto Crema Hidratante para el Cuerpo Ekos Castaña 400 ml
+            - generic [ref=e1260]:
+              - generic [ref=e1261]: $ 20.100,00
+              - generic [ref=e1262]: "-20%"
+            - generic [ref=e1264]: $ 16.080,00
+            - generic [ref=e1265]: valor de . por $ 16.080,00.
+            - button [ref=e1267]:
+              - generic [ref=e1268]: etiqueta undefined
+              - generic [ref=e1270]: 
+        - generic [ref=e1272]:
+          - button [ref=e1273] [cursor=pointer]
+          - generic [ref=e1276]:
+            - img [ref=e1277]
+            - generic [ref=e1278]: Blur Efecto Instantaneo
+            - generic [ref=e1279]:
+              - generic [ref=e1280]: $ 36.500,00
+              - generic [ref=e1281]: "-35%"
+            - generic [ref=e1283]: $ 23.725,00
+            - generic [ref=e1284]: valor de . por $ 23.725,00.
+            - button [ref=e1286]:
+              - generic [ref=e1287]: etiqueta undefined
+              - generic [ref=e1289]: 
+        - generic [ref=e1291]:
+          - button [ref=e1292] [cursor=pointer]
+          - generic [ref=e1295]:
+            - img [ref=e1296]
+            - generic [ref=e1297]: Labial gel lip stain Rose Una - 3 g
+            - generic [ref=e1299]: $ 20.400,00
+            - generic [ref=e1300]: $ 20.400,00
+            - button [ref=e1302]:
+              - generic [ref=e1303]: etiqueta undefined
+              - generic [ref=e1305]: 
+      - button "Próximo item, botón, carrusel con 0 itens" [ref=e1306] [cursor=pointer]:
+        - generic [ref=e1308]: 
+      - button "Item anterior, botón, carrusel con 0 itens" [ref=e1309] [cursor=pointer]:
+        - generic [ref=e1311]: 
+    - generic "Artículo de lectura" [ref=e1313]:
+      - img [ref=e1314]
+      - generic [ref=e1315]:
+        - generic [ref=e1317]:
+          - heading "experiencia app Natura" [level=2] [ref=e1318]:
+            - generic [ref=e1319]: experiencia app Natura
+          - heading "elegí, comprá y recibí tus favoritos con los mejores descuentos" [level=2] [ref=e1320]:
+            - generic [ref=e1321]: elegí, comprá y recibí tus favoritos con los mejores descuentos
+        - link "descargá la app Natura":
+          - /url: /aplicativo-natura
+    - generic "Artículo de lectura" [ref=e1323]:
+      - img [ref=e1324]
+      - generic [ref=e1325]:
+        - generic [ref=e1327]:
+          - heading "razón de ser Natura" [level=2] [ref=e1328]:
+            - generic [ref=e1329]: razón de ser Natura
+          - heading "nuestra razón de ser es crear y comercializar productos que promuevan el bien estar bien" [level=2] [ref=e1330]:
+            - generic [ref=e1331]: nuestra razón de ser es crear y comercializar productos que promuevan el bien estar bien
+        - link "conocer más":
+          - /url: /la-natura-nuestra-historia

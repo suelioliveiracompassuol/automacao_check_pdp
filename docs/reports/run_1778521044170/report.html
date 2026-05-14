@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDP Monitor Report - 11/05/2026</title>
+  <style>
+    :root {
+      --color-pass: #10b981;
+      --color-fail: #ef4444;
+      --color-warn: #f59e0b;
+      --color-na: #6b7280;
+      --color-bg: #f3f4f6;
+      --color-card: #ffffff;
+      --color-text: #1f2937;
+      --color-border: #e5e7eb;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.6;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header {
+      background: var(--color-card);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    header h1 {
+      font-size: 24px;
+      margin-bottom: 16px;
+    }
+
+    .run-info {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 14px;
+      color: #6b7280;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .summary-card {
+      background: var(--color-card);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .summary-card.pass { border-left: 4px solid var(--color-pass); }
+    .summary-card.fail { border-left: 4px solid var(--color-fail); }
+    .summary-card.error { border-left: 4px solid var(--color-warn); }
+    .summary-card.total { border-left: 4px solid #3b82f6; }
+
+    .summary-number {
+      font-size: 36px;
+      font-weight: 700;
+    }
+
+    .summary-card.pass .summary-number { color: var(--color-pass); }
+    .summary-card.fail .summary-number { color: var(--color-fail); }
+    .summary-card.error .summary-number { color: var(--color-warn); }
+    .summary-card.total .summary-number { color: #3b82f6; }
+
+    .summary-label {
+      font-size: 14px;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+
+    .pdp-card {
+      background: var(--color-card);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .pdp-card.success { border-left: 4px solid var(--color-pass); }
+    .pdp-card.failure { border-left: 4px solid var(--color-fail); }
+
+    .pdp-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .pdp-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pdp-title h3 {
+      font-size: 18px;
+    }
+
+    .pdp-status {
+      font-size: 24px;
+    }
+
+    .pdp-meta {
+      display: flex;
+      gap: 8px;
+    }
+
+    .badge {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .badge-ouro { background: #fef3c7; color: #92400e; }
+    .badge-critico { background: #fee2e2; color: #991b1b; }
+    .badge-cenario { background: #dbeafe; color: #1e40af; }
+    .badge-vendor { background: #f3e8ff; color: #6b21a8; }
+    .badge-country { background: #ecfdf5; color: #065f46; }
+
+    .pdp-info {
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+
+    .pdp-info p {
+      margin-bottom: 4px;
+    }
+
+    .pdp-info a {
+      color: #3b82f6;
+      text-decoration: none;
+    }
+
+    .pdp-info a:hover {
+      text-decoration: underline;
+    }
+
+    .error-message {
+      color: var(--color-fail);
+      background: #fef2f2;
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-top: 8px;
+    }
+
+    .features-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    .features-table th,
+    .features-table td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .features-table th {
+      background: var(--color-bg);
+      font-weight: 600;
+    }
+
+    .features-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .status-pass { background: #f0fdf4; }
+    .status-fail { background: #fef2f2; }
+    .status-error { background: #fffbeb; }
+    .status-na { background: #f9fafb; color: #9ca3af; }
+    .status-disabled { background: #f3f4f6; color: #6b7280; }
+    .status-warning { background: #fffbeb; }
+
+    .flag-info {
+      color: #6b7280;
+      font-size: 11px;
+      font-family: monospace;
+    }
+
+    .remote-config-section {
+      margin-top: 8px;
+      padding: 12px;
+      background: #f3f4f6;
+      border-radius: 8px;
+      font-size: 12px;
+    }
+
+    .remote-config-section summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: #374151;
+      font-size: 14px;
+    }
+
+    .remote-config-section .rc-flags {
+      margin-top: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .remote-config-section code {
+      background: #e5e7eb;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 11px;
+    }
+
+    .rc-categories {
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .rc-category {
+      background: white;
+      border-radius: 6px;
+      padding: 10px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .rc-category h4 {
+      margin: 0 0 8px 0;
+      font-size: 13px;
+      color: #4b5563;
+    }
+
+    .rc-flags-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 6px;
+    }
+
+    .rc-flag {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 8px;
+      background: #f9fafb;
+      border-radius: 4px;
+      font-size: 11px;
+    }
+
+    .rc-flag code {
+      color: #374151;
+      background: transparent;
+      padding: 0;
+    }
+
+    .flag-true {
+      color: #059669;
+      font-weight: bold;
+    }
+
+    .flag-false {
+      color: #dc2626;
+      font-weight: bold;
+    }
+
+    .flag-na {
+      color: #9ca3af;
+    }
+
+    .page-screenshot {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--color-border);
+    }
+
+    .page-screenshot a {
+      color: #3b82f6;
+      text-decoration: none;
+    }
+
+    .feature-group-header {
+      font-weight: 600;
+    }
+
+    .feature-group-header td:first-child {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .group-toggle {
+      font-size: 10px;
+      transition: transform 0.2s;
+      display: inline-block;
+      margin: 0 4px;
+      transform: rotate(90deg);
+    }
+
+    .feature-group-header:not(.expanded) .group-toggle {
+      transform: rotate(0deg);
+    }
+
+    .group-summary {
+      font-weight: 400;
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .group-review-rating {
+      display: table-row;
+    }
+
+    .group-review-rating.group-hidden {
+      display: none;
+    }
+
+    .group-review-rating td:first-child {
+      font-size: 13px;
+    }
+
+    .group-endpoint {
+      display: table-row;
+    }
+
+    .group-endpoint.group-hidden {
+      display: none;
+    }
+
+    .group-endpoint td:first-child {
+      font-size: 13px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    @media (max-width: 640px) {
+      .pdp-header {
+        flex-direction: column;
+      }
+
+      .summary {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🔍 PDP Feature Monitor Report</h1>
+      <div class="run-info">
+        <span>📅 11/05/2026, 14:37:24</span>
+        <span>⏱️ Duração: 24.1s</span>
+        <span>🆔 run_1778521044170</span>
+      </div>
+    </header>
+
+    <div class="summary">
+      <div class="summary-card total">
+        <div class="summary-number">1</div>
+        <div class="summary-label">Total de PDPs</div>
+      </div>
+      <div class="summary-card pass">
+        <div class="summary-number">1</div>
+        <div class="summary-label">Passou</div>
+      </div>
+      <div class="summary-card fail">
+        <div class="summary-number">0</div>
+        <div class="summary-label">Falhou</div>
+      </div>
+      <div class="summary-card error">
+        <div class="summary-number">0</div>
+        <div class="summary-label">Erros</div>
+      </div>
+    </div>
+
+    <main>
+      
+    <div class="pdp-card success">
+      <div class="pdp-header">
+        <div class="pdp-title">
+          <span class="pdp-status">✅</span>
+          <h3>Sabonete em Barra Kaiak</h3>
+        </div>
+        <div class="pdp-meta">
+          <span class="badge badge-ouro">OURO</span>
+          <span class="badge badge-vendor">natura</span>
+          <span class="badge badge-country"><img src="https://flagcdn.com/20x15/br.png" alt="BR" style="vertical-align:middle;margin-right:2px" width="20" height="15"> BR</span>
+        </div>
+      </div>
+
+      <div class="pdp-info">
+        <p><strong>SKU:</strong> NATBRA-108875</p>
+        <p><strong>URL:</strong> <a href="https://www.natura.com.br/p/sabonete-em-barra-corpo-e-barba-kaiak-2-un-de-90-g-cada/NATBRA-108875" target="_blank">https://www.natura.com.br/p/sabonete-em-barra-corpo-e-barba-kaiak-2-un-de-90-g-cada/NATBRA-108875</a></p>
+        <p><strong>Tempo de carga:</strong> 1.4s</p>
+        
+        
+      <div class="remote-config-section">
+        <details open>
+          <summary>🔧 Remote Config Flags (61 capturadas) - locale: pt-BR</summary>
+          <div class="rc-categories">
+    
+        <div class="rc-category">
+          <h4>📝 Reviews (product_reviews)</h4>
+          <div class="rc-flags-grid">
+      <div class="rc-flag"><code>enabled</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>ai_summary</code> <span class="flag-false">✗</span></div><div class="rc-flag"><code>filter</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>sort</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>photos</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>feedback</code> <span class="flag-na">-</span></div><div class="rc-flag"><code>recommendation.enabled</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>recommendation.min_count</code> 4</div>
+          </div>
+        </div>
+      
+        <div class="rc-category">
+          <h4>🛍️ PDP Features</h4>
+          <div class="rc-flags-grid">
+      <div class="rc-flag"><code>pdp_new_experience</code> <span class="flag-false">✗</span></div><div class="rc-flag"><code>disable_omni_pickup_tab_on_pdp</code> <span class="flag-false">✗</span></div><div class="rc-flag"><code>enable_descount_amount_tag_pdp</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>enable_gift_pdp_new_experience</code> <span class="flag-false">✗</span></div><div class="rc-flag"><code>enable_pdp_review</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>enable_vto_pdp</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>enable_shoptheset_pdp</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>enable_shoptheset_pdp_einstein</code> <span class="flag-false">✗</span></div><div class="rc-flag"><code>wl_target_personalization_pdp_showcase</code> null</div><div class="rc-flag"><code>wl_target_personalization_pdp_showcase_v2</code> <span class="flag-true">✓</span></div>
+          </div>
+        </div>
+      
+        <div class="rc-category">
+          <h4>⭐ Reviews (individual)</h4>
+          <div class="rc-flags-grid">
+      <div class="rc-flag"><code>enable_konfidency_review</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>enable_review_ai_summary</code> <span class="flag-false">✗</span></div><div class="rc-flag"><code>enable_review_feedback</code> <span class="flag-false">✗</span></div><div class="rc-flag"><code>enable_reviews_filter</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>enable_reviews_sorting</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>enable_image_and_upload_review</code> <span class="flag-false">✗</span></div>
+          </div>
+        </div>
+      
+        <div class="rc-category">
+          <h4>📦 Showcases</h4>
+          <div class="rc-flags-grid">
+      <div class="rc-flag"><code>enable_installments_showcase</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>feature_bag_favorites_showcase</code> [object Object]</div><div class="rc-flag"><code>showcase_sacola_new_experience</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>feature_product_recommendations</code> <span class="flag-true">✓</span></div>
+          </div>
+        </div>
+      
+        <div class="rc-category">
+          <h4>🃏 Product Card</h4>
+          <div class="rc-flags-grid">
+      <div class="rc-flag"><code>enable_product_card_rating</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>wl_show_rating_on_product_card</code> <span class="flag-false">✗</span></div>
+          </div>
+        </div>
+      
+        <div class="rc-category">
+          <h4>🛒 Commerce/Checkout</h4>
+          <div class="rc-flags-grid">
+      <div class="rc-flag"><code>enable_cashback</code> [object Object]</div><div class="rc-flag"><code>enable_cashback_account</code> <span class="flag-false">✗</span></div><div class="rc-flag"><code>enable_checkout_einstein_activities</code> <span class="flag-false">✗</span></div><div class="rc-flag"><code>enable_click_to_pay</code> <span class="flag-false">✗</span></div><div class="rc-flag"><code>enable_choose_your_samples</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>enable_special_gifts</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>enable_module_gift_cart</code> [object Object]</div><div class="rc-flag"><code>enable_progressivepromo_progressbar</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>wl_default_cb_commerce</code> <span class="flag-true">✓</span></div>
+          </div>
+        </div>
+      
+        <div class="rc-category">
+          <h4>🔍 Search & Personalization</h4>
+          <div class="rc-flags-grid">
+      <div class="rc-flag"><code>enable_front_personalization_sdk</code> <span class="flag-false">✗</span></div><div class="rc-flag"><code>enableSearchAI</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>enable_conversational_search_app</code> <span class="flag-false">✗</span></div><div class="rc-flag"><code>auto_suggest_search</code> <span class="flag-true">✓</span></div>
+          </div>
+        </div>
+      
+        <div class="rc-category">
+          <h4>💬 Liveshopping & Chat</h4>
+          <div class="rc-flags-grid">
+      <div class="rc-flag"><code>enable_liveshopping</code> <span class="flag-false">✗</span></div><div class="rc-flag"><code>enable_floating_button_liveshopping</code> <span class="flag-false">✗</span></div><div class="rc-flag"><code>enable_chatbot_service</code> <span class="flag-false">✗</span></div><div class="rc-flag"><code>wl_enable_chatbot</code> <span class="flag-false">✗</span></div>
+          </div>
+        </div>
+      
+        <div class="rc-category">
+          <h4>🔐 Auth & Login</h4>
+          <div class="rc-flags-grid">
+      <div class="rc-flag"><code>enable_login_without_password</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>featureFlag_enable_apple_social_login</code> <span class="flag-false">✗</span></div><div class="rc-flag"><code>featureFlag_enable_facebook_social_login</code> <span class="flag-false">✗</span></div><div class="rc-flag"><code>featureFlag_enable_google_social_login</code> <span class="flag-false">✗</span></div>
+          </div>
+        </div>
+      
+        <div class="rc-category">
+          <h4>🔧 Other</h4>
+          <div class="rc-flags-grid">
+      <div class="rc-flag"><code>enable_ocular</code> <span class="flag-false">✗</span></div><div class="rc-flag"><code>enable_consultant_portrait</code> <span class="flag-false">✗</span></div><div class="rc-flag"><code>enable_consulting</code> <span class="flag-false">✗</span></div><div class="rc-flag"><code>feature_spoken_product</code> <span class="flag-true">✓</span></div>
+          </div>
+        </div>
+      
+          </div>
+        </details>
+      </div>
+    
+        
+      <div class="remote-config-section commerce-flags">
+        <details open>
+          <summary>🛒 Commerce Feature Flags (65 capturadas)</summary>
+          <div class="rc-categories">
+    
+        <div class="rc-category">
+          <h4>🏢 Business Model</h4>
+          <div class="rc-flags-grid">
+      <div class="rc-flag"><code>businessModel</code> B2C_B2B2C</div><div class="rc-flag"><code>businessModelB2B2C</code> <span class="flag-false">✗</span></div><div class="rc-flag"><code>businessModelB2C</code> <span class="flag-false">✗</span></div>
+          </div>
+        </div>
+      
+        <div class="rc-category">
+          <h4>💰 Cashback & Promos</h4>
+          <div class="rc-flags-grid">
+      <div class="rc-flag"><code>crmCashback</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>cbCommerce</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>cashbackCampaign</code> <span class="flag-false">✗</span></div>
+          </div>
+        </div>
+      
+        <div class="rc-category">
+          <h4>💳 Checkout & Payment</h4>
+          <div class="rc-flags-grid">
+      <div class="rc-flag"><code>enableFastCheckout</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>enablePix</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>enableZeroAuth</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>guestCheckout</code> <span class="flag-false">✗</span></div><div class="rc-flag"><code>installments</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>installmentsMP</code> <span class="flag-false">✗</span></div><div class="rc-flag"><code>installmentsNPay</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>natBankImmediatePix</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>natBankSaveCard</code> <span class="flag-false">✗</span></div>
+          </div>
+        </div>
+      
+        <div class="rc-category">
+          <h4>🔐 Social Login</h4>
+          <div class="rc-flags-grid">
+      <div class="rc-flag"><code>socialLogin</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>enableGoogleSocialLogin</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>enableFacebookSocialLogin</code> <span class="flag-false">✗</span></div><div class="rc-flag"><code>enableAppleSocialLogin</code> <span class="flag-true">✓</span></div>
+          </div>
+        </div>
+      
+        <div class="rc-category">
+          <h4>🛍️ PDP Features</h4>
+          <div class="rc-flags-grid">
+      <div class="rc-flag"><code>displayStockOnProductDetailPage</code> <span class="flag-false">✗</span></div><div class="rc-flag"><code>newExperiencePdpEnable</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>enablePdpFreightCalculation</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>enableDisplayFreeShippingPdp</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>freeShippingValue</code> 149</div><div class="rc-flag"><code>nePagesPdV2</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>newExperienceEnableGiftPdp</code> <span class="flag-false">✗</span></div>
+          </div>
+        </div>
+      
+        <div class="rc-category">
+          <h4>🛒 Cart & Basket</h4>
+          <div class="rc-flags-grid">
+      <div class="rc-flag"><code>newExperienceShoppingCartPageEnable</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>newBasketFlow</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>enableBasketCalculateShipping</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>shareCart</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>favorites</code> <span class="flag-true">✓</span></div>
+          </div>
+        </div>
+      
+        <div class="rc-category">
+          <h4>📦 Omni Channel</h4>
+          <div class="rc-flags-grid">
+      <div class="rc-flag"><code>omniEnabled</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>omniFilterByCity</code> <span class="flag-false">✗</span></div><div class="rc-flag"><code>omniPickupDays</code> 7</div><div class="rc-flag"><code>omniStoresQuantity</code> 30</div><div class="rc-flag"><code>omniEnableDeliverySearchFilter</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>enableMultiShipmentDesktop</code> <span class="flag-false">✗</span></div>
+          </div>
+        </div>
+      
+        <div class="rc-category">
+          <h4>🎁 Gift & Packaging</h4>
+          <div class="rc-flags-grid">
+      <div class="rc-flag"><code>giftPackaging</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>enableGiftOnSite</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>giftSku</code> NATBRA-100455</div>
+          </div>
+        </div>
+      
+        <div class="rc-category">
+          <h4>👤 Consultant</h4>
+          <div class="rc-flags-grid">
+      <div class="rc-flag"><code>cnBlockSelfBuy</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>cnRecommendation</code> <span class="flag-false">✗</span></div><div class="rc-flag"><code>enableConsultantRating</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>enableConsultantMercadoPagoToken</code> <span class="flag-true">✓</span></div>
+          </div>
+        </div>
+      
+        <div class="rc-category">
+          <h4>🏷️ Coupon & Discount</h4>
+          <div class="rc-flags-grid">
+      <div class="rc-flag"><code>couponCenter</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>enableCouponCompatibleCurrentCart</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>promoDisplayFreeShip</code> <span class="flag-false">✗</span></div><div class="rc-flag"><code>originDiscount</code> <span class="flag-true">✓</span></div>
+          </div>
+        </div>
+      
+        <div class="rc-category">
+          <h4>🔧 Other Commerce</h4>
+          <div class="rc-flags-grid">
+      <div class="rc-flag"><code>liveShopping</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>guidedSelling</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>memberGetMember</code> <span class="flag-false">✗</span></div><div class="rc-flag"><code>productRecommendation</code> <span class="flag-false">✗</span></div><div class="rc-flag"><code>socialShare</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>newExperienceEnable</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>newExperienceCategoryEnable</code> <span class="flag-true">✓</span></div><div class="rc-flag"><code>regretPurchaseEnabled</code> <span class="flag-false">✗</span></div><div class="rc-flag"><code>orderCancellationForm</code> <span class="flag-true">✓</span></div>
+          </div>
+        </div>
+      
+          </div>
+        </details>
+      </div>
+    
+      </div>
+
+      <table class="features-table">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Status</th>
+            <th>Screenshot</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+        <tr class="feature-group-header status-pass expanded" onclick="this.classList.toggle('expanded');var rows=this.parentElement.querySelectorAll('.group-review-rating');rows.forEach(function(r){r.classList.toggle('group-hidden')})" style="cursor:pointer">
+          <td>✅ ⭐ Avaliações & Rating <span class="group-toggle">▶</span> <span class="group-summary">(6/6 ok)</span></td>
+          <td>Todas as sub-features ok</td>
+          <td>-</td>
+        </tr>
+      
+        <tr class="group-review-rating status-pass">
+          <td style="padding-left:32px">✅ Avaliações do produto</td>
+          <td>Seção de avaliações presente com 4 reviews<br><small class="flag-info">🔧 product_reviews.enabled=true</small></td>
+          <td>-</td>
+        </tr>
+        
+        <tr class="group-review-rating status-pass">
+          <td style="padding-left:32px">✅ Filtro de avaliações</td>
+          <td>Botão de filtro de avaliações presente<br><small class="flag-info">🔧 product_reviews.filter=true</small></td>
+          <td>-</td>
+        </tr>
+        
+        <tr class="group-review-rating status-pass">
+          <td style="padding-left:32px">✅ Ordenação de avaliações</td>
+          <td>Dropdown de ordenação de avaliações presente<br><small class="flag-info">🔧 product_reviews.sort=true</small></td>
+          <td>-</td>
+        </tr>
+        
+        <tr class="group-review-rating status-warning">
+          <td style="padding-left:32px">⚠️ Fotos nas avaliações</td>
+          <td>Feature de fotos habilitada (filtro de mídia presente), mas nenhuma avaliação com foto na página atual<br><small class="flag-info">🔧 product_reviews.photos=true</small></td>
+          <td>-</td>
+        </tr>
+        
+        <tr class="group-review-rating status-pass">
+          <td style="padding-left:32px">✅ Recomendação de avaliações</td>
+          <td>100% de recomendação exibido<br><small class="flag-info">🔧 product_reviews.recommendation.enabled=true</small></td>
+          <td>-</td>
+        </tr>
+        
+        <tr class="group-review-rating status-pass">
+          <td style="padding-left:32px">✅ Nota/Rating</td>
+          <td>Indicador de rating presente</td>
+          <td>-</td>
+        </tr>
+        
+        <tr class="feature-group-header status-pass expanded" onclick="this.classList.toggle('expanded');var rows=this.parentElement.querySelectorAll('.group-endpoint');rows.forEach(function(r){r.classList.toggle('group-hidden')})" style="cursor:pointer">
+          <td>✅ 🌐 Endpoints de API <span class="group-toggle">▶</span> <span class="group-summary">(1/1 ok)</span></td>
+          <td>Todos os endpoints ok</td>
+          <td>-</td>
+        </tr>
+      
+        <tr class="group-endpoint status-pass">
+          <td style="padding-left:32px">✅ 🌐 API de avaliações (/reviews/v2)</td>
+          <td>2 chamada(s) ok (status 200)<br><code style="font-size:11px;color:#6b7280;word-break:break-all">{"productId":"NATBRA-108875","aggregatedRating":4.9,"reviewsCount":32,"recommendedPercentage":100,"reviews":[{"id":"6a01d6735bcde8097202242d","createdAt":"2026-05-11T13:15:31.734Z","rating":5,"helpful</code><br><small><code style="font-size:11px">GET 200 /bff-app-natura-brazil/reviews/v2/details</code><br><code style="font-size:11px">GET 200 /bff-app-natura-brazil/reviews/v2/details</code></small></td>
+          <td>-</td>
+        </tr>
+        
+    <tr class="status-pass">
+      <td>✅ Vitrine "Mais produtos da marca"</td>
+      <td>Vitrine presente com 36 produto(s) ("mais produtos da marca")</td>
+      <td>-</td>
+    </tr>
+  
+    <tr class="status-pass">
+      <td>✅ Vitrine "Achamos que você vai gostar"</td>
+      <td>Vitrine de recomendações presente com 36 produto(s) ("achamos que você vai gostar")</td>
+      <td>-</td>
+    </tr>
+  
+    <tr class="status-pass">
+      <td>✅ Imagens do produto</td>
+      <td>4 imagem(ns) carregada(s) corretamente (carrossel presente)</td>
+      <td>-</td>
+    </tr>
+  
+    <tr class="status-pass">
+      <td>✅ Preço e desconto</td>
+      <td>Preço R$ 28.90</td>
+      <td>-</td>
+    </tr>
+  
+    <tr class="status-warning">
+      <td>⚠️ Simulação de frete</td>
+      <td>Seção de frete presente (campo CEP pode estar em componente dinâmico)</td>
+      <td>-</td>
+    </tr>
+  
+    <tr class="status-pass">
+      <td>✅ Chaves de tradução (i18n)</td>
+      <td>Nenhuma chave de tradução exposta na página</td>
+      <td>-</td>
+    </tr>
+  
+        </tbody>
+      </table>
+
+      
+    </div>
+  
+    </main>
+
+    <footer>
+      PDP Feature Monitor • Gerado automaticamente
+    </footer>
+  </div>
+</body>
+</html>

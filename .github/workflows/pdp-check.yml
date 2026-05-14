@@ -1,0 +1,166 @@
+name: PDP Feature Monitor
+
+on:
+  # Run daily at 8:00 UTC (5:00 BRT)
+  schedule:
+    - cron: "0 8 * * *"
+
+  # Allow manual trigger with optional filters
+  workflow_dispatch:
+    inputs:
+      features_filter:
+        description: "Features a verificar (separadas por vírgula, vazio = todas)"
+        required: false
+        default: ""
+        type: string
+      operations_filter:
+        description: "Operações a verificar (ex: natura-BR,avon-BR, vazio = todas)"
+        required: false
+        default: ""
+        type: string
+      send_email_always:
+        description: "Enviar e-mail mesmo se tudo passar"
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🎭 Install Playwright browsers
+        run: npx playwright install chromium firefox --with-deps
+
+      - name: 🔍 Run PDP checks
+        id: checks
+        run: npm run check
+        env:
+          FEATURES_FILTER: ${{ inputs.features_filter }}
+          OPERATIONS_FILTER: ${{ inputs.operations_filter }}
+        continue-on-error: true
+
+      - name: 📊 Find report directory
+        id: find_report
+        run: |
+          REPORT_DIR=$(ls -td reports/run_* 2>/dev/null | head -1)
+          echo "report_dir=$REPORT_DIR" >> $GITHUB_OUTPUT
+          if [ -f "$REPORT_DIR/report.json" ]; then
+            SUMMARY=$(cat "$REPORT_DIR/report.json" | jq -r '"Total: \(.summary.total), Passed: \(.summary.passed), Failed: \(.summary.failed), Errors: \(.summary.errors)"')
+            echo "summary=$SUMMARY" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 📤 Upload report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pdp-monitor-report-${{ github.run_number }}
+          path: reports/
+          retention-days: 30
+
+      - name: 🌐 Publish report to GitHub Pages
+        run: |
+          REPORT_DIR=$(ls -td reports/run_* 2>/dev/null | head -1)
+          if [ -f "$REPORT_DIR/report.html" ]; then
+            mkdir -p docs
+            RUN_ID=$(basename "$REPORT_DIR")
+
+            # Keep latest shortcuts
+            cp "$REPORT_DIR/report.html" docs/last-report.html
+            cp "$REPORT_DIR/report.json" docs/last-report.json
+
+            # Keep historical reports published on Pages
+            TARGET_DIR="docs/reports/$RUN_ID"
+            mkdir -p "$TARGET_DIR"
+            cp "$REPORT_DIR/report.html" "$TARGET_DIR/report.html"
+            cp "$REPORT_DIR/report.json" "$TARGET_DIR/report.json"
+
+            # Keep only the most recent historical reports on Pages
+            MAX_REPORTS=50
+            COUNT=0
+            for DIR in $(ls -1d docs/reports/run_* 2>/dev/null | sort -r); do
+              COUNT=$((COUNT + 1))
+              if [ "$COUNT" -gt "$MAX_REPORTS" ]; then
+                rm -rf "$DIR"
+              fi
+            done
+
+            # Build reports index used by docs/index.html
+            TMP_INDEX=$(mktemp)
+            for DIR in $(ls -1d docs/reports/run_* 2>/dev/null | sort -r); do
+              if [ -f "$DIR/report.json" ]; then
+                jq -c \
+                  --arg runId "$(basename "$DIR")" \
+                  --arg htmlPath "${DIR#docs/}/report.html" \
+                  --arg jsonPath "${DIR#docs/}/report.json" \
+                  '{
+                    runId: $runId,
+                    startTime,
+                    endTime,
+                    durationMs,
+                    summary,
+                    htmlPath: $htmlPath,
+                    jsonPath: $jsonPath
+                  }' "$DIR/report.json" >> "$TMP_INDEX"
+              fi
+            done
+
+            jq -s '{
+              generatedAt: (now | todate),
+              reports: .
+            }' "$TMP_INDEX" > docs/reports/index.json
+
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add docs/last-report.html docs/last-report.json docs/reports
+            git diff --staged --quiet || git commit -m "chore: update last report [run #${{ github.run_number }}]"
+            git pull --rebase origin HEAD
+            git push
+            echo "✅ Report published to GitHub Pages"
+          fi
+
+      - name: 📧 Send email notification (on failure)
+        if: steps.checks.outcome == 'failure' || inputs.send_email_always == 'true'
+        uses: dawidd6/action-send-mail@v3
+        continue-on-error: true
+        with:
+          server_address: ${{ secrets.SMTP_SERVER }}
+          server_port: ${{ secrets.SMTP_PORT }}
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: "🔴 PDP Monitor Alert - Features fora do ar"
+          to: ${{ secrets.ALERT_EMAIL_TO }}
+          from: ${{ secrets.ALERT_EMAIL_FROM }}
+          body: |
+            ⚠️ O monitoramento de PDPs detectou problemas!
+
+            📊 Resumo: ${{ steps.find_report.outputs.summary }}
+
+            📅 Execução: ${{ github.run_number }}
+            🔗 Workflow: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+            Verifique o relatório completo no artifact do workflow.
+          attachments: ${{ steps.find_report.outputs.report_dir }}/report.html
+
+      - name: ✅ Check final status
+        if: steps.checks.outcome == 'failure'
+        run: exit 1
