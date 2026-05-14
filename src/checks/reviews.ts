@@ -15,14 +15,14 @@ export async function checkReviews(page: Page): Promise<CheckResult> {
   const feature = "Avaliações do produto";
 
   try {
-    // Scroll down to trigger lazy loading of reviews section
-    await page.evaluate(() => window.scrollBy(0, 2000));
-    await page.waitForTimeout(1500); // eslint-disable-line playwright/no-wait-for-timeout
+    // Scroll to bottom to ensure reviews lazy-loading is triggered
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    await page.waitForTimeout(600);
 
     // Primary: look for #reviews container
     const reviewsContainer = page.locator("#reviews");
     const hasReviews = await reviewsContainer
-      .isVisible({ timeout: 8000 })
+      .isVisible({ timeout: 10000 })
       .catch(() => false);
 
     if (!hasReviews) {

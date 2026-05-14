@@ -10,6 +10,7 @@
     "explore": "tsc && node dist/explore.js",
     "explore:headed": "tsc && HEADLESS=false node dist/explore.js",
     "test": "npx playwright test",
+    "test:unit": "npx playwright test src/tests/",
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix"
   },

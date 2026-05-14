@@ -13,10 +13,7 @@
 import { chromium, firefox, Browser, Page } from "@playwright/test";
 import * as fs from "fs";
 import * as path from "path";
-import {
-  TIMING,
-  isFeatureSupported,
-} from "./checks/configs/config.js";
+import { TIMING, isFeatureSupported } from "./checks/configs/config.js";
 import {
   FEATURE_CHECKERS,
   logFeaturesGrouped,
@@ -32,15 +29,36 @@ import {
 import { generateHtmlReport, generateJsonReport } from "./reporter.js";
 import {
   setupRemoteConfigCapture,
+  setupCommerceFeatureFlagCapture,
+  extractCommerceFeatureFlags,
+  mergeCommerceFeatureFlags,
   isFeatureEnabledByRemoteConfig,
   formatFlagsForLog,
+  getCommerceFlagsByCategory,
+  countCommerceFlags,
   COUNTRY_TO_LOCALE,
   RemoteConfigFlags,
+  CommerceFeatureFlags,
 } from "./checks/remoteConfig.js";
 import { DOMAINS } from "./checks/configs/domains.js";
 import { FEATURES } from "./checks/configs/features.js";
+import { runWithConcurrency, jitter, parseConcurrency } from "./concurrency.js";
+import {
+  describePlaywrightTraceMode,
+  finalizeBrowserTrace,
+  getPlaywrightTraceMode,
+  startBrowserTraceIfEnabled,
+} from "./playwrightTrace.js";
 
-
+function formatFlagLogValue(value: unknown): string {
+  if (value === true) {
+    return "✅";
+  }
+  if (value === false) {
+    return "❌";
+  }
+  return String(value);
+}
 
 export async function dismissCookieBannerExplore(page: Page): Promise<void> {
   return dismissCookieBanner(page, "     ");
@@ -55,11 +73,15 @@ export async function navigateViaVitrine(page: Page): Promise<string | null> {
   // Scroll progressively to load all lazy vitrines
   for (let i = 1; i <= 8; i++) {
     await page.evaluate((step) => window.scrollTo(0, step * 800), i);
-    await page.waitForTimeout(600); // eslint-disable-line playwright/no-wait-for-timeout
   }
 
-  // Wait a bit more for vitrines to fully render
-  await page.waitForTimeout(2000); // eslint-disable-line playwright/no-wait-for-timeout
+  // Wait until at least one product link appears in the DOM, or fall back after 6 s
+  await page
+    .waitForFunction(
+      () => document.querySelectorAll('a[href*="/p/"]').length > 0,
+      { timeout: 6000 },
+    )
+    .catch(() => {});
 
   // Extract product links directly from DOM - don't rely on Playwright visibility
   // Many carousels have hidden slides that contain valid product links
@@ -69,7 +91,7 @@ export async function navigateViaVitrine(page: Page): Promise<string | null> {
 
     links.forEach((link) => {
       const href = link.getAttribute("href");
-      if (href && href.includes("/p/")) {
+      if (href?.includes("/p/")) {
         // Normalize URL (remove query params for deduplication)
         const baseUrl = href.split("?")[0];
         uniqueUrls.add(baseUrl);
@@ -155,9 +177,10 @@ export async function navigateViaVitrine(page: Page): Promise<string | null> {
     timeout: TIMING.navigationTimeout,
   });
 
-  // Wait for PDP to load
-  await page.waitForLoadState("domcontentloaded");
-  await page.waitForTimeout(TIMING.pageLoadSettleTime); // eslint-disable-line playwright/no-wait-for-timeout
+  // Wait for PDP to fully load; domcontentloaded is already guaranteed by goto()
+  await page
+    .waitForLoadState("load", { timeout: TIMING.pageLoadSettleTime })
+    .catch(() => {});
 
   return page.url();
 }
@@ -172,11 +195,13 @@ export async function runExplorePdpChecks(
   label: string,
   remoteConfigFlags?: RemoteConfigFlags | null,
   collectRemoteConfig?: (() => Promise<RemoteConfigFlags | null>) | null,
+  collectCommerceFlags?: (() => Promise<CommerceFeatureFlags | null>) | null,
 ): Promise<{
   features: CheckResult[];
   passed: number;
   failed: number;
   remoteConfigFlags?: RemoteConfigFlags;
+  commerceFeatureFlags?: CommerceFeatureFlags;
 }> {
   // Scroll progressively down to load lazy content, then back to top
   await scrollAndLoadContent(page);
@@ -187,6 +212,25 @@ export async function runExplorePdpChecks(
     rcFlags = await collectRemoteConfig();
     if (rcFlags) {
       console.log(`     🔧 Remote Config: ${formatFlagsForLog(rcFlags)}`);
+    }
+  }
+
+  const fromNetwork = collectCommerceFlags
+    ? await collectCommerceFlags()
+    : null;
+  const fromPage = await extractCommerceFeatureFlags(page);
+  const commerceFeatureFlags = mergeCommerceFeatureFlags(fromNetwork, fromPage);
+  if (commerceFeatureFlags) {
+    const totalFlags = countCommerceFlags(commerceFeatureFlags);
+    console.log(
+      `     🛒 Commerce Feature Flags capturado: ${totalFlags} flags`,
+    );
+    const categories = getCommerceFlagsByCategory(commerceFeatureFlags);
+    for (const [category, flags] of Object.entries(categories)) {
+      const flagSummary = Object.entries(flags)
+        .map(([k, v]) => `${k}=${formatFlagLogValue(v)}`)
+        .join(", ");
+      console.log(`        ${category}: ${flagSummary}`);
     }
   }
 
@@ -288,7 +332,13 @@ export async function runExplorePdpChecks(
     `\n     📊 Resultado: ${passed} ok, ${failed} falha(s) de ${applicableFeatures.length} feature(s)`,
   );
 
-  return { features, passed, failed, remoteConfigFlags: rcFlags ?? undefined };
+  return {
+    features,
+    passed,
+    failed,
+    remoteConfigFlags: rcFlags ?? undefined,
+    commerceFeatureFlags: commerceFeatureFlags ?? undefined,
+  };
 }
 
 /**
@@ -315,6 +365,9 @@ export async function runExploratoryJourney(
     userAgent:
       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
     ignoreHTTPSErrors: true,
+    extraHTTPHeaders: {
+      "Accept-Language": "pt-BR,pt;q=0.9,es;q=0.8,en;q=0.7",
+    },
   });
 
   // Mask automation signals that trigger Akamai bot detection
@@ -333,6 +386,31 @@ export async function runExploratoryJourney(
   // Setup Remote Config capture BEFORE navigation
   const locale = COUNTRY_TO_LOCALE[domainConfig.country] || "pt-BR";
   const collectRemoteConfig = setupRemoteConfigCapture(page, locale);
+  const collectCommerceFlags = setupCommerceFeatureFlagCapture(page);
+
+  const traceMode = getPlaywrightTraceMode();
+  const traceZipPath = path.join(
+    outputDir,
+    "traces",
+    `explore_${label.replace(/[^a-zA-Z0-9._-]+/g, "_")}_${Date.now()}.zip`,
+  );
+  let traceActive = await startBrowserTraceIfEnabled(context, traceMode);
+
+  const finishTrace = async (
+    runSucceeded: boolean,
+  ): Promise<string | undefined> => {
+    if (!traceActive) return undefined;
+    const p = await finalizeBrowserTrace(
+      context,
+      traceMode,
+      traceActive,
+      runSucceeded,
+      traceZipPath,
+    );
+    traceActive = false;
+    if (p) console.log(`   🎬 Trace salvo: ${p}`);
+    return p;
+  };
 
   try {
     // 1. Acessar a Home
@@ -351,6 +429,7 @@ export async function runExploratoryJourney(
 
     if (!pdpUrl) {
       console.log("   ❌ Nenhuma vitrine com produtos encontrada na home");
+      const playwrightTracePath = await finishTrace(false);
       return {
         sku: "explore",
         name: `Exploratória: ${label}`,
@@ -361,12 +440,14 @@ export async function runExploratoryJourney(
         success: false,
         features: [],
         error: "Nenhuma vitrine com produtos encontrada na home",
+        playwrightTracePath,
       };
     }
 
     // Verify we actually landed on a PDP
     if (!pdpUrl.includes("/p/")) {
       console.log(`   ❌ Não chegou em uma PDP (URL: ${pdpUrl})`);
+      const playwrightTracePath = await finishTrace(false);
       return {
         sku: "explore",
         name: `Exploratória: ${label}`,
@@ -378,6 +459,7 @@ export async function runExploratoryJourney(
         success: false,
         features: [],
         error: `Navegação não chegou em uma PDP (URL: ${pdpUrl})`,
+        playwrightTracePath,
       };
     }
 
@@ -390,14 +472,16 @@ export async function runExploratoryJourney(
 
     // 3. Rodar checagens
     console.log("\n   📋 Rodando validações da PDP...");
-    const { features, failed, remoteConfigFlags } = await runExplorePdpChecks(
-      page,
-      domainConfig,
-      outputDir,
-      label,
-      null, // No cached flags
-      collectRemoteConfig, // Collector function set up before navigation
-    );
+    const { features, failed, remoteConfigFlags, commerceFeatureFlags } =
+      await runExplorePdpChecks(
+        page,
+        domainConfig,
+        outputDir,
+        label,
+        null, // No cached flags
+        collectRemoteConfig, // Collector function set up before navigation
+        collectCommerceFlags,
+      );
 
     // Take full page screenshot on failure
     let pageScreenshot: string | undefined;
@@ -414,6 +498,8 @@ export async function runExploratoryJourney(
 
     console.log(`\n   ✅ Jornada exploratória finalizada: ${label}`);
 
+    const playwrightTracePath = await finishTrace(failed === 0);
+
     return {
       sku: "explore",
       name: `Exploratória: ${label} — ${title}`,
@@ -425,12 +511,15 @@ export async function runExploratoryJourney(
       features,
       pageScreenshot,
       remoteConfigFlags,
+      commerceFeatureFlags,
+      playwrightTracePath,
     };
   } catch (error) {
     console.error(
       `\n   ❌ Falha na jornada exploratória (${label}):`,
       error instanceof Error ? error.message : error,
     );
+    const playwrightTracePath = await finishTrace(false);
     return {
       sku: "explore",
       name: `Exploratória: ${label}`,
@@ -441,8 +530,19 @@ export async function runExploratoryJourney(
       success: false,
       features: [],
       error: error instanceof Error ? error.message : String(error),
+      playwrightTracePath,
     };
   } finally {
+    if (traceActive) {
+      await finalizeBrowserTrace(
+        context,
+        traceMode,
+        traceActive,
+        false,
+        traceZipPath,
+      ).catch(() => {});
+      traceActive = false;
+    }
     await context.close();
   }
 }
@@ -474,6 +574,19 @@ async function main() {
   }
   console.log(`   Operações: ${domainsToTest.length}`);
 
+  const traceMode = getPlaywrightTraceMode();
+  if (traceMode !== "off") {
+    console.log(
+      `   🎬 Trace Playwright: ${describePlaywrightTraceMode(traceMode)} — abrir com: npx playwright show-trace <caminho.zip>`,
+    );
+  }
+
+  // Concurrency from CONCURRENCY env var (default 3; hard-capped at 8)
+  const concurrency = parseConcurrency(3);
+  console.log(
+    `   ⚡ Concorrência: ${concurrency} worker(s) | jitter 0\u20132 s inicial por domínio`,
+  );
+
   // Launch browsers
   const browserChromium = await chromium.launch({
     headless: isHeadless,
@@ -493,33 +606,21 @@ async function main() {
   const results: PdpCheckResult[] = [];
 
   try {
-    for (let i = 0; i < domainsToTest.length; i++) {
-      const domainConfig = domainsToTest[i];
-      console.log(`\n[${i + 1}/${domainsToTest.length}]`);
-
-      // Use Firefox for international sites that may block headless Chromium
-      const useFirefox =
-        browserFirefox &&
-        domainConfig.vendor === "natura" &&
-        domainConfig.country !== "BR" &&
-        !domainConfig.channel;
-
-      const browser = useFirefox ? browserFirefox! : browserChromium;
-
-      const result = await runExploratoryJourney(
-        browser,
-        domainConfig,
-        outputDir,
-      );
-      results.push(result);
-
-      // Delay between operations
-      if (i < domainsToTest.length - 1) {
-        await new Promise((resolve) =>
-          setTimeout(resolve, TIMING.delayBetweenPages),
-        );
-      }
-    }
+    // Each domain is its own task (1:1). Run in parallel with a 0\u20132 s initial
+    // jitter to spread first requests and reduce WAF/rate-limit exposure.
+    const tasks = domainsToTest.map(
+      (domainConfig) => async (): Promise<PdpCheckResult> => {
+        await jitter(0, 2000);
+        const useFirefox =
+          browserFirefox !== null &&
+          domainConfig.vendor === "natura" &&
+          domainConfig.country !== "BR" &&
+          !domainConfig.channel;
+        const browser = useFirefox ? browserFirefox! : browserChromium;
+        return runExploratoryJourney(browser, domainConfig, outputDir);
+      },
+    );
+    results.push(...(await runWithConcurrency(tasks, concurrency)));
   } finally {
     await browserChromium.close();
     if (browserFirefox) await browserFirefox.close();

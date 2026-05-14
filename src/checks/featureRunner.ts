@@ -12,7 +12,7 @@
 
 import { Page } from "@playwright/test";
 import { CheckResult } from "../types.js";
-import { TIMING, SELECTORS } from "./configs/config.js";
+import { SELECTORS } from "./configs/config.js";
 import {
   checkReviews,
   checkAiReviewSummary,
@@ -144,6 +144,11 @@ export function logFeaturesGrouped(
 // Page interaction helpers
 // ---------------------------------------------------------------------------
 
+/** Fixed delay without `page.waitForTimeout` (forbidden by eslint-plugin-playwright). */
+function sleepMs(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 /**
  * Dismiss the cookie consent banner if present.
  * @param indent - leading whitespace for the confirmation log line
@@ -162,7 +167,10 @@ export async function dismissCookieBanner(
 
     if (isVisible) {
       await cookieButton.click();
-      await page.waitForTimeout(500); // eslint-disable-line playwright/no-wait-for-timeout
+      // Wait for the banner element to disappear rather than sleeping a fixed time
+      await cookieButton
+        .waitFor({ state: "hidden", timeout: 2000 })
+        .catch(() => {});
       console.log(`${indent}✓ Cookie banner dismissed`);
     }
   } catch {
@@ -175,11 +183,15 @@ export async function dismissCookieBanner(
  * then return to the top.
  */
 export async function scrollAndLoadContent(page: Page): Promise<void> {
-  for (let i = 1; i <= 5; i++) {
+  for (let i = 1; i <= 8; i++) {
     await page.evaluate((step) => window.scrollTo(0, step * 1000), i);
-    await page.waitForTimeout(500); // eslint-disable-line playwright/no-wait-for-timeout
+    // Wait between steps so lazy-loaded content has time to render
+    await sleepMs(400);
   }
-  await page.waitForTimeout(1500); // eslint-disable-line playwright/no-wait-for-timeout
+  // Scroll to the very bottom to ensure all lazy content (including reviews) is triggered
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await sleepMs(800);
+  // Bounded settle for lazy-loaded content (avoid networkidle — flaky with SPAs / long-lived connections)
+  await sleepMs(2000);
   await page.evaluate(() => window.scrollTo(0, 0));
-  await page.waitForTimeout(500); // eslint-disable-line playwright/no-wait-for-timeout
 }

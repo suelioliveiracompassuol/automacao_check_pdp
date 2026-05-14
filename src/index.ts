@@ -6,8 +6,8 @@
  */
 
 import { chromium, firefox, Browser } from "@playwright/test";
-import * as fs from "fs";
-import * as path from "path";
+import * as fs from "node:fs";
+import * as path from "node:path";
 import {
   TIMING,
   buildPdpUrl,
@@ -31,7 +31,9 @@ import { setupEndpointMonitor } from "./checks/endpointResponse.js";
 import { checkI18nKeys } from "./checks/i18n.js";
 import {
   setupRemoteConfigCapture,
+  setupCommerceFeatureFlagCapture,
   extractCommerceFeatureFlags,
+  mergeCommerceFeatureFlags,
   isFeatureEnabledByRemoteConfig,
   formatFlagsForLog,
   getFlagsByCategory,
@@ -46,21 +48,47 @@ import { SKUS } from "./checks/configs/skus.js";
 import { runExploratoryJourney } from "./explore.js";
 import { DOMAINS } from "./checks/configs/domains.js";
 import { FEATURES } from "./checks/configs/features.js";
-import { PDP_ENDPOINT_RULES } from "./checks/configs/enpoints-rules.js";
+import { PDP_ENDPOINT_RULES } from "./checks/configs/endpoints-rules.js";
+import { runWithConcurrency, jitter, parseConcurrency } from "./concurrency.js";
+import {
+  describePlaywrightTraceMode,
+  finalizeBrowserTrace,
+  getPlaywrightTraceMode,
+  startBrowserTraceIfEnabled,
+} from "./playwrightTrace.js";
+
+function formatFlagLogValue(value: unknown): string {
+  if (value === true) return "✅";
+  if (value === false) return "❌";
+  return String(value);
+}
+
+interface CheckPdpParams {
+  browser: Browser;
+  sku: SkuConfig;
+  outputDir: string;
+  featuresFilter: Set<string> | null;
+  endpointMatch: string | null;
+  monitorEndpoints: boolean;
+  cachedRemoteConfig?: RemoteConfigFlags | null;
+  cachedCommerceFlags?: CommerceFeatureFlags | null;
+}
 
 /**
  * Check a single PDP for all applicable features
  */
-async function checkPdp(
-  browser: Browser,
-  sku: SkuConfig,
-  outputDir: string,
-  featuresFilter: Set<string> | null,
-  endpointMatch: string | null,
-  monitorEndpoints: boolean,
-  cachedRemoteConfig?: RemoteConfigFlags | null,
-  cachedCommerceFlags?: CommerceFeatureFlags | null,
-): Promise<PdpCheckResult> {
+async function checkPdp(params: CheckPdpParams): Promise<PdpCheckResult> {
+  const {
+    browser,
+    sku,
+    outputDir,
+    featuresFilter,
+    endpointMatch,
+    monitorEndpoints,
+    cachedRemoteConfig,
+    cachedCommerceFlags,
+  } = params;
+
   const url = buildPdpUrl(sku);
   const timestamp = new Date().toISOString();
   const features: CheckResult[] = [];
@@ -118,9 +146,21 @@ async function checkPdp(
 
   // Setup Remote Config capture BEFORE navigation (if not already cached)
   const locale = COUNTRY_TO_LOCALE[sku.country] || "pt-BR";
-  const collectRemoteConfig = !cachedRemoteConfig
-    ? setupRemoteConfigCapture(page, locale)
-    : null;
+  const collectRemoteConfig = cachedRemoteConfig
+    ? null
+    : setupRemoteConfigCapture(page, locale);
+
+  const collectCommerceFlags = cachedCommerceFlags
+    ? null
+    : setupCommerceFeatureFlagCapture(page);
+
+  const traceMode = getPlaywrightTraceMode();
+  const traceZipPath = path.join(
+    outputDir,
+    "traces",
+    `${sku.sku.replace(/[^a-zA-Z0-9._-]+/g, "_")}_${Date.now()}.zip`,
+  );
+  let traceActive = await startBrowserTraceIfEnabled(context, traceMode);
 
   try {
     // Navigate to PDP (with retry on HTTP2 errors)
@@ -142,7 +182,7 @@ async function checkPdp(
           console.log(
             `   ⚠️ HTTP2 error, retrying (attempt ${attempt + 1})...`,
           );
-          await page.waitForTimeout(2000); // eslint-disable-line playwright/no-wait-for-timeout
+          await new Promise<void>((resolve) => setTimeout(resolve, 2000));
         }
       }
     }
@@ -161,8 +201,10 @@ async function checkPdp(
 
     console.log(`   ⏱️  Load time: ${loadTime}ms`);
 
-    // Wait for page to settle
-    await page.waitForTimeout(TIMING.pageLoadSettleTime); // eslint-disable-line playwright/no-wait-for-timeout
+    // Wait for the page to fully load after domcontentloaded
+    await page
+      .waitForLoadState("load", { timeout: TIMING.pageLoadSettleTime })
+      .catch(() => {});
 
     // Dismiss cookie banner
     await dismissCookieBanner(page);
@@ -194,18 +236,20 @@ async function checkPdp(
         const categories = getFlagsByCategory(remoteConfigFlags);
         for (const [category, flags] of Object.entries(categories)) {
           const flagSummary = Object.entries(flags)
-            .map(
-              ([k, v]) => `${k}=${v === true ? "✅" : v === false ? "❌" : v}`,
-            )
+            .map(([k, v]) => `${k}=${formatFlagLogValue(v)}`)
             .join(", ");
           console.log(`      ${category}: ${flagSummary}`);
         }
       }
     }
 
-    // Extract Commerce Feature Flags from page context (if not already cached)
+    // Commerce flags: intercept /feature-flag (setup before goto) + DOM fallback
     if (!cachedCommerceFlags) {
-      commerceFeatureFlags = await extractCommerceFeatureFlags(page);
+      const fromNetwork = collectCommerceFlags
+        ? await collectCommerceFlags()
+        : null;
+      const fromPage = await extractCommerceFeatureFlags(page);
+      commerceFeatureFlags = mergeCommerceFeatureFlags(fromNetwork, fromPage);
     }
 
     // Log commerce feature flags if captured
@@ -219,7 +263,7 @@ async function checkPdp(
       const categories = getCommerceFlagsByCategory(commerceFeatureFlags);
       for (const [category, flags] of Object.entries(categories)) {
         const flagSummary = Object.entries(flags)
-          .map(([k, v]) => `${k}=${v === true ? "✅" : v === false ? "❌" : v}`)
+          .map(([k, v]) => `${k}=${formatFlagLogValue(v)}`)
           .join(", ");
         console.log(`      ${category}: ${flagSummary}`);
       }
@@ -410,6 +454,18 @@ async function checkPdp(
         .catch(() => {});
     }
 
+    const playwrightTracePath = await finalizeBrowserTrace(
+      context,
+      traceMode,
+      traceActive,
+      success,
+      traceZipPath,
+    );
+    traceActive = false;
+    if (playwrightTracePath) {
+      console.log(`   🎬 Trace salvo: ${playwrightTracePath}`);
+    }
+
     return {
       sku: sku.sku,
       name: sku.name,
@@ -421,6 +477,7 @@ async function checkPdp(
       loadTime,
       features,
       pageScreenshot,
+      playwrightTracePath,
       remoteConfigFlags: remoteConfigFlags ?? undefined,
       commerceFeatureFlags: commerceFeatureFlags ?? undefined,
     };
@@ -436,6 +493,18 @@ async function checkPdp(
       .screenshot({ path: pageScreenshot, fullPage: true })
       .catch(() => {});
 
+    const playwrightTracePath = await finalizeBrowserTrace(
+      context,
+      traceMode,
+      traceActive,
+      false,
+      traceZipPath,
+    );
+    traceActive = false;
+    if (playwrightTracePath) {
+      console.log(`   🎬 Trace salvo: ${playwrightTracePath}`);
+    }
+
     return {
       sku: sku.sku,
       name: sku.name,
@@ -448,10 +517,20 @@ async function checkPdp(
       features,
       error: error instanceof Error ? error.message : String(error),
       pageScreenshot,
+      playwrightTracePath,
       remoteConfigFlags: remoteConfigFlags ?? undefined,
       commerceFeatureFlags: commerceFeatureFlags ?? undefined,
     };
   } finally {
+    if (traceActive) {
+      await finalizeBrowserTrace(
+        context,
+        traceMode,
+        traceActive,
+        false,
+        traceZipPath,
+      ).catch(() => {});
+    }
     await context.close().catch(() => {});
   }
 }
@@ -514,9 +593,11 @@ async function main() {
   console.log("🚀 PDP Feature Monitor");
   console.log(`📅 Started: ${startTime.toISOString()}`);
   console.log(`📂 Output: ${outputDir}`);
-  console.log(
-    `📦 SKUs to check: ${skusToCheck.length}${operationsFilter ? ` (filtro: ${operationsFilter.join(", ")})` : ""}`,
-  );
+  const operationsFilterNote =
+    operationsFilter && operationsFilter.length > 0
+      ? ` (filtro: ${operationsFilter.join(", ")})`
+      : "";
+  console.log(`📦 SKUs to check: ${skusToCheck.length}${operationsFilterNote}`);
   if (featuresFilter) {
     console.log(`🔍 Features filter: ${[...featuresFilter].join(", ")}`);
   }
@@ -526,6 +607,12 @@ async function main() {
   if (monitorEndpoints) {
     console.log(
       `🌐 Monitoramento de endpoints PDP ativado (${PDP_ENDPOINT_RULES.length} regras)`,
+    );
+  }
+  const traceMode = getPlaywrightTraceMode();
+  if (traceMode !== "off") {
+    console.log(
+      `🎬 Trace Playwright: ${describePlaywrightTraceMode(traceMode)} — abrir com: npx playwright show-trace <caminho.zip>`,
     );
   }
   console.log("");
@@ -552,37 +639,57 @@ async function main() {
 
   const results: PdpCheckResult[] = [];
 
-  try {
-    // Check each PDP
-    for (let i = 0; i < skusToCheck.length; i++) {
-      const sku = skusToCheck[i];
-      // Use Firefox for international Natura sites (AR, CL, CO, MX, PE) that block headless Chromium
-      const useFirefox =
-        browserFirefox !== null &&
-        sku.vendor === "natura" &&
-        sku.country !== "BR" &&
-        (sku.channel || "ecommerce") === "ecommerce";
-      const browser = useFirefox ? browserFirefox! : browserChromium;
-      const result = await checkPdp(
-        browser,
-        sku,
-        outputDir,
-        featuresFilter,
-        endpointMatch,
-        monitorEndpoints,
-      );
-      results.push(result);
+  // Concurrency from CONCURRENCY env var (default 3; hard-capped at 8 to reduce WAF risk)
+  const concurrency = parseConcurrency(3);
+  console.log(
+    `⚡ Concorrência: ${concurrency} worker(s) | jitter 1\u20133 s entre SKUs do mesmo domínio\n`,
+  );
 
-      // Delay between pages (except last)
-      if (i < skusToCheck.length - 1) {
-        console.log(
-          `   ⏳ Waiting ${TIMING.delayBetweenPages}ms before next page...`,
-        );
-        await new Promise((resolve) =>
-          setTimeout(resolve, TIMING.delayBetweenPages),
-        );
-      }
-    }
+  // Group SKUs by domain key so same-origin requests stay serial within each group
+  const skusByDomain = new Map<string, typeof skusToCheck>();
+  for (const sku of skusToCheck) {
+    const domainKey = `${sku.vendor}-${sku.country}${(sku.channel || "ecommerce") === "socialcommerce" ? "-social" : ""}`;
+    if (!skusByDomain.has(domainKey)) skusByDomain.set(domainKey, []);
+    skusByDomain.get(domainKey)!.push(sku);
+  }
+  console.log(
+    `🗂️  ${skusByDomain.size} grupo(s) de domínio: ${[...skusByDomain.keys()].join(", ")}\n`,
+  );
+
+  try {
+    // One async task per domain group; groups run in parallel up to the concurrency limit.
+    // SKUs within each group run serially with a random 1\u20133 s jitter between requests.
+    const skuTasks = [...skusByDomain.entries()].map(
+      ([, group]) =>
+        async (): Promise<PdpCheckResult[]> => {
+          const groupResults: PdpCheckResult[] = [];
+          for (let i = 0; i < group.length; i++) {
+            if (i > 0) {
+              await jitter(1000, 2000); // 1\u20133 s between consecutive hits on the same domain
+            }
+            const sku = group[i];
+            const useFirefox =
+              browserFirefox !== null &&
+              sku.vendor === "natura" &&
+              sku.country !== "BR" &&
+              (sku.channel || "ecommerce") === "ecommerce";
+            const browser = useFirefox ? browserFirefox! : browserChromium;
+            groupResults.push(
+              await checkPdp({
+                browser,
+                sku,
+                outputDir,
+                featuresFilter,
+                endpointMatch,
+                monitorEndpoints,
+              }),
+            );
+          }
+          return groupResults;
+        },
+    );
+    const groupedResults = await runWithConcurrency(skuTasks, concurrency);
+    results.push(...groupedResults.flat());
 
     // =========================================================================
     // EXPLORATORY JOURNEYS — navigate via vitrines on the homepage
@@ -603,31 +710,25 @@ async function main() {
       console.log(`   Operações: ${domainsToExplore.length}`);
       console.log("═".repeat(60));
 
-      for (let i = 0; i < domainsToExplore.length; i++) {
-        const domainConfig = domainsToExplore[i];
-        console.log(`\n[Explore ${i + 1}/${domainsToExplore.length}]`);
-
-        const useFirefox =
-          browserFirefox !== null &&
-          domainConfig.vendor === "natura" &&
-          domainConfig.country !== "BR" &&
-          !domainConfig.channel;
-
-        const browser = useFirefox ? browserFirefox! : browserChromium;
-
-        const exploreResult = await runExploratoryJourney(
-          browser,
-          domainConfig,
-          outputDir,
-        );
-        results.push(exploreResult);
-
-        if (i < domainsToExplore.length - 1) {
-          await new Promise((resolve) =>
-            setTimeout(resolve, TIMING.delayBetweenPages),
-          );
-        }
-      }
+      // Each domain is its own task (1:1). Run in parallel with a random
+      // 0\u20132 s initial spread to avoid simultaneous first-request bursts.
+      const exploreTasks = domainsToExplore.map(
+        (domainConfig) => async (): Promise<PdpCheckResult> => {
+          await jitter(0, 2000);
+          const useFirefox =
+            browserFirefox !== null &&
+            domainConfig.vendor === "natura" &&
+            domainConfig.country !== "BR" &&
+            !domainConfig.channel;
+          const browser = useFirefox ? browserFirefox! : browserChromium;
+          return runExploratoryJourney(browser, domainConfig, outputDir);
+        },
+      );
+      const exploreResults = await runWithConcurrency(
+        exploreTasks,
+        concurrency,
+      );
+      results.push(...exploreResults);
     }
   } finally {
     await browserChromium.close();

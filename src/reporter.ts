@@ -333,8 +333,8 @@ export function generateHtmlReport(report: MonitoringReport): string {
         <p><strong>URL:</strong> <a href="${result.url}" target="_blank">${result.url}</a></p>
         ${result.loadTime ? `<p><strong>Tempo de carga:</strong> ${formatDuration(result.loadTime)}</p>` : ""}
         ${result.error ? `<p class="error-message"><strong>Erro:</strong> ${result.error}</p>` : ""}
-        ${result.sku === "explore" ? generateRemoteConfigSection(result.remoteConfigFlags) : ""}
-        ${result.sku === "explore" ? generateCommerceFeatureFlagsSection(result.commerceFeatureFlags) : ""}
+        ${generateRemoteConfigSection(result.remoteConfigFlags)}
+        ${generateCommerceFeatureFlagsSection(result.commerceFeatureFlags)}
       </div>
 
       <table class="features-table">
@@ -357,6 +357,16 @@ export function generateHtmlReport(report: MonitoringReport): string {
           <a href="${result.pageScreenshot}" target="_blank">
             📷 Ver screenshot da página completa
           </a>
+        </div>
+      `
+          : ""
+      }
+      ${
+        result.playwrightTracePath
+          ? `
+        <div class="page-screenshot">
+          <a href="${result.playwrightTracePath}" target="_blank">🎬 Trace Playwright (.zip)</a>
+          <p style="margin-top:6px;font-size:12px;color:#6b7280">Abrir no terminal: <code style="background:#e5e7eb;padding:2px 6px;border-radius:4px">npx playwright show-trace</code> + caminho do arquivo</p>
         </div>
       `
           : ""

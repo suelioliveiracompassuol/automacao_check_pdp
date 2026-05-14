@@ -52,6 +52,8 @@ export interface PdpCheckResult {
   error?: string;
   /** Full page screenshot on failure */
   pageScreenshot?: string;
+  /** Playwright trace .zip when PLAYWRIGHT_TRACE is enabled */
+  playwrightTracePath?: string;
   /** Captured Remote Config flags for this domain */
   remoteConfigFlags?: RemoteConfigFlags;
   /** Captured Commerce Feature Flags from /feature-flag endpoint */

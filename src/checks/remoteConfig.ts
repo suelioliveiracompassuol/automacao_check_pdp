@@ -22,8 +22,9 @@ export async function extractCommerceFeatureFlags(
   page: Page,
 ): Promise<CommerceFeatureFlags | null> {
   try {
-    // Wait a bit for hydration
-    await page.waitForTimeout(1000); // eslint-disable-line playwright/no-wait-for-timeout
+    // Wait for the page to fully load so hydrated state (window.__NEXT_DATA__ etc.) is available;
+    // resolves immediately if the load event already fired
+    await page.waitForLoadState("load", { timeout: 3000 }).catch(() => {});
 
     // Try to extract feature flags from the page context
     const flags = await page.evaluate(() => {
@@ -31,8 +32,8 @@ export async function extractCommerceFeatureFlags(
       const isFeatureFlagsObject = (obj: unknown): boolean => {
         if (!obj || typeof obj !== "object") return false;
         const keys = Object.keys(obj as Record<string, unknown>);
-        // Check for characteristic feature flag keys
-        const featureFlagKeys = [
+        // Legacy checkout / omni shape (older stacks)
+        const legacyKeys = [
           "guestCheckout",
           "enablePix",
           "businessModel",
@@ -40,7 +41,19 @@ export async function extractCommerceFeatureFlags(
           "omniEnabled",
           "liveShopping",
         ];
-        return featureFlagKeys.filter((k) => keys.includes(k)).length >= 3;
+        if (legacyKeys.filter((k) => keys.includes(k)).length >= 3) return true;
+        // Commerce BFF / PDP feature-flag shape (Natura et al.)
+        const commerceKeys = [
+          "businessModel",
+          "newExperiencePdpEnable",
+          "displayStockOnProductDetailPage",
+          "enablePdpFreightCalculation",
+          "enableDisplayFreeShippingPdp",
+          "giftPackaging",
+          "cnBlockSelfBuy",
+          "productRecommendation",
+        ];
+        return commerceKeys.filter((k) => keys.includes(k)).length >= 2;
       };
 
       // Recursively search for feature flags in an object
@@ -110,7 +123,9 @@ export async function extractCommerceFeatureFlags(
           if (!Array.isArray(entry) || typeof entry[1] !== "string") continue;
           const str = entry[1];
           // Look for JSON objects with feature flag patterns
-          const jsonMatches = str.match(/\{[^{}]*"guestCheckout"[^{}]*\}/g);
+          const jsonMatches = str.match(
+            /\{[^{}]*"(?:guestCheckout|businessModel)"[^{}]*\}/g,
+          );
           if (jsonMatches) {
             for (const match of jsonMatches) {
               try {
@@ -308,6 +323,62 @@ export interface CommerceFeatureFlags {
   newExperienceEnable?: boolean;
 }
 
+/** Keys merged by {@link mergeCommerceFeatureFlags} (excludes metadata). */
+const COMMERCE_FLAG_DATA_KEYS: (keyof CommerceFeatureFlags)[] = [
+  "businessModel",
+  "businessModelB2B2C",
+  "businessModelB2C",
+  "businessModelB2C_B2B2C",
+  "displayStockOnProductDetailPage",
+  "newExperiencePdpEnable",
+  "enablePdpFreightCalculation",
+  "enableDisplayFreeShippingPdp",
+  "freeShippingValue",
+  "nePagesPdV2",
+  "newExperienceEnableGiftPdp",
+  "giftPackaging",
+  "enableGiftOnSite",
+  "giftSku",
+  "cnBlockSelfBuy",
+  "cnRecommendation",
+  "consultantWithoutCommissionOnFirstPurchase",
+  "enableConsultantRating",
+  "enableConsultantMercadoPagoToken",
+  "productRecommendation",
+  "location",
+  "newExperienceEnable",
+];
+
+/**
+ * Merges network-captured commerce flags with DOM-extracted flags.
+ * Prefer defined values from `primary` (typically /feature-flag), then `secondary`.
+ */
+export function mergeCommerceFeatureFlags(
+  primary: CommerceFeatureFlags | null,
+  secondary: CommerceFeatureFlags | null,
+): CommerceFeatureFlags | null {
+  if (!primary && !secondary) return null;
+  if (!primary) return secondary;
+  if (!secondary) return primary;
+
+  const out: CommerceFeatureFlags = {
+    capturedAt: primary.capturedAt || secondary.capturedAt,
+    _raw: primary._raw ?? secondary._raw,
+  };
+
+  for (const k of COMMERCE_FLAG_DATA_KEYS) {
+    const pv = primary[k];
+    const sv = secondary[k];
+    if (pv !== undefined) {
+      (out as unknown as Record<string, unknown>)[k] = pv;
+    } else if (sv !== undefined) {
+      (out as unknown as Record<string, unknown>)[k] = sv;
+    }
+  }
+
+  return out;
+}
+
 /**
  * Mapping of feature keys to their Remote Config paths
  */
@@ -422,6 +493,17 @@ export function setupRemoteConfigCapture(
   };
 }
 
+/** True if URL is likely the commerce BFF feature-flag JSON (not Firebase). */
+function matchesCommerceFeatureFlagUrl(url: string): boolean {
+  const u = url.toLowerCase();
+  if (u.includes("firebase")) return false;
+  return (
+    u.includes("feature-flag") ||
+    u.includes("feature-flags") ||
+    u.includes("featureflags")
+  );
+}
+
 /**
  * Sets up Commerce Feature Flags capture BEFORE navigation.
  * Captures responses from /feature-flag endpoint.
@@ -433,85 +515,92 @@ export function setupCommerceFeatureFlagCapture(
   page: Page,
 ): () => Promise<CommerceFeatureFlags | null> {
   let capturedFlags: CommerceFeatureFlags | null = null;
+  const pending = new Set<Promise<void>>();
 
-  const responseHandler = async (response: {
+  const processCommerceJson = async (response: {
+    json: () => Promise<unknown>;
+  }) => {
+    try {
+      const body = (await response.json()) as Record<string, unknown>;
+
+      capturedFlags = {
+        capturedAt: new Date().toISOString(),
+        _raw: body,
+        // Business Model
+        businessModel: body.businessModel as string | undefined,
+        businessModelB2B2C: body.businessModelB2B2C as boolean | undefined,
+        businessModelB2C: body.businessModelB2C as boolean | undefined,
+        businessModelB2C_B2B2C: body.businessModelB2C_B2B2C as
+          | boolean
+          | undefined,
+        // PDP Features
+        displayStockOnProductDetailPage:
+          body.displayStockOnProductDetailPage as boolean | undefined,
+        newExperiencePdpEnable: body.newExperiencePdpEnable as
+          | boolean
+          | undefined,
+        enablePdpFreightCalculation: body.enablePdpFreightCalculation as
+          | boolean
+          | undefined,
+        enableDisplayFreeShippingPdp: body.enableDisplayFreeShippingPdp as
+          | boolean
+          | undefined,
+        freeShippingValue: body.freeShippingValue as number | undefined,
+        nePagesPdV2: body.nePagesPdV2 as boolean | undefined,
+        newExperienceEnableGiftPdp: body.newExperienceEnableGiftPdp as
+          | boolean
+          | undefined,
+        // Gift & Packaging
+        giftPackaging: body.giftPackaging as boolean | undefined,
+        enableGiftOnSite: body.enableGiftOnSite as boolean | undefined,
+        giftSku: body.giftSku as string | undefined,
+        // Consultant Features
+        cnBlockSelfBuy: body.cnBlockSelfBuy as boolean | undefined,
+        cnRecommendation: body.cnRecommendation as boolean | undefined,
+        consultantWithoutCommissionOnFirstPurchase:
+          body.consultantWithoutCommissionOnFirstPurchase as
+            | boolean
+            | undefined,
+        enableConsultantRating: body.enableConsultantRating as
+          | boolean
+          | undefined,
+        enableConsultantMercadoPagoToken:
+          body.enableConsultantMercadoPagoToken as boolean | undefined,
+        // Other
+        productRecommendation: body.productRecommendation as
+          | boolean
+          | undefined,
+        location: body.location as boolean | undefined,
+        newExperienceEnable: body.newExperienceEnable as boolean | undefined,
+      };
+    } catch {
+      // Response not JSON or parsing failed - continue
+    }
+  };
+
+  const responseHandler = (response: {
     url: () => string;
     status: () => number;
     json: () => Promise<unknown>;
   }) => {
-    const url = response.url();
-
-    // Check for Commerce feature-flag endpoint
     if (
-      url.includes("/feature-flag") &&
-      !url.includes("firebase") &&
-      response.status() === 200
+      !matchesCommerceFeatureFlagUrl(response.url()) ||
+      response.status() !== 200
     ) {
-      try {
-        const body = (await response.json()) as Record<string, unknown>;
-
-        capturedFlags = {
-          capturedAt: new Date().toISOString(),
-          _raw: body,
-          // Business Model
-          businessModel: body.businessModel as string | undefined,
-          businessModelB2B2C: body.businessModelB2B2C as boolean | undefined,
-          businessModelB2C: body.businessModelB2C as boolean | undefined,
-          businessModelB2C_B2B2C: body.businessModelB2C_B2B2C as
-            | boolean
-            | undefined,
-          // PDP Features
-          displayStockOnProductDetailPage:
-            body.displayStockOnProductDetailPage as boolean | undefined,
-          newExperiencePdpEnable: body.newExperiencePdpEnable as
-            | boolean
-            | undefined,
-          enablePdpFreightCalculation: body.enablePdpFreightCalculation as
-            | boolean
-            | undefined,
-          enableDisplayFreeShippingPdp: body.enableDisplayFreeShippingPdp as
-            | boolean
-            | undefined,
-          freeShippingValue: body.freeShippingValue as number | undefined,
-          nePagesPdV2: body.nePagesPdV2 as boolean | undefined,
-          newExperienceEnableGiftPdp: body.newExperienceEnableGiftPdp as
-            | boolean
-            | undefined,
-          // Gift & Packaging
-          giftPackaging: body.giftPackaging as boolean | undefined,
-          enableGiftOnSite: body.enableGiftOnSite as boolean | undefined,
-          giftSku: body.giftSku as string | undefined,
-          // Consultant Features
-          cnBlockSelfBuy: body.cnBlockSelfBuy as boolean | undefined,
-          cnRecommendation: body.cnRecommendation as boolean | undefined,
-          consultantWithoutCommissionOnFirstPurchase:
-            body.consultantWithoutCommissionOnFirstPurchase as
-              | boolean
-              | undefined,
-          enableConsultantRating: body.enableConsultantRating as
-            | boolean
-            | undefined,
-          enableConsultantMercadoPagoToken:
-            body.enableConsultantMercadoPagoToken as boolean | undefined,
-          // Other
-          productRecommendation: body.productRecommendation as
-            | boolean
-            | undefined,
-          location: body.location as boolean | undefined,
-          newExperienceEnable: body.newExperienceEnable as boolean | undefined,
-        };
-      } catch {
-        // Response not JSON or parsing failed - continue
-      }
+      return;
     }
+    const p = processCommerceJson(response);
+    pending.add(p);
+    void p.finally(() => pending.delete(p));
   };
 
   page.on("response", responseHandler);
 
   // Return collector function
   return async (): Promise<CommerceFeatureFlags | null> => {
-    // Give a small delay to ensure any pending responses are processed
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    // Allow in-flight response handlers (async json()) to finish before we read capturedFlags
+    await new Promise((resolve) => setTimeout(resolve, 800));
+    await Promise.allSettled([...pending]);
     page.off("response", responseHandler);
 
     // If we captured from network, return it

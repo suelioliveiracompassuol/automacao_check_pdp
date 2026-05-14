@@ -1,6 +1,177 @@
 import { Page } from "@playwright/test";
 import { CheckResult } from "../types.js";
 
+// ---------------------------------------------------------------------------
+// Einstein Personalization API helper
+// ---------------------------------------------------------------------------
+
+interface EinsteinApiResult {
+  /** Whether a matching request was found in the page's performance timeline */
+  called: boolean;
+  /** The full URL that was called */
+  url: string | null;
+  /** The contentZones parameter value */
+  contentZone: string | null;
+  /** Number of campaign responses returned (0 = empty) */
+  campaignCount: number;
+  /** HTTP status of the API response, or null if not fetched */
+  httpStatus: number | null;
+  /** Error message if the re-fetch failed */
+  fetchError: string | null;
+  /** Fallback expected content zone (derived from country + suffix) */
+  expectedContentZone: string | null;
+}
+
+/**
+ * Finds an Einstein Personalization call made during page load
+ * (via PerformanceResourceTiming), re-fetches it from the browser
+ * context (same cookies/session), and returns diagnostic data.
+ *
+ * @param contentZoneHint - optional substring to match against the contentZones param
+ */
+async function checkEinsteinApi(
+  page: Page,
+  contentZoneHint?: string,
+  expectedZoneSuffix?: string,
+): Promise<EinsteinApiResult> {
+  const empty: EinsteinApiResult = {
+    called: false,
+    url: null,
+    contentZone: null,
+    campaignCount: 0,
+    httpStatus: null,
+    fetchError: null,
+    expectedContentZone: null,
+  };
+
+  try {
+    const generatedContentZone = await page
+      .evaluate((suffix) => {
+        if (!suffix) return null;
+        const countryCodeMatch = window.location.hostname.match(
+          /(?:\.com\.)?([a-z]{2})$/i,
+        );
+        const countryCode = countryCodeMatch?.[1]?.toUpperCase();
+        if (!countryCode) return null;
+        return `CZ_${countryCode}_VITRINE_PDP_${suffix}`;
+      }, expectedZoneSuffix ?? null)
+      .catch(() => null);
+
+    // Prefer content zone returned by product API payload when available
+    const productApiContentZone = await page
+      .evaluate(async () => {
+        try {
+          const entries = performance.getEntriesByType(
+            "resource",
+          ) as PerformanceResourceTiming[];
+          const productEntry = entries.find((e) =>
+            e.name.includes("/pages/v2/product/"),
+          );
+          if (!productEntry) return null;
+
+          const res = await fetch(productEntry.name, {
+            credentials: "include",
+          });
+          const body = await res.json().catch(() => null);
+          if (!body || typeof body !== "object") return null;
+
+          const fromPersonalization = (body as Record<string, unknown>)
+            .personalizationShowcase as { contentZones?: string } | undefined;
+          if (fromPersonalization?.contentZones) {
+            return fromPersonalization.contentZones;
+          }
+
+          const components = (body as Record<string, unknown>)
+            .productComponents;
+          if (!Array.isArray(components)) return null;
+
+          for (const comp of components) {
+            if (!comp || typeof comp !== "object") continue;
+            const obj = comp as Record<string, unknown>;
+            const list = obj.productListPersonalization as
+              | { contentZones?: string }
+              | undefined;
+            if (list?.contentZones) return list.contentZones;
+          }
+
+          return null;
+        } catch {
+          return null;
+        }
+      })
+      .catch(() => null);
+
+    const expectedContentZone =
+      contentZoneHint === "EXPERIENCIA"
+        ? (productApiContentZone ?? generatedContentZone)
+        : generatedContentZone;
+
+    // Find the Einstein URL from the page's resource timing entries
+    const einsteinUrl: string | null = await page.evaluate((hint) => {
+      const entries = performance.getEntriesByType(
+        "resource",
+      ) as PerformanceResourceTiming[];
+      const match = entries.find((e) => {
+        if (!e.name.includes("einstein/personalization")) return false;
+        if (hint) {
+          try {
+            const params = new URL(e.name).searchParams.get("contentZones");
+            return params?.includes(hint) ?? false;
+          } catch {
+            return false;
+          }
+        }
+        return true;
+      });
+      return match?.name ?? null;
+    }, contentZoneHint ?? null);
+
+    if (!einsteinUrl) {
+      return {
+        ...empty,
+        expectedContentZone,
+      };
+    }
+
+    let contentZone: string | null = null;
+    try {
+      contentZone = new URL(einsteinUrl).searchParams.get("contentZones");
+    } catch {
+      /* ignore */
+    }
+
+    // Re-fetch from browser context (same cookies/auth)
+    const apiResult = await page.evaluate(async (url) => {
+      try {
+        const res = await fetch(url, { credentials: "include" });
+        const body = await res.json().catch(() => null);
+        const campaignCount = Array.isArray(body?.campaignResponses)
+          ? body.campaignResponses.length
+          : -1;
+        return { status: res.status, campaignCount, error: null };
+      } catch (e) {
+        return {
+          status: null,
+          campaignCount: -1,
+          error: String(e),
+        };
+      }
+    }, einsteinUrl);
+
+    return {
+      called: true,
+      url: einsteinUrl,
+      contentZone,
+      campaignCount: apiResult.campaignCount,
+      httpStatus: apiResult.status,
+      fetchError: apiResult.error,
+      expectedContentZone,
+    };
+  } catch {
+    return empty;
+  }
+}
+
 /**
  * Structural selector for showcase sections.
  * All operations use the same whitelabel code:
@@ -39,7 +210,49 @@ export async function checkBrandShowcase(page: Page): Promise<CheckResult> {
     const sections = await getShowcaseSections(page);
     const sectionCount = await sections.count().catch(() => 0);
 
+    // Also probe the Einstein API for brand showcase diagnostics
+    const einstein = await checkEinsteinApi(
+      page,
+      "BRAND",
+      "MAIS_PRODUTOS_DA_MARCA",
+    );
+    const zoneName =
+      einstein.contentZone ?? einstein.expectedContentZone ?? "BRAND";
+
     if (sectionCount < 1) {
+      // Check if there's an empty placeholder section
+      const allBgSections = page.locator(SHOWCASE_SECTION_SELECTOR);
+      const allCount = await allBgSections.count().catch(() => 0);
+
+      if (allCount >= 1 && einstein.called && einstein.campaignCount === 0) {
+        return {
+          feature,
+          featureKey,
+          passed: false,
+          status: "fail",
+          message: `Content zone "${zoneName}" foi chamada mas API de personalização retornou vazia (campaignResponses: [])`,
+          details: {
+            einsteinUrl: einstein.url,
+            contentZone: zoneName,
+          },
+        };
+      }
+
+      if (allCount >= 1 && einstein.called && einstein.campaignCount > 0) {
+        return {
+          feature,
+          featureKey,
+          passed: false,
+          status: "fail",
+          message: `Content zone "${zoneName}" foi chamada; API de personalização retornou ${einstein.campaignCount} campanha(s), mas vitrine não renderizou na tela`,
+          details: {
+            einsteinUrl: einstein.url,
+            campaignCount: einstein.campaignCount,
+            contentZone: zoneName,
+          },
+        };
+      }
+
       return {
         feature,
         featureKey,
@@ -66,8 +279,13 @@ export async function checkBrandShowcase(page: Page): Promise<CheckResult> {
       featureKey,
       passed: true,
       status: "pass",
-      message: `Vitrine presente com ${cardCount} produto(s)${title ? ` ("${title.trim()}")` : ""}`,
-      details: { productCount: cardCount, title: title?.trim() },
+      message: `Vitrine presente com ${cardCount} produto(s)${title ? ` ("${title.trim()}")` : ""} [contentZone: ${zoneName}]`,
+      details: {
+        productCount: cardCount,
+        title: title?.trim(),
+        einsteinContentZone: zoneName,
+        einsteinCampaignCount: einstein.campaignCount,
+      },
     };
   } catch (error) {
     return {
@@ -81,9 +299,10 @@ export async function checkBrandShowcase(page: Page): Promise<CheckResult> {
 }
 
 /**
- * Check if Recommendation Showcase (2nd showcase section) is present with products
- * Note: This section may take time to load (lazy loading), so we scroll and wait.
- * The Einstein Recommender may not populate in headless mode for some operations.
+ * Check if Recommendation Showcase (2nd showcase section) is present with products.
+ * Note: This section loads asynchronously (Einstein Recommender / lazy hydration).
+ * Strategy: wait for the 2nd *populated* showcase section to appear (ignores empty
+ * placeholder sections and other in-between sections like Shop the Set).
  */
 export async function checkRecommendationShowcase(
   page: Page,
@@ -92,31 +311,74 @@ export async function checkRecommendationShowcase(
   const feature = 'Vitrine "Achamos que você vai gostar"';
 
   try {
-    // Scroll progressively down to trigger lazy loading of recommendations section
-    for (let i = 1; i <= 4; i++) {
-      await page.evaluate((step) => window.scrollTo(0, step * 1500), i);
-      await new Promise((resolve) => setTimeout(resolve, 500));
-    }
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    // Scroll to the bottom once more so lazy sections below the fold trigger loading
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    await new Promise<void>((resolve) => setTimeout(resolve, 1000));
 
-    const sections = await getShowcaseSections(page);
-    const sectionCount = await sections.count().catch(() => 0);
+    // Populated section locator — sections that have product card links
+    const populatedSections = page.locator(
+      `${SHOWCASE_SECTION_SELECTOR}:has([data-testid="btn-add-to-cart"], a[href*="/p/"])`,
+    );
 
-    if (sectionCount < 2) {
-      // Check if there's an empty placeholder section (Einstein Recommender SSR placeholder)
+    // Wait up to 25 s for the 2nd populated section to appear
+    // (1st = brand showcase which is SSR; 2nd = Einstein recommendation)
+    const secondSection = populatedSections.nth(1);
+    const populated = await secondSection
+      .waitFor({ state: "visible", timeout: 25000 })
+      .then(() => true)
+      .catch(() => false);
+
+    if (!populated) {
+      // Confirm how many bg-background sections exist (to detect placeholder)
       const allBgSections = page.locator(SHOWCASE_SECTION_SELECTOR);
       const allCount = await allBgSections.count().catch(() => 0);
 
-      if (allCount >= 2) {
-        // Placeholder sections exist but content didn't populate (headless limitation)
+      const einstein = await checkEinsteinApi(
+        page,
+        "EXPERIENCIA",
+        "EXPERIENCIA",
+      );
+      const zoneName =
+        einstein.contentZone ?? einstein.expectedContentZone ?? "EXPERIENCIA";
+
+      if (einstein.called && einstein.campaignCount === 0) {
         return {
           feature,
           featureKey,
-          passed: true,
+          passed: false,
+          status: "fail",
+          message: `Content zone "${zoneName}" foi chamada mas API de personalização retornou vazia (campaignResponses: [])`,
+          details: {
+            einsteinUrl: einstein.url,
+            contentZone: zoneName,
+            httpStatus: einstein.httpStatus,
+          },
+        };
+      }
+
+      if (einstein.called && einstein.campaignCount > 0) {
+        return {
+          feature,
+          featureKey,
+          passed: false,
+          status: "fail",
+          message: `Content zone "${zoneName}" foi chamada; API de personalização retornou ${einstein.campaignCount} campanha(s), mas vitrine não renderizou na tela`,
+          details: {
+            einsteinUrl: einstein.url,
+            campaignCount: einstein.campaignCount,
+            contentZone: zoneName,
+          },
+        };
+      }
+
+      if (!einstein.called) {
+        return {
+          feature,
+          featureKey,
+          passed: false,
           status: "warning",
-          message:
-            "Placeholder da vitrine de recomendações presente mas conteúdo não carregou (Einstein Recommender não popula em headless)",
-          details: { totalSections: allCount, populatedSections: sectionCount },
+          message: `Placeholder da vitrine de recomendações presente mas Einstein API não foi chamada [contentZone esperada: ${zoneName}]`,
+          details: { totalSections: allCount, contentZone: zoneName },
         };
       }
 
@@ -124,40 +386,40 @@ export async function checkRecommendationShowcase(
         feature,
         featureKey,
         passed: false,
-        status: "fail",
-        message: "Vitrine de recomendações não encontrada",
+        status: "warning",
+        message: `Placeholder da vitrine de recomendações presente mas conteúdo não carregou [contentZone: ${zoneName}]`,
+        details: { totalSections: allCount, contentZone: zoneName },
       };
     }
 
-    // 2nd showcase section = recommendation showcase
-    const recoSection = sections.nth(1);
-    const productCards = recoSection.locator('a[href*="/p/"]');
-    const cardCount = await productCards.count().catch(() => 0);
-
-    // Get the section title for the report
-    const title = await recoSection
+    // Count products and get title from the (now-populated) 2nd section
+    const cardCount = await secondSection
+      .locator('a[href*="/p/"]')
+      .count()
+      .catch(() => 0);
+    const title = await secondSection
       .locator("h2")
       .first()
       .textContent()
       .catch(() => "");
 
-    if (cardCount === 0) {
-      return {
-        feature,
-        featureKey,
-        passed: false,
-        status: "fail",
-        message: "Vitrine de recomendações encontrada mas sem produtos",
-      };
-    }
+    // Enrich with Einstein API data
+    const einstein = await checkEinsteinApi(page, "EXPERIENCIA", "EXPERIENCIA");
+    const zoneName =
+      einstein.contentZone ?? einstein.expectedContentZone ?? "EXPERIENCIA";
 
     return {
       feature,
       featureKey,
       passed: true,
       status: "pass",
-      message: `Vitrine de recomendações presente com ${cardCount} produto(s)${title ? ` ("${title.trim()}")` : ""}`,
-      details: { productCount: cardCount, title: title?.trim() },
+      message: `Vitrine de recomendações presente com ${cardCount} produto(s)${title ? ` ("${title.trim()}")` : ""} [contentZone: ${zoneName}]`,
+      details: {
+        productCount: cardCount,
+        title: title?.trim(),
+        einsteinContentZone: zoneName,
+        einsteinCampaignCount: einstein.campaignCount,
+      },
     };
   } catch (error) {
     return {

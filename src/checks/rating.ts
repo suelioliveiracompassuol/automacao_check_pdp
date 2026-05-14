@@ -12,7 +12,6 @@ export async function checkRating(page: Page): Promise<CheckResult> {
   try {
     // Scroll to trigger lazy loading of rating section
     await page.evaluate(() => window.scrollBy(0, 2000));
-    await page.waitForTimeout(1500); // eslint-disable-line playwright/no-wait-for-timeout
 
     // Look for star rating display (increased timeout for lazy load)
     const starsLocator = page.locator(SELECTORS.rating.stars).first();

@@ -193,11 +193,12 @@ export const DOMAINS: DomainConfig[] = [
   {
     vendor: "avon",
     country: "MX",
-    domain: "https://www.avon.com.mx",
+    domain: "https://www.avon.mx",
     locale: "es-mx",
     availableFeatures: [
       "brandShowcase",
-      "images", // "pricing",
+      "images",
+      // "pricing",
       //"shipping",
     ],
   },
