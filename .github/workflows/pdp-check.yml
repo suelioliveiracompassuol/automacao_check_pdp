@@ -77,10 +77,10 @@ jobs:
           path: reports/
           retention-days: 30
 
-      - name: 🌐 Publish report to GitHub Pages
+      - name: 🌐 Prepare Data for Dashboard
         run: |
           REPORT_DIR=$(ls -td reports/run_* 2>/dev/null | head -1)
-          if [ -f "$REPORT_DIR/report.html" ]; then
+          if [ -f "$REPORT_DIR/report.json" ]; then
             mkdir -p docs
             RUN_ID=$(basename "$REPORT_DIR")
 
@@ -136,15 +136,27 @@ jobs:
               generatedAt: (now | todate),
               reports: .
             }' "$TMP_INDEX" > docs/reports/index.json
-
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            git add docs/last-report.html docs/last-report.json docs/reports
-            git diff --staged --quiet || git commit -m "chore: update last report [run #${{ github.run_number }}]"
-            git pull --rebase origin HEAD
-            git push
-            echo "✅ Report published to GitHub Pages"
           fi
+
+      - name: 🏗️ Build Next.js Dashboard
+        run: |
+          cd dashboard
+          npm ci
+          mkdir -p public/data
+          cp ../docs/last-report.json public/data/
+          npm run build
+          # Copy the static export to docs folder to be served by GitHub Pages
+          cp -r out/* ../docs/
+
+      - name: 🚀 Commit and Push to GitHub Pages
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/
+          git diff --staged --quiet || git commit -m "chore: update dashboard and reports [run #${{ github.run_number }}]"
+          git pull --rebase origin HEAD
+          git push
+          echo "✅ Dashboard and reports published to GitHub Pages"
 
       - name: 📧 Send email notification (on failure)
         if: steps.checks.outcome == 'failure' || inputs.send_email_always == 'true'
