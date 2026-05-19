@@ -34,8 +34,7 @@ function screenshotToDataUri(
       : nodePath.join(outputDir, relPath);
     if (fs.existsSync(absPath)) {
       const ext = nodePath.extname(absPath).toLowerCase().slice(1) || "png";
-      const mime =
-        ext === "jpg" || ext === "jpeg" ? "image/jpeg" : "image/png";
+      const mime = ext === "jpg" || ext === "jpeg" ? "image/jpeg" : "image/png";
       const base64 = fs.readFileSync(absPath).toString("base64");
       return `data:${mime};base64,${base64}`;
     }
@@ -408,8 +407,9 @@ export function generateHtmlReport(
       const title = isSocialCommerce
         ? `${op.vendor} / ${op.country} <span style="font-size:12px;color:#6b7280">(Minha Loja)</span>`
         : `${op.vendor} / ${op.country}`;
+      const opKey = `${op.vendor}-${op.country}${isSocialCommerce ? "-social" : ""}`;
       html += `
-        <div class="pdp-card" style="margin-bottom: 0;">
+        <div class="pdp-card" style="margin-bottom: 0;" data-operation="${opKey}" data-status="info">
           <div class="pdp-header" style="margin-bottom: 12px;">
             <div class="pdp-title">
               <h3 style="font-size: 16px; text-transform: capitalize;">${title}</h3>
@@ -430,8 +430,13 @@ export function generateHtmlReport(
     return html;
   };
 
+  const getOperationKey = (r: PdpCheckResult) => {
+    const ch = r.channel ?? "ecommerce";
+    return `${r.vendor}-${r.country}${ch === "socialcommerce" ? "-social" : ""}`;
+  };
+
   const generatePdpCard = (result: PdpCheckResult) => `
-    <div class="pdp-card ${result.success ? "success" : "failure"}">
+    <div class="pdp-card ${result.success ? "success" : "failure"}" data-operation="${getOperationKey(result)}" data-status="${result.success ? "pass" : result.error ? "error" : "fail"}">
       <div class="pdp-header">
         <div class="pdp-title">
           <span class="pdp-status">${result.success ? "✅" : "❌"}</span>
@@ -855,6 +860,138 @@ export function generateHtmlReport(
       .summary {
         grid-template-columns: repeat(2, 1fr);
       }
+
+      .filter-bar {
+        flex-direction: column;
+      }
+    }
+
+    /* ── Operation & Status Filters ── */
+    .filter-section {
+      background: var(--color-card);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .filter-section h2 {
+      font-size: 15px;
+      margin-bottom: 12px;
+      color: #374151;
+    }
+
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .filter-bar-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .filter-bar-separator {
+      width: 1px;
+      height: 24px;
+      background: #d1d5db;
+      margin: 0 8px;
+    }
+
+    .filter-btn {
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.15s ease;
+      user-select: none;
+      text-transform: uppercase;
+    }
+
+    .filter-btn:hover {
+      opacity: 0.85;
+      transform: translateY(-1px);
+    }
+
+    .filter-btn.active {
+      box-shadow: 0 0 0 2px rgba(59,130,246,0.5);
+    }
+
+    /* operation badges */
+    .filter-btn[data-filter-type="operation"] {
+      background: #f3f4f6;
+      color: #374151;
+    }
+    .filter-btn[data-filter-type="operation"].active {
+      background: #3b82f6;
+      color: #fff;
+    }
+
+    /* status badges */
+    .filter-btn[data-filter-status="all"] {
+      background: #e0e7ff;
+      color: #3730a3;
+    }
+    .filter-btn[data-filter-status="all"].active {
+      background: #3b82f6;
+      color: #fff;
+    }
+    .filter-btn[data-filter-status="pass"] {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    .filter-btn[data-filter-status="pass"].active {
+      background: var(--color-pass);
+      color: #fff;
+    }
+    .filter-btn[data-filter-status="fail"] {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    .filter-btn[data-filter-status="fail"].active {
+      background: var(--color-fail);
+      color: #fff;
+    }
+    .filter-btn[data-filter-status="error"] {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    .filter-btn[data-filter-status="error"].active {
+      background: var(--color-warn);
+      color: #fff;
+    }
+
+    .filter-count {
+      display: inline-block;
+      min-width: 18px;
+      text-align: center;
+      background: rgba(0,0,0,0.1);
+      border-radius: 10px;
+      padding: 1px 5px;
+      font-size: 11px;
+      margin-left: 4px;
+    }
+
+    .filter-btn.active .filter-count {
+      background: rgba(255,255,255,0.3);
+    }
+
+    .pdp-card.filter-hidden {
+      display: none !important;
+    }
+
+    .filter-empty-msg {
+      text-align: center;
+      padding: 40px 20px;
+      color: #6b7280;
+      font-size: 15px;
+      display: none;
     }
   </style>
 </head>
@@ -887,17 +1024,145 @@ export function generateHtmlReport(
         <div class="summary-label">Erros</div>
       </div>
     </div>
+    ${(() => {
+      // Build unique operations + counts
+      const opCounts = new Map<
+        string,
+        {
+          label: string;
+          total: number;
+          pass: number;
+          fail: number;
+          error: number;
+        }
+      >();
+      for (const r of results) {
+        const key = getOperationKey(r);
+        if (!opCounts.has(key)) {
+          const ch = r.channel ?? "ecommerce";
+          const label = `${r.vendor}/${r.country}${ch === "socialcommerce" ? " Social" : ""}`;
+          opCounts.set(key, { label, total: 0, pass: 0, fail: 0, error: 0 });
+        }
+        const c = opCounts.get(key)!;
+        c.total++;
+        if (r.success) c.pass++;
+        else if (r.error) c.error++;
+        else c.fail++;
+      }
+
+      const totalPass = results.filter((r) => r.success).length;
+      const totalFail = results.filter((r) => !r.success && !r.error).length;
+      const totalError = results.filter((r) => !!r.error).length;
+
+      const opBtns = [...opCounts.entries()]
+        .map(
+          ([key, c]) =>
+            `<button class="filter-btn active" data-filter-type="operation" data-filter-op="${key}">${flag(c.label.split("/")[1]?.split(" ")[0] ?? "")} ${c.label}<span class="filter-count">${c.total}</span></button>`,
+        )
+        .join("");
+
+      return `
+    <div class="filter-section" id="filterSection">
+      <h2>🔎 Filtrar Resultados</h2>
+      <div class="filter-bar">
+        <div class="filter-bar-group" id="statusFilters">
+          <button class="filter-btn active" data-filter-status="all">Todos<span class="filter-count">${results.length}</span></button>
+          <button class="filter-btn" data-filter-status="pass">✅ Passou<span class="filter-count">${totalPass}</span></button>
+          <button class="filter-btn" data-filter-status="fail">❌ Falhou<span class="filter-count">${totalFail}</span></button>
+          ${totalError > 0 ? `<button class="filter-btn" data-filter-status="error">⚠️ Erro<span class="filter-count">${totalError}</span></button>` : ""}
+        </div>
+        <div class="filter-bar-separator"></div>
+        <div class="filter-bar-group" id="operationFilters">
+          ${opBtns}
+        </div>
+      </div>
+    </div>
+      `;
+    })()}
 
     ${generateOperationsFeatureFlags()}
 
-    <main>
+
+    <main id="pdpResults">
       ${[...results.filter((r) => r.sku === "explore"), ...results.filter((r) => r.sku !== "explore")].map((r) => generatePdpCard(r)).join("")}
     </main>
+    <div class="filter-empty-msg" id="filterEmptyMsg">Nenhum resultado corresponde aos filtros selecionados.</div>
 
     <footer>
       PDP Feature Monitor • Gerado automaticamente
     </footer>
   </div>
+
+  <script>
+  (function() {
+    var activeStatus = 'all';
+    var activeOps = new Set();
+
+    // Init: all operations active
+    document.querySelectorAll('#operationFilters .filter-btn').forEach(function(btn) {
+      activeOps.add(btn.getAttribute('data-filter-op'));
+    });
+
+    function applyFilters() {
+      var cards = document.querySelectorAll('.pdp-card[data-operation]');
+      var visibleCount = 0;
+      cards.forEach(function(card) {
+        var cardOp = card.getAttribute('data-operation');
+        var cardStatus = card.getAttribute('data-status');
+        var matchOp = activeOps.has(cardOp);
+
+        // Os cards de config tem status="info", vamos exibi-los apenas se status for "all"
+        // ou se houvesse um filtro específico para info (que não existe no momento).
+        var matchStatus = activeStatus === 'all' || cardStatus === activeStatus;
+
+        if (matchOp && matchStatus) {
+          card.classList.remove('filter-hidden');
+          // Conta apenas os cards de resultado real para a mensagem de 'vazio'
+          if (card.closest('#pdpResults')) {
+            visibleCount++;
+          }
+        } else {
+          card.classList.add('filter-hidden');
+        }
+      });
+      document.getElementById('filterEmptyMsg').style.display = visibleCount === 0 ? 'block' : 'none';
+    }
+
+    // Status filter
+    document.querySelectorAll('#statusFilters .filter-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('#statusFilters .filter-btn').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        activeStatus = btn.getAttribute('data-filter-status');
+        applyFilters();
+      });
+    });
+
+    // Operation filter (toggle individual)
+    document.querySelectorAll('#operationFilters .filter-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var op = btn.getAttribute('data-filter-op');
+        if (activeOps.has(op)) {
+          // Don't allow deselecting all
+          if (activeOps.size > 1) {
+            activeOps.delete(op);
+            btn.classList.remove('active');
+          } else {
+            // If clicking the last active one, reactivate all
+            document.querySelectorAll('#operationFilters .filter-btn').forEach(function(b) {
+              activeOps.add(b.getAttribute('data-filter-op'));
+              b.classList.add('active');
+            });
+          }
+        } else {
+          activeOps.add(op);
+          btn.classList.add('active');
+        }
+        applyFilters();
+      });
+    });
+  })();
+  </script>
 </body>
 </html>`;
 }
