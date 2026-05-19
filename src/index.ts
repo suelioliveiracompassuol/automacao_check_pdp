@@ -744,7 +744,7 @@ async function main() {
   const htmlPath = path.join(outputDir, "report.html");
   const jsonPath = path.join(outputDir, "report.json");
 
-  fs.writeFileSync(htmlPath, generateHtmlReport(report));
+  fs.writeFileSync(htmlPath, generateHtmlReport(report, outputDir));
   fs.writeFileSync(jsonPath, generateJsonReport(report));
 
   // Print summary
