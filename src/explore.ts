@@ -10,27 +10,24 @@
  * No search is used — navigation happens entirely through vitrines on the home.
  */
 
-import { chromium, firefox, Browser, Page } from "@playwright/test";
-import * as fs from "fs";
+import { Browser, Page } from "@playwright/test";
 import * as path from "path";
-import { TIMING, isFeatureSupported } from "./checks/configs/config.js";
+import {
+  TIMING,
+  isFeatureSupported,
+  SELECTORS,
+} from "./checks/configs/config.js";
 import {
   FEATURE_CHECKERS,
   logFeaturesGrouped,
   dismissCookieBanner,
   scrollAndLoadContent,
 } from "./checks/featureRunner.js";
-import {
-  CheckResult,
-  PdpCheckResult,
-  MonitoringReport,
-  DomainConfig,
-} from "./types.js";
-import { generateHtmlReport, generateJsonReport } from "./reporter.js";
+import { CheckResult, PdpCheckResult, DomainConfig } from "./types.js";
 import {
   setupRemoteConfigCapture,
   setupCommerceFeatureFlagCapture,
-  extractCommerceFeatureFlags,
+  getCommerceFeatureFlagsFromPage,
   mergeCommerceFeatureFlags,
   isFeatureEnabledByRemoteConfig,
   formatFlagsForLog,
@@ -40,25 +37,15 @@ import {
   RemoteConfigFlags,
   CommerceFeatureFlags,
 } from "./checks/remoteConfig.js";
-import { DOMAINS } from "./checks/configs/domains.js";
+import { setupEinsteinShowcaseCapture } from "./checks/showcases.js";
 import { FEATURES } from "./checks/configs/features.js";
-import { runWithConcurrency, jitter, parseConcurrency } from "./concurrency.js";
 import {
-  describePlaywrightTraceMode,
   finalizeBrowserTrace,
   getPlaywrightTraceMode,
   startBrowserTraceIfEnabled,
 } from "./playwrightTrace.js";
-
-function formatFlagLogValue(value: unknown): string {
-  if (value === true) {
-    return "✅";
-  }
-  if (value === false) {
-    return "❌";
-  }
-  return String(value);
-}
+import { createStandardContext } from "./browserSetup.js";
+import { formatFlagLogValue } from "./utils.js";
 
 export async function dismissCookieBannerExplore(page: Page): Promise<void> {
   return dismissCookieBanner(page, "     ");
@@ -99,17 +86,11 @@ export async function navigateViaVitrine(page: Page): Promise<string | null> {
     });
 
     return Array.from(uniqueUrls);
-  });
+  }, SELECTORS.explore.productLinks);
 
   if (productUrls.length === 0) {
     // Fallback: try Playwright locator with visible filter
-    const vitrineSelectors = [
-      'section:has(a[href*="/p/"]) a[href*="/p/"]',
-      '[class*="swiper"] a[href*="/p/"]',
-      '[class*="carousel"] a[href*="/p/"]',
-      '[class*="showcase"] a[href*="/p/"]',
-      'a[href*="/p/"]',
-    ];
+    const vitrineSelectors = SELECTORS.explore.vitrineSelectors;
 
     for (const selector of vitrineSelectors) {
       const productLinks = page.locator(selector).locator("visible=true");
@@ -218,7 +199,7 @@ export async function runExplorePdpChecks(
   const fromNetwork = collectCommerceFlags
     ? await collectCommerceFlags()
     : null;
-  const fromPage = await extractCommerceFeatureFlags(page);
+  const fromPage = await getCommerceFeatureFlagsFromPage(page);
   const commerceFeatureFlags = mergeCommerceFeatureFlags(fromNetwork, fromPage);
   if (commerceFeatureFlags) {
     const totalFlags = countCommerceFlags(commerceFeatureFlags);
@@ -360,33 +341,16 @@ export async function runExploratoryJourney(
   console.log(`   Home: ${homeUrl}`);
   console.log(`${"═".repeat(70)}`);
 
-  const context = await browser.newContext({
-    viewport: { width: 1280, height: 720 },
-    userAgent:
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-    ignoreHTTPSErrors: true,
-    extraHTTPHeaders: {
-      "Accept-Language": "pt-BR,pt;q=0.9,es;q=0.8,en;q=0.7",
-    },
-  });
-
-  // Mask automation signals that trigger Akamai bot detection
-  await context.addInitScript(() => {
-    Object.defineProperty(navigator, "webdriver", { get: () => false });
-    Object.defineProperty(navigator, "plugins", {
-      get: () => [1, 2, 3, 4, 5],
-    });
-    Object.defineProperty(navigator, "languages", {
-      get: () => ["pt-BR", "pt", "es", "en"],
-    });
-  });
-
+  const context = await createStandardContext(browser, homeUrl);
   const page = await context.newPage();
 
   // Setup Remote Config capture BEFORE navigation
   const locale = COUNTRY_TO_LOCALE[domainConfig.country] || "pt-BR";
   const collectRemoteConfig = setupRemoteConfigCapture(page, locale);
   const collectCommerceFlags = setupCommerceFeatureFlagCapture(page);
+
+  // Setup Einstein showcase capture BEFORE navigation
+  setupEinsteinShowcaseCapture(page);
 
   const traceMode = getPlaywrightTraceMode();
   const traceZipPath = path.join(
@@ -545,137 +509,4 @@ export async function runExploratoryJourney(
     }
     await context.close();
   }
-}
-
-async function main() {
-  const runId = `run_explore_${Date.now()}`;
-  const startTime = new Date();
-  const outputDir = path.join(process.cwd(), "reports", runId);
-  fs.mkdirSync(path.join(outputDir, "screenshots"), { recursive: true });
-
-  const isHeadless = process.env.HEADLESS !== "false";
-  // Optional filter: OPERATIONS=natura-BR,avon-BR
-  const operationsFilter = process.env.OPERATIONS
-    ? new Set(process.env.OPERATIONS.split(",").map((s) => s.trim()))
-    : null;
-
-  console.log(`\n🚀 Jornada Exploratória - Navegação via Vitrines`);
-  console.log(`   Headless: ${isHeadless}`);
-  console.log(`   📂 Output: ${outputDir}`);
-
-  // Determine which domains to test
-  let domainsToTest = DOMAINS;
-  if (operationsFilter) {
-    domainsToTest = DOMAINS.filter((d) => {
-      const key = `${d.vendor}-${d.country}${d.channel === "socialcommerce" ? "-social" : ""}`;
-      return operationsFilter.has(key);
-    });
-    console.log(`   Filtro: ${[...operationsFilter].join(", ")}`);
-  }
-  console.log(`   Operações: ${domainsToTest.length}`);
-
-  const traceMode = getPlaywrightTraceMode();
-  if (traceMode !== "off") {
-    console.log(
-      `   🎬 Trace Playwright: ${describePlaywrightTraceMode(traceMode)} — abrir com: npx playwright show-trace <caminho.zip>`,
-    );
-  }
-
-  // Concurrency from CONCURRENCY env var (default 3; hard-capped at 8)
-  const concurrency = parseConcurrency(3);
-  console.log(
-    `   ⚡ Concorrência: ${concurrency} worker(s) | jitter 0\u20132 s inicial por domínio`,
-  );
-
-  // Launch browsers
-  const browserChromium = await chromium.launch({
-    headless: isHeadless,
-    args: [
-      "--disable-blink-features=AutomationControlled",
-      "--no-sandbox",
-      "--disable-dev-shm-usage",
-    ],
-  });
-  let browserFirefox: Browser | null = null;
-  try {
-    browserFirefox = await firefox.launch({ headless: isHeadless });
-  } catch {
-    console.log("   ⚠️  Firefox não disponível, usando Chromium para tudo");
-  }
-
-  const results: PdpCheckResult[] = [];
-
-  try {
-    // Each domain is its own task (1:1). Run in parallel with a 0\u20132 s initial
-    // jitter to spread first requests and reduce WAF/rate-limit exposure.
-    const tasks = domainsToTest.map(
-      (domainConfig) => async (): Promise<PdpCheckResult> => {
-        await jitter(0, 2000);
-        const useFirefox =
-          browserFirefox !== null &&
-          domainConfig.vendor === "natura" &&
-          domainConfig.country !== "BR" &&
-          !domainConfig.channel;
-        const browser = useFirefox ? browserFirefox! : browserChromium;
-        return runExploratoryJourney(browser, domainConfig, outputDir);
-      },
-    );
-    results.push(...(await runWithConcurrency(tasks, concurrency)));
-  } finally {
-    await browserChromium.close();
-    if (browserFirefox) await browserFirefox.close();
-  }
-
-  // Generate report
-  const endTime = new Date();
-  const durationMs = endTime.getTime() - startTime.getTime();
-
-  const report: MonitoringReport = {
-    runId,
-    startTime: startTime.toISOString(),
-    endTime: endTime.toISOString(),
-    durationMs,
-    summary: {
-      total: results.length,
-      passed: results.filter((r) => r.success).length,
-      failed: results.filter((r) => !r.success && !r.error).length,
-      errors: results.filter((r) => r.error).length,
-    },
-    results,
-  };
-
-  const htmlPath = path.join(outputDir, "report.html");
-  const jsonPath = path.join(outputDir, "report.json");
-
-  fs.writeFileSync(htmlPath, generateHtmlReport(report));
-  fs.writeFileSync(jsonPath, generateJsonReport(report));
-
-  // Summary
-  const successCount = results.filter((r) => r.success).length;
-  const failCount = results.filter((r) => !r.success).length;
-
-  console.log(`\n${"═".repeat(70)}`);
-  console.log(`📊 RESUMO DA JORNADA EXPLORATÓRIA`);
-  console.log(
-    `   Total: ${results.length} | ✅ Sucesso: ${successCount} | ❌ Falha: ${failCount}`,
-  );
-  console.log(`   ⏱️  Duração: ${(durationMs / 1000).toFixed(1)}s`);
-  console.log(`   📄 Relatório: ${htmlPath}`);
-  console.log(`${"═".repeat(70)}\n`);
-
-  if (failCount > 0) {
-    console.log("🔴 Há falhas na jornada exploratória!");
-    process.exit(1);
-  } else {
-    console.log("🟢 Todas as jornadas exploratórias passaram!");
-  }
-}
-
-// Run standalone only when called directly (not when imported)
-const isMainModule =
-  process.argv[1]?.endsWith("explore.js") ||
-  process.argv[1]?.endsWith("explore.ts");
-
-if (isMainModule) {
-  main().catch(console.error);
 }

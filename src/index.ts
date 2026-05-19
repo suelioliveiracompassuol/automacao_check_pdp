@@ -29,11 +29,10 @@ import {
 import { generateHtmlReport, generateJsonReport } from "./reporter.js";
 import { setupEndpointMonitor } from "./checks/endpointResponse.js";
 import { checkI18nKeys } from "./checks/i18n.js";
+import { setupEinsteinShowcaseCapture } from "./checks/showcases.js";
 import {
   setupRemoteConfigCapture,
   setupCommerceFeatureFlagCapture,
-  extractCommerceFeatureFlags,
-  mergeCommerceFeatureFlags,
   isFeatureEnabledByRemoteConfig,
   formatFlagsForLog,
   getFlagsByCategory,
@@ -57,11 +56,8 @@ import {
   startBrowserTraceIfEnabled,
 } from "./playwrightTrace.js";
 
-function formatFlagLogValue(value: unknown): string {
-  if (value === true) return "✅";
-  if (value === false) return "❌";
-  return String(value);
-}
+import { createStandardContext } from "./browserSetup.js";
+import { formatFlagLogValue } from "./utils.js";
 
 interface CheckPdpParams {
   browser: Browser;
@@ -101,27 +97,7 @@ async function checkPdp(params: CheckPdpParams): Promise<PdpCheckResult> {
   console.log(`\n📦 Checking: ${sku.name} (${sku.sku})`);
   console.log(`   URL: ${url}`);
 
-  const context = await browser.newContext({
-    viewport: { width: 1280, height: 720 },
-    userAgent:
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-    ignoreHTTPSErrors: true,
-    extraHTTPHeaders: {
-      "Accept-Language": "pt-BR,pt;q=0.9,es;q=0.8,en;q=0.7",
-    },
-  });
-
-  // Mask automation signals that trigger Akamai bot detection
-  await context.addInitScript(() => {
-    Object.defineProperty(navigator, "webdriver", { get: () => false });
-    Object.defineProperty(navigator, "plugins", {
-      get: () => [1, 2, 3, 4, 5],
-    });
-    Object.defineProperty(navigator, "languages", {
-      get: () => ["pt-BR", "pt", "es", "en"],
-    });
-  });
-
+  const context = await createStandardContext(browser, url);
   const page = await context.newPage();
 
   // Legacy single-pattern endpoint check
@@ -153,6 +129,9 @@ async function checkPdp(params: CheckPdpParams): Promise<PdpCheckResult> {
   const collectCommerceFlags = cachedCommerceFlags
     ? null
     : setupCommerceFeatureFlagCapture(page);
+
+  // Setup Einstein showcase capture BEFORE navigation
+  setupEinsteinShowcaseCapture(page);
 
   const traceMode = getPlaywrightTraceMode();
   const traceZipPath = path.join(
@@ -243,13 +222,9 @@ async function checkPdp(params: CheckPdpParams): Promise<PdpCheckResult> {
       }
     }
 
-    // Commerce flags: intercept /feature-flag (setup before goto) + DOM fallback
-    if (!cachedCommerceFlags) {
-      const fromNetwork = collectCommerceFlags
-        ? await collectCommerceFlags()
-        : null;
-      const fromPage = await extractCommerceFeatureFlags(page);
-      commerceFeatureFlags = mergeCommerceFeatureFlags(fromNetwork, fromPage);
+    // Commerce flags: intercept /feature-flag (setup before goto) and/or use DOM fallback
+    if (!cachedCommerceFlags && collectCommerceFlags) {
+      commerceFeatureFlags = await collectCommerceFlags();
     }
 
     // Log commerce feature flags if captured
@@ -333,7 +308,7 @@ async function checkPdp(params: CheckPdpParams): Promise<PdpCheckResult> {
 
         try {
           await page.screenshot({ path: screenshotPath, fullPage: false });
-          result.screenshot = screenshotPath;
+          result.screenshot = path.relative(outputDir, screenshotPath);
         } catch {
           // Ignore screenshot errors
         }
@@ -353,7 +328,7 @@ async function checkPdp(params: CheckPdpParams): Promise<PdpCheckResult> {
       );
       try {
         await page.screenshot({ path: screenshotPath, fullPage: false });
-        i18nResult.screenshot = screenshotPath;
+        i18nResult.screenshot = path.relative(outputDir, screenshotPath);
       } catch {
         // Ignore screenshot errors
       }
@@ -448,13 +423,18 @@ async function checkPdp(params: CheckPdpParams): Promise<PdpCheckResult> {
     // Take full page screenshot if any failure
     if (!success) {
       const screenshotName = `${sku.sku}_fullpage_${Date.now()}.png`;
-      pageScreenshot = path.join(outputDir, "screenshots", screenshotName);
+      const screenshotPath = path.join(
+        outputDir,
+        "screenshots",
+        screenshotName,
+      );
       await page
-        .screenshot({ path: pageScreenshot, fullPage: true })
+        .screenshot({ path: screenshotPath, fullPage: true })
         .catch(() => {});
+      pageScreenshot = path.relative(outputDir, screenshotPath);
     }
 
-    const playwrightTracePath = await finalizeBrowserTrace(
+    const playwrightTracePathAbs = await finalizeBrowserTrace(
       context,
       traceMode,
       traceActive,
@@ -462,8 +442,8 @@ async function checkPdp(params: CheckPdpParams): Promise<PdpCheckResult> {
       traceZipPath,
     );
     traceActive = false;
-    if (playwrightTracePath) {
-      console.log(`   🎬 Trace salvo: ${playwrightTracePath}`);
+    if (playwrightTracePathAbs) {
+      console.log(`   🎬 Trace salvo: ${playwrightTracePathAbs}`);
     }
 
     return {
@@ -472,12 +452,15 @@ async function checkPdp(params: CheckPdpParams): Promise<PdpCheckResult> {
       url,
       vendor: sku.vendor,
       country: sku.country,
+      channel: sku.channel,
       timestamp,
       success,
       loadTime,
       features,
       pageScreenshot,
-      playwrightTracePath,
+      playwrightTracePath: playwrightTracePathAbs
+        ? path.relative(outputDir, playwrightTracePathAbs)
+        : undefined,
       remoteConfigFlags: remoteConfigFlags ?? undefined,
       commerceFeatureFlags: commerceFeatureFlags ?? undefined,
     };
@@ -488,12 +471,13 @@ async function checkPdp(params: CheckPdpParams): Promise<PdpCheckResult> {
 
     // Take screenshot of error state
     const screenshotName = `${sku.sku}_error_${Date.now()}.png`;
-    pageScreenshot = path.join(outputDir, "screenshots", screenshotName);
+    const screenshotPath = path.join(outputDir, "screenshots", screenshotName);
     await page
-      .screenshot({ path: pageScreenshot, fullPage: true })
+      .screenshot({ path: screenshotPath, fullPage: true })
       .catch(() => {});
+    pageScreenshot = path.relative(outputDir, screenshotPath);
 
-    const playwrightTracePath = await finalizeBrowserTrace(
+    const playwrightTracePathAbs = await finalizeBrowserTrace(
       context,
       traceMode,
       traceActive,
@@ -501,8 +485,8 @@ async function checkPdp(params: CheckPdpParams): Promise<PdpCheckResult> {
       traceZipPath,
     );
     traceActive = false;
-    if (playwrightTracePath) {
-      console.log(`   🎬 Trace salvo: ${playwrightTracePath}`);
+    if (playwrightTracePathAbs) {
+      console.log(`   🎬 Trace salvo: ${playwrightTracePathAbs}`);
     }
 
     return {
@@ -511,13 +495,16 @@ async function checkPdp(params: CheckPdpParams): Promise<PdpCheckResult> {
       url,
       vendor: sku.vendor,
       country: sku.country,
+      channel: sku.channel,
       timestamp,
       success: false,
       loadTime,
       features,
       error: error instanceof Error ? error.message : String(error),
       pageScreenshot,
-      playwrightTracePath,
+      playwrightTracePath: playwrightTracePathAbs
+        ? path.relative(outputDir, playwrightTracePathAbs)
+        : undefined,
       remoteConfigFlags: remoteConfigFlags ?? undefined,
       commerceFeatureFlags: commerceFeatureFlags ?? undefined,
     };

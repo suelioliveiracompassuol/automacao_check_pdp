@@ -121,10 +121,10 @@ export const SELECTORS = {
     productCards: '[class*="product-card"], [class*="showcase"] a[href*="/p/"]',
   },
 
-  // Recommendation showcase (PT-BR: "achamos que você vai gostar", ES: "te puede gustar", "también te puede interesar")
+  // Recommendation showcase (PT-BR: "achamos que você vai gostar", ES: "te puede gustar", "también te puede gustar", "también te puede interesar")
   recommendationShowcase: {
     section:
-      'section:has-text("achamos que você vai gostar"), section:has-text("você também pode gostar"), section:has-text("te puede gustar"), section:has-text("también te puede interesar"), section:has-text("te puede interesar"), [data-testid="recommendation-showcase"]',
+      'section:has-text("achamos que você vai gostar"), section:has-text("você também pode gostar"), section:has-text("también te puede gustar"), section:has-text("te puede gustar"), section:has-text("te pueden gustar"), section:has-text("también te puede interesar"), section:has-text("te puede interesar"), section:has-text("también podrían gustarte"), section:has-text("te podrían gustar"), section:has-text("te va a gustar"), section:has-text("productos recomendados"), [data-testid="recommendation-showcase"]',
     productCards: '[class*="product-card"], [class*="showcase"] a[href*="/p/"]',
   },
 
@@ -163,6 +163,25 @@ export const SELECTORS = {
     section:
       'section:has-text("Queridinhos que são comprados juntos"), section:has-text("queridinhos que são comprados juntos"), section:has-text("comprados juntos"), section:has-text("compre junto"), section:has-text("shop the set"), section:has-text("compra el set"), section:has-text("favoritos que se compran juntos"), [data-testid="shop-the-set"], [data-testid="bought-together"]',
     productCards: 'a[href*="/p/"], [class*="product-card"]',
+  },
+
+  // Structural selector for showcase sections
+  showcase: {
+    section: "section.bg-background:not(#ot-pc-lst):not(#ot-fltr-modal)",
+    populatedSection:
+      'section.bg-background:not(#ot-pc-lst):not(#ot-fltr-modal):has([data-testid="btn-add-to-cart"], a[href*="/p/"])',
+  },
+
+  // Explore journey selectors
+  explore: {
+    productLinks: 'a[href*="/p/"]',
+    vitrineSelectors: [
+      'section:has(a[href*="/p/"]) a[href*="/p/"]',
+      '[class*="swiper"] a[href*="/p/"]',
+      '[class*="carousel"] a[href*="/p/"]',
+      '[class*="showcase"] a[href*="/p/"]',
+      'a[href*="/p/"]',
+    ],
   },
 };
 

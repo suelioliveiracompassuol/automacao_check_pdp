@@ -1,3 +1,5 @@
+/* eslint-disable no-empty */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Firebase Remote Config Capture Module
  *
@@ -7,56 +9,47 @@
 
 import { Page } from "@playwright/test";
 import { FeatureKey } from "../types.js";
+import { getNestedValue } from "../utils.js";
 
 // =============================================================================
 // BFF ENDPOINT MAPPING
 // =============================================================================
 
+// =============================================================================
+// DOM-BASED FEATURE FLAG EXTRACTION
+// =============================================================================
+
 /**
- * Extract Commerce Feature Flags from page context after navigation
- * This extracts flags from the RSC payload or React context
- * @param page - Playwright page instance (after navigation)
- * @returns Promise with the feature flags or null if unavailable
+ * Unified function to extract Commerce Feature Flags from the page content.
+ * This runs in the browser context and tries multiple strategies to find the flags
+ * when they are not available from a network endpoint.
+ *
+ * @param page Playwright Page object
+ * @returns Promise resolving to the feature flags object or null
  */
-export async function extractCommerceFeatureFlags(
+export async function getCommerceFeatureFlagsFromPage(
   page: Page,
 ): Promise<CommerceFeatureFlags | null> {
   try {
-    // Wait for the page to fully load so hydrated state (window.__NEXT_DATA__ etc.) is available;
-    // resolves immediately if the load event already fired
-    await page.waitForLoadState("load", { timeout: 3000 }).catch(() => {});
-
-    // Try to extract feature flags from the page context
     const flags = await page.evaluate(() => {
-      // Helper to search for feature flags in objects
+      // Helper to check if an object looks like a feature flags object
       const isFeatureFlagsObject = (obj: unknown): boolean => {
         if (!obj || typeof obj !== "object") return false;
         const keys = Object.keys(obj as Record<string, unknown>);
-        // Legacy checkout / omni shape (older stacks)
-        const legacyKeys = [
-          "guestCheckout",
-          "enablePix",
-          "businessModel",
-          "installments",
-          "omniEnabled",
-          "liveShopping",
-        ];
-        if (legacyKeys.filter((k) => keys.includes(k)).length >= 3) return true;
-        // Commerce BFF / PDP feature-flag shape (Natura et al.)
-        const commerceKeys = [
+        const primaryKeys = [
           "businessModel",
           "newExperiencePdpEnable",
           "displayStockOnProductDetailPage",
           "enablePdpFreightCalculation",
-          "enableDisplayFreeShippingPdp",
-          "giftPackaging",
-          "cnBlockSelfBuy",
-          "productRecommendation",
         ];
-        return commerceKeys.filter((k) => keys.includes(k)).length >= 2;
+        const legacyKeys = ["guestCheckout", "enablePix", "omniEnabled"];
+        return (
+          primaryKeys.filter((k) => keys.includes(k)).length >= 2 ||
+          legacyKeys.filter((k) => keys.includes(k)).length >= 2
+        );
       };
 
-      // Recursively search for feature flags in an object
+      // Helper to recursively search for the first valid feature flags object
       const findFeatureFlags = (
         obj: unknown,
         depth = 0,
@@ -70,97 +63,95 @@ export async function extractCommerceFeatureFlags(
         return null;
       };
 
-      // 1. Try window.__NEXT_DATA__ (Pages Router)
-      const nextData = (window as unknown as Record<string, unknown>)
-        .__NEXT_DATA__ as { props?: { pageProps?: unknown } } | undefined;
+      // Strategy 1: Look in `window.__NEXT_DATA__` (Pages Router)
+      const nextData = (window as any).__NEXT_DATA__;
       if (nextData?.props?.pageProps) {
         const found = findFeatureFlags(nextData.props.pageProps);
         if (found) return found;
       }
 
-      // 2. Try to find in React fiber tree (App Router)
+      // Strategy 2: Look in JSON script tags
+      const scripts = document.querySelectorAll(
+        'script[type="application/json"]',
+      );
+      for (const script of Array.from(scripts)) {
+        try {
+          const data = JSON.parse(script.textContent || "");
+          const found = findFeatureFlags(data);
+          if (found) return found;
+        } catch {}
+      }
+
+      // Strategy 3: Look in React Fiber tree (App Router)
       const reactRoot = document.getElementById("__next");
       if (reactRoot) {
         const fiberKey = Object.keys(reactRoot).find((k) =>
           k.startsWith("__reactFiber"),
         );
         if (fiberKey) {
-          // Search through fiber memoizedProps
           const searchFiber = (
-            fiber: unknown,
+            fiber: any,
             depth = 0,
           ): Record<string, unknown> | null => {
-            if (depth > 20 || !fiber) return null;
-            const f = fiber as Record<string, unknown>;
-            if (f.memoizedProps) {
-              const found = findFeatureFlags(f.memoizedProps);
+            if (depth > 25 || !fiber) return null;
+            if (fiber.memoizedProps) {
+              const found = findFeatureFlags(fiber.memoizedProps);
               if (found) return found;
             }
-            if (f.child) {
-              const found = searchFiber(f.child, depth + 1);
+            if (fiber.child) {
+              const found = searchFiber(fiber.child, depth + 1);
               if (found) return found;
             }
-            if (f.sibling) {
-              const found = searchFiber(f.sibling, depth + 1);
+            if (fiber.sibling) {
+              const found = searchFiber(fiber.sibling, depth + 1);
               if (found) return found;
             }
             return null;
           };
-          const fiber = (reactRoot as unknown as Record<string, unknown>)[
-            fiberKey
-          ];
-          const found = searchFiber(fiber);
+          const rootFiber = (reactRoot as any)[fiberKey];
+          const found = searchFiber(rootFiber);
           if (found) return found;
         }
       }
 
-      // 3. Try self.__next_f (RSC flight data)
-      const nextF = (
-        window as unknown as { self?: { __next_f?: Array<[number, string]> } }
-      ).self?.__next_f;
-      if (nextF && Array.isArray(nextF)) {
-        for (const entry of nextF) {
-          if (!Array.isArray(entry) || typeof entry[1] !== "string") continue;
-          const str = entry[1];
-          // Look for JSON objects with feature flag patterns
-          const jsonMatches = str.match(
-            /\{[^{}]*"(?:guestCheckout|businessModel)"[^{}]*\}/g,
+      // Strategy 4: Look for RSC flight data in `self.__next_f`
+      const nextFlight = (window as any).self?.__next_f;
+      if (Array.isArray(nextFlight)) {
+        for (const entry of nextFlight) {
+          if (typeof entry[1] !== "string") continue;
+          // Find JSON objects within the string that look like feature flags
+          const jsonMatches = entry[1].match(
+            /\{[^{}]*"(?:guestCheckout|businessModel|newExperiencePdpEnable)"[^{}]*\}/g,
           );
           if (jsonMatches) {
             for (const match of jsonMatches) {
               try {
                 const parsed = JSON.parse(match);
                 if (isFeatureFlagsObject(parsed)) return parsed;
-              } catch {
-                // Continue
-              }
+              } catch {}
             }
           }
         }
       }
 
-      // 4. Search in script tags for inline data
-      const scripts = document.querySelectorAll(
-        'script[type="application/json"]',
-      );
-      for (let i = 0; i < scripts.length; i++) {
-        const script = scripts[i];
-        try {
-          const data = JSON.parse(script.textContent || "");
-          const found = findFeatureFlags(data);
-          if (found) return found;
-        } catch {
-          // Continue
-        }
+      // Strategy 5: Look for global variables
+      const win = window as any;
+      if (
+        win.__FEATURE_FLAGS__ &&
+        isFeatureFlagsObject(win.__FEATURE_FLAGS__)
+      ) {
+        return win.__FEATURE_FLAGS__;
+      }
+      if (win.featureFlags && isFeatureFlagsObject(win.featureFlags)) {
+        return win.featureFlags;
       }
 
       return null;
     });
 
-    if (!flags) {
-      return null;
-    }
+    if (!flags) return null;
 
+    // Normalize the found flags object into the CommerceFeatureFlags structure
     return {
       capturedAt: new Date().toISOString(),
       _raw: flags,
@@ -190,22 +181,18 @@ export async function extractCommerceFeatureFlags(
       giftPackaging: flags.giftPackaging as boolean | undefined,
       enableGiftOnSite: flags.enableGiftOnSite as boolean | undefined,
       giftSku: flags.giftSku as string | undefined,
-      cnBlockSelfBuy: flags.cnBlockSelfBuy as boolean | undefined,
-      cnRecommendation: flags.cnRecommendation as boolean | undefined,
-      consultantWithoutCommissionOnFirstPurchase:
-        flags.consultantWithoutCommissionOnFirstPurchase as boolean | undefined,
-      enableConsultantRating: flags.enableConsultantRating as
-        | boolean
-        | undefined,
-      enableConsultantMercadoPagoToken:
-        flags.enableConsultantMercadoPagoToken as boolean | undefined,
+
       productRecommendation: flags.productRecommendation as boolean | undefined,
       location: flags.location as boolean | undefined,
       newExperienceEnable: flags.newExperienceEnable as boolean | undefined,
+      socialCommerce: flags.socialCommerce as boolean | undefined,
+      socialCommerceMinhaLoja: flags.socialCommerceMinhaLoja as
+        | boolean
+        | undefined,
     };
   } catch (error) {
     console.log(
-      `      ⚠️ Erro ao extrair feature flags: ${error instanceof Error ? error.message : String(error)}`,
+      `      ⚠️ Error during DOM extraction of feature flags: ${error instanceof Error ? error.message : String(error)}`,
     );
     return null;
   }
@@ -312,15 +299,13 @@ export interface CommerceFeatureFlags {
   enableGiftOnSite?: boolean;
   giftSku?: string;
 
-  // Consultant Features
-  cnBlockSelfBuy?: boolean;
-  cnRecommendation?: boolean;
-  consultantWithoutCommissionOnFirstPurchase?: boolean;
-  enableConsultantRating?: boolean;
-  enableConsultantMercadoPagoToken?: boolean;
   productRecommendation?: boolean;
   location?: boolean;
   newExperienceEnable?: boolean;
+
+  // Social Commerce
+  socialCommerce?: boolean;
+  socialCommerceMinhaLoja?: boolean;
 }
 
 /** Keys merged by {@link mergeCommerceFeatureFlags} (excludes metadata). */
@@ -339,14 +324,11 @@ const COMMERCE_FLAG_DATA_KEYS: (keyof CommerceFeatureFlags)[] = [
   "giftPackaging",
   "enableGiftOnSite",
   "giftSku",
-  "cnBlockSelfBuy",
-  "cnRecommendation",
-  "consultantWithoutCommissionOnFirstPurchase",
-  "enableConsultantRating",
-  "enableConsultantMercadoPagoToken",
   "productRecommendation",
   "location",
   "newExperienceEnable",
+  "socialCommerce",
+  "socialCommerceMinhaLoja",
 ];
 
 /**
@@ -554,24 +536,16 @@ export function setupCommerceFeatureFlagCapture(
         giftPackaging: body.giftPackaging as boolean | undefined,
         enableGiftOnSite: body.enableGiftOnSite as boolean | undefined,
         giftSku: body.giftSku as string | undefined,
-        // Consultant Features
-        cnBlockSelfBuy: body.cnBlockSelfBuy as boolean | undefined,
-        cnRecommendation: body.cnRecommendation as boolean | undefined,
-        consultantWithoutCommissionOnFirstPurchase:
-          body.consultantWithoutCommissionOnFirstPurchase as
-            | boolean
-            | undefined,
-        enableConsultantRating: body.enableConsultantRating as
-          | boolean
-          | undefined,
-        enableConsultantMercadoPagoToken:
-          body.enableConsultantMercadoPagoToken as boolean | undefined,
-        // Other
+
         productRecommendation: body.productRecommendation as
           | boolean
           | undefined,
         location: body.location as boolean | undefined,
         newExperienceEnable: body.newExperienceEnable as boolean | undefined,
+        socialCommerce: body.socialCommerce as boolean | undefined,
+        socialCommerceMinhaLoja: body.socialCommerceMinhaLoja as
+          | boolean
+          | undefined,
       };
     } catch {
       // Response not JSON or parsing failed - continue
@@ -670,6 +644,47 @@ export function setupCommerceFeatureFlagCapture(
                 }
               }
             }
+
+            // 3b. Escaped RSC format used by Next.js App Router social commerce sites
+            // Script textContent contains: \"featureFlags\":{\"key\":value,...}
+            const escapedMarker = '\\"featureFlags\\":{';
+            const markerIdx = content.indexOf(escapedMarker);
+            if (markerIdx >= 0) {
+              const braceStart = content.indexOf("{", markerIdx);
+              if (braceStart >= 0) {
+                let depth = 0;
+                let braceEnd = -1;
+                for (let k = braceStart; k < content.length; k++) {
+                  if (content[k] === "\\" && k + 1 < content.length) {
+                    k++; // skip escaped character
+                    continue;
+                  }
+                  if (content[k] === "{") depth++;
+                  else if (content[k] === "}") {
+                    depth--;
+                    if (depth === 0) {
+                      braceEnd = k;
+                      break;
+                    }
+                  }
+                }
+                if (braceEnd > braceStart) {
+                  const escapedObj = content.substring(
+                    braceStart,
+                    braceEnd + 1,
+                  );
+                  // Unescape: \" -> "  and  \\ -> \
+                  const unescaped = escapedObj
+                    .replace(/\\"/g, '"')
+                    .replace(/\\\\/g, "\\");
+                  try {
+                    return JSON.parse(unescaped);
+                  } catch {
+                    // Not valid JSON after unescape, continue
+                  }
+                }
+              }
+            }
           }
         }
 
@@ -749,17 +764,7 @@ export function setupCommerceFeatureFlagCapture(
           giftPackaging: body.giftPackaging as boolean | undefined,
           enableGiftOnSite: body.enableGiftOnSite as boolean | undefined,
           giftSku: body.giftSku as string | undefined,
-          cnBlockSelfBuy: body.cnBlockSelfBuy as boolean | undefined,
-          cnRecommendation: body.cnRecommendation as boolean | undefined,
-          consultantWithoutCommissionOnFirstPurchase:
-            body.consultantWithoutCommissionOnFirstPurchase as
-              | boolean
-              | undefined,
-          enableConsultantRating: body.enableConsultantRating as
-            | boolean
-            | undefined,
-          enableConsultantMercadoPagoToken:
-            body.enableConsultantMercadoPagoToken as boolean | undefined,
+
           productRecommendation: body.productRecommendation as
             | boolean
             | undefined,
@@ -813,20 +818,6 @@ export function getCommerceFlagsByCategory(
   if (flags.giftSku !== undefined) giftFlags.giftSku = flags.giftSku;
   if (Object.keys(giftFlags).length > 0)
     categories["🎁 Gift & Packaging"] = giftFlags;
-
-  // Consultant Features
-  const consultantFlags: Record<string, unknown> = {};
-  if (flags.cnBlockSelfBuy !== undefined)
-    consultantFlags.cnBlockSelfBuy = flags.cnBlockSelfBuy;
-  if (flags.cnRecommendation !== undefined)
-    consultantFlags.cnRecommendation = flags.cnRecommendation;
-  if (flags.enableConsultantRating !== undefined)
-    consultantFlags.enableConsultantRating = flags.enableConsultantRating;
-  if (flags.enableConsultantMercadoPagoToken !== undefined)
-    consultantFlags.enableConsultantMercadoPagoToken =
-      flags.enableConsultantMercadoPagoToken;
-  if (Object.keys(consultantFlags).length > 0)
-    categories["👤 Consultant"] = consultantFlags;
 
   // Other
   const otherFlags: Record<string, unknown> = {};
@@ -998,22 +989,6 @@ function parseRemoteConfigEntries(
 // =============================================================================
 // HELPER FUNCTIONS
 // =============================================================================
-
-/**
- * Gets nested value from an object using dot notation path
- */
-function getNestedValue(obj: unknown, path: string): unknown {
-  const parts = path.split(".");
-  let current: unknown = obj;
-
-  for (const part of parts) {
-    if (current === null || current === undefined) return undefined;
-    if (typeof current !== "object") return undefined;
-    current = (current as Record<string, unknown>)[part];
-  }
-
-  return current;
-}
 
 /**
  * Checks if a feature is enabled according to Remote Config flags

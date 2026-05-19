@@ -41,6 +41,8 @@ export interface PdpCheckResult {
   url: string;
   vendor: string;
   country: string;
+  /** Channel: ecommerce (default) or socialcommerce (Minha Loja) */
+  channel?: Channel;
   timestamp: string;
   /** Overall status: true if all required checks passed */
   success: boolean;

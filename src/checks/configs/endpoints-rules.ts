@@ -24,8 +24,8 @@ export const PDP_ENDPOINT_RULES: EndpointRule[] = [
   },
   {
     key: "reviews",
-    name: "API de avaliações (/reviews/v2)",
-    match: "/reviews/v2",
+    name: "API de avaliações (/reviews/v2/)",
+    match: "/reviews/v2/",
   },
   {
     key: "ratings",

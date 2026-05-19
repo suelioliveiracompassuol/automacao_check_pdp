@@ -94,6 +94,14 @@ jobs:
             cp "$REPORT_DIR/report.html" "$TARGET_DIR/report.html"
             cp "$REPORT_DIR/report.json" "$TARGET_DIR/report.json"
 
+            # Copy assets for the historical report
+            if [ -d "$REPORT_DIR/screenshots" ]; then
+              cp -r "$REPORT_DIR/screenshots" "$TARGET_DIR/screenshots"
+            fi
+            if [ -d "$REPORT_DIR/traces" ]; then
+              cp -r "$REPORT_DIR/traces" "$TARGET_DIR/traces"
+            fi
+
             # Keep only the most recent historical reports on Pages
             MAX_REPORTS=50
             COUNT=0

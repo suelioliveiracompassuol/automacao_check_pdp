@@ -1,28 +1,6 @@
 import { Page } from "@playwright/test";
 import { CheckResult } from "../types.js";
-
-/**
- * Count total reviews for the current product.
- * Returns 0 if no reviews found.
- */
-async function getReviewCount(page: Page): Promise<number> {
-  return page
-    .evaluate(() => {
-      // Check go-to-reviews button text (e.g. "(350) avaliações")
-      const goToBtn = document.querySelector(
-        '[data-testid="go-to-reviews-button"]',
-      );
-      if (goToBtn) {
-        const match = goToBtn.textContent?.match(/\(?\s*(\d+)\s*\)?/);
-        if (match) return parseInt(match[1]);
-      }
-      // Fallback: count visible review cards
-      const reviews = document.getElementById("reviews");
-      if (!reviews) return 0;
-      return reviews.querySelectorAll('div[role="group"]').length;
-    })
-    .catch(() => 0);
-}
+import { getReviewCount } from "../utils.js";
 
 /**
  * Check if reviews filter button is present in the reviews section.
@@ -42,6 +20,23 @@ export async function checkReviewFilter(page: Page): Promise<CheckResult> {
       .catch(() => false);
 
     if (!hasReviews) {
+      // When #reviews is absent, check if the go-to-reviews-button is in the DOM.
+      // Products with 0 reviews may not render #reviews but the button is still present.
+      const goToReviewsBtnCount = await page
+        .locator('[data-testid="go-to-reviews-button"]')
+        .count()
+        .catch(() => 0);
+
+      if (goToReviewsBtnCount > 0) {
+        return {
+          feature,
+          featureKey,
+          passed: true,
+          status: "warning",
+          message: "Produto sem avaliações — filtro não se aplica",
+        };
+      }
+
       return {
         feature,
         featureKey,
@@ -368,28 +363,7 @@ export async function checkReviewRecommendation(
     if (reviewsExist) {
       // Check total review count from the summary area (not just visible cards)
       // The summary shows "N avaliações" / "N opiniones" which is the total count
-      const reviewCount = await page.evaluate(() => {
-        const reviews = document.getElementById("reviews");
-        if (!reviews) return 0;
-
-        // Look for the count in the go-to-reviews button text (e.g. "(350) avaliações")
-        const goToBtn = document.querySelector(
-          '[data-testid="go-to-reviews-button"]',
-        );
-        if (goToBtn) {
-          const match = goToBtn.textContent?.match(/\(?\s*(\d+)\s*\)?/);
-          if (match) return parseInt(match[1]);
-        }
-
-        // Fallback: look for count in reviews summary area
-        const summaryText =
-          reviews.querySelector(".flex.flex-col.gap-1")?.textContent || "";
-        const countMatch = summaryText.match(/(\d+)\s*(avalia|opini|rese)/i);
-        if (countMatch) return parseInt(countMatch[1]);
-
-        // Last fallback: count visible cards
-        return reviews.querySelectorAll('div[role="group"]').length;
-      });
+      const reviewCount = await getReviewCount(page);
 
       if (reviewCount <= 4) {
         return {

@@ -23,7 +23,21 @@ export async function runWithConcurrency<T>(
   async function worker(): Promise<void> {
     while (next < tasks.length) {
       const i = next++;
-      results[i] = await tasks[i]();
+      try {
+        results[i] = await tasks[i]();
+      } catch (e) {
+        console.error(`Task ${i} failed:`, e);
+        // We cast the error to unknown then T to satisfy the generic type T,
+        // assuming the caller handles error objects or the task returns a specific error shape.
+        // In the context of this project, tasks usually return PdpCheckResult or an array of them.
+        // The caller (index.ts/explore.ts) should ideally handle these rejected promises,
+        // but to prevent the whole worker pool from crashing, we catch and return the error.
+        results[i] = {
+          success: false,
+          error: e instanceof Error ? e.message : String(e),
+          features: [],
+        } as unknown as T;
+      }
     }
   }
 

@@ -75,13 +75,10 @@ export function generateHtmlReport(report: MonitoringReport): string {
   ]);
 
   const generateFeatureRow = (feature: CheckResult) => {
-    const flagInfo = feature.flagKey
-      ? `<br><small class="flag-info">🔧 ${feature.flagKey}=${JSON.stringify(feature.flagValue)}</small>`
-      : "";
     return `
     <tr class="${statusClass(feature.passed, feature.status)}">
       <td>${statusEmoji(feature.passed, feature.status)} ${feature.feature}</td>
-      <td>${feature.message}${flagInfo}</td>
+      <td>${feature.message}</td>
       <td>${feature.screenshot ? `<a href="${feature.screenshot}" target="_blank">📷</a>` : "-"}</td>
     </tr>
   `;
@@ -149,13 +146,10 @@ export function generateHtmlReport(report: MonitoringReport): string {
         </tr>
       `;
       for (const f of reviewFeatures) {
-        const flagInfo = f.flagKey
-          ? `<br><small class="flag-info">🔧 ${f.flagKey}=${JSON.stringify(f.flagValue)}</small>`
-          : "";
         html += `
         <tr class="group-review-rating ${statusClass(f.passed, f.status)}">
           <td style="padding-left:32px">${statusEmoji(f.passed, f.status)} ${f.feature}</td>
-          <td>${f.message}${flagInfo}</td>
+          <td>${f.message}</td>
           <td>${f.screenshot ? `<a href="${f.screenshot}" target="_blank">📷</a>` : "-"}</td>
         </tr>
         `;
@@ -230,7 +224,7 @@ export function generateHtmlReport(report: MonitoringReport): string {
 
     let html = `
       <div class="remote-config-section">
-        <details open>
+        <details>
           <summary>🔧 Remote Config Flags (${totalFlags} capturadas) - locale: ${flags.locale}</summary>
           <div class="rc-categories">
     `;
@@ -284,7 +278,7 @@ export function generateHtmlReport(report: MonitoringReport): string {
 
     let html = `
       <div class="remote-config-section commerce-flags">
-        <details open>
+        <details>
           <summary>🛒 Commerce Feature Flags (${totalFlags} capturadas)</summary>
           <div class="rc-categories">
     `;
@@ -315,6 +309,74 @@ export function generateHtmlReport(report: MonitoringReport): string {
     return html;
   };
 
+  const operations = new Map<
+    string,
+    {
+      vendor: string;
+      country: string;
+      channel?: string;
+      remoteConfigFlags?: RemoteConfigFlags;
+      commerceFeatureFlags?: CommerceFeatureFlags;
+    }
+  >();
+
+  for (const result of results) {
+    const channel = result.channel ?? "ecommerce";
+    const key = `${result.vendor}/${result.country}/${channel}`;
+    if (!operations.has(key)) {
+      operations.set(key, {
+        vendor: result.vendor,
+        country: result.country,
+        channel,
+        remoteConfigFlags: result.remoteConfigFlags,
+        commerceFeatureFlags: result.commerceFeatureFlags,
+      });
+    } else {
+      const op = operations.get(key)!;
+      if (!op.remoteConfigFlags && result.remoteConfigFlags) {
+        op.remoteConfigFlags = result.remoteConfigFlags;
+      }
+      if (!op.commerceFeatureFlags && result.commerceFeatureFlags) {
+        op.commerceFeatureFlags = result.commerceFeatureFlags;
+      }
+    }
+  }
+
+  const generateOperationsFeatureFlags = () => {
+    if (operations.size === 0) return "";
+
+    let html = `<div class="operations-flags-container" style="margin-bottom: 24px;">
+      <h2 style="font-size: 20px; margin-bottom: 16px;">🔧 Feature Flags por Operação</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px;">
+    `;
+
+    for (const op of operations.values()) {
+      const isSocialCommerce = op.channel === "socialcommerce";
+      const title = isSocialCommerce
+        ? `${op.vendor} / ${op.country} <span style="font-size:12px;color:#6b7280">(Minha Loja)</span>`
+        : `${op.vendor} / ${op.country}`;
+      html += `
+        <div class="pdp-card" style="margin-bottom: 0;">
+          <div class="pdp-header" style="margin-bottom: 12px;">
+            <div class="pdp-title">
+              <h3 style="font-size: 16px; text-transform: capitalize;">${title}</h3>
+            </div>
+            <div class="pdp-meta">
+              <span class="badge badge-vendor">${op.vendor}</span>
+              <span class="badge badge-country">${flag(op.country)} ${op.country}</span>
+              ${isSocialCommerce ? `<span class="badge" style="background:#f3e8ff;color:#7c3aed">Minha Loja</span>` : ""}
+            </div>
+          </div>
+          ${generateRemoteConfigSection(op.remoteConfigFlags)}
+          ${generateCommerceFeatureFlagsSection(op.commerceFeatureFlags)}
+        </div>
+      `;
+    }
+
+    html += `</div></div>`;
+    return html;
+  };
+
   const generatePdpCard = (result: PdpCheckResult) => `
     <div class="pdp-card ${result.success ? "success" : "failure"}">
       <div class="pdp-header">
@@ -333,8 +395,6 @@ export function generateHtmlReport(report: MonitoringReport): string {
         <p><strong>URL:</strong> <a href="${result.url}" target="_blank">${result.url}</a></p>
         ${result.loadTime ? `<p><strong>Tempo de carga:</strong> ${formatDuration(result.loadTime)}</p>` : ""}
         ${result.error ? `<p class="error-message"><strong>Erro:</strong> ${result.error}</p>` : ""}
-        ${generateRemoteConfigSection(result.remoteConfigFlags)}
-        ${generateCommerceFeatureFlagsSection(result.commerceFeatureFlags)}
       </div>
 
       <table class="features-table">
@@ -776,6 +836,8 @@ export function generateHtmlReport(report: MonitoringReport): string {
         <div class="summary-label">Erros</div>
       </div>
     </div>
+
+    ${generateOperationsFeatureFlags()}
 
     <main>
       ${[...results.filter((r) => r.sku === "explore"), ...results.filter((r) => r.sku !== "explore")].map((r) => generatePdpCard(r)).join("")}

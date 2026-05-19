@@ -7,6 +7,7 @@
 
 import { Page } from "@playwright/test";
 import { CheckResult } from "../types.js";
+import { getNestedValue } from "../utils.js";
 
 export interface EndpointRule {
   /** Unique key for this rule, used in CheckResult.featureKey */
@@ -31,18 +32,6 @@ interface CapturedCall {
   status: number;
   bodyJson?: unknown;
   bodyError?: string;
-}
-
-/**
- * Utility: access nested object value by dot-path ("data.product.id")
- */
-function getNestedValue(obj: unknown, path: string): unknown {
-  return path.split(".").reduce<unknown>((acc, key) => {
-    if (acc !== null && acc !== undefined && typeof acc === "object") {
-      return (acc as Record<string, unknown>)[key];
-    }
-    return undefined;
-  }, obj);
 }
 
 /**

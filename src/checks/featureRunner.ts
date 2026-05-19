@@ -12,6 +12,7 @@
 
 import { Page } from "@playwright/test";
 import { CheckResult } from "../types.js";
+import { sleepMs } from "../utils.js";
 import { SELECTORS } from "./configs/config.js";
 import {
   checkReviews,
@@ -144,11 +145,6 @@ export function logFeaturesGrouped(
 // Page interaction helpers
 // ---------------------------------------------------------------------------
 
-/** Fixed delay without `page.waitForTimeout` (forbidden by eslint-plugin-playwright). */
-function sleepMs(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 /**
  * Dismiss the cookie consent banner if present.
  * @param indent - leading whitespace for the confirmation log line
@@ -183,7 +179,9 @@ export async function dismissCookieBanner(
  * then return to the top.
  */
 export async function scrollAndLoadContent(page: Page): Promise<void> {
-  for (let i = 1; i <= 8; i++) {
+  const totalHeight = await page.evaluate(() => document.body.scrollHeight);
+  const steps = Math.ceil(totalHeight / 1000);
+  for (let i = 1; i <= steps; i++) {
     await page.evaluate((step) => window.scrollTo(0, step * 1000), i);
     // Wait between steps so lazy-loaded content has time to render
     await sleepMs(400);

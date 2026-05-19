@@ -51,20 +51,18 @@ export async function checkI18nKeys(page: Page): Promise<CheckResult> {
       const walker = document.createTreeWalker(
         document.body,
         NodeFilter.SHOW_TEXT,
-        {
-          acceptNode: (node) => {
-            const el = node.parentElement;
-            if (!el) return NodeFilter.FILTER_REJECT;
-            // Skip script, style, and hidden elements
-            const tag = el.tagName;
-            if (tag === "SCRIPT" || tag === "STYLE" || tag === "NOSCRIPT")
-              return NodeFilter.FILTER_REJECT;
-            // Skip invisible elements
-            const style = window.getComputedStyle(el);
-            if (style.display === "none" || style.visibility === "hidden")
-              return NodeFilter.FILTER_REJECT;
-            return NodeFilter.FILTER_ACCEPT;
-          },
+        (node) => {
+          const el = node.parentElement;
+          if (!el) return NodeFilter.FILTER_REJECT;
+          // Skip script, style, and hidden elements
+          const tag = el.tagName;
+          if (tag === "SCRIPT" || tag === "STYLE" || tag === "NOSCRIPT")
+            return NodeFilter.FILTER_REJECT;
+          // Skip invisible elements
+          const style = window.getComputedStyle(el);
+          if (style.display === "none" || style.visibility === "hidden")
+            return NodeFilter.FILTER_REJECT;
+          return NodeFilter.FILTER_ACCEPT;
         },
       );
 

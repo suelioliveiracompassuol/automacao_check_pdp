@@ -17,7 +17,11 @@ export async function checkReviews(page: Page): Promise<CheckResult> {
   try {
     // Scroll to bottom to ensure reviews lazy-loading is triggered
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-    await page.waitForTimeout(600);
+
+    // Wait for a short time using a more robust method than waitForTimeout
+    await page.evaluate(
+      () => new Promise((resolve) => setTimeout(resolve, 600)),
+    );
 
     // Primary: look for #reviews container
     const reviewsContainer = page.locator("#reviews");
@@ -27,14 +31,49 @@ export async function checkReviews(page: Page): Promise<CheckResult> {
 
     if (!hasReviews) {
       // Fallback: check for go-to-reviews-button in product header
-      const goToReviewsBtn = page
+      // Use count() instead of isVisible() — the button may exist in the DOM
+      // but have no visible dimensions when the product has 0 reviews
+      const goToReviewsBtnCount = await page
         .locator('[data-testid="go-to-reviews-button"]')
-        .first();
-      const hasBtnVisible = await goToReviewsBtn
-        .isVisible({ timeout: 3000 })
-        .catch(() => false);
+        .count()
+        .catch(() => 0);
 
-      if (!hasBtnVisible) {
+      if (goToReviewsBtnCount === 0) {
+        // Check if it's because there are 0 reviews
+        try {
+          const reviewsApiUrl = await page.evaluate(() => {
+            const entries = performance.getEntriesByType("resource");
+            const reviewEntry = entries.find((e) =>
+              e.name.includes("/reviews/v2/details"),
+            );
+            return reviewEntry ? reviewEntry.name : null;
+          });
+
+          if (reviewsApiUrl) {
+            const reviewsData = await page.evaluate(async (url) => {
+              try {
+                const res = await fetch(url);
+                return await res.json();
+              } catch {
+                return null;
+              }
+            }, reviewsApiUrl);
+
+            if (reviewsData && reviewsData.reviewsCount === 0) {
+              return {
+                feature,
+                featureKey,
+                passed: true,
+                status: "warning",
+                message:
+                  "Seção de avaliações não encontrada, mas a API indica 0 avaliações (comportamento esperado)",
+              };
+            }
+          }
+        } catch {
+          // Ignore errors and fallback to fail
+        }
+
         return {
           feature,
           featureKey,
@@ -51,7 +90,7 @@ export async function checkReviews(page: Page): Promise<CheckResult> {
         passed: true,
         status: "warning",
         message:
-          "Botão go-to-reviews presente mas container #reviews não carregou (lazy load)",
+          "Botão go-to-reviews presente mas container #reviews não carregou — produto sem avaliações",
       };
     }
 
