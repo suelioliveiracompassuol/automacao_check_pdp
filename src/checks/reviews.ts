@@ -97,7 +97,9 @@ export async function checkReviews(page: Page): Promise<CheckResult> {
     // Structural check: count review cards and rating icons
     const reviewData = await page.evaluate(() => {
       const reviews = document.getElementById("reviews");
-      if (!reviews) return { cards: 0, hasRating: false, gtmId: null };
+      if (!reviews) {
+        return { cards: 0, hasRating: false, gtmId: null };
+      }
 
       const cards = reviews.querySelectorAll('div[role="group"]');
       const ratingIcons = reviews.querySelectorAll(

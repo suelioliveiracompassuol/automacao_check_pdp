@@ -33,11 +33,18 @@ export async function checkRating(page: Page): Promise<CheckResult> {
     }
 
     if (!hasStars) {
-      // Try text-based rating (e.g., "4.6")
-      const ratingPattern = page.locator("text=/\\d[,.]\\d/").first();
-      const hasRatingText = await ratingPattern
-        .isVisible({ timeout: 2000 })
-        .catch(() => false);
+      // Try text-based rating scoped to rating/review containers only.
+      // Using a broad "text=/\d[,.]\d/" globally causes false positives with
+      // prices or volume text (e.g. "35,90" or "100ml" variants on the page).
+      const ratingContainerText = await page
+        .locator(
+          '#reviews, [class*="rating"], [class*="stars"], [data-testid*="rating"]',
+        )
+        .first()
+        .textContent({ timeout: 3000 })
+        .catch(() => "");
+
+      const hasRatingText = /\d[,.]\d/.test(ratingContainerText ?? "");
 
       if (!hasRatingText) {
         return {
@@ -82,6 +89,21 @@ export async function checkRating(page: Page): Promise<CheckResult> {
       'svg[fill*="gold"], svg[fill*="yellow"], [class*="star"][class*="filled"], [class*="star-active"]',
     );
     const starCount = await filledStars.count().catch(() => 0);
+
+    // If neither a real rating value nor stars were found, the check passed
+    // only because the rating section exists in the DOM — but is empty
+    // (product has no reviews yet). Return warning instead of a false pass.
+    if (ratingValue === null && starCount === 0) {
+      return {
+        feature,
+        featureKey,
+        passed: true,
+        status: "warning",
+        message:
+          "Produto sem avaliações — indicador de rating presente mas vazio",
+        details: { ratingValue, starCount, ratingText: ratingText.trim() },
+      };
+    }
 
     return {
       feature,

@@ -63,7 +63,9 @@ export function isFeatureSupported(
   feature: FeatureConfig,
   vendor: Vendor,
 ): boolean {
-  if (!feature.supportedVendors) return true;
+  if (!feature.supportedVendors) {
+    return true;
+  }
   return feature.supportedVendors.includes(vendor);
 }
 
@@ -81,7 +83,9 @@ export function getApplicableFeatures(sku: SkuConfig): FeatureConfig[] {
 
   return FEATURES.filter((f) => {
     // Feature must be available on this operation
-    if (!domainFeatures.includes(f.key)) return false;
+    if (!domainFeatures.includes(f.key)) {
+      return false;
+    }
 
     // Check if feature is optional - only check if explicitly expected for this SKU
     if (f.optional) {
@@ -124,7 +128,7 @@ export const SELECTORS = {
   // Recommendation showcase (PT-BR: "achamos que você vai gostar", ES: "te puede gustar", "también te puede gustar", "también te puede interesar")
   recommendationShowcase: {
     section:
-      'section:has-text("achamos que você vai gostar"), section:has-text("você também pode gostar"), section:has-text("también te puede gustar"), section:has-text("te puede gustar"), section:has-text("te pueden gustar"), section:has-text("también te puede interesar"), section:has-text("te puede interesar"), section:has-text("también podrían gustarte"), section:has-text("te podrían gustar"), section:has-text("te va a gustar"), section:has-text("productos recomendados"), [data-testid="recommendation-showcase"]',
+      'section:has-text("achamos que você vai gostar"), section:has-text("você também pode gostar"), section:has-text("también te puede gustar"), section:has-text("te puede gustar"), section:has-text("te pueden gustar"), section:has-text("también te puede interesar"), section:has-text("te puede interesar"), section:has-text("también podrían gustarte"), section:has-text("te podrían gustar"), section:has-text("te va a gustar"), section:has-text("productos recomendados"), section:has-text("también te puede gustar"), [data-testid="recommendation-showcase"]',
     productCards: '[class*="product-card"], [class*="showcase"] a[href*="/p/"]',
   },
 

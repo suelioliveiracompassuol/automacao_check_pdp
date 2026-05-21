@@ -12,7 +12,9 @@ import { SELECTORS } from "./configs/config.js";
  * Different country BFFs may use different field names for the product array.
  */
 function extractProductsFromPayload(payloadObj: unknown): number {
-  if (!payloadObj || typeof payloadObj !== "object") return 0;
+  if (!payloadObj || typeof payloadObj !== "object") {
+    return 0;
+  }
   const obj = payloadObj as Record<string, unknown>;
   // Try well-known field names first
   for (const key of [
@@ -23,12 +25,16 @@ function extractProductsFromPayload(payloadObj: unknown): number {
     "recommendations",
     "result",
   ]) {
-    if (Array.isArray(obj[key])) return (obj[key] as unknown[]).length;
+    if (Array.isArray(obj[key])) {
+      return (obj[key] as unknown[]).length;
+    }
   }
   // Fallback: return the length of the first non-empty array property found.
   // Covers any other field name used by country-specific BFFs.
   for (const val of Object.values(obj)) {
-    if (Array.isArray(val) && val.length > 0) return val.length;
+    if (Array.isArray(val) && val.length > 0) {
+      return val.length;
+    }
   }
   return 0;
 }
@@ -155,12 +161,16 @@ async function checkEinsteinApi(
   try {
     const generatedContentZone = await page
       .evaluate((suffix) => {
-        if (!suffix) return null;
+        if (!suffix) {
+          return null;
+        }
         const countryCodeMatch = window.location.hostname.match(
           /(?:\.com\.)?([a-z]{2})$/i,
         );
         const countryCode = countryCodeMatch?.[1]?.toUpperCase();
-        if (!countryCode) return null;
+        if (!countryCode) {
+          return null;
+        }
         return `CZ_${countryCode}_VITRINE_PDP_${suffix}`;
       }, expectedZoneSuffix ?? null)
       .catch(() => null);
@@ -175,13 +185,17 @@ async function checkEinsteinApi(
           const productEntry = entries.find((e) =>
             e.name.includes("/pages/v2/product/"),
           );
-          if (!productEntry) return null;
+          if (!productEntry) {
+            return null;
+          }
 
           const res = await fetch(productEntry.name, {
             credentials: "include",
           });
           const body = await res.json().catch(() => null);
-          if (!body || typeof body !== "object") return null;
+          if (!body || typeof body !== "object") {
+            return null;
+          }
 
           const fromPersonalization = (body as Record<string, unknown>)
             .personalizationShowcase as { contentZones?: string } | undefined;
@@ -191,15 +205,21 @@ async function checkEinsteinApi(
 
           const components = (body as Record<string, unknown>)
             .productComponents;
-          if (!Array.isArray(components)) return null;
+          if (!Array.isArray(components)) {
+            return null;
+          }
 
           for (const comp of components) {
-            if (!comp || typeof comp !== "object") continue;
+            if (!comp || typeof comp !== "object") {
+              continue;
+            }
             const obj = comp as Record<string, unknown>;
             const list = obj.productListPersonalization as
               | { contentZones?: string }
               | undefined;
-            if (list?.contentZones) return list.contentZones;
+            if (list?.contentZones) {
+              return list.contentZones;
+            }
           }
 
           return null;
@@ -220,7 +240,9 @@ async function checkEinsteinApi(
         "resource",
       ) as PerformanceResourceTiming[];
       const match = entries.find((e) => {
-        if (!e.name.includes("einstein/personalization")) return false;
+        if (!e.name.includes("einstein/personalization")) {
+          return false;
+        }
         if (hint) {
           try {
             const params = new URL(e.name).searchParams.get("contentZones");
@@ -562,7 +584,9 @@ export async function checkRecommendationShowcase(
       while (Date.now() < deadline) {
         await new Promise<void>((r) => setTimeout(r, 500));
         captured = einsteinShowcaseCache.get(page);
-        if (captured && captured.campaignCount > 0) break;
+        if (captured && captured.campaignCount > 0) {
+          break;
+        }
       }
     }
 

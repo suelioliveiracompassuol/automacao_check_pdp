@@ -58,6 +58,7 @@ jobs:
         env:
           FEATURES_FILTER: ${{ inputs.features_filter }}
           OPERATIONS_FILTER: ${{ inputs.operations_filter }}
+          SKIP_EXPLORE: "true"
         continue-on-error: true
 
       - name: 📊 Find report directory
@@ -165,6 +166,8 @@ jobs:
 
             📅 Execução: ${{ github.run_number }}
             🔗 Workflow: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+            Acesse o report no site: https://sites.google.com/natura.net/checagem-features-pdp
 
             Verifique o relatório completo no artifact do workflow.
           attachments: ${{ steps.find_report.outputs.report_dir }}/report.html

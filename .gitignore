@@ -25,6 +25,8 @@ test-results/
 playwright-report/
 playwright/.cache/
 
+.playwright-cli/
+.playwright-mcp/
 # Logs
 *.log
 npm-debug.log*

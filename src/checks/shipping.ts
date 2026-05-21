@@ -39,7 +39,9 @@ export async function checkShipping(page: Page): Promise<CheckResult> {
         sectionVisible = await textLocator
           .isVisible({ timeout: 2000 })
           .catch(() => false);
-        if (sectionVisible) break;
+        if (sectionVisible) {
+          break;
+        }
       }
 
       if (!sectionVisible) {

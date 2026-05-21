@@ -37,7 +37,9 @@ export async function checkShopTheSet(page: Page): Promise<CheckResult> {
         sectionVisible = await headingLocator
           .isVisible({ timeout: 2000 })
           .catch(() => false);
-        if (sectionVisible) break;
+        if (sectionVisible) {
+          break;
+        }
       }
 
       if (!sectionVisible) {

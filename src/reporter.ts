@@ -70,26 +70,68 @@ export function generateHtmlReport(
   const { summary, results, startTime, durationMs, runId } = report;
 
   const flag = (country: string) =>
-    `<img src="https://flagcdn.com/20x15/${country.toLowerCase()}.png" alt="${country}" style="vertical-align:middle;margin-right:2px" width="20" height="15">`;
+    `<img src="https://flagcdn.com/20x15/${country.toLowerCase()}.png" alt="${country}" style="vertical-align:middle;margin-right:2px;border-radius:2px" width="20" height="15">`;
+
+  const vendorLogo = (vendor: string) => {
+    const v = vendor.toLowerCase();
+    if (v === "natura") {
+      return `<svg width="70" height="30" viewBox="0 0 148 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle;">
+        <path fill="#EB6619" d="M58.2134 14.5687C52.8233 14.5687 49.805 17.8028 49.805 23.0491V29.9485H53.4703V22.6898C53.4703 18.6653 54.9076 16.2217 58.2136 16.2217C61.3039 16.2217 62.7412 18.6653 62.7412 22.6898V29.9485H66.4065V23.0491C66.4065 17.8028 63.6753 14.5687 58.2134 14.5687Z" />
+        <path fill="#EB6619" d="M77.9053 14.5687C73.5214 14.5687 69.4968 17.5153 69.4968 22.6898C69.4968 27.5769 72.8027 30.4515 77.4023 30.4515C79.8458 30.4515 81.7144 29.4453 82.7204 27.5767V29.9483H86.242V23.1209C86.242 17.8745 83.3672 14.5687 77.9053 14.5687ZM77.9053 28.7985C74.6712 28.7985 73.1619 26.6425 73.1619 22.6896C73.1619 19.0963 74.6712 16.2215 77.9053 16.2215C81.1394 16.2215 82.5766 19.0963 82.5766 22.6896C82.5766 26.4267 80.6361 28.7985 77.9053 28.7985Z" />
+        <path fill="#EB6619" d="M113.839 22.3304C113.839 26.355 112.546 28.7985 109.383 28.7985C106.365 28.7985 105.071 26.355 105.071 22.3304V15.0717H101.406V21.9711C101.406 27.2175 103.993 30.4515 109.383 30.4515C114.63 30.4515 117.504 27.2175 117.504 21.9711V15.0717H113.839V22.3304Z" />
+        <path fill="#EB6619" d="M139.137 14.5687C134.753 14.5687 130.728 17.5153 130.728 22.6898C130.728 27.5769 134.034 30.4515 138.634 30.4515C141.077 30.4515 142.946 29.4453 143.952 27.5767V29.9483H147.473V23.1209C147.473 17.8745 144.598 14.5687 139.137 14.5687ZM139.137 28.7985C135.903 28.7985 134.393 26.6425 134.393 22.6896C134.393 19.0963 135.903 16.2215 139.137 16.2215C142.371 16.2215 143.808 19.0963 143.808 22.6896C143.808 26.4267 141.867 28.7985 139.137 28.7985Z" />
+        <path fill="#EB6619" d="M121.457 21.4679V29.9483H125.122V21.0366C125.122 18.1618 125.769 16.2933 128.716 16.2933C129.075 16.2933 129.506 16.2933 129.937 16.365V14.8557C129.147 14.6402 128.356 14.5682 127.566 14.5682C124.044 14.5682 121.457 16.5808 121.457 21.4679Z" />
+        <path fill="#EB6619" d="M96.7345 28.7265C94.9377 28.7265 93.8597 27.5767 93.8597 24.0552V16.7965H98.6748V15.0717H93.8597V11.3346H90.1943V23.4804C90.1943 28.7987 93.0691 30.4515 96.1595 30.4515C97.6687 30.4515 99.0342 30.0203 100.04 29.3017C99.681 28.9425 99.3935 28.5112 99.2498 28.08C98.531 28.5112 97.7405 28.7265 96.7345 28.7265Z" />
+        <path fill="#EB6619" d="M37.3037 7.74661C37.3037 9.8619 36.2308 12.4317 35.4675 13.7888C35.0445 14.541 34.9412 14.7144 34.9412 14.8314C34.9412 14.9136 34.9915 14.9836 35.0899 14.9836C35.5982 14.9836 39.8332 11.7234 42.8046 11.7234C44.5462 11.7234 46.1396 12.649 46.1396 14.8347C46.1396 17.0785 44.6552 20.6483 39.7078 23.2983C39.3539 23.4879 38.6121 23.8815 38.0918 24.1573C37.4262 24.5101 37.2519 24.6833 37.2519 24.903C37.2519 25.4648 39.2185 25.1965 39.2185 26.3476C39.2185 26.9621 38.4686 27.9794 36.5043 29.0763C34.7089 30.079 32.3163 30.9025 29.3414 30.9025C27.2228 30.9025 26.0351 30.4867 25.8087 30.4867C25.7221 30.4867 25.655 30.5131 25.5602 30.5955C25.4375 30.7025 23.9203 32 20.3907 32C16.3329 32 11.7867 30.3383 11.7867 28.7883C11.7867 28.0341 12.7407 27.8235 12.7407 27.662C12.7407 27.5964 12.6282 27.5721 12.5827 27.5599C6.91843 26.0325 0.526489 23.0137 0.526489 18.9439C0.526489 17.8189 1.32077 17.2382 2.46569 17.2382C4.45605 17.2382 7.2108 18.1594 7.81039 18.1594C7.95658 18.1594 8.01173 18.0794 8.01173 17.9977C8.01173 17.8874 7.92335 17.7644 7.75147 17.6183C4.12226 14.5346 2.60877 11.6992 2.60877 9.32676C2.60877 6.25705 4.82484 3.93311 7.76941 3.3539C13.1958 2.28673 16.4678 6.91666 19.3583 10.6367C19.4392 10.7408 19.5865 10.9565 19.7668 10.9565C19.9891 10.9565 20.0456 10.7423 20.2467 9.92613C20.4479 9.10992 20.5079 8.85896 20.7648 7.81328C21.6114 4.36946 23.652 0 29.5436 0C33.0118 0 37.3037 2.34675 37.3037 7.74661ZM20.5141 15.4857C19.4183 15.4857 18.8398 14.871 17.7208 13.4716C17.5432 13.2495 16.7677 12.3108 16.5701 12.0724C13.8628 8.80447 11.8994 7.3282 9.6559 7.3282C8.301 7.3282 6.26767 8.08594 6.26767 10.6708C6.26767 11.0084 6.31153 12.4565 7.71537 14.1727C9.50329 16.3584 12.0915 19.2463 12.3289 19.5158C12.5715 19.7911 12.6988 20.0844 12.6968 20.3449C12.6957 20.4897 12.651 21.1241 11.5705 21.1241C10.5157 21.1241 5.90575 19.7754 4.2917 19.7754C3.54349 19.7754 3.06151 20.099 3.06151 20.6479C3.06151 22.065 5.828 24.9792 14.5222 26.9399C15.6139 27.1862 15.7103 27.5767 15.7103 27.7103C15.7103 28.2186 14.3569 28.4541 14.3569 29.3155C14.3569 30.5795 18.4446 31.1402 19.6168 31.1402C21.7031 31.1402 22.7273 30.5284 23.5049 29.9941C24.1694 29.5376 24.5473 29.3622 24.9907 29.3622C25.9239 29.3622 26.7964 29.9447 29.6298 29.9447C33.0769 29.9447 36.6955 28.1457 36.6955 27.1658C36.6955 26.7831 36.1234 26.6859 34.836 26.2617C34.1602 26.0389 33.7708 25.7653 33.7708 25.3438C33.7708 24.9425 34.1004 24.6257 35.0752 24.2027C36.1172 23.7506 36.8621 23.4181 37.6306 23.048C41.8222 21.0289 43.4469 18.5654 43.4567 16.7837C43.4631 15.6418 42.8063 14.8673 41.7374 14.8673C40.3289 14.8673 38.784 15.6819 37.2774 16.4454C34.4582 17.8741 33.4315 18.4203 32.4428 18.4203C31.7424 18.4203 31.4157 17.8222 31.411 17.4685C31.4084 17.2636 31.4425 17.0284 31.5357 16.7759C31.8999 15.7905 32.1588 15.1306 32.5573 14.0745C33.1433 12.5212 33.8535 10.7461 33.8535 8.99164C33.8535 6.24819 31.7236 4.37809 28.9274 4.37809C25.7977 4.37809 24.458 7.32887 23.664 9.67407C23.4469 10.3149 22.6227 12.814 22.3715 13.5638C21.9323 14.8744 21.3531 15.4857 20.5141 15.4857Z" />
+      </svg>`;
+    }
+    if (v === "avon") {
+      return `<svg width="47" height="30" viewBox="0 0 171 54" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle;">
+        <path fill="#FF2469" d="M138.583 52.4431H131.355V1.40088H141.266L163.759 41.1993V1.40088H171V52.4431H161.827L138.641 11.6713L138.583 52.4431Z" />
+        <path fill="#FF2469" d="M102.323 53.8413C88.3959 53.8413 77.6187 42.5504 77.6187 26.9207C77.6187 11.2909 88.3959 0 102.323 0C116.25 0 127.099 11.2909 127.099 26.9207C127.099 42.5504 116.322 53.8413 102.323 53.8413ZM102.323 46.5884C112.264 46.5884 119.262 37.9874 119.262 26.9207C119.262 15.8539 112.264 7.25298 102.323 7.25298C92.3821 7.25298 85.4559 15.851 85.4559 26.9207C85.4559 37.9904 92.4539 46.5884 102.323 46.5884Z" />
+        <path fill="#FF2469" d="M17.916 1.39795L0 52.4402H7.69368L22.8767 9.18184L38.0598 52.4402H45.7535L27.8375 1.39795H17.9132H17.916Z" />
+        <path fill="#FF2469" d="M52.583 52.4431L34.667 1.40088H42.3607L57.5437 44.6592L72.7268 1.40088H80.4205L62.5045 52.4431H52.5803H52.583Z" />
+      </svg>`;
+    }
+    return `<span class="badge badge-vendor">${vendor}</span>`;
+  };
 
   const statusEmoji = (passed: boolean, status: string) => {
-    if (status === "na") return "⬜";
-    if (status === "error") return "⚠️";
-    if (status === "disabled") return "🚫";
-    if (status === "warning") return "⚠️";
+    if (status === "na") {
+      return "⬜";
+    }
+    if (status === "error") {
+      return "⚠️";
+    }
+    if (status === "disabled") {
+      return "🚫";
+    }
+    if (status === "warning") {
+      return "⚠️";
+    }
     return passed ? "✅" : "❌";
   };
 
   const statusClass = (passed: boolean, status: string) => {
-    if (status === "na") return "status-na";
-    if (status === "error") return "status-error";
-    if (status === "disabled") return "status-disabled";
-    if (status === "warning") return "status-warning";
+    if (status === "na") {
+      return "status-na";
+    }
+    if (status === "error") {
+      return "status-error";
+    }
+    if (status === "disabled") {
+      return "status-disabled";
+    }
+    if (status === "warning") {
+      return "status-warning";
+    }
     return passed ? "status-pass" : "status-fail";
   };
 
   const formatDuration = (ms: number) => {
-    if (ms < 1000) return `${ms}ms`;
+    if (ms < 1000) {
+      return `${ms}ms`;
+    }
     return `${(ms / 1000).toFixed(1)}s`;
   };
 
@@ -111,7 +153,9 @@ export function generateHtmlReport(
     screenshotPath: string | undefined,
     thumbnail = true,
   ): string => {
-    if (!screenshotPath) return "-";
+    if (!screenshotPath) {
+      return "-";
+    }
     if (outputDir) {
       const dataUri = screenshotToDataUri(screenshotPath, outputDir);
       if (dataUri) {
@@ -256,8 +300,9 @@ export function generateHtmlReport(
   const generateRemoteConfigSection = (
     flags: RemoteConfigFlags | undefined,
   ) => {
-    if (!flags)
+    if (!flags) {
       return '<div class="remote-config-section"><em>Remote Config não capturado</em></div>';
+    }
 
     const categories = getFlagsByCategory(flags);
     const totalFlags = countCapturedFlags(flags);
@@ -267,10 +312,15 @@ export function generateHtmlReport(
     }
 
     const formatValue = (v: unknown): string => {
-      if (v === true) return '<span class="flag-true">✓</span>';
-      if (v === false) return '<span class="flag-false">✗</span>';
-      if (v === undefined || v === null)
+      if (v === true) {
+        return '<span class="flag-true">✓</span>';
+      }
+      if (v === false) {
+        return '<span class="flag-false">✗</span>';
+      }
+      if (v === undefined || v === null) {
         return '<span class="flag-na">-</span>';
+      }
       return String(v);
     };
 
@@ -310,8 +360,9 @@ export function generateHtmlReport(
   const generateCommerceFeatureFlagsSection = (
     flags: CommerceFeatureFlags | undefined,
   ) => {
-    if (!flags)
+    if (!flags) {
       return '<div class="remote-config-section commerce-flags"><em>Commerce Feature Flags não capturado</em></div>';
+    }
 
     const categories = getCommerceFlagsByCategory(flags);
     const totalFlags = countCommerceFlags(flags);
@@ -321,10 +372,15 @@ export function generateHtmlReport(
     }
 
     const formatValue = (v: unknown): string => {
-      if (v === true) return '<span class="flag-true">✓</span>';
-      if (v === false) return '<span class="flag-false">✗</span>';
-      if (v === undefined || v === null)
+      if (v === true) {
+        return '<span class="flag-true">✓</span>';
+      }
+      if (v === false) {
+        return '<span class="flag-false">✗</span>';
+      }
+      if (v === undefined || v === null) {
         return '<span class="flag-na">-</span>';
+      }
       return String(v);
     };
 
@@ -395,7 +451,9 @@ export function generateHtmlReport(
   }
 
   const generateOperationsFeatureFlags = () => {
-    if (operations.size === 0) return "";
+    if (operations.size === 0) {
+      return "";
+    }
 
     let html = `<div class="operations-flags-container" style="margin-bottom: 24px;">
       <h2 style="font-size: 20px; margin-bottom: 16px;">🔧 Feature Flags por Operação</h2>
@@ -415,7 +473,7 @@ export function generateHtmlReport(
               <h3 style="font-size: 16px; text-transform: capitalize;">${title}</h3>
             </div>
             <div class="pdp-meta">
-              <span class="badge badge-vendor">${op.vendor}</span>
+              ${vendorLogo(op.vendor)}
               <span class="badge badge-country">${flag(op.country)} ${op.country}</span>
               ${isSocialCommerce ? `<span class="badge" style="background:#f3e8ff;color:#7c3aed">Minha Loja</span>` : ""}
             </div>
@@ -443,8 +501,9 @@ export function generateHtmlReport(
           <h3>${result.name}</h3>
         </div>
         <div class="pdp-meta">
-          <span class="badge badge-vendor">${result.vendor}</span>
+          ${vendorLogo(result.vendor)}
           <span class="badge badge-country">${flag(result.country)} ${result.country}</span>
+
         </div>
       </div>
 
@@ -1045,9 +1104,13 @@ export function generateHtmlReport(
         }
         const c = opCounts.get(key)!;
         c.total++;
-        if (r.success) c.pass++;
-        else if (r.error) c.error++;
-        else c.fail++;
+        if (r.success) {
+          c.pass++;
+        } else if (r.error) {
+          c.error++;
+        } else {
+          c.fail++;
+        }
       }
 
       const totalPass = results.filter((r) => r.success).length;

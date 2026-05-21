@@ -28,7 +28,8 @@ import {
 } from "../checks/remoteConfig.js";
 import { PDP_ENDPOINT_RULES } from "../checks/configs/endpoints-rules.js";
 import { parseConcurrency } from "../concurrency.js";
-import type { SkuConfig, FeatureConfig } from "../types.js";
+import { getStatusIcon } from "../checks/featureRunner.js";
+import type { SkuConfig, FeatureConfig, CheckResult } from "../types.js";
 
 // ---------------------------------------------------------------------------
 // Shared test fixtures
@@ -327,6 +328,48 @@ test.describe("PDP_ENDPOINT_RULES schema", () => {
         expect(field.trim().length).toBeGreaterThan(0);
       }
     }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getStatusIcon
+// ---------------------------------------------------------------------------
+
+test.describe("getStatusIcon", () => {
+  test("returns ✅ for passed results", () => {
+    expect(
+      getStatusIcon({ passed: true, status: "ok" } as unknown as CheckResult),
+    ).toBe("✅");
+  });
+
+  test("returns ❌ for failed results", () => {
+    expect(
+      getStatusIcon({ passed: false, status: "ok" } as unknown as CheckResult),
+    ).toBe("❌");
+  });
+
+  test("returns ⚠️ for warning status", () => {
+    expect(getStatusIcon({ status: "warning" } as unknown as CheckResult)).toBe(
+      "⚠️",
+    );
+  });
+
+  test("returns ⚠️ for error status", () => {
+    expect(getStatusIcon({ status: "error" } as unknown as CheckResult)).toBe(
+      "⚠️",
+    );
+  });
+
+  test("returns 🚫 for disabled status", () => {
+    expect(
+      getStatusIcon({ status: "disabled" } as unknown as CheckResult),
+    ).toBe("🚫");
+  });
+
+  test("returns ⬜ for n/a status", () => {
+    expect(getStatusIcon({ status: "na" } as unknown as CheckResult)).toBe(
+      "⬜",
+    );
   });
 });
 

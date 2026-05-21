@@ -53,8 +53,12 @@ export function setupEndpointMonitor(
     const status = response.status();
 
     for (const rule of rules) {
-      if (!url.includes(rule.match)) continue;
-      if (rule.methods && !rule.methods.includes(method)) continue;
+      if (!url.includes(rule.match)) {
+        continue;
+      }
+      if (rule.methods && !rule.methods.includes(method)) {
+        continue;
+      }
 
       let bodyJson: unknown = undefined;
       let bodyError: string | undefined = undefined;
@@ -114,7 +118,9 @@ function evaluateRule(rule: EndpointRule, calls: CapturedCall[]): CheckResult {
 
   const failedStatus = calls.filter((c) => {
     const expected = rule.expectedStatuses;
-    if (expected) return !expected.includes(c.status);
+    if (expected) {
+      return !expected.includes(c.status);
+    }
     return c.status >= 400;
   });
 

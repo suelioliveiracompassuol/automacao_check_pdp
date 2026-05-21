@@ -117,16 +117,19 @@ export async function checkImages(page: Page): Promise<CheckResult> {
           };
         });
 
-        if (!result.isRendered) continue;
+        if (!result.isRendered) {
+          continue;
+        }
 
         if (result.loaded) {
           loadedCount++;
         } else {
           brokenCount++;
-          if (result.src)
+          if (result.src) {
             brokenSrcs.push(
               result.src.split("?")[0].split("/").pop() || result.src,
             );
+          }
         }
       } catch {
         brokenCount++;

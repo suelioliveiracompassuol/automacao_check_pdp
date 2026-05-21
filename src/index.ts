@@ -31,6 +31,10 @@ import { setupEndpointMonitor } from "./checks/endpointResponse.js";
 import { checkI18nKeys } from "./checks/i18n.js";
 import { setupEinsteinShowcaseCapture } from "./checks/showcases.js";
 import {
+  setupRatingConsistencyCapture,
+  captureRatingFromJsonLd,
+} from "./checks/ratingConsistency.js";
+import {
   setupRemoteConfigCapture,
   setupCommerceFeatureFlagCapture,
   isFeatureEnabledByRemoteConfig,
@@ -106,7 +110,9 @@ async function checkPdp(params: CheckPdpParams): Promise<PdpCheckResult> {
   if (endpointMatch) {
     page.on("response", (response) => {
       const url = response.url();
-      if (!url.includes(endpointMatch)) return;
+      if (!url.includes(endpointMatch)) {
+        return;
+      }
       endpointCalls.push({
         url,
         method: response.request().method(),
@@ -132,6 +138,9 @@ async function checkPdp(params: CheckPdpParams): Promise<PdpCheckResult> {
 
   // Setup Einstein showcase capture BEFORE navigation
   setupEinsteinShowcaseCapture(page);
+
+  // Setup rating consistency capture BEFORE navigation (intercepts API responses)
+  setupRatingConsistencyCapture(page);
 
   const traceMode = getPlaywrightTraceMode();
   const traceZipPath = path.join(
@@ -184,6 +193,10 @@ async function checkPdp(params: CheckPdpParams): Promise<PdpCheckResult> {
     await page
       .waitForLoadState("load", { timeout: TIMING.pageLoadSettleTime })
       .catch(() => {});
+
+    // Read product rating from JSON-LD immediately after load, before any DOM interactions
+    // that could cause React to re-render/clear the SSR script tags.
+    await captureRatingFromJsonLd(page);
 
     // Dismiss cookie banner
     await dismissCookieBanner(page);
@@ -403,7 +416,13 @@ async function checkPdp(params: CheckPdpParams): Promise<PdpCheckResult> {
     const requiredFeatures = features.filter((f) => {
       const config = FEATURES.find((fc) => fc.key === f.featureKey);
       // Endpoint monitor results also count as required
-      if (f.featureKey.startsWith("endpoint_")) return true;
+      if (f.featureKey.startsWith("endpoint_")) {
+        return true;
+      }
+      // i18n keys check is always required
+      if (f.featureKey === "i18nKeys") {
+        return true;
+      }
       return config && !config.optional;
     });
 
@@ -636,7 +655,9 @@ async function main() {
   const skusByDomain = new Map<string, typeof skusToCheck>();
   for (const sku of skusToCheck) {
     const domainKey = `${sku.vendor}-${sku.country}${(sku.channel || "ecommerce") === "socialcommerce" ? "-social" : ""}`;
-    if (!skusByDomain.has(domainKey)) skusByDomain.set(domainKey, []);
+    if (!skusByDomain.has(domainKey)) {
+      skusByDomain.set(domainKey, []);
+    }
     skusByDomain.get(domainKey)!.push(sku);
   }
   console.log(
@@ -719,7 +740,9 @@ async function main() {
     }
   } finally {
     await browserChromium.close();
-    if (browserFirefox) await browserFirefox.close();
+    if (browserFirefox) {
+      await browserFirefox.close();
+    }
   }
 
   const endTime = new Date();

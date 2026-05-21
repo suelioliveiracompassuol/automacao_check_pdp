@@ -102,6 +102,7 @@ export type FeatureKey =
   | "images"
   | "pricing"
   | "shipping"
+  | "ratingConsistency"
   | "rating";
 
 export interface SkuConfig {

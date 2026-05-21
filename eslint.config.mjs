@@ -19,6 +19,12 @@ export default tseslint.config(
     ...playwright.configs["flat/recommended"],
   },
   {
+    files: ["src/**/*.ts"],
+    rules: {
+      "curly": ["error", "all"],
+    },
+  },
+  {
     ignores: ["dist/", "node_modules/", "reports/", "playwright-report/", "test-results/"],
   }
 );

@@ -16,61 +16,61 @@ const RAW_SKUS: RawSkuConfig[] = [
     name: "Kaiak Ultra Masculino 100ml",
     slug: "deo-colonia-kaiak-ultra-masculino-100-ml",
   },
-  {
-    sku: "NATBRA-108875",
-    name: "Sabonete em Barra Kaiak",
-    slug: "sabonete-em-barra-corpo-e-barba-kaiak-2-un-de-90-g-cada",
-  },
-  {
-    sku: "NATBRA-216032",
-    name: "Kit Desodorante Kaiak Oceano",
-    slug: "kit-desodorante-spray-corporal-kaiak-oceano-masculino-3-produtos",
-  },
-  {
-    sku: "NATBRA-189390",
-    name: "Desodorante Roll-on Kaiak Masculino",
-    slug: "desodorante-antitranspirante-roll-on-kaiak-masculino-75-ml",
-  },
-  {
-    sku: "NATBRA-258116",
-    name: "Kit Desodorante Kaiak Clássico com Refil",
-    slug: "kit-desodorante-corporal-kaiak-classico-masculino-com-refil-2-unidades-de-100-ml",
-  },
+  // {
+  //   sku: "NATBRA-108875",
+  //   name: "Sabonete em Barra Kaiak",
+  //   slug: "sabonete-em-barra-corpo-e-barba-kaiak-2-un-de-90-g-cada",
+  // },
+  // {
+  //   sku: "NATBRA-216032",
+  //   name: "Kit Desodorante Kaiak Oceano",
+  //   slug: "kit-desodorante-spray-corporal-kaiak-oceano-masculino-3-produtos",
+  // },
+  // {
+  //   sku: "NATBRA-189390",
+  //   name: "Desodorante Roll-on Kaiak Masculino",
+  //   slug: "desodorante-antitranspirante-roll-on-kaiak-masculino-75-ml",
+  // },
+  // {
+  //   sku: "NATBRA-258116",
+  //   name: "Kit Desodorante Kaiak Clássico com Refil",
+  //   slug: "kit-desodorante-corporal-kaiak-classico-masculino-com-refil-2-unidades-de-100-ml",
+  // },
 
-  // ===== SKUs CRÍTICOS (Monitoramento especial) =====
-  {
-    sku: "NATBRA-171117",
-    name: "Kaiak Aventura Intensa Masculino",
-    slug: "desodorante-colonia-kaiak-aventura-intensa-masculino-100-ml",
-  },
-  {
-    sku: "NATBRA-249685",
-    name: "Kaiak Extremo Masculino Promoção",
-    slug: "desodorante-colonia-kaiak-extremo-masculino-promocao-vai-dar-onda-100-ml",
-  },
-  {
-    sku: "NATBRA-242220",
-    name: "Presente Kaiak Aventura Feminino",
-    slug: "presente-dia-dos-namorados-natura-kaiak-aventura",
-  },
-  {
-    sku: "NATBRA-194223",
-    name: "Kaiak Oceano Feminino Miniatura",
-    slug: "desodorante-colonia-kaiak-oceano-feminino-miniatura-25-ml",
-  },
-  {
-    sku: "NATBRA-160214",
-    name: "Body Splash Kaiak Aventura",
-    slug: "body-splash-desodorante-colonia-kaiak-aventura-feminino-200-ml",
-  },
+  // // ===== SKUs CRÍTICOS (Monitoramento especial) =====
+  // {
+  //   sku: "NATBRA-171117",
+  //   name: "Kaiak Aventura Intensa Masculino",
+  //   slug: "desodorante-colonia-kaiak-aventura-intensa-masculino-100-ml",
+  // },
+  // {
+  //   sku: "NATBRA-249685",
+  //   name: "Kaiak Extremo Masculino Promoção",
+  //   slug: "desodorante-colonia-kaiak-extremo-masculino-promocao-vai-dar-onda-100-ml",
+  // },
+  // {
+  //   sku: "NATBRA-242220",
+  //   name: "Presente Kaiak Aventura Feminino",
+  //   slug: "presente-dia-dos-namorados-natura-kaiak-aventura",
+  // },
+  // {
+  //   sku: "NATBRA-194223",
+  //   name: "Kaiak Oceano Feminino Miniatura",
+  //   slug: "desodorante-colonia-kaiak-oceano-feminino-miniatura-25-ml",
+  // },
+  // {
+  //   sku: "NATBRA-160214",
+  //   name: "Body Splash Kaiak Aventura",
+  //   slug: "body-splash-desodorante-colonia-kaiak-aventura-feminino-200-ml",
+  // },
 
-  // ===== SKU com Shop the Set =====
-  {
-    sku: "NATBRA-172407",
-    name: "Óleo em Creme Tododia Jambo Rosa e Flor de Caju",
-    slug: "oleo-em-creme-ultranutritivo-restaurador-tododia-jambo-rosa-e-flor-de-caju-200-ml",
-    expectedFeatures: ["shopTheSet"],
-  },
+  // // ===== SKU com Shop the Set =====
+  // {
+  //   sku: "NATBRA-172407",
+  //   name: "Óleo em Creme Tododia Jambo Rosa e Flor de Caju",
+  //   slug: "oleo-em-creme-ultranutritivo-restaurador-tododia-jambo-rosa-e-flor-de-caju-200-ml",
+  //   expectedFeatures: ["shopTheSet"],
+  // },
   {
     sku: "NATBRA-167756",
     name: "Essencial Sentir Feminino 100ml",
@@ -84,11 +84,11 @@ const RAW_SKUS: RawSkuConfig[] = [
     name: "Kaiak Masculino Promoção",
     slug: "desodorante-colonia-kaiak-masculino-promocao-vai-dar-onda-100-ml",
   },
-  {
-    sku: "NATBRA-242233",
-    name: "Presente Kaiak Pulso",
-    slug: "presente-dia-dos-namorados-natura-kaiak-pulso",
-  },
+  // {
+  //   sku: "NATBRA-242233",
+  //   name: "Presente Kaiak Pulso",
+  //   slug: "presente-dia-dos-namorados-natura-kaiak-pulso",
+  // },
 
   // ===== AVON BRASIL =====
   {

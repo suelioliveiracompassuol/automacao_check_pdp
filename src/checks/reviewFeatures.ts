@@ -236,7 +236,9 @@ export async function checkReviewPhotos(page: Page): Promise<CheckResult> {
     // Check for review card images (h-32 w-32 thumbnails inside review cards)
     const reviewPhotos = await page.evaluate(() => {
       const reviews = document.getElementById("reviews");
-      if (!reviews) return { count: 0, hasFilter: false };
+      if (!reviews) {
+        return { count: 0, hasFilter: false };
+      }
 
       // Review card photos have specific size classes
       const imgs = reviews.querySelectorAll(
@@ -317,7 +319,9 @@ export async function checkReviewRecommendation(
     const recommendation = await page.evaluate(() => {
       // Look for bg-success chip anywhere on the page (it's part of reviews summary)
       const chip = document.querySelector(".bg-success");
-      if (!chip) return null;
+      if (!chip) {
+        return null;
+      }
 
       // The chip contains the percentage text
       const chipText = chip.textContent?.trim() || "";

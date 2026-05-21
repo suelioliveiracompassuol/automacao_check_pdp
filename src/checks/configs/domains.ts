@@ -24,6 +24,7 @@ export const DOMAINS: DomainConfig[] = [
       // "pricing",
       // "shipping",
       "rating",
+      "ratingConsistency",
     ],
   },
   {
@@ -43,6 +44,7 @@ export const DOMAINS: DomainConfig[] = [
       // "pricing",
       // "shipping",
       "rating",
+      "ratingConsistency",
     ],
   },
   {
@@ -62,6 +64,7 @@ export const DOMAINS: DomainConfig[] = [
       // "pricing",
       // "shipping",
       "rating",
+      "ratingConsistency",
     ],
   },
   {
@@ -81,6 +84,7 @@ export const DOMAINS: DomainConfig[] = [
       // "pricing",
       // "shipping",
       "rating",
+      "ratingConsistency",
     ],
   },
   {
@@ -100,6 +104,7 @@ export const DOMAINS: DomainConfig[] = [
       // "pricing",
       // "shipping",
       "rating",
+      "ratingConsistency",
     ],
   },
   {
@@ -119,6 +124,7 @@ export const DOMAINS: DomainConfig[] = [
       // "pricing",
       // "shipping",
       "rating",
+      "ratingConsistency",
     ],
   },
   // ===== Natura Social Commerce (Minha Loja) =====
@@ -139,6 +145,7 @@ export const DOMAINS: DomainConfig[] = [
       // "pricing",
       // "shipping",
       "rating",
+      "ratingConsistency",
     ],
   },
   // ===== Avon Social Commerce (Minha Loja) =====
@@ -159,6 +166,7 @@ export const DOMAINS: DomainConfig[] = [
       // "pricing",
       // "shipping",
       "rating",
+      "ratingConsistency",
     ],
   },
   // ===== Avon Ecommerce =====
@@ -177,6 +185,7 @@ export const DOMAINS: DomainConfig[] = [
       //"pricing",
       //"shipping",
       "rating",
+      "ratingConsistency",
     ],
   },
   {
