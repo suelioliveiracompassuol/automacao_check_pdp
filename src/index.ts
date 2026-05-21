@@ -547,7 +547,7 @@ async function checkPdp(params: CheckPdpParams): Promise<PdpCheckResult> {
 async function main() {
   const runId = `run_${Date.now()}`;
   const startTime = new Date();
-  const outputDir = path.join(process.cwd(), "reports", runId);
+  const outputDir = path.join(process.cwd(), "docs", "reports", runId);
 
   // Create output directories
   fs.mkdirSync(path.join(outputDir, "screenshots"), { recursive: true });
@@ -769,6 +769,56 @@ async function main() {
 
   fs.writeFileSync(htmlPath, generateHtmlReport(report, outputDir));
   fs.writeFileSync(jsonPath, generateJsonReport(report));
+
+  // Copy to last-report files and update index
+  try {
+    const docsDir = path.join(process.cwd(), "docs");
+    const reportsDir = path.join(docsDir, "reports");
+
+    // Copy to last-report
+    fs.copyFileSync(htmlPath, path.join(docsDir, "last-report.html"));
+    fs.copyFileSync(jsonPath, path.join(docsDir, "last-report.json"));
+
+    // Update index.json
+    const indexJsonPath = path.join(reportsDir, "index.json");
+    let reportsIndex: { reports: MonitoringReport[] } = { reports: [] };
+
+    if (fs.existsSync(indexJsonPath)) {
+      try {
+        const data = JSON.parse(fs.readFileSync(indexJsonPath, "utf-8"));
+        if (data && Array.isArray(data.reports)) {
+          reportsIndex = data;
+        }
+      } catch (e) {
+        console.log("Could not parse existing report index, creating new one.");
+      }
+    }
+
+    // Create a new entry for the index, removing full results to keep it small
+    const reportForIndex: Partial<MonitoringReport> & { htmlPath: string, jsonPath: string } = {
+      runId: report.runId,
+      startTime: report.startTime,
+      endTime: report.endTime,
+      durationMs: report.durationMs,
+      summary: report.summary,
+      // Paths relative to the /docs root for the frontend
+      htmlPath: path.join('reports', runId, 'report.html').replace(/\\/g, '/'),
+      jsonPath: path.join('reports', runId, 'report.json').replace(/\\/g, '/'),
+    };
+
+    reportsIndex.reports.unshift(reportForIndex as MonitoringReport);
+    
+    // Limit to 100 most recent reports
+    if (reportsIndex.reports.length > 100) {
+      reportsIndex.reports = reportsIndex.reports.slice(0, 100);
+    }
+    
+    fs.writeFileSync(indexJsonPath, JSON.stringify(reportsIndex, null, 2));
+    console.log(`\n✅  Índice de relatórios atualizado: ${indexJsonPath}`);
+
+  } catch (e) {
+    console.error("\n❌ Erro ao atualizar o histórico de relatórios:", e);
+  }
 
   // Print summary
   console.log("\n" + "=".repeat(60));

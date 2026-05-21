@@ -549,6 +549,65 @@ export function generateHtmlReport(
     </div>
   `;
 
+  const generateHistory = () => {
+    if (!outputDir) {
+      return "";
+    }
+
+    try {
+      // outputDir is reports/run_<timestamp>, so we go up one level
+      const reportsRoot = nodePath.resolve(outputDir, "..");
+      const runDirs = fs
+        .readdirSync(reportsRoot)
+        .map((name) => ({ name, path: nodePath.join(reportsRoot, name) }))
+        .filter(
+          (item) =>
+            item.name.startsWith("run_") &&
+            fs.statSync(item.path).isDirectory(),
+        )
+        .map((item) => ({
+          name: item.name,
+          time: parseInt(item.name.split("_")[1] || "0", 10),
+        }))
+        .sort((a, b) => b.time - a.time) // Newest first
+        .slice(0, 25); // Limit to last 25 runs
+
+      if (runDirs.length <= 1) {
+        return "";
+      }
+
+      const currentRunTime = parseInt(runId.split("_")[1] || "0", 10);
+
+      const historyLinks = runDirs
+        .map((dir) => {
+          const isCurrent = dir.time === currentRunTime;
+          const date = new Date(dir.time).toLocaleString("pt-BR", {
+            dateStyle: "short",
+            timeStyle: "medium",
+          });
+          // Link path is relative to the current report, which is inside a 'run_...' folder
+          const link = isCurrent
+            ? `<span>${date} (Atual)</span>`
+            : `<a href="../${dir.name}/report.html">${date}</a>`;
+          return `<li style="${isCurrent ? "font-weight:bold; color:#3b82f6;" : ""}">${link}</li>`;
+        })
+        .join("");
+
+      return `
+        <div class="history-dropdown">
+          <button class="history-button">📖 Histórico de Execuções</button>
+          <ul class="history-list">
+            ${historyLinks}
+          </ul>
+        </div>
+      `;
+    } catch (e) {
+      // In case of error (e.g. fs access), just don't show the history
+      console.error("Failed to generate report history:", e);
+      return "";
+    }
+  };
+
   return `<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -605,6 +664,8 @@ export function generateHtmlReport(
       gap: 16px;
       font-size: 14px;
       color: #6b7280;
+      justify-content: space-between;
+      align-items: center;
     }
 
     .summary {
@@ -1052,6 +1113,67 @@ export function generateHtmlReport(
       font-size: 15px;
       display: none;
     }
+
+    /* ── History Dropdown ── */
+    .history-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .history-button {
+      background: #fff;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .history-button:hover {
+      background: #f9fafb;
+    }
+
+    .history-list {
+      display: none;
+      position: absolute;
+      background-color: #ffffff;
+      min-width: 220px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1;
+      list-style: none;
+      padding: 8px 0;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+      max-height: 400px;
+      overflow-y: auto;
+      right: 0;
+    }
+
+    .history-dropdown:hover .history-list {
+      display: block;
+    }
+
+    .history-list li {
+      padding: 8px 16px;
+      font-size: 13px;
+    }
+
+    .history-list li:hover {
+      background-color: #f3f4f6;
+    }
+
+    .history-list a {
+      text-decoration: none;
+      color: #374151;
+      display: block;
+    }
+
+    .history-list a:hover {
+      color: #1f2937;
+    }
   </style>
 </head>
 <body>
@@ -1059,9 +1181,12 @@ export function generateHtmlReport(
     <header>
       <h1>🔍 PDP Feature Monitor Report</h1>
       <div class="run-info">
-        <span>📅 ${new Date(startTime).toLocaleString("pt-BR")}</span>
-        <span>⏱️ Duração: ${formatDuration(durationMs)}</span>
-        <span>🆔 ${runId}</span>
+        <div>
+          <span>📅 ${new Date(startTime).toLocaleString("pt-BR")}</span>
+          <span>⏱️ Duração: ${formatDuration(durationMs)}</span>
+          <span>🆔 ${runId}</span>
+        </div>
+        ${generateHistory()}
       </div>
     </header>
 
