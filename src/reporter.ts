@@ -575,7 +575,6 @@ export function generateHtmlReport(report: MonitoringReport): string {
               var date = new Date(rep.startTime).toLocaleString("pt-BR", {
                 dateStyle: "short",
                 timeStyle: "medium",
-                timeZone: "America/Sao_Paulo",
               });
               if (rep.runId === currentRunId) {
                 li.style.fontWeight = 'bold';
@@ -603,10 +602,7 @@ export function generateHtmlReport(report: MonitoringReport): string {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PDP Monitor Report - ${new Date(startTime).toLocaleDateString(
-    "pt-BR",
-    { timeZone: "America/Sao_Paulo" },
-  )}</title>
+  <title>PDP Monitor Report</title>
   <style>
     :root {
       --color-pass: #10b981;
@@ -1175,9 +1171,7 @@ export function generateHtmlReport(report: MonitoringReport): string {
       <h1>🔍 PDP Feature Monitor Report</h1>
       <div class="run-info">
         <div>
-          <span>📅 ${new Date(startTime).toLocaleString("pt-BR", {
-            timeZone: "America/Sao_Paulo",
-          })}</span>
+          <span id="runDate"></span>
           <span>⏱️ Duração: ${formatDuration(durationMs)}</span>
           <span>🆔 ${runId}</span>
         </div>
@@ -1344,6 +1338,16 @@ export function generateHtmlReport(report: MonitoringReport): string {
         applyFilters();
       });
     });
+  })();
+  </script>
+  <script>
+  (function() {
+    var startTimeIso = ${JSON.stringify(startTime)};
+    var startDate = new Date(startTimeIso);
+    var dateString = startDate.toLocaleString("pt-BR", { dateStyle: 'short', timeStyle: 'medium' });
+
+    document.title = 'PDP Monitor Report - ' + startDate.toLocaleDateString("pt-BR");
+    document.getElementById('runDate').textContent = '📅 ' + dateString;
   })();
   </script>
 </body>
