@@ -4,8 +4,8 @@
  * Generates HTML and JSON reports from monitoring results
  */
 
-import * as fs from "node:fs";
-import * as nodePath from "node:path";
+// import * as fs from "node:fs";
+// import * as nodePath from "node:path";
 import {
   MonitoringReport,
   PdpCheckResult,
@@ -24,25 +24,25 @@ import {
  * Read a screenshot file (relative to outputDir) and return a base64 data URI,
  * or null if the file cannot be read.
  */
-function screenshotToDataUri(
-  relPath: string,
-  outputDir: string,
-): string | null {
-  try {
-    const absPath = nodePath.isAbsolute(relPath)
-      ? relPath
-      : nodePath.join(outputDir, relPath);
-    if (fs.existsSync(absPath)) {
-      const ext = nodePath.extname(absPath).toLowerCase().slice(1) || "png";
-      const mime = ext === "jpg" || ext === "jpeg" ? "image/jpeg" : "image/png";
-      const base64 = fs.readFileSync(absPath).toString("base64");
-      return `data:${mime};base64,${base64}`;
-    }
-  } catch {
-    // ignore read errors — fall back to relative path
-  }
-  return null;
-}
+// function screenshotToDataUri(
+//   relPath: string,
+//   outputDir: string,
+// ): string | null {
+//   try {
+//     const absPath = nodePath.isAbsolute(relPath)
+//       ? relPath
+//       : nodePath.join(outputDir, relPath);
+//     if (fs.existsSync(absPath)) {
+//       const ext = nodePath.extname(absPath).toLowerCase().slice(1) || "png";
+//       const mime = ext === "jpg" || ext === "jpeg" ? "image/jpeg" : "image/png";
+//       const base64 = fs.readFileSync(absPath).toString("base64");
+//       return `data:${mime};base64,${base64}`;
+//     }
+//   } catch {
+//     // ignore read errors — fall back to relative path
+//   }
+//   return null;
+// }
 
 /**
  * Generate JSON report
@@ -63,10 +63,7 @@ export function generateJsonReport(report: MonitoringReport): string {
 /**
  * Generate HTML report
  */
-export function generateHtmlReport(
-  report: MonitoringReport,
-  outputDir?: string,
-): string {
+export function generateHtmlReport(report: MonitoringReport): string {
   const { summary, results, startTime, durationMs, runId } = report;
 
   const flag = (country: string) =>
@@ -150,33 +147,33 @@ export function generateHtmlReport(
    * Render a screenshot as an inline base64 thumbnail (if outputDir is
    * available and the file exists), or fall back to a plain relative link.
    */
-  const renderScreenshot = (
-    screenshotPath: string | undefined,
-    thumbnail = true,
-  ): string => {
-    if (!screenshotPath) {
-      return "-";
-    }
-    if (outputDir) {
-      const dataUri = screenshotToDataUri(screenshotPath, outputDir);
-      if (dataUri) {
-        return thumbnail
-          ? `<a href="${dataUri}" target="_blank"><img src="${dataUri}" style="max-width:80px;max-height:50px;border-radius:4px;cursor:pointer;vertical-align:middle;border:1px solid #e5e7eb" alt="screenshot"></a>`
-          : `<a href="${dataUri}" target="_blank">📷 Ver screenshot da página completa</a>`;
-      }
-    }
-    // fallback to relative link (works when report is served from the same dir)
-    return thumbnail
-      ? `<a href="${screenshotPath}" target="_blank">📷</a>`
-      : `<a href="${screenshotPath}" target="_blank">📷 Ver screenshot da página completa</a>`;
-  };
+  // const renderScreenshot = (
+  //   screenshotPath: string | undefined,
+  //   thumbnail = true,
+  // ): string => {
+  //   if (!screenshotPath) {
+  //     return "-";
+  //   }
+  //   if (outputDir) {
+  //     const dataUri = screenshotToDataUri(screenshotPath, outputDir);
+  //     if (dataUri) {
+  //       return thumbnail
+  //         ? `<a href="${dataUri}" target="_blank"><img src="${dataUri}" style="max-width:80px;max-height:50px;border-radius:4px;cursor:pointer;vertical-align:middle;border:1px solid #e5e7eb" alt="screenshot"></a>`
+  //         : `<a href="${dataUri}" target="_blank">📷 Ver screenshot da página completa</a>`;
+  //     }
+  //   }
+  //   // fallback to relative link (works when report is served from the same dir)
+  //   return thumbnail
+  //     ? `<a href="${screenshotPath}" target="_blank">📷</a>`
+  //     : `<a href="${screenshotPath}" target="_blank">📷 Ver screenshot da página completa</a>`;
+  // };
 
   const generateFeatureRow = (feature: CheckResult) => {
     return `
     <tr class="${statusClass(feature.passed, feature.status)}">
       <td>${statusEmoji(feature.passed, feature.status)} ${feature.feature}</td>
       <td>${feature.message}</td>
-      <td>${renderScreenshot(feature.screenshot)}</td>
+            <td>${feature.screenshot ? `<a href="${feature.screenshot}" target="_blank">📷</a>` : "-"}</td>
     </tr>
   `;
   };
@@ -247,8 +244,7 @@ export function generateHtmlReport(
         <tr class="group-review-rating ${statusClass(f.passed, f.status)}">
           <td style="padding-left:32px">${statusEmoji(f.passed, f.status)} ${f.feature}</td>
           <td>${f.message}</td>
-          <td>${renderScreenshot(f.screenshot)}</td>
-        </tr>
+          <td>${f.screenshot ? `<a href="${f.screenshot}" target="_blank">📷</a>` : "-"}</td>        </tr>
         `;
       }
     }
@@ -532,8 +528,9 @@ export function generateHtmlReport(
         result.pageScreenshot
           ? `
         <div class="page-screenshot">
-          ${renderScreenshot(result.pageScreenshot, false)}
-        </div>
+          <a href="${result.pageScreenshot}" target="_blank">
+            📷 Ver screenshot da página completa
+          </a>        </div>
       `
           : ""
       }

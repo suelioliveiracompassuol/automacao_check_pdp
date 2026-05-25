@@ -39,6 +39,9 @@ jobs:
     steps:
       - name: 📥 Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref_name }}
 
       - name: 🟢 Setup Node.js
         uses: actions/setup-node@v4
@@ -140,10 +143,10 @@ jobs:
 
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
-            git add docs/last-report.html docs/last-report.json docs/reports
+            git add -f docs/last-report.html docs/last-report.json docs/reports
             git diff --staged --quiet || git commit -m "chore: update last report [run #${{ github.run_number }}]"
-            git pull --rebase origin HEAD
-            git push
+            git pull --rebase origin ${{ github.ref_name }} || true
+            git push origin HEAD:${{ github.ref_name }}
             echo "✅ Report published to GitHub Pages"
           fi
 

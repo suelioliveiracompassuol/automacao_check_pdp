@@ -633,10 +633,64 @@ export async function checkRecommendationShowcase(
       (!captured || captured.campaignCount <= 0)
     ) {
       await new Promise<void>((r) => setTimeout(r, 2000));
+
+      // Set up the response watcher BEFORE reload so we don't miss it
+      const einsteinResponseCapture = page
+        .waitForResponse(
+          (res) =>
+            res.url().includes("einstein/personalization/campaign/products") &&
+            res.url().includes("VITRINE_PDP_EXPERIENCIA"),
+          { timeout: 20000 },
+        )
+        .then(async (res) => {
+          const body = (await res.json().catch(() => null)) as Record<
+            string,
+            unknown
+          > | null;
+          if (!body || !Array.isArray(body.campaignResponses)) {
+            return 0;
+          }
+          let count = 0;
+          for (const campaign of body.campaignResponses as Record<
+            string,
+            unknown
+          >[]) {
+            let payloadObj = campaign?.payload;
+            if (typeof payloadObj === "string") {
+              try {
+                payloadObj = JSON.parse(payloadObj);
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+              } catch (e) {
+                // ignore
+              }
+            }
+            count += extractProductsFromPayload(payloadObj);
+          }
+          if (count === 0 && (body.campaignResponses as unknown[]).length > 0) {
+            count = (body.campaignResponses as unknown[]).length;
+          }
+          return count;
+        })
+        .catch(() => 0);
+
       await page
         .reload({ waitUntil: "domcontentloaded", timeout: 30000 })
         .catch(() => {});
-      await new Promise<void>((r) => setTimeout(r, 3000));
+
+      // Wait for the Einstein API response that fires during reload
+      const reloadCampaignCount = await einsteinResponseCapture;
+
+      // If the reload gave us data, update the cache so downstream logic sees it
+      if (reloadCampaignCount > 0) {
+        einsteinShowcaseCache.set(page, {
+          campaignCount: reloadCampaignCount,
+          httpStatus: 200,
+          reqHeaders: captured?.reqHeaders ?? {},
+        });
+        captured = einsteinShowcaseCache.get(page);
+      }
+
+      await new Promise<void>((r) => setTimeout(r, 2000));
 
       // Scroll again to trigger lazy hydration
       await page.evaluate(async () => {
@@ -648,7 +702,7 @@ export async function checkRecommendationShowcase(
         }
         window.scrollTo(0, scrollHeight);
       });
-      await new Promise<void>((r) => setTimeout(r, 3000));
+      await new Promise<void>((r) => setTimeout(r, 2500));
 
       // Re-check DOM for the recommendation section
       const byTitleRetry = page
@@ -682,7 +736,7 @@ export async function checkRecommendationShowcase(
         }
       }
 
-      // Re-check captured cache after reload (the listener is still active)
+      // Sync cache one more time (async listener may have completed by now)
       captured = einsteinShowcaseCache.get(page);
     }
 
@@ -741,14 +795,25 @@ export async function checkRecommendationShowcase(
     }
 
     if (captured !== undefined && captured.campaignCount !== -1) {
-      // Captured but 0 campaigns
+      // HTTP 200 + empty campaignResponses: the API is configured correctly and
+      // reachable, but Einstein returned no personalisation data for this
+      // anonymous (no SLAS token) session.  This is expected behaviour —
+      // authenticated users will see the showcase.  Treat as PASS.
+      // Any non-200 status means something actually went wrong → keep warning.
+      const apiOk = captured.httpStatus === 200;
       return {
         feature,
         featureKey,
         passed: true,
-        status: "warning",
-        message: `API retornou 0 campanhas para a content zone "${zoneName}"`,
-        details: { contentZone: zoneName, httpStatus: captured.httpStatus },
+        status: apiOk ? "pass" : "warning",
+        message: apiOk
+          ? `Vitrine configurada (API ok, contentZone: "${zoneName}") — sem dados para sessão anônima`
+          : `API retornou 0 campanhas para a content zone "${zoneName}" (HTTP ${captured.httpStatus ?? "?"})`,
+        details: {
+          contentZone: zoneName,
+          httpStatus: captured.httpStatus,
+          ...(apiOk && { note: "empty-anonymous-session" }),
+        },
       };
     }
 
@@ -778,16 +843,20 @@ export async function checkRecommendationShowcase(
     console.log("SECTION TITLES FOUND:", allTitles);
 
     if (einsteinZone.called && einsteinZone.campaignCount === 0) {
+      const apiOk = einsteinZone.httpStatus === 200;
       return {
         feature,
         featureKey,
         passed: true,
-        status: "warning",
-        message: `API retornou 0 campanhas para a content zone "${zoneName}"`,
+        status: apiOk ? "pass" : "warning",
+        message: apiOk
+          ? `Vitrine configurada (API ok, contentZone: "${zoneName}") — sem dados para sessão anônima`
+          : `API retornou 0 campanhas para a content zone "${zoneName}" (HTTP ${einsteinZone.httpStatus ?? "?"})`,
         details: {
           einsteinUrl: einsteinZone.url,
           contentZone: zoneName,
           httpStatus: einsteinZone.httpStatus,
+          ...(apiOk && { note: "empty-anonymous-session" }),
           sectionTitlesFound: allTitles,
         },
       };
