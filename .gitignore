@@ -34,7 +34,6 @@ npm-debug.log*
 
 ncf-ssr/
 debug-**
-test-**
 .vscode
 
 # Force git to see changes
