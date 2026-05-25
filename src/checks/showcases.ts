@@ -288,24 +288,50 @@ async function checkEinsteinApi(
     };
 
     if (!cachedData || cachedData.campaignCount < 1) {
-      const reqHeaders = cachedData?.reqHeaders;
+      const reqHeaders = cachedData?.reqHeaders ?? {};
 
-      // Re-fetch from browser context (same cookies/auth)
-      apiResult = await page.evaluate(async ({ url, headers }) => {
+      // Re-fetch using Playwright's APIRequestContext (Node.js level — no browser
+      // header restrictions, properly forwards x-api-key and other custom headers).
+      // Retries up to 3 times with a 2 s delay so transient CDN/Einstein misses are
+      // covered without flooding the API.
+      const RETRIES = 3;
+      const RETRY_DELAY_MS = 2000;
+
+      const PAYLOAD_KEYS = [
+        "products",
+        "recs",
+        "items",
+        "productList",
+        "recommendations",
+        "result",
+      ];
+
+      for (let attempt = 0; attempt < RETRIES; attempt++) {
+        if (attempt > 0) {
+          await new Promise<void>((r) => setTimeout(r, RETRY_DELAY_MS));
+        }
         try {
-          const fetchOptions: RequestInit = { credentials: "include" };
-          if (headers) {
-            fetchOptions.headers = headers;
-          }
-          const res = await fetch(url, fetchOptions);
-          const body = await res.json().catch(() => null);
+          const apiResponse = await page.context().request.get(einsteinUrl, {
+            headers: reqHeaders,
+            timeout: 15000,
+          });
+          const body = (await apiResponse.json().catch(() => null)) as Record<
+            string,
+            unknown
+          > | null;
+
           if (
             !body ||
             !Array.isArray(
               (body as { campaignResponses?: unknown[] }).campaignResponses,
             )
           ) {
-            return { status: res.status, campaignCount: -1, error: null };
+            apiResult = {
+              status: apiResponse.status(),
+              campaignCount: -1,
+              error: null,
+            };
+            continue;
           }
 
           let productCount = 0;
@@ -313,14 +339,6 @@ async function checkEinsteinApi(
             body as { campaignResponses: Record<string, unknown>[] }
           ).campaignResponses;
 
-          const PAYLOAD_KEYS = [
-            "products",
-            "recs",
-            "items",
-            "productList",
-            "recommendations",
-            "result",
-          ];
           for (const campaign of campaigns) {
             let payloadObj = campaign?.payload;
             if (typeof payloadObj === "string") {
@@ -357,19 +375,20 @@ async function checkEinsteinApi(
           if (productCount === 0 && campaigns.length > 0) {
             productCount = campaigns.length;
           }
-          return {
-            status: res.status,
+
+          apiResult = {
+            status: apiResponse.status(),
             campaignCount: productCount,
             error: null,
           };
+
+          if (productCount > 0) {
+            break; // got data — stop retrying
+          }
         } catch (e) {
-          return {
-            status: null,
-            campaignCount: -1,
-            error: String(e),
-          };
+          apiResult = { status: null, campaignCount: -1, error: String(e) };
         }
-      }, { url: einsteinUrl, headers: reqHeaders });
+      }
     }
 
     return {
@@ -599,6 +618,72 @@ export async function checkRecommendationShowcase(
           break;
         }
       }
+    }
+
+    // -----------------------------------------------------------------------
+    // Retry via page reload: Einstein CDN/personalisation can return empty on
+    // the first request but populate the cache for subsequent ones.  Reload
+    // the page so the server-side rendering gets a fresh chance with warmer
+    // CDN cache.  Only do this when the section wasn't found AND the API
+    // returned 0 campaigns (genuine miss).
+    // -----------------------------------------------------------------------
+    if (
+      !populated &&
+      einsteinZone.campaignCount <= 0 &&
+      (!captured || captured.campaignCount <= 0)
+    ) {
+      await new Promise<void>((r) => setTimeout(r, 2000));
+      await page
+        .reload({ waitUntil: "domcontentloaded", timeout: 30000 })
+        .catch(() => {});
+      await new Promise<void>((r) => setTimeout(r, 3000));
+
+      // Scroll again to trigger lazy hydration
+      await page.evaluate(async () => {
+        const scrollHeight = document.body.scrollHeight;
+        const viewportHeight = window.innerHeight;
+        for (let i = 0; i < scrollHeight; i += viewportHeight / 2) {
+          window.scrollTo(0, i);
+          await new Promise((r) => setTimeout(r, 200));
+        }
+        window.scrollTo(0, scrollHeight);
+      });
+      await new Promise<void>((r) => setTimeout(r, 3000));
+
+      // Re-check DOM for the recommendation section
+      const byTitleRetry = page
+        .locator(SELECTORS.recommendationShowcase.section)
+        .filter({ has: page.locator('a[href*="/p/"]') });
+      const titleCountRetry = await byTitleRetry.count().catch(() => 0);
+      if (titleCountRetry > 0) {
+        const visibleRetry = await byTitleRetry
+          .first()
+          .isVisible()
+          .catch(() => false);
+        if (visibleRetry) {
+          activeSection = byTitleRetry.first();
+          populated = true;
+        }
+      }
+
+      // Also retry via position (2nd populated section)
+      if (!populated) {
+        const populatedRetry = page.locator(
+          SELECTORS.showcase.populatedSection,
+        );
+        const secondRetry = populatedRetry.nth(1);
+        const secondVisibleRetry = await secondRetry
+          .waitFor({ state: "visible", timeout: 10000 })
+          .then(() => true)
+          .catch(() => false);
+        if (secondVisibleRetry) {
+          activeSection = secondRetry;
+          populated = true;
+        }
+      }
+
+      // Re-check captured cache after reload (the listener is still active)
+      captured = einsteinShowcaseCache.get(page);
     }
 
     if (populated) {
