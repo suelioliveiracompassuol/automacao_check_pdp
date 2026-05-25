@@ -572,7 +572,11 @@ export function generateHtmlReport(report: MonitoringReport): string {
             var list = document.getElementById('historyList');
             reports.forEach(function(rep) {
               var li = document.createElement('li');
-              var date = new Date(rep.startTime).toLocaleString('pt-BR', {dateStyle: 'short', timeStyle: 'medium'});
+              var date = new Date(rep.startTime).toLocaleString("pt-BR", {
+                dateStyle: "short",
+                timeStyle: "medium",
+                timeZone: "America/Sao_Paulo",
+              });
               if (rep.runId === currentRunId) {
                 li.style.fontWeight = 'bold';
                 li.style.color = '#3b82f6';
@@ -599,7 +603,10 @@ export function generateHtmlReport(report: MonitoringReport): string {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PDP Monitor Report - ${new Date(startTime).toLocaleDateString("pt-BR")}</title>
+  <title>PDP Monitor Report - ${new Date(startTime).toLocaleDateString(
+    "pt-BR",
+    { timeZone: "America/Sao_Paulo" },
+  )}</title>
   <style>
     :root {
       --color-pass: #10b981;
@@ -1168,7 +1175,9 @@ export function generateHtmlReport(report: MonitoringReport): string {
       <h1>🔍 PDP Feature Monitor Report</h1>
       <div class="run-info">
         <div>
-          <span>📅 ${new Date(startTime).toLocaleString("pt-BR")}</span>
+          <span>📅 ${new Date(startTime).toLocaleString("pt-BR", {
+            timeZone: "America/Sao_Paulo",
+          })}</span>
           <span>⏱️ Duração: ${formatDuration(durationMs)}</span>
           <span>🆔 ${runId}</span>
         </div>
