@@ -40,7 +40,7 @@ import {
 import { setupEinsteinShowcaseCapture } from "./checks/showcases.js";
 import {
   setupRatingConsistencyCapture,
-  captureRatingFromJsonLd,
+  captureRatingFromDOM,
 } from "./checks/ratingConsistency.js";
 import { FEATURES } from "./checks/configs/features.js";
 import {
@@ -175,7 +175,7 @@ export async function navigateViaVitrine(page: Page): Promise<string | null> {
     .catch(() => {});
 
   // Read product rating from JSON-LD immediately after load, before any DOM interactions.
-  await captureRatingFromJsonLd(page);
+  await captureRatingFromDOM(page);
 
   return page.url();
 }

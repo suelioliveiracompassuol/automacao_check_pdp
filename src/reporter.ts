@@ -143,6 +143,7 @@ export function generateHtmlReport(
     "reviewRecommendation",
     "aiReviewSummary",
     "rating",
+    "ratingConsistency",
   ]);
 
   /**
@@ -550,62 +551,50 @@ export function generateHtmlReport(
   `;
 
   const generateHistory = () => {
-    if (!outputDir) {
-      return "";
-    }
-
-    try {
-      // outputDir is reports/run_<timestamp>, so we go up one level
-      const reportsRoot = nodePath.resolve(outputDir, "..");
-      const runDirs = fs
-        .readdirSync(reportsRoot)
-        .map((name) => ({ name, path: nodePath.join(reportsRoot, name) }))
-        .filter(
-          (item) =>
-            item.name.startsWith("run_") &&
-            fs.statSync(item.path).isDirectory(),
-        )
-        .map((item) => ({
-          name: item.name,
-          time: parseInt(item.name.split("_")[1] || "0", 10),
-        }))
-        .sort((a, b) => b.time - a.time) // Newest first
-        .slice(0, 25); // Limit to last 25 runs
-
-      if (runDirs.length <= 1) {
-        return "";
-      }
-
-      const currentRunTime = parseInt(runId.split("_")[1] || "0", 10);
-
-      const historyLinks = runDirs
-        .map((dir) => {
-          const isCurrent = dir.time === currentRunTime;
-          const date = new Date(dir.time).toLocaleString("pt-BR", {
-            dateStyle: "short",
-            timeStyle: "medium",
-          });
-          // Link path is relative to the current report, which is inside a 'run_...' folder
-          const link = isCurrent
-            ? `<span>${date} (Atual)</span>`
-            : `<a href="../${dir.name}/report.html">${date}</a>`;
-          return `<li style="${isCurrent ? "font-weight:bold; color:#3b82f6;" : ""}">${link}</li>`;
-        })
-        .join("");
-
-      return `
-        <div class="history-dropdown">
-          <button class="history-button">📖 Histórico de Execuções</button>
-          <ul class="history-list">
-            ${historyLinks}
-          </ul>
-        </div>
-      `;
-    } catch (e) {
-      // In case of error (e.g. fs access), just don't show the history
-      console.error("Failed to generate report history:", e);
-      return "";
-    }
+    // History is loaded dynamically at runtime from docs/reports/index.json.
+    // This avoids broken relative paths when the report is placed at different
+    // directory depths (e.g. docs/last-report.html vs docs/reports/run_X/report.html).
+    return `
+      <div class="history-dropdown" id="historyDropdown" style="display:none">
+        <button class="history-button">📖 Histórico de Execuções</button>
+        <ul class="history-list" id="historyList"></ul>
+      </div>
+      <script>
+      (function() {
+        var currentRunId = ${JSON.stringify(runId)};
+        // Detect whether this page is inside a reports/run_* sub-directory.
+        var isInRunDir = window.location.pathname.indexOf('/reports/run_') >= 0;
+        // From reports/run_XXX/report.html  -> ../index.json  = reports/index.json
+        // From docs/last-report.html        -> reports/index.json = reports/index.json
+        var indexUrl = isInRunDir ? '../index.json' : 'reports/index.json';
+        fetch(indexUrl)
+          .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
+          .then(function(data) {
+            var reports = (data.reports || []).slice(0, 25);
+            if (reports.length <= 1) return;
+            var list = document.getElementById('historyList');
+            reports.forEach(function(rep) {
+              var li = document.createElement('li');
+              var date = new Date(rep.startTime).toLocaleString('pt-BR', {dateStyle: 'short', timeStyle: 'medium'});
+              if (rep.runId === currentRunId) {
+                li.style.fontWeight = 'bold';
+                li.style.color = '#3b82f6';
+                li.textContent = date + ' (Atual)';
+              } else {
+                var a = document.createElement('a');
+                // Build link relative to the current page location
+                a.href = isInRunDir ? ('../' + rep.runId + '/report.html') : rep.htmlPath;
+                a.textContent = date;
+                li.appendChild(a);
+              }
+              list.appendChild(li);
+            });
+            document.getElementById('historyDropdown').style.display = 'inline-block';
+          })
+          .catch(function() { /* no history available (e.g. local file://) */ });
+      })();
+      </script>
+    `;
   };
 
   return `<!DOCTYPE html>

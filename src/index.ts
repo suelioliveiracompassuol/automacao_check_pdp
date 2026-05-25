@@ -32,7 +32,7 @@ import { checkI18nKeys } from "./checks/i18n.js";
 import { setupEinsteinShowcaseCapture } from "./checks/showcases.js";
 import {
   setupRatingConsistencyCapture,
-  captureRatingFromJsonLd,
+  captureRatingFromDOM,
 } from "./checks/ratingConsistency.js";
 import {
   setupRemoteConfigCapture,
@@ -47,7 +47,7 @@ import {
   RemoteConfigFlags,
   CommerceFeatureFlags,
 } from "./checks/remoteConfig.js";
-import { SKUS } from "./checks/configs/skus.js";
+import { SKUS } from "./checks/configs/skus/skus.js";
 import { runExploratoryJourney } from "./explore.js";
 import { DOMAINS } from "./checks/configs/domains.js";
 import { FEATURES } from "./checks/configs/features.js";
@@ -196,7 +196,7 @@ async function checkPdp(params: CheckPdpParams): Promise<PdpCheckResult> {
 
     // Read product rating from JSON-LD immediately after load, before any DOM interactions
     // that could cause React to re-render/clear the SSR script tags.
-    await captureRatingFromJsonLd(page);
+    await captureRatingFromDOM(page);
 
     // Dismiss cookie banner
     await dismissCookieBanner(page);
@@ -789,33 +789,36 @@ async function main() {
         if (data && Array.isArray(data.reports)) {
           reportsIndex = data;
         }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (e) {
         console.log("Could not parse existing report index, creating new one.");
       }
     }
 
     // Create a new entry for the index, removing full results to keep it small
-    const reportForIndex: Partial<MonitoringReport> & { htmlPath: string, jsonPath: string } = {
+    const reportForIndex: Partial<MonitoringReport> & {
+      htmlPath: string;
+      jsonPath: string;
+    } = {
       runId: report.runId,
       startTime: report.startTime,
       endTime: report.endTime,
       durationMs: report.durationMs,
       summary: report.summary,
       // Paths relative to the /docs root for the frontend
-      htmlPath: path.join('reports', runId, 'report.html').replace(/\\/g, '/'),
-      jsonPath: path.join('reports', runId, 'report.json').replace(/\\/g, '/'),
+      htmlPath: path.join("reports", runId, "report.html").replace(/\\/g, "/"),
+      jsonPath: path.join("reports", runId, "report.json").replace(/\\/g, "/"),
     };
 
     reportsIndex.reports.unshift(reportForIndex as MonitoringReport);
-    
+
     // Limit to 100 most recent reports
     if (reportsIndex.reports.length > 100) {
       reportsIndex.reports = reportsIndex.reports.slice(0, 100);
     }
-    
+
     fs.writeFileSync(indexJsonPath, JSON.stringify(reportsIndex, null, 2));
     console.log(`\n✅  Índice de relatórios atualizado: ${indexJsonPath}`);
-
   } catch (e) {
     console.error("\n❌ Erro ao atualizar o histórico de relatórios:", e);
   }

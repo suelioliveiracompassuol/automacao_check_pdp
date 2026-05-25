@@ -18,37 +18,57 @@ interface CapturedRatingData {
  * WeakMap stores captured data per page instance.
  * Keys are garbage-collected when the page is closed.
  */
-const captureCache = new WeakMap<Page, CapturedRatingData>();
+export const captureCache = new WeakMap<Page, CapturedRatingData>();
 
 /**
  * Must be called AFTER page.waitForLoadState("load") but BEFORE
- * dismissCookieBanner / scrollAndLoadContent, when the SSR DOM is fresh.
- * Reads the JSON-LD <script type="application/ld+json"> from the DOM and
- * stores the aggregateRating.ratingValue as productRating in the WeakMap.
+ * dismissCookieBanner / scrollAndLoadContent.
  *
- * This is a fallback for SSR-only product APIs (e.g. natura.com.br) where
- * the product data is not available via client-side API calls.
+ * This function is a fallback for pages where the product rating is not
+ * available via the standard client-side APIs or initial SSR data blobs
+ * (__NEXT_DATA__).
+ *
+ * It attempts to capture the rating by:
+ * 1. Parsing <script type="application/ld+json"> from the DOM (for natura.com.br).
+ * 2. For avon.com.br, finding the rating element based on its proximity to a
+ *    stable `data-testid`.
  */
-export async function captureRatingFromJsonLd(page: Page): Promise<void> {
-  // Only apply to standard natura.com.br (SSR — product API is not called client-side).
-  // For social commerce (minhaloja.natura.com) and other domains the product API IS
-  // called client-side and is the authoritative source; skip JSON-LD capture there.
-  const pageUrl = page.url();
-  const isNaturaBrSsr =
-    pageUrl.includes("natura.com.br") && !pageUrl.includes("minhaloja");
-  if (!isNaturaBrSsr) {
-    return;
-  }
-
+export async function captureRatingFromDOM(page: Page): Promise<void> {
   const existing = captureCache.get(page) ?? {};
   if (existing.productRating !== undefined) {
     return;
   }
+  const pageUrl = page.url();
 
   try {
+    const isAvon =
+      pageUrl.includes("avon.com.br") || pageUrl.includes("marca=avon");
+
+    // Case 1: Avon-specific DOM scraping using data-testid
+    if (isAvon) {
+      const ratingButton = page.locator('[data-testid="go-to-reviews-button"]');
+      // The rating span is a sibling to the button's parent.
+      const ratingLocator = ratingButton
+        .locator("..")
+        .locator("..")
+        .locator("span")
+        .first();
+      const ratingText = await ratingLocator.textContent({ timeout: 12000 });
+
+      if (ratingText) {
+        const parsed = parseFloat(ratingText.replace(",", "."));
+        if (!isNaN(parsed)) {
+          const current = captureCache.get(page) ?? {};
+          if (current.productRating === undefined) {
+            captureCache.set(page, { ...current, productRating: parsed });
+          }
+          return; // Found it for Avon, we're done.
+        }
+      }
+    }
+
+    // Case 2: Poll for JSON-LD (original logic for natura.com.br)
     // Use waitForFunction to poll the DOM until the JSON-LD with ratingValue is available.
-    // This is more robust than waiting for a fixed event like 'load', as it accounts for
-    // client-side rendering delays (hydration). Timeout increased to 12 seconds.
     const ratingHandle = await page.waitForFunction(
       () => {
         const scripts = Array.from(
@@ -83,7 +103,7 @@ export async function captureRatingFromJsonLd(page: Page): Promise<void> {
       }
     }
   } catch {
-    // ignore evaluation errors (e.g. page navigated away)
+    // ignore evaluation errors (e.g. page navigated away, locator timed out)
   }
 }
 
@@ -259,6 +279,7 @@ export async function checkRatingConsistency(page: Page): Promise<CheckResult> {
     // 1. WeakMap capture of /pages/v2/product/ API (client-side sites)
     // 2. JSON-LD extracted from raw SSR HTML response (intercepted in setup)
     // 3. __NEXT_DATA__ extracted from SSR HTML (Next.js domains)
+    // 4. DOM scraping as a last resort (see captureRatingFromDOM)
     const productRating: number | undefined = captured?.productRating;
 
     if (productRating === undefined && aggregatedRating === undefined) {
@@ -273,15 +294,15 @@ export async function checkRatingConsistency(page: Page): Promise<CheckResult> {
     }
 
     if (productRating === undefined) {
-      // A exceção para Avon estava incorreta. A API de produto existe (via SSR/JSON-LD).
-      // Se não conseguimos capturar, é um erro de automação ou uma falha na página.
+      // This error now means all capture methods have failed: API interception,
+      // SSR HTML parsing (JSON-LD, __NEXT_DATA__), and direct DOM scraping.
       return {
         feature,
         featureKey,
         passed: false,
         status: "error",
         message:
-          "Rating do produto não encontrado (JSON-LD ausente ou inválido e API de produto não capturada).",
+          "Rating do produto não encontrado. Todas as formas de captura falharam (API, JSON-LD, __NEXT_DATA__, e raspagem do DOM).",
         details: { reviewsApiUrl: captured?.reviewsApiUrl, aggregatedRating },
       };
     }

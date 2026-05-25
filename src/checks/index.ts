@@ -22,6 +22,6 @@ export { checkShipping } from "./shipping.js";
 export {
   checkRatingConsistency,
   setupRatingConsistencyCapture,
-  captureRatingFromJsonLd,
+  captureRatingFromDOM,
 } from "./ratingConsistency.js";
 export { checkRating } from "./rating.js";

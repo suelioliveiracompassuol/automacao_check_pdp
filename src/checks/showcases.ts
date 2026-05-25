@@ -43,6 +43,8 @@ interface EinsteinCapturedData {
   campaignCount: number;
   /** HTTP status of the original page-load response */
   httpStatus: number;
+  /** Original request headers to replay in diagnostic check */
+  reqHeaders?: Record<string, string>;
 }
 
 /** Per-page cache populated by {@link setupEinsteinShowcaseCapture}. */
@@ -63,6 +65,7 @@ export function setupEinsteinShowcaseCapture(page: Page): void {
       return;
     }
     const status = response.status();
+    const reqHeaders = response.request().headers();
     void response
       .body()
       .then((buffer) => {
@@ -99,6 +102,7 @@ export function setupEinsteinShowcaseCapture(page: Page): void {
           einsteinShowcaseCache.set(page, {
             campaignCount: count,
             httpStatus: status,
+            reqHeaders,
           });
         }
       })
@@ -109,6 +113,7 @@ export function setupEinsteinShowcaseCapture(page: Page): void {
           einsteinShowcaseCache.set(page, {
             campaignCount: -1,
             httpStatus: status,
+            reqHeaders,
           });
         }
       });
@@ -283,10 +288,16 @@ async function checkEinsteinApi(
     };
 
     if (!cachedData || cachedData.campaignCount < 1) {
+      const reqHeaders = cachedData?.reqHeaders;
+
       // Re-fetch from browser context (same cookies/auth)
-      apiResult = await page.evaluate(async (url) => {
+      apiResult = await page.evaluate(async ({ url, headers }) => {
         try {
-          const res = await fetch(url, { credentials: "include" });
+          const fetchOptions: RequestInit = { credentials: "include" };
+          if (headers) {
+            fetchOptions.headers = headers;
+          }
+          const res = await fetch(url, fetchOptions);
           const body = await res.json().catch(() => null);
           if (
             !body ||
@@ -358,7 +369,7 @@ async function checkEinsteinApi(
             error: String(e),
           };
         }
-      }, einsteinUrl);
+      }, { url: einsteinUrl, headers: reqHeaders });
     }
 
     return {
@@ -679,6 +690,7 @@ export async function checkRecommendationShowcase(
         allTitles.push(titleText.trim());
       }
     }
+    console.log("SECTION TITLES FOUND:", allTitles);
 
     if (einsteinZone.called && einsteinZone.campaignCount === 0) {
       return {

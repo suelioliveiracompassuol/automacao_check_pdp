@@ -143,3 +143,8 @@ export interface FeatureConfig {
   /** Some features are product-category specific */
   optional?: boolean;
 }
+
+export type RawSkuConfig = Omit<SkuConfig, "vendor" | "country"> & {
+  vendor?: Vendor;
+  country?: Country;
+};

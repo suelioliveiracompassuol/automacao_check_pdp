@@ -72,6 +72,13 @@ export async function checkImages(page: Page): Promise<CheckResult> {
 
     let imageCount = await imageLocator.count().catch(() => 0);
 
+    // Fallback for Natura BR specific image naming convention
+    if (imageCount === 0 && productCode && productCode.startsWith("NATBRA-")) {
+      const numericCode = productCode.replace("NATBRA-", "");
+      imageLocator = page.locator(`img[src*="${numericCode}"]`);
+      imageCount = await imageLocator.count().catch(() => 0);
+    }
+
     if (imageCount === 0) {
       // Try broader selector as last resort
       const allImages = page.locator(
