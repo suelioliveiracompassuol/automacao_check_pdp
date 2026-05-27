@@ -497,7 +497,7 @@ export async function checkBrandShowcase(page: Page): Promise<CheckResult> {
 
     // 1st showcase section = brand showcase
     const brandSection = sections.nth(0);
-    const productCards = brandSection.locator('a[href*="/p/"]');
+    const productCards = brandSection.locator(SELECTORS.brandShowcase.productCards);
     const cardCount = await productCards.count().catch(() => 0);
 
     // Get the section title for the report
@@ -563,7 +563,7 @@ export async function checkRecommendationShowcase(
     // This handles "también te puede gustar", "achamos que você vai gostar", etc.
     const byTitle = page
       .locator(SELECTORS.recommendationShowcase.section)
-      .filter({ has: page.locator('a[href*="/p/"]') });
+      .filter({ has: page.locator(SELECTORS.recommendationShowcase.productCards) });
     const titleCount = await byTitle.count().catch(() => 0);
 
     let activeSection = byTitle.first();
@@ -707,7 +707,7 @@ export async function checkRecommendationShowcase(
       // Re-check DOM for the recommendation section
       const byTitleRetry = page
         .locator(SELECTORS.recommendationShowcase.section)
-        .filter({ has: page.locator('a[href*="/p/"]') });
+        .filter({ has: page.locator(SELECTORS.recommendationShowcase.productCards) });
       const titleCountRetry = await byTitleRetry.count().catch(() => 0);
       if (titleCountRetry > 0) {
         const visibleRetry = await byTitleRetry
@@ -723,7 +723,7 @@ export async function checkRecommendationShowcase(
       // Also retry via position (2nd populated section)
       if (!populated) {
         const populatedRetry = page.locator(
-          SELECTORS.showcase.populatedSection,
+          'section.bg-background:not(#ot-pc-lst):not(#ot-fltr-modal):has([data-testid="btn-add-to-cart"], a[href*="/p/"])',
         );
         const secondRetry = populatedRetry.nth(1);
         const secondVisibleRetry = await secondRetry

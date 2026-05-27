@@ -13,7 +13,8 @@ export async function checkPricing(page: Page): Promise<CheckResult> {
     // Look for pricing section by CSS class
     const pricingLocator = page.locator(SELECTORS.pricing.section).first();
     const hasPricing = await pricingLocator
-      .isVisible({ timeout: 5000 })
+      .waitFor({ state: "visible", timeout: 5000 })
+      .then(() => true)
       .catch(() => false);
 
     // Extract price from pricing section (not entire page to avoid picking up banner/promo prices)
@@ -143,7 +144,8 @@ export async function checkPricing(page: Page): Promise<CheckResult> {
     // Check for discount badge (optional)
     const discountLocator = page.locator(SELECTORS.pricing.discount).first();
     const hasDiscount = await discountLocator
-      .isVisible({ timeout: 2000 })
+      .waitFor({ state: "visible", timeout: 2000 })
+      .then(() => true)
       .catch(() => false);
 
     let discountText = "";
@@ -155,7 +157,8 @@ export async function checkPricing(page: Page): Promise<CheckResult> {
     // Check for list price (crossed out)
     const listPriceLocator = page.locator(SELECTORS.pricing.listPrice).first();
     const hasListPrice = await listPriceLocator
-      .isVisible({ timeout: 2000 })
+      .waitFor({ state: "visible", timeout: 2000 })
+      .then(() => true)
       .catch(() => false);
 
     // Detect currency symbol from price text

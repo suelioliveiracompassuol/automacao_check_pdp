@@ -14,9 +14,12 @@ export async function checkReviewFilter(page: Page): Promise<CheckResult> {
   const feature = "Filtro de avaliações";
 
   try {
-    const reviewsContainer = page.locator("#reviews");
+    const reviewsContainer = page
+      .locator('[data-testid="reviews-component"], #reviews')
+      .first();
     const hasReviews = await reviewsContainer
-      .isVisible({ timeout: 5000 })
+      .waitFor({ state: "visible", timeout: 5000 })
+      .then(() => true)
       .catch(() => false);
 
     if (!hasReviews) {
@@ -60,11 +63,14 @@ export async function checkReviewFilter(page: Page): Promise<CheckResult> {
 
     // Look for filter icon inside reviews
     const filterIcon = reviewsContainer
-      .locator('i[class*="natds-icons-outlined-action-filter"]')
+      .locator(
+        '[data-testid="reviews-filter"], i[class*="natds-icons-outlined-action-filter"]',
+      )
       .first();
 
     const hasFilter = await filterIcon
-      .isVisible({ timeout: 5000 })
+      .waitFor({ state: "visible", timeout: 5000 })
+      .then(() => true)
       .catch(() => false);
 
     if (hasFilter) {
@@ -107,9 +113,12 @@ export async function checkReviewSort(page: Page): Promise<CheckResult> {
   const feature = "Ordenação de avaliações";
 
   try {
-    const reviewsContainer = page.locator("#reviews");
+    const reviewsContainer = page
+      .locator('[data-testid="reviews-component"], #reviews')
+      .first();
     const hasReviews = await reviewsContainer
-      .isVisible({ timeout: 5000 })
+      .waitFor({ state: "visible", timeout: 5000 })
+      .then(() => true)
       .catch(() => false);
 
     if (!hasReviews) {
@@ -136,11 +145,14 @@ export async function checkReviewSort(page: Page): Promise<CheckResult> {
 
     // Look for sort dropdown arrow icon inside reviews
     const sortIcon = reviewsContainer
-      .locator('i[class*="natds-icons-outlined-navigation-arrowbottom"]')
+      .locator(
+        '[data-testid="reviews-sort"], i[class*="natds-icons-outlined-navigation-arrowbottom"]',
+      )
       .first();
 
     const hasSortIcon = await sortIcon
-      .isVisible({ timeout: 5000 })
+      .waitFor({ state: "visible", timeout: 5000 })
+      .then(() => true)
       .catch(() => false);
 
     if (hasSortIcon) {
@@ -162,7 +174,8 @@ export async function checkReviewSort(page: Page): Promise<CheckResult> {
       .first();
 
     const hasSortButton = await sortButton
-      .isVisible({ timeout: 3000 })
+      .waitFor({ state: "visible", timeout: 3000 })
+      .then(() => true)
       .catch(() => false);
 
     if (hasSortButton) {
@@ -206,9 +219,12 @@ export async function checkReviewPhotos(page: Page): Promise<CheckResult> {
   const feature = "Fotos nas avaliações";
 
   try {
-    const reviewsContainer = page.locator("#reviews");
+    const reviewsContainer = page
+      .locator('[data-testid="reviews-component"], #reviews')
+      .first();
     const hasReviews = await reviewsContainer
-      .isVisible({ timeout: 5000 })
+      .waitFor({ state: "visible", timeout: 5000 })
+      .then(() => true)
       .catch(() => false);
 
     if (!hasReviews) {
@@ -234,27 +250,22 @@ export async function checkReviewPhotos(page: Page): Promise<CheckResult> {
     }
 
     // Check for review card images (h-32 w-32 thumbnails inside review cards)
-    const reviewPhotos = await page.evaluate(() => {
-      const reviews = document.getElementById("reviews");
-      if (!reviews) {
-        return { count: 0, hasFilter: false };
-      }
+    const imgsCount = await reviewsContainer
+      .locator('img[class*="h-32"][class*="w-32"], img[class*="rounded-micro"]')
+      .count()
+      .catch(() => 0);
+    const hasFilter = await reviewsContainer
+      .locator(
+        '[data-testid="reviews-filter"], i[class*="natds-icons-outlined-action-filter"]',
+      )
+      .first()
+      .isVisible()
+      .catch(() => false);
 
-      // Review card photos have specific size classes
-      const imgs = reviews.querySelectorAll(
-        'img[class*="h-32"][class*="w-32"], img[class*="rounded-micro"]',
-      );
-
-      // Also check if filter button exists (confirms media/photos feature is enabled)
-      const filterIcon = reviews.querySelector(
-        'i[class*="natds-icons-outlined-action-filter"]',
-      );
-
-      return {
-        count: imgs.length,
-        hasFilter: !!filterIcon,
-      };
-    });
+    const reviewPhotos = {
+      count: imgsCount,
+      hasFilter: hasFilter,
+    };
 
     if (reviewPhotos.count > 0) {
       return {
@@ -360,7 +371,8 @@ export async function checkReviewRecommendation(
     // Check if reviews exist but recommendation doesn't appear
     // (might not meet min_count threshold or percentage is 0)
     const reviewsExist = await page
-      .locator("#reviews")
+      .locator('[data-testid="reviews-component"], #reviews')
+      .first()
       .isVisible({ timeout: 3000 })
       .catch(() => false);
 

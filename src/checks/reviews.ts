@@ -18,15 +18,15 @@ export async function checkReviews(page: Page): Promise<CheckResult> {
     // Scroll to bottom to ensure reviews lazy-loading is triggered
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
 
-    // Wait for a short time using a more robust method than waitForTimeout
-    await page.evaluate(
-      () => new Promise((resolve) => setTimeout(resolve, 600)),
-    );
+    // Primary: look for #reviews container or data-testid
+    const reviewsContainer = page
+      .locator('[data-testid="reviews-component"], #reviews')
+      .first();
 
-    // Primary: look for #reviews container
-    const reviewsContainer = page.locator("#reviews");
+    // Use waitFor instead of isVisible with setTimeout
     const hasReviews = await reviewsContainer
-      .isVisible({ timeout: 10000 })
+      .waitFor({ state: "visible", timeout: 10000 })
+      .then(() => true)
       .catch(() => false);
 
     if (!hasReviews) {
@@ -94,25 +94,28 @@ export async function checkReviews(page: Page): Promise<CheckResult> {
       };
     }
 
-    // Structural check: count review cards and rating icons
-    const reviewData = await page.evaluate(() => {
-      const reviews = document.getElementById("reviews");
-      if (!reviews) {
-        return { cards: 0, hasRating: false, gtmId: null };
-      }
+    // Structural check: count review cards and rating icons using locators
+    const cardsCount = await page
+      .locator('[data-testid="review-card"], [class*="review-card"]')
+      .count()
+      .catch(() => 0);
+    const hasRating = await page
+      .locator(
+        '[data-testid="review-stars"], [data-testid="star-icon"], i[class*="natds-icons-filled-action-rating"]',
+      )
+      .first()
+      .isVisible()
+      .catch(() => false);
 
-      const cards = reviews.querySelectorAll('div[role="group"]');
-      const ratingIcons = reviews.querySelectorAll(
-        'i[class*="natds-icons-filled-action-rating"]',
-      );
-      const gtmId = reviews.getAttribute("data-gtm-reviews");
+    const gtmId = await reviewsContainer
+      .getAttribute("data-gtm-reviews")
+      .catch(() => null);
 
-      return {
-        cards: cards.length,
-        hasRating: ratingIcons.length > 0,
-        gtmId,
-      };
-    });
+    const reviewData = {
+      cards: cardsCount,
+      hasRating: hasRating,
+      gtmId,
+    };
 
     return {
       feature,

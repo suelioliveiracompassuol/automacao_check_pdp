@@ -36,7 +36,7 @@ export async function checkRating(page: Page): Promise<CheckResult> {
       ratingText =
         (await page
           .locator(
-            '#reviews, [class*="rating"], [class*="stars"], [data-testid*="rating"]',
+            '#reviews, [class*="rating"], [class*="stars"], [data-testid*="rating"], div:has(> [data-testid="go-to-reviews-button"])',
           )
           .first()
           .textContent({ timeout: 5000 })
@@ -60,7 +60,8 @@ export async function checkRating(page: Page): Promise<CheckResult> {
     let hasStars = await page
       .locator(SELECTORS.rating.stars)
       .first()
-      .isVisible({ timeout: timeoutForStars })
+      .waitFor({ state: "visible", timeout: timeoutForStars })
+      .then(() => true)
       .catch(() => false);
 
     if (!hasStars) {
@@ -71,7 +72,8 @@ export async function checkRating(page: Page): Promise<CheckResult> {
       });
       hasStars = await svgStars
         .first()
-        .isVisible({ timeout: 2000 })
+        .waitFor({ state: "visible", timeout: 2000 })
+        .then(() => true)
         .catch(() => false);
     }
 
@@ -96,7 +98,11 @@ export async function checkRating(page: Page): Promise<CheckResult> {
           passed: true,
           status: "warning",
           message: `Rating (${cachedRating}) encontrado nos dados da página, mas não visível na interface.`,
-          details: { ratingValue: cachedRating, source: "cache", domVisible: false },
+          details: {
+            ratingValue: cachedRating,
+            source: "cache",
+            domVisible: false,
+          },
         };
       }
 
@@ -107,7 +113,12 @@ export async function checkRating(page: Page): Promise<CheckResult> {
           passed: false,
           status: "fail",
           message: `O produto tem ${reviewsCount} reviews, mas o indicador de rating não foi encontrado.`,
-          details: { ratingValue, starCount, ratingText: ratingText.trim(), reviewsCount },
+          details: {
+            ratingValue,
+            starCount,
+            ratingText: ratingText.trim(),
+            reviewsCount,
+          },
         };
       }
 
@@ -116,7 +127,8 @@ export async function checkRating(page: Page): Promise<CheckResult> {
         featureKey,
         passed: true,
         status: "warning",
-        message: "Produto sem avaliações — indicador de rating presente mas vazio",
+        message:
+          "Produto sem avaliações — indicador de rating presente mas vazio",
         details: { ratingValue, starCount, ratingText: ratingText.trim() },
       };
     }
