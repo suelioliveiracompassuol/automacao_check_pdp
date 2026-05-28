@@ -25,3 +25,4 @@ export {
   captureRatingFromDOM,
 } from "./ratingConsistency.js";
 export { checkRating } from "./rating.js";
+export { checkAddToCart } from "./addToCart.js";

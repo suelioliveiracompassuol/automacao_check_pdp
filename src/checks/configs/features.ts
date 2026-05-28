@@ -33,4 +33,5 @@ export const FEATURES: FeatureConfig[] = [
   { key: "shipping", name: "Simulação de frete" },
   { key: "rating", name: "Nota/Rating" },
   { key: "ratingConsistency", name: "Consistência da Nota (Rating)" },
+  { key: "addToCart", name: "Botão Adicionar à Sacola" },
 ];

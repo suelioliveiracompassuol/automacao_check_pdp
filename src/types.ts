@@ -103,7 +103,8 @@ export type FeatureKey =
   | "pricing"
   | "shipping"
   | "ratingConsistency"
-  | "rating";
+  | "rating"
+  | "addToCart";
 
 export interface SkuConfig {
   sku: string;

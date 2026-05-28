@@ -167,6 +167,34 @@ export const SELECTORS = {
     productCards: '[data-testid="product-card"]',
   },
 
+  // Add to Cart / Warn Me
+  addToCart: {
+    anyButton: [
+      // Identificadores agnósticos de idioma
+      '[data-testid="btn-add-to-cart"]',
+      '[data-testid="product-quantity-counter"]',
+      // Textos em Português
+      'button:has-text("Comprar")',
+      'button:has-text("Adicionar")',
+      'button:has-text("Avise-me")',
+      'button[aria-label*="Comprar" i]',
+      'button[aria-label*="Adicionar" i]',
+      'button[aria-label*="Avise-me" i]',
+      // Textos em Espanhol
+      'button:has-text("Agregar")',
+      'button:has-text("Avisame")',
+      'button:has-text("Avísame")',
+      'button[aria-label*="Agregar" i]',
+      'button[aria-label*="Avisame" i]',
+      'button[aria-label*="Avísame" i]',
+      // Textos em Inglês (fallback)
+      'button:has-text("Buy")',
+      'button:has-text("Warn me")',
+      'button[aria-label*="buy" i]',
+      'button[aria-label*="warn" i]'
+    ].join(', '),
+  },
+
   // Structural selector for showcase sections
   showcase: {
     section:

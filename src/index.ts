@@ -34,6 +34,7 @@ import {
   setupRatingConsistencyCapture,
   captureRatingFromDOM,
 } from "./checks/ratingConsistency.js";
+
 import {
   setupRemoteConfigCapture,
   setupCommerceFeatureFlagCapture,

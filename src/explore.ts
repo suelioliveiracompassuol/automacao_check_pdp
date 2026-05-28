@@ -42,6 +42,7 @@ import {
   setupRatingConsistencyCapture,
   captureRatingFromDOM,
 } from "./checks/ratingConsistency.js";
+
 import { FEATURES } from "./checks/configs/features.js";
 import {
   finalizeBrowserTrace,

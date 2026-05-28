@@ -29,6 +29,7 @@ import {
   checkShipping,
   checkRating,
   checkRatingConsistency,
+  checkAddToCart,
 } from "./index.js";
 
 // ---------------------------------------------------------------------------
@@ -53,6 +54,7 @@ export const FEATURE_CHECKERS: Record<
   shipping: checkShipping,
   rating: checkRating,
   ratingConsistency: checkRatingConsistency,
+  addToCart: checkAddToCart,
 };
 
 // ---------------------------------------------------------------------------

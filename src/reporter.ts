@@ -252,7 +252,7 @@ export function generateHtmlReport(report: MonitoringReport): string {
     // Endpoint monitoring group
     if (endpointFeatures.length > 0) {
       html += `
-        <tr class="feature-group-header status-${endpointGroupStatus} expanded" onclick="this.classList.toggle('expanded');var rows=this.parentElement.querySelectorAll('.group-endpoint');rows.forEach(function(r){r.classList.toggle('group-hidden')})" style="cursor:pointer">
+        <tr class="feature-group-header status-${endpointGroupStatus}" onclick="this.classList.toggle('expanded');var rows=this.parentElement.querySelectorAll('.group-endpoint');rows.forEach(function(r){r.classList.toggle('group-hidden')})" style="cursor:pointer">
           <td>${endpointGroupEmoji} 🌐 Endpoints de API <span class="group-toggle">▶</span> <span class="group-summary">(${endpointPassCount}/${endpointTotal} ok)</span></td>
           <td>${endpointFailCount > 0 ? `${endpointFailCount} falha(s)` : "Todos os endpoints ok"}</td>
           <td>-</td>
@@ -277,7 +277,7 @@ export function generateHtmlReport(report: MonitoringReport): string {
               .join("<br>")
           : "";
         html += `
-        <tr class="group-endpoint ${statusClass(f.passed, f.status)}">
+        <tr class="group-endpoint group-hidden ${statusClass(f.passed, f.status)}">
           <td style="padding-left:32px">${statusEmoji(f.passed, f.status)} ${f.feature}</td>
           <td>${f.message}${bodyPreview}${calls ? `<br><small>${calls}</small>` : ""}</td>
           <td>-</td>
