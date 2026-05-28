@@ -175,7 +175,7 @@ export const SELECTORS = {
   // Favorite Button — escopado no card principal do produto (section.bg-white)
   favoriteButton: {
     button: [
-      'section.bg-white button:has([data-icon-name*="action-love"])',
+      'section.bg-white button[data-icon-name*="action-love"]',
       'section.bg-white button[aria-label*="favorito" i]',
       'section.bg-white button[aria-label*="favorit" i]',
       'section.bg-white button[title*="favorito" i]',
