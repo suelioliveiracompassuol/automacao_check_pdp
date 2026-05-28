@@ -167,6 +167,11 @@ export const SELECTORS = {
     productCards: '[data-testid="product-card"]',
   },
 
+  // Product Variations selector — color/shade swatches on PDP
+  productVariations: {
+    selector: '[data-testid="color-option"]',
+  },
+
   // Favorite Button — escopado no card principal do produto (section.bg-white)
   favoriteButton: {
     button: [

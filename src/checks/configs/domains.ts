@@ -27,6 +27,7 @@ export const DOMAINS: DomainConfig[] = [
       "ratingConsistency",
       "addToCart",
       "favoriteButton",
+      "productVariations",
     ],
   },
   {
@@ -49,6 +50,7 @@ export const DOMAINS: DomainConfig[] = [
       "ratingConsistency",
       "addToCart",
       "favoriteButton",
+      "productVariations",
     ],
   },
   {
@@ -71,6 +73,7 @@ export const DOMAINS: DomainConfig[] = [
       "ratingConsistency",
       "addToCart",
       "favoriteButton",
+      "productVariations",
     ],
   },
   {
@@ -93,6 +96,7 @@ export const DOMAINS: DomainConfig[] = [
       "ratingConsistency",
       "addToCart",
       "favoriteButton",
+      "productVariations",
     ],
   },
   {
@@ -115,6 +119,7 @@ export const DOMAINS: DomainConfig[] = [
       "ratingConsistency",
       "addToCart",
       "favoriteButton",
+      "productVariations",
     ],
   },
   {
@@ -137,6 +142,7 @@ export const DOMAINS: DomainConfig[] = [
       "ratingConsistency",
       "addToCart",
       "favoriteButton",
+      "productVariations",
     ],
   },
   // ===== Natura Social Commerce (Minha Loja) =====
@@ -162,6 +168,7 @@ export const DOMAINS: DomainConfig[] = [
       "ratingConsistency",
       "addToCart",
       "favoriteButton",
+      "productVariations",
     ],
   },
   // ===== Avon Social Commerce (Minha Loja) =====
@@ -187,6 +194,7 @@ export const DOMAINS: DomainConfig[] = [
       "ratingConsistency",
       "addToCart",
       "favoriteButton",
+      "productVariations",
     ],
   },
   // ===== Avon Ecommerce =====
@@ -208,6 +216,7 @@ export const DOMAINS: DomainConfig[] = [
       "ratingConsistency",
       "addToCart",
       "favoriteButton",
+      "productVariations",
     ],
   },
   {

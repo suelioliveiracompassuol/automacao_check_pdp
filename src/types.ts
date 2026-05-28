@@ -105,7 +105,8 @@ export type FeatureKey =
   | "ratingConsistency"
   | "rating"
   | "addToCart"
-  | "favoriteButton";
+  | "favoriteButton"
+  | "productVariations";
 
 export interface SkuConfig {
   sku: string;

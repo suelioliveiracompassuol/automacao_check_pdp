@@ -34,6 +34,7 @@ import {
   setupRatingConsistencyCapture,
   captureRatingFromDOM,
 } from "./checks/ratingConsistency.js";
+import { setupProductVariationsCapture } from "./checks/productVariations.js";
 
 import {
   setupRemoteConfigCapture,
@@ -142,6 +143,9 @@ async function checkPdp(params: CheckPdpParams): Promise<PdpCheckResult> {
 
   // Setup rating consistency capture BEFORE navigation (intercepts API responses)
   setupRatingConsistencyCapture(page);
+
+  // Setup product variations capture BEFORE navigation (intercepts BFF API + SSR)
+  setupProductVariationsCapture(page);
 
   const traceMode = getPlaywrightTraceMode();
   const traceZipPath = path.join(

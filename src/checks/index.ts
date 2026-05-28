@@ -27,3 +27,7 @@ export {
 export { checkRating } from "./rating.js";
 export { checkAddToCart } from "./addToCart.js";
 export { checkFavoriteButton } from "./favoriteButton.js";
+export {
+  checkProductVariations,
+  setupProductVariationsCapture,
+} from "./productVariations.js";
