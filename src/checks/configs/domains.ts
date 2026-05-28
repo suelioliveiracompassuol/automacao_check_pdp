@@ -26,6 +26,7 @@ export const DOMAINS: DomainConfig[] = [
       "rating",
       "ratingConsistency",
       "addToCart",
+      "favoriteButton",
     ],
   },
   {
@@ -47,6 +48,7 @@ export const DOMAINS: DomainConfig[] = [
       "rating",
       "ratingConsistency",
       "addToCart",
+      "favoriteButton",
     ],
   },
   {
@@ -68,6 +70,7 @@ export const DOMAINS: DomainConfig[] = [
       "rating",
       "ratingConsistency",
       "addToCart",
+      "favoriteButton",
     ],
   },
   {
@@ -89,6 +92,7 @@ export const DOMAINS: DomainConfig[] = [
       "rating",
       "ratingConsistency",
       "addToCart",
+      "favoriteButton",
     ],
   },
   {
@@ -110,6 +114,7 @@ export const DOMAINS: DomainConfig[] = [
       "rating",
       "ratingConsistency",
       "addToCart",
+      "favoriteButton",
     ],
   },
   {
@@ -131,6 +136,7 @@ export const DOMAINS: DomainConfig[] = [
       "rating",
       "ratingConsistency",
       "addToCart",
+      "favoriteButton",
     ],
   },
   // ===== Natura Social Commerce (Minha Loja) =====
@@ -147,12 +153,15 @@ export const DOMAINS: DomainConfig[] = [
       "reviewSort",
       "reviewPhotos",
       "reviewRecommendation",
+      "brandShowcase",
+      "recommendationShowcase",
       "images",
       // "pricing",
       // "shipping",
       "rating",
       "ratingConsistency",
       "addToCart",
+      "favoriteButton",
     ],
   },
   // ===== Avon Social Commerce (Minha Loja) =====
@@ -169,12 +178,15 @@ export const DOMAINS: DomainConfig[] = [
       "reviewSort",
       "reviewPhotos",
       "reviewRecommendation",
+      "brandShowcase",
+      "recommendationShowcase",
       "images",
       // "pricing",
       // "shipping",
       "rating",
       "ratingConsistency",
       "addToCart",
+      "favoriteButton",
     ],
   },
   // ===== Avon Ecommerce =====
@@ -195,6 +207,7 @@ export const DOMAINS: DomainConfig[] = [
       "rating",
       "ratingConsistency",
       "addToCart",
+      "favoriteButton",
     ],
   },
   {
@@ -207,6 +220,7 @@ export const DOMAINS: DomainConfig[] = [
       "images",
       //  "pricing"
       "addToCart",
+      "favoriteButton",
     ],
   },
   {
@@ -220,6 +234,7 @@ export const DOMAINS: DomainConfig[] = [
       // "pricing",
       //"shipping",
       "addToCart",
+      "favoriteButton",
     ],
   },
 ];

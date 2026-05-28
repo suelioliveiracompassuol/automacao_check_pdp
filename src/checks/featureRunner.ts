@@ -30,6 +30,7 @@ import {
   checkRating,
   checkRatingConsistency,
   checkAddToCart,
+  checkFavoriteButton,
 } from "./index.js";
 
 // ---------------------------------------------------------------------------
@@ -55,6 +56,7 @@ export const FEATURE_CHECKERS: Record<
   rating: checkRating,
   ratingConsistency: checkRatingConsistency,
   addToCart: checkAddToCart,
+  favoriteButton: checkFavoriteButton,
 };
 
 // ---------------------------------------------------------------------------
