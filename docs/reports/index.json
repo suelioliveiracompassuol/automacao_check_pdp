@@ -2,6 +2,20 @@
   "generatedAt": "2026-05-21T12:25:05Z",
   "reports": [
     {
+      "runId": "run_1780320979912",
+      "startTime": "2026-06-01T13:36:19.912Z",
+      "endTime": "2026-06-01T13:43:42.893Z",
+      "durationMs": 442981,
+      "summary": {
+        "total": 27,
+        "passed": 8,
+        "failed": 19,
+        "errors": 0
+      },
+      "htmlPath": "reports/run_1780320979912/report.html",
+      "jsonPath": "reports/run_1780320979912/report.json"
+    },
+    {
       "runId": "run_1780222518420",
       "startTime": "2026-05-31T10:15:18.420Z",
       "endTime": "2026-05-31T10:22:34.851Z",
