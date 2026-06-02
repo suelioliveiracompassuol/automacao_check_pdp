@@ -72,6 +72,13 @@ export async function checkImages(page: Page): Promise<CheckResult> {
 
     let imageCount = await imageLocator.count().catch(() => 0);
 
+    // Fallback for Natura BR specific image naming convention
+    if (imageCount === 0 && productCode && productCode.startsWith("NATBRA-")) {
+      const numericCode = productCode.replace("NATBRA-", "");
+      imageLocator = page.locator(`img[src*="${numericCode}"]`);
+      imageCount = await imageLocator.count().catch(() => 0);
+    }
+
     if (imageCount === 0) {
       // Try broader selector as last resort
       const allImages = page.locator(
@@ -117,16 +124,19 @@ export async function checkImages(page: Page): Promise<CheckResult> {
           };
         });
 
-        if (!result.isRendered) continue;
+        if (!result.isRendered) {
+          continue;
+        }
 
         if (result.loaded) {
           loadedCount++;
         } else {
           brokenCount++;
-          if (result.src)
+          if (result.src) {
             brokenSrcs.push(
               result.src.split("?")[0].split("/").pop() || result.src,
             );
+          }
         }
       } catch {
         brokenCount++;

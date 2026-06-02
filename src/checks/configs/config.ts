@@ -63,7 +63,9 @@ export function isFeatureSupported(
   feature: FeatureConfig,
   vendor: Vendor,
 ): boolean {
-  if (!feature.supportedVendors) return true;
+  if (!feature.supportedVendors) {
+    return true;
+  }
   return feature.supportedVendors.includes(vendor);
 }
 
@@ -81,7 +83,9 @@ export function getApplicableFeatures(sku: SkuConfig): FeatureConfig[] {
 
   return FEATURES.filter((f) => {
     // Feature must be available on this operation
-    if (!domainFeatures.includes(f.key)) return false;
+    if (!domainFeatures.includes(f.key)) {
+      return false;
+    }
 
     // Check if feature is optional - only check if explicitly expected for this SKU
     if (f.optional) {
@@ -102,84 +106,126 @@ export const SELECTORS = {
   // Cookie consent banner - dismiss it first (multi-language)
   cookieConsent: {
     acceptButton:
-      'button:has-text("aceitar"), button:has-text("Aceitar"), button:has-text("aceptar"), button:has-text("Aceptar"), button:has-text("accept"), [data-testid="cookie-accept"]',
+      '[id="onetrust-accept-btn-handler"], [data-testid="cookie-accept"]',
   },
 
-  // Reviews section (PT-BR: avaliações, ES: evaluaciones/reseñas)
+  // Reviews section
   reviews: {
-    section:
-      'section:has-text("avaliações do produto"), section:has-text("avaliações"), h2:has-text("avaliações"), h2:has-text("evaluaciones"), section:has-text("evaluaciones"), section:has-text("reseñas"), [data-testid="reviews"], #reviews',
-    ratingValue: '[class*="rating"], [class*="stars"], [data-testid="rating"]',
-    reviewList:
-      '[class*="review-card"], [class*="review-item"], [data-testid="review"]',
+    section: '[data-testid="reviews-component"], #reviews',
+    ratingValue: '[data-testid="reviews-summary"]',
+    reviewList: '[data-testid="review-card"], [class*="review-card"]',
   },
 
-  // Brand showcase (PT-BR: "mais produtos da marca", ES: "más productos de la marca")
+  // Brand showcase
   brandShowcase: {
     section:
-      'section:has-text("mais produtos da marca"), section:has-text("más productos de la marca"), [data-testid="brand-showcase"]',
-    productCards: '[class*="product-card"], [class*="showcase"] a[href*="/p/"]',
+      'section:has-text("mais produtos da marca"), section:has-text("más productos de la marca"), [data-testid="product-showcase-carousel"], [data-testid="mock-product-showcase-carousel"]',
+    productCards:
+      '[data-testid="btn-add-to-cart"], [data-testid="product-card"], [class*="product-card"], [class*="showcase"] a[href*="/p/"]',
   },
 
-  // Recommendation showcase (PT-BR: "achamos que você vai gostar", ES: "te puede gustar", "también te puede gustar", "también te puede interesar")
+  // Recommendation showcase
   recommendationShowcase: {
     section:
-      'section:has-text("achamos que você vai gostar"), section:has-text("você também pode gostar"), section:has-text("también te puede gustar"), section:has-text("te puede gustar"), section:has-text("te pueden gustar"), section:has-text("también te puede interesar"), section:has-text("te puede interesar"), section:has-text("también podrían gustarte"), section:has-text("te podrían gustar"), section:has-text("te va a gustar"), section:has-text("productos recomendados"), [data-testid="recommendation-showcase"]',
-    productCards: '[class*="product-card"], [class*="showcase"] a[href*="/p/"]',
+      'section:has-text("achamos que você vai gostar"), section:has-text("você também pode gostar"), section:has-text("también te puede gustar"), section:has-text("te puede gustar"), section:has-text("te pueden gustar"), section:has-text("también te puede interesar"), section:has-text("te puede interesar"), section:has-text("también podrían gustarte"), section:has-text("te podrían gustar"), section:has-text("te va a gustar"), section:has-text("productos recomendados"), section:has-text("también te puede gustar"), [data-testid="einstein-recommendation-carousel"], [data-testid="personalization-recommendation-carousel"], [data-testid="product-showcase-carousel"]',
+    productCards:
+      '[data-testid="btn-add-to-cart"], [data-testid="product-card"], [class*="product-card"], [class*="showcase"] a[href*="/p/"]',
   },
 
   // Product images
   images: {
-    carousel: '[class*="swiper"], [class*="carousel"], [class*="gallery"]',
+    carousel: '[data-testid="product-image-carousel"], [data-testid="swiper"]',
     productImage:
-      'img[src*="natura"], img[src*="avon"], img[alt*="produto"], img[alt*="product"], [data-testid="product-image"]',
+      '[data-testid="product-image"], img[alt*="produto"], img[alt*="product"]',
   },
 
   // Pricing
   pricing: {
-    section: '[class*="price"], [class*="pricing"], [data-testid="price"]',
+    section: '[data-testid="product-pricing"], [data-testid="sku-split-price"]',
     salePrice:
-      '[class*="sale"], [class*="price"]:not([class*="list"]), [data-testid="sale-price"]',
-    listPrice: '[class*="list-price"], [class*="original"], del, s',
-    discount: '[class*="discount"], [class*="badge"]',
+      '[data-testid="product-card-bag-product-pricing-sale-price"], [data-testid="price-line"]',
+    listPrice: '[data-testid="product-card-bag-product-pricing-list-price"]',
+    discount: '[data-testid="discount-badge"]',
   },
 
-  // Shipping simulation (PT-BR: simular frete, ES: calcular envío / costo de envío)
+  // Shipping simulation
   shipping: {
-    section:
-      'section:has-text("simular frete"), section:has-text("calcular frete"), section:has-text("frete grátis"), section:has-text("calcular envío"), section:has-text("costo de envío"), section:has-text("envío gratis"), [data-testid="shipping"]',
+    section: '[data-testid="shipping-indicator"], [data-testid="bag-shipping"]',
     cepInput:
-      'input[placeholder*="CEP"], input[placeholder*="cep"], input[placeholder*="Cep"], input[placeholder*="código postal"], input[placeholder*="CP"], input[name*="cep"], input[name*="CEP"], input[name*="postal"], input[aria-label*="cep" i], input[aria-label*="postal" i], input[type="tel"][maxlength="9"], input[type="tel"][maxlength="8"], input[type="tel"][maxlength="5"], input[inputmode="numeric"]',
+      '[data-testid="shipping-indicator-form"], [data-testid="postalCode"]',
   },
 
   // Rating (top of page)
   rating: {
-    stars: '[class*="star"], [class*="rating"], svg[class*="star"]',
-    value: '[class*="rating-value"], [class*="average"], text=/\\d+\\.\\d+/',
+    stars: '[data-testid="review-stars"], [data-testid="star-icon"], [data-icon-name*="action-rating"]',
+    value: '[data-testid="reviews-summary"], div:has(> [data-testid="go-to-reviews-button"])',
   },
 
-  // Shop the Set / "Queridinhos que são comprados juntos"
+  // Shop the Set
   shopTheSet: {
-    section:
-      'section:has-text("Queridinhos que são comprados juntos"), section:has-text("queridinhos que são comprados juntos"), section:has-text("comprados juntos"), section:has-text("compre junto"), section:has-text("shop the set"), section:has-text("compra el set"), section:has-text("favoritos que se compran juntos"), [data-testid="shop-the-set"], [data-testid="bought-together"]',
-    productCards: 'a[href*="/p/"], [class*="product-card"]',
+    section: '[data-testid="shop-the-set"]',
+    productCards: '[data-testid="product-card"]',
+  },
+
+  // Product Variations selector — color/shade swatches on PDP
+  productVariations: {
+    selector: '[data-testid="color-option"]',
+  },
+
+  // Favorite Button — escopado no card principal do produto (section.bg-white)
+  favoriteButton: {
+    button: [
+      'section.bg-white button[data-icon-name*="action-love"]',
+      'section.bg-white button[aria-label*="favorito" i]',
+      'section.bg-white button[aria-label*="favorit" i]',
+      'section.bg-white button[title*="favorito" i]',
+    ].join(', '),
+  },
+
+  // Add to Cart / Warn Me
+  addToCart: {
+    anyButton: [
+      // Identificadores agnósticos de idioma
+      '[data-testid="btn-add-to-cart"]',
+      '[data-testid="product-quantity-counter"]',
+      // Textos em Português
+      'button:has-text("Comprar")',
+      'button:has-text("Adicionar")',
+      'button:has-text("Avise-me")',
+      'button[aria-label*="Comprar" i]',
+      'button[aria-label*="Adicionar" i]',
+      'button[aria-label*="Avise-me" i]',
+      // Textos em Espanhol
+      'button:has-text("Agregar")',
+      'button:has-text("Avisame")',
+      'button:has-text("Avísame")',
+      'button[aria-label*="Agregar" i]',
+      'button[aria-label*="Avisame" i]',
+      'button[aria-label*="Avísame" i]',
+      // Textos em Inglês (fallback)
+      'button:has-text("Buy")',
+      'button:has-text("Warn me")',
+      'button[aria-label*="buy" i]',
+      'button[aria-label*="warn" i]'
+    ].join(', '),
   },
 
   // Structural selector for showcase sections
   showcase: {
-    section: "section.bg-background:not(#ot-pc-lst):not(#ot-fltr-modal)",
+    section:
+      'section.bg-background:not(#ot-pc-lst):not(#ot-fltr-modal), [data-testid="product-showcase-carousel"], [data-testid="einstein-recommendation-carousel"], [data-testid="personalization-recommendation-carousel"]',
     populatedSection:
-      'section.bg-background:not(#ot-pc-lst):not(#ot-fltr-modal):has([data-testid="btn-add-to-cart"], a[href*="/p/"])',
+      'section.bg-background:not(#ot-pc-lst):not(#ot-fltr-modal):has([data-testid="btn-add-to-cart"]), section.bg-background:not(#ot-pc-lst):not(#ot-fltr-modal):has(a[href*="/p/"]), [data-testid="product-showcase-carousel"]:has([data-testid="product-card"]), [data-testid="einstein-recommendation-carousel"]:has([data-testid="product-card"]), [data-testid="personalization-recommendation-carousel"]:has([data-testid="product-card"])',
   },
 
   // Explore journey selectors
   explore: {
     productLinks: 'a[href*="/p/"]',
     vitrineSelectors: [
-      'section:has(a[href*="/p/"]) a[href*="/p/"]',
-      '[class*="swiper"] a[href*="/p/"]',
-      '[class*="carousel"] a[href*="/p/"]',
-      '[class*="showcase"] a[href*="/p/"]',
+      '[data-testid="product-showcase-carousel"] a[href*="/p/"]',
+      '[data-testid="einstein-recommendation-carousel"] a[href*="/p/"]',
+      '[data-testid="personalization-recommendation-carousel"] a[href*="/p/"]',
+      '[data-testid="swiper"] a[href*="/p/"]',
       'a[href*="/p/"]',
     ],
   },

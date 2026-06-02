@@ -38,6 +38,11 @@ import {
   CommerceFeatureFlags,
 } from "./checks/remoteConfig.js";
 import { setupEinsteinShowcaseCapture } from "./checks/showcases.js";
+import {
+  setupRatingConsistencyCapture,
+  captureRatingFromDOM,
+} from "./checks/ratingConsistency.js";
+
 import { FEATURES } from "./checks/configs/features.js";
 import {
   finalizeBrowserTrace,
@@ -109,9 +114,12 @@ export async function navigateViaVitrine(page: Page): Promise<string | null> {
           const marca = currentPageParams.get("marca");
           if (consultoria || marca) {
             const productUrl = new URL(fullUrl);
-            if (consultoria)
+            if (consultoria) {
               productUrl.searchParams.set("consultoria", consultoria);
-            if (marca) productUrl.searchParams.set("marca", marca);
+            }
+            if (marca) {
+              productUrl.searchParams.set("marca", marca);
+            }
             fullUrl = productUrl.href;
           }
           await page.goto(fullUrl, {
@@ -148,8 +156,12 @@ export async function navigateViaVitrine(page: Page): Promise<string | null> {
   const marca = currentPageParams.get("marca");
   if (consultoria || marca) {
     const productUrl = new URL(fullUrl);
-    if (consultoria) productUrl.searchParams.set("consultoria", consultoria);
-    if (marca) productUrl.searchParams.set("marca", marca);
+    if (consultoria) {
+      productUrl.searchParams.set("consultoria", consultoria);
+    }
+    if (marca) {
+      productUrl.searchParams.set("marca", marca);
+    }
     fullUrl = productUrl.href;
   }
 
@@ -162,6 +174,9 @@ export async function navigateViaVitrine(page: Page): Promise<string | null> {
   await page
     .waitForLoadState("load", { timeout: TIMING.pageLoadSettleTime })
     .catch(() => {});
+
+  // Read product rating from JSON-LD immediately after load, before any DOM interactions.
+  await captureRatingFromDOM(page);
 
   return page.url();
 }
@@ -226,7 +241,9 @@ export async function runExplorePdpChecks(
 
   for (const featureConfig of applicableFeatures) {
     const checker = FEATURE_CHECKERS[featureConfig.key];
-    if (!checker) continue;
+    if (!checker) {
+      continue;
+    }
 
     if (!isFeatureSupported(featureConfig, domainConfig.vendor)) {
       features.push({
@@ -352,6 +369,9 @@ export async function runExploratoryJourney(
   // Setup Einstein showcase capture BEFORE navigation
   setupEinsteinShowcaseCapture(page);
 
+  // Setup rating consistency capture BEFORE navigation (intercepts API responses)
+  setupRatingConsistencyCapture(page);
+
   const traceMode = getPlaywrightTraceMode();
   const traceZipPath = path.join(
     outputDir,
@@ -363,7 +383,9 @@ export async function runExploratoryJourney(
   const finishTrace = async (
     runSucceeded: boolean,
   ): Promise<string | undefined> => {
-    if (!traceActive) return undefined;
+    if (!traceActive) {
+      return undefined;
+    }
     const p = await finalizeBrowserTrace(
       context,
       traceMode,
@@ -372,7 +394,9 @@ export async function runExploratoryJourney(
       traceZipPath,
     );
     traceActive = false;
-    if (p) console.log(`   🎬 Trace salvo: ${p}`);
+    if (p) {
+      console.log(`   🎬 Trace salvo: ${p}`);
+    }
     return p;
   };
 

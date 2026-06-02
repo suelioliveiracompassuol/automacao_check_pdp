@@ -53,15 +53,19 @@ export async function checkI18nKeys(page: Page): Promise<CheckResult> {
         NodeFilter.SHOW_TEXT,
         (node) => {
           const el = node.parentElement;
-          if (!el) return NodeFilter.FILTER_REJECT;
+          if (!el) {
+            return NodeFilter.FILTER_REJECT;
+          }
           // Skip script, style, and hidden elements
           const tag = el.tagName;
-          if (tag === "SCRIPT" || tag === "STYLE" || tag === "NOSCRIPT")
+          if (tag === "SCRIPT" || tag === "STYLE" || tag === "NOSCRIPT") {
             return NodeFilter.FILTER_REJECT;
+          }
           // Skip invisible elements
           const style = window.getComputedStyle(el);
-          if (style.display === "none" || style.visibility === "hidden")
+          if (style.display === "none" || style.visibility === "hidden") {
             return NodeFilter.FILTER_REJECT;
+          }
           return NodeFilter.FILTER_ACCEPT;
         },
       );
@@ -69,14 +73,22 @@ export async function checkI18nKeys(page: Page): Promise<CheckResult> {
       let node: Node | null;
       while ((node = walker.nextNode())) {
         const text = node.textContent?.trim() || "";
-        if (text.length < 5 || text.length > 200) continue;
+        if (text.length < 5 || text.length > 200) {
+          continue;
+        }
 
         const matches = text.match(i18nPattern);
-        if (!matches) continue;
+        if (!matches) {
+          continue;
+        }
 
         for (const m of matches) {
-          if (seen.has(m)) continue;
-          if (excludePatterns.some((p) => p.test(m))) continue;
+          if (seen.has(m)) {
+            continue;
+          }
+          if (excludePatterns.some((p) => p.test(m))) {
+            continue;
+          }
 
           seen.add(m);
           // Get surrounding context (parent element text, truncated)
@@ -91,18 +103,30 @@ export async function checkI18nKeys(page: Page): Promise<CheckResult> {
         "[alt], [title], [placeholder], [aria-label]",
       );
       for (const el of Array.from(attrElements)) {
-        if (!(el instanceof HTMLElement)) continue;
+        if (!(el instanceof HTMLElement)) {
+          continue;
+        }
         const style = window.getComputedStyle(el);
-        if (style.display === "none" || style.visibility === "hidden") continue;
+        if (style.display === "none" || style.visibility === "hidden") {
+          continue;
+        }
 
         for (const attr of ["alt", "title", "placeholder", "aria-label"]) {
           const val = el.getAttribute(attr);
-          if (!val) continue;
+          if (!val) {
+            continue;
+          }
           const matches = val.match(i18nPattern);
-          if (!matches) continue;
+          if (!matches) {
+            continue;
+          }
           for (const m of matches) {
-            if (seen.has(m)) continue;
-            if (excludePatterns.some((p) => p.test(m))) continue;
+            if (seen.has(m)) {
+              continue;
+            }
+            if (excludePatterns.some((p) => p.test(m))) {
+              continue;
+            }
             seen.add(m);
             found.push({
               key: m,

@@ -39,6 +39,9 @@ jobs:
     steps:
       - name: 📥 Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref_name }}
 
       - name: 🟢 Setup Node.js
         uses: actions/setup-node@v4
@@ -58,12 +61,14 @@ jobs:
         env:
           FEATURES_FILTER: ${{ inputs.features_filter }}
           OPERATIONS_FILTER: ${{ inputs.operations_filter }}
+          SKIP_EXPLORE: "true"
         continue-on-error: true
 
       - name: 📊 Find report directory
         id: find_report
         run: |
-          REPORT_DIR=$(ls -td reports/run_* 2>/dev/null | head -1)
+          # The check script writes directly to docs/reports/run_*/
+          REPORT_DIR=$(ls -td docs/reports/run_* 2>/dev/null | head -1)
           echo "report_dir=$REPORT_DIR" >> $GITHUB_OUTPUT
           if [ -f "$REPORT_DIR/report.json" ]; then
             SUMMARY=$(cat "$REPORT_DIR/report.json" | jq -r '"Total: \(.summary.total), Passed: \(.summary.passed), Failed: \(.summary.failed), Errors: \(.summary.errors)"')
@@ -74,89 +79,33 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: pdp-monitor-report-${{ github.run_number }}
-          path: reports/
+          path: ${{ steps.find_report.outputs.report_dir }}
           retention-days: 30
 
       - name: 🌐 Prepare Data for Dashboard
         run: |
-          REPORT_DIR=$(ls -td reports/run_* 2>/dev/null | head -1)
-          if [ -f "$REPORT_DIR/report.json" ]; then
-            mkdir -p docs
-            RUN_ID=$(basename "$REPORT_DIR")
-
-            # Keep latest shortcuts
-            cp "$REPORT_DIR/report.html" docs/last-report.html
-            cp "$REPORT_DIR/report.json" docs/last-report.json
-
-            # Keep historical reports published on Pages
-            TARGET_DIR="docs/reports/$RUN_ID"
-            mkdir -p "$TARGET_DIR"
-            cp "$REPORT_DIR/report.html" "$TARGET_DIR/report.html"
-            cp "$REPORT_DIR/report.json" "$TARGET_DIR/report.json"
-
-            # Copy assets for the historical report
-            if [ -d "$REPORT_DIR/screenshots" ]; then
-              cp -r "$REPORT_DIR/screenshots" "$TARGET_DIR/screenshots"
-            fi
-            if [ -d "$REPORT_DIR/traces" ]; then
-              cp -r "$REPORT_DIR/traces" "$TARGET_DIR/traces"
-            fi
-
-            # Keep only the most recent historical reports on Pages
-            MAX_REPORTS=50
-            COUNT=0
-            for DIR in $(ls -1d docs/reports/run_* 2>/dev/null | sort -r); do
-              COUNT=$((COUNT + 1))
-              if [ "$COUNT" -gt "$MAX_REPORTS" ]; then
-                rm -rf "$DIR"
-              fi
-            done
-
-            # Build reports index used by docs/index.html
-            TMP_INDEX=$(mktemp)
-            for DIR in $(ls -1d docs/reports/run_* 2>/dev/null | sort -r); do
-              if [ -f "$DIR/report.json" ]; then
-                jq -c \
-                  --arg runId "$(basename "$DIR")" \
-                  --arg htmlPath "${DIR#docs/}/report.html" \
-                  --arg jsonPath "${DIR#docs/}/report.json" \
-                  '{
-                    runId: $runId,
-                    startTime,
-                    endTime,
-                    durationMs,
-                    summary,
-                    htmlPath: $htmlPath,
-                    jsonPath: $jsonPath
-                  }' "$DIR/report.json" >> "$TMP_INDEX"
-              fi
-            done
-
-            jq -s '{
-              generatedAt: (now | todate),
-              reports: .
-            }' "$TMP_INDEX" > docs/reports/index.json
+          # The check script already writes reports to docs/reports/run_*/ and
+          # updates docs/reports/index.json.  We only need to refresh the
+          # last-report shortcuts and commit everything in docs/.
+          REPORT_DIR=$(ls -td docs/reports/run_* 2>/dev/null | head -1)
+          if [ ! -f "$REPORT_DIR/report.html" ]; then
+            echo "⚠️  No report found in docs/reports/ — skipping publish"
+            exit 0
           fi
 
-      - name: 🏗️ Build Next.js Dashboard
-        run: |
-          cd dashboard
-          npm ci
-          mkdir -p public/data
-          cp ../docs/last-report.json public/data/
-          npm run build
-          # Copy the static export to docs folder to be served by GitHub Pages
-          cp -r out/* ../docs/
+          # Update last-report shortcuts
+          cp "$REPORT_DIR/report.html" docs/last-report.html
+          cp "$REPORT_DIR/report.json" docs/last-report.json
+          echo "✅ Índice de relatórios atualizado: $(pwd)/docs/reports/index.json"
 
-      - name: 🚀 Commit and Push to GitHub Pages
-        run: |
+          # Commit and push all docs/ changes (new run dir + index.json + last-report)
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/
-          git diff --staged --quiet || git commit -m "chore: update dashboard and reports [run #${{ github.run_number }}]"
-          git pull --rebase origin HEAD
-          git push
-          echo "✅ Dashboard and reports published to GitHub Pages"
+          git add -f docs/
+          git diff --staged --quiet || git commit -m "chore: update last report [run #${{ github.run_number }}]"
+          git pull --rebase origin ${{ github.ref_name }} || true
+          git push origin HEAD:${{ github.ref_name }}
+          echo "✅ Report published to GitHub Pages"
 
       - name: 📧 Send email notification (on failure)
         if: steps.checks.outcome == 'failure' || inputs.send_email_always == 'true'
@@ -177,6 +126,8 @@ jobs:
 
             📅 Execução: ${{ github.run_number }}
             🔗 Workflow: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+            Acesse o report no site: https://sites.google.com/natura.net/checagem-features-pdp
 
             Verifique o relatório completo no artifact do workflow.
           attachments: ${{ steps.find_report.outputs.report_dir }}/report.html

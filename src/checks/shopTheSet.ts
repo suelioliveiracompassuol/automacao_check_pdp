@@ -13,7 +13,8 @@ export async function checkShopTheSet(page: Page): Promise<CheckResult> {
     // Look for the section by text content (exact phrase: "Queridinhos que são comprados juntos")
     const sectionLocator = page.locator(SELECTORS.shopTheSet.section).first();
     let sectionVisible = await sectionLocator
-      .isVisible({ timeout: 5000 })
+      .waitFor({ state: "visible", timeout: 5000 })
+      .then(() => true)
       .catch(() => false);
 
     if (!sectionVisible) {
@@ -35,9 +36,12 @@ export async function checkShopTheSet(page: Page): Promise<CheckResult> {
           .filter({ hasText: pattern })
           .first();
         sectionVisible = await headingLocator
-          .isVisible({ timeout: 2000 })
+          .waitFor({ state: "visible", timeout: 2000 })
+          .then(() => true)
           .catch(() => false);
-        if (sectionVisible) break;
+        if (sectionVisible) {
+          break;
+        }
       }
 
       if (!sectionVisible) {
@@ -53,11 +57,9 @@ export async function checkShopTheSet(page: Page): Promise<CheckResult> {
     }
 
     // Count product cards within the section
-    const productCards = page
-      .locator(
-        'section:has-text("queridinhos"), section:has-text("comprados juntos"), section:has-text("shop the set")',
-      )
-      .locator('a[href*="/p/"]');
+    const productCards = sectionLocator.locator(
+      SELECTORS.shopTheSet.productCards,
+    );
     const cardCount = await productCards.count().catch(() => 0);
 
     if (cardCount === 0) {

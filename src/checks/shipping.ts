@@ -13,7 +13,8 @@ export async function checkShipping(page: Page): Promise<CheckResult> {
     // Look for shipping section
     const sectionLocator = page.locator(SELECTORS.shipping.section).first();
     let sectionVisible = await sectionLocator
-      .isVisible({ timeout: 5000 })
+      .waitFor({ state: "visible", timeout: 5000 })
+      .then(() => true)
       .catch(() => false);
 
     if (!sectionVisible) {
@@ -37,16 +38,20 @@ export async function checkShipping(page: Page): Promise<CheckResult> {
           .filter({ hasText: pattern })
           .first();
         sectionVisible = await textLocator
-          .isVisible({ timeout: 2000 })
+          .waitFor({ state: "visible", timeout: 2000 })
+          .then(() => true)
           .catch(() => false);
-        if (sectionVisible) break;
+        if (sectionVisible) {
+          break;
+        }
       }
 
       if (!sectionVisible) {
         // Also try looking for the CEP input directly
         const cepInput = page.locator(SELECTORS.shipping.cepInput).first();
         sectionVisible = await cepInput
-          .isVisible({ timeout: 2000 })
+          .waitFor({ state: "visible", timeout: 2000 })
+          .then(() => true)
           .catch(() => false);
       }
 
@@ -64,7 +69,8 @@ export async function checkShipping(page: Page): Promise<CheckResult> {
     // Check for CEP input field
     const cepInputLocator = page.locator(SELECTORS.shipping.cepInput).first();
     let hasCepInput = await cepInputLocator
-      .isVisible({ timeout: 3000 })
+      .waitFor({ state: "visible", timeout: 3000 })
+      .then(() => true)
       .catch(() => false);
 
     if (!hasCepInput) {

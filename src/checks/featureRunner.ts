@@ -28,6 +28,10 @@ import {
   checkPricing,
   checkShipping,
   checkRating,
+  checkRatingConsistency,
+  checkAddToCart,
+  checkFavoriteButton,
+  checkProductVariations,
 } from "./index.js";
 
 // ---------------------------------------------------------------------------
@@ -51,6 +55,10 @@ export const FEATURE_CHECKERS: Record<
   pricing: checkPricing,
   shipping: checkShipping,
   rating: checkRating,
+  ratingConsistency: checkRatingConsistency,
+  addToCart: checkAddToCart,
+  favoriteButton: checkFavoriteButton,
+  productVariations: checkProductVariations,
 };
 
 // ---------------------------------------------------------------------------
@@ -65,6 +73,7 @@ export const REVIEW_RATING_KEYS = new Set([
   "reviewRecommendation",
   "aiReviewSummary",
   "rating",
+  "ratingConsistency",
 ]);
 
 // ---------------------------------------------------------------------------
@@ -72,10 +81,18 @@ export const REVIEW_RATING_KEYS = new Set([
 // ---------------------------------------------------------------------------
 
 export function getStatusIcon(result: CheckResult): string {
-  if (result.status === "warning") return "⚠️";
-  if (result.status === "disabled") return "🚫";
-  if (result.status === "na") return "⬜";
-  if (result.status === "error") return "⚠️";
+  if (result.status === "warning") {
+    return "⚠️";
+  }
+  if (result.status === "disabled") {
+    return "🚫";
+  }
+  if (result.status === "na") {
+    return "⬜";
+  }
+  if (result.status === "error") {
+    return "⚠️";
+  }
   return result.passed ? "✅" : "❌";
 }
 

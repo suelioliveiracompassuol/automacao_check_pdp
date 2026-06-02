@@ -13,7 +13,8 @@ export async function checkPricing(page: Page): Promise<CheckResult> {
     // Look for pricing section by CSS class
     const pricingLocator = page.locator(SELECTORS.pricing.section).first();
     const hasPricing = await pricingLocator
-      .isVisible({ timeout: 5000 })
+      .waitFor({ state: "visible", timeout: 5000 })
+      .then(() => true)
       .catch(() => false);
 
     // Extract price from pricing section (not entire page to avoid picking up banner/promo prices)
@@ -36,7 +37,9 @@ export async function checkPricing(page: Page): Promise<CheckResult> {
         const text = (el as HTMLElement).innerText || el.textContent || "";
         const lines = text.split("\n");
         for (const line of lines) {
-          if (skipKeywords.test(line)) continue;
+          if (skipKeywords.test(line)) {
+            continue;
+          }
           for (const pattern of patterns) {
             const m = line.match(pattern);
             if (m && m[1] && m[1].length >= 2) {
@@ -58,11 +61,15 @@ export async function checkPricing(page: Page): Promise<CheckResult> {
 
       for (const selector of mainSelectors) {
         const container = document.querySelector(selector);
-        if (!container) continue;
+        if (!container) {
+          continue;
+        }
         const text = (container as HTMLElement).innerText || "";
         const lines = text.split("\n");
         for (const line of lines) {
-          if (skipKeywords.test(line)) continue;
+          if (skipKeywords.test(line)) {
+            continue;
+          }
           for (const pattern of patterns) {
             const m = line.match(pattern);
             if (m && m[1] && m[1].length >= 2) {
@@ -76,7 +83,9 @@ export async function checkPricing(page: Page): Promise<CheckResult> {
       const bodyText = document.body.innerText;
       const lines = bodyText.substring(500).split("\n");
       for (const line of lines) {
-        if (skipKeywords.test(line)) continue;
+        if (skipKeywords.test(line)) {
+          continue;
+        }
         for (const pattern of patterns) {
           const m = line.match(pattern);
           if (m && m[1] && m[1].length >= 2) {
@@ -135,7 +144,8 @@ export async function checkPricing(page: Page): Promise<CheckResult> {
     // Check for discount badge (optional)
     const discountLocator = page.locator(SELECTORS.pricing.discount).first();
     const hasDiscount = await discountLocator
-      .isVisible({ timeout: 2000 })
+      .waitFor({ state: "visible", timeout: 2000 })
+      .then(() => true)
       .catch(() => false);
 
     let discountText = "";
@@ -147,7 +157,8 @@ export async function checkPricing(page: Page): Promise<CheckResult> {
     // Check for list price (crossed out)
     const listPriceLocator = page.locator(SELECTORS.pricing.listPrice).first();
     const hasListPrice = await listPriceLocator
-      .isVisible({ timeout: 2000 })
+      .waitFor({ state: "visible", timeout: 2000 })
+      .then(() => true)
       .catch(() => false);
 
     // Detect currency symbol from price text

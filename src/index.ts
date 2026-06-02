@@ -31,6 +31,12 @@ import { setupEndpointMonitor } from "./checks/endpointResponse.js";
 import { checkI18nKeys } from "./checks/i18n.js";
 import { setupEinsteinShowcaseCapture } from "./checks/showcases.js";
 import {
+  setupRatingConsistencyCapture,
+  captureRatingFromDOM,
+} from "./checks/ratingConsistency.js";
+import { setupProductVariationsCapture } from "./checks/productVariations.js";
+
+import {
   setupRemoteConfigCapture,
   setupCommerceFeatureFlagCapture,
   isFeatureEnabledByRemoteConfig,
@@ -43,7 +49,7 @@ import {
   RemoteConfigFlags,
   CommerceFeatureFlags,
 } from "./checks/remoteConfig.js";
-import { SKUS } from "./checks/configs/skus.js";
+import { SKUS } from "./checks/configs/skus/skus.js";
 import { runExploratoryJourney } from "./explore.js";
 import { DOMAINS } from "./checks/configs/domains.js";
 import { FEATURES } from "./checks/configs/features.js";
@@ -106,7 +112,9 @@ async function checkPdp(params: CheckPdpParams): Promise<PdpCheckResult> {
   if (endpointMatch) {
     page.on("response", (response) => {
       const url = response.url();
-      if (!url.includes(endpointMatch)) return;
+      if (!url.includes(endpointMatch)) {
+        return;
+      }
       endpointCalls.push({
         url,
         method: response.request().method(),
@@ -132,6 +140,12 @@ async function checkPdp(params: CheckPdpParams): Promise<PdpCheckResult> {
 
   // Setup Einstein showcase capture BEFORE navigation
   setupEinsteinShowcaseCapture(page);
+
+  // Setup rating consistency capture BEFORE navigation (intercepts API responses)
+  setupRatingConsistencyCapture(page);
+
+  // Setup product variations capture BEFORE navigation (intercepts BFF API + SSR)
+  setupProductVariationsCapture(page);
 
   const traceMode = getPlaywrightTraceMode();
   const traceZipPath = path.join(
@@ -184,6 +198,10 @@ async function checkPdp(params: CheckPdpParams): Promise<PdpCheckResult> {
     await page
       .waitForLoadState("load", { timeout: TIMING.pageLoadSettleTime })
       .catch(() => {});
+
+    // Read product rating from JSON-LD immediately after load, before any DOM interactions
+    // that could cause React to re-render/clear the SSR script tags.
+    await captureRatingFromDOM(page);
 
     // Dismiss cookie banner
     await dismissCookieBanner(page);
@@ -403,7 +421,13 @@ async function checkPdp(params: CheckPdpParams): Promise<PdpCheckResult> {
     const requiredFeatures = features.filter((f) => {
       const config = FEATURES.find((fc) => fc.key === f.featureKey);
       // Endpoint monitor results also count as required
-      if (f.featureKey.startsWith("endpoint_")) return true;
+      if (f.featureKey.startsWith("endpoint_")) {
+        return true;
+      }
+      // i18n keys check is always required
+      if (f.featureKey === "i18nKeys") {
+        return true;
+      }
       return config && !config.optional;
     });
 
@@ -528,7 +552,7 @@ async function checkPdp(params: CheckPdpParams): Promise<PdpCheckResult> {
 async function main() {
   const runId = `run_${Date.now()}`;
   const startTime = new Date();
-  const outputDir = path.join(process.cwd(), "reports", runId);
+  const outputDir = path.join(process.cwd(), "docs", "reports", runId);
 
   // Create output directories
   fs.mkdirSync(path.join(outputDir, "screenshots"), { recursive: true });
@@ -636,7 +660,9 @@ async function main() {
   const skusByDomain = new Map<string, typeof skusToCheck>();
   for (const sku of skusToCheck) {
     const domainKey = `${sku.vendor}-${sku.country}${(sku.channel || "ecommerce") === "socialcommerce" ? "-social" : ""}`;
-    if (!skusByDomain.has(domainKey)) skusByDomain.set(domainKey, []);
+    if (!skusByDomain.has(domainKey)) {
+      skusByDomain.set(domainKey, []);
+    }
     skusByDomain.get(domainKey)!.push(sku);
   }
   console.log(
@@ -719,7 +745,9 @@ async function main() {
     }
   } finally {
     await browserChromium.close();
-    if (browserFirefox) await browserFirefox.close();
+    if (browserFirefox) {
+      await browserFirefox.close();
+    }
   }
 
   const endTime = new Date();
@@ -744,8 +772,61 @@ async function main() {
   const htmlPath = path.join(outputDir, "report.html");
   const jsonPath = path.join(outputDir, "report.json");
 
-  fs.writeFileSync(htmlPath, generateHtmlReport(report, outputDir));
+  fs.writeFileSync(htmlPath, generateHtmlReport(report));
   fs.writeFileSync(jsonPath, generateJsonReport(report));
+
+  // Copy to last-report files and update index
+  try {
+    const docsDir = path.join(process.cwd(), "docs");
+    const reportsDir = path.join(docsDir, "reports");
+
+    // Copy to last-report
+    fs.copyFileSync(htmlPath, path.join(docsDir, "last-report.html"));
+    fs.copyFileSync(jsonPath, path.join(docsDir, "last-report.json"));
+
+    // Update index.json
+    const indexJsonPath = path.join(reportsDir, "index.json");
+    let reportsIndex: { reports: MonitoringReport[] } = { reports: [] };
+
+    if (fs.existsSync(indexJsonPath)) {
+      try {
+        const data = JSON.parse(fs.readFileSync(indexJsonPath, "utf-8"));
+        if (data && Array.isArray(data.reports)) {
+          reportsIndex = data;
+        }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (e) {
+        console.log("Could not parse existing report index, creating new one.");
+      }
+    }
+
+    // Create a new entry for the index, removing full results to keep it small
+    const reportForIndex: Partial<MonitoringReport> & {
+      htmlPath: string;
+      jsonPath: string;
+    } = {
+      runId: report.runId,
+      startTime: report.startTime,
+      endTime: report.endTime,
+      durationMs: report.durationMs,
+      summary: report.summary,
+      // Paths relative to the /docs root for the frontend
+      htmlPath: path.join("reports", runId, "report.html").replace(/\\/g, "/"),
+      jsonPath: path.join("reports", runId, "report.json").replace(/\\/g, "/"),
+    };
+
+    reportsIndex.reports.unshift(reportForIndex as MonitoringReport);
+
+    // Limit to 100 most recent reports
+    if (reportsIndex.reports.length > 100) {
+      reportsIndex.reports = reportsIndex.reports.slice(0, 100);
+    }
+
+    fs.writeFileSync(indexJsonPath, JSON.stringify(reportsIndex, null, 2));
+    console.log(`\n✅  Índice de relatórios atualizado: ${indexJsonPath}`);
+  } catch (e) {
+    console.error("\n❌ Erro ao atualizar o histórico de relatórios:", e);
+  }
 
   // Print summary
   console.log("\n" + "=".repeat(60));

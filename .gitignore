@@ -15,6 +15,7 @@ dist/
 # IDE
 .vscode/
 .idea/
+.aicockpit/
 
 # OS
 .DS_Store
@@ -25,13 +26,14 @@ test-results/
 playwright-report/
 playwright/.cache/
 
+.playwright-cli/
+.playwright-mcp/
 # Logs
 *.log
 npm-debug.log*
 
 ncf-ssr/
 debug-**
-test-**
 .vscode
 
 # Force git to see changes

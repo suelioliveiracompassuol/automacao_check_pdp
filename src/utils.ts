@@ -39,7 +39,9 @@ export async function safeScreenshot(
  * Returns null if parsing fails.
  */
 export function safeJsonParse<T = unknown>(data: unknown): T | null {
-  if (typeof data !== "string") return (data as T) ?? null;
+  if (typeof data !== "string") {
+    return (data as T) ?? null;
+  }
   try {
     return JSON.parse(data) as T;
   } catch {
@@ -62,8 +64,12 @@ export function appendSocialCommerceParams(
 
     if (consultoria || marca) {
       const productUrl = new URL(targetUrl);
-      if (consultoria) productUrl.searchParams.set("consultoria", consultoria);
-      if (marca) productUrl.searchParams.set("marca", marca);
+      if (consultoria) {
+        productUrl.searchParams.set("consultoria", consultoria);
+      }
+      if (marca) {
+        productUrl.searchParams.set("marca", marca);
+      }
       return productUrl.href;
     }
   } catch {
@@ -99,7 +105,9 @@ export async function getReviewCount(page: Page): Promise<number> {
   return page
     .evaluate(() => {
       const reviews = document.getElementById("reviews");
-      if (!reviews) return 0;
+      if (!reviews) {
+        return 0;
+      }
 
       // Look for the count in the go-to-reviews button text (e.g. "(350) avaliações")
       const goToBtn = document.querySelector(
@@ -107,14 +115,18 @@ export async function getReviewCount(page: Page): Promise<number> {
       );
       if (goToBtn) {
         const match = goToBtn.textContent?.match(/\(?\s*(\d+)\s*\)?/);
-        if (match) return parseInt(match[1], 10);
+        if (match) {
+          return parseInt(match[1], 10);
+        }
       }
 
       // Fallback: look for count in reviews summary area
       const summaryText =
         reviews.querySelector(".flex.flex-col.gap-1")?.textContent || "";
       const countMatch = summaryText.match(/(\d+)\s*(avalia|opini|rese)/i);
-      if (countMatch) return parseInt(countMatch[1], 10);
+      if (countMatch) {
+        return parseInt(countMatch[1], 10);
+      }
 
       // Last fallback: count visible cards
       return reviews.querySelectorAll('div[role="group"]').length;

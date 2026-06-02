@@ -34,7 +34,9 @@ export async function getCommerceFeatureFlagsFromPage(
     const flags = await page.evaluate(() => {
       // Helper to check if an object looks like a feature flags object
       const isFeatureFlagsObject = (obj: unknown): boolean => {
-        if (!obj || typeof obj !== "object") return false;
+        if (!obj || typeof obj !== "object") {
+          return false;
+        }
         const keys = Object.keys(obj as Record<string, unknown>);
         const primaryKeys = [
           "businessModel",
@@ -54,11 +56,17 @@ export async function getCommerceFeatureFlagsFromPage(
         obj: unknown,
         depth = 0,
       ): Record<string, unknown> | null => {
-        if (depth > 10 || !obj || typeof obj !== "object") return null;
-        if (isFeatureFlagsObject(obj)) return obj as Record<string, unknown>;
+        if (depth > 10 || !obj || typeof obj !== "object") {
+          return null;
+        }
+        if (isFeatureFlagsObject(obj)) {
+          return obj as Record<string, unknown>;
+        }
         for (const value of Object.values(obj as Record<string, unknown>)) {
           const found = findFeatureFlags(value, depth + 1);
-          if (found) return found;
+          if (found) {
+            return found;
+          }
         }
         return null;
       };
@@ -67,7 +75,9 @@ export async function getCommerceFeatureFlagsFromPage(
       const nextData = (window as any).__NEXT_DATA__;
       if (nextData?.props?.pageProps) {
         const found = findFeatureFlags(nextData.props.pageProps);
-        if (found) return found;
+        if (found) {
+          return found;
+        }
       }
 
       // Strategy 2: Look in JSON script tags
@@ -78,7 +88,9 @@ export async function getCommerceFeatureFlagsFromPage(
         try {
           const data = JSON.parse(script.textContent || "");
           const found = findFeatureFlags(data);
-          if (found) return found;
+          if (found) {
+            return found;
+          }
         } catch {}
       }
 
@@ -93,24 +105,34 @@ export async function getCommerceFeatureFlagsFromPage(
             fiber: any,
             depth = 0,
           ): Record<string, unknown> | null => {
-            if (depth > 25 || !fiber) return null;
+            if (depth > 25 || !fiber) {
+              return null;
+            }
             if (fiber.memoizedProps) {
               const found = findFeatureFlags(fiber.memoizedProps);
-              if (found) return found;
+              if (found) {
+                return found;
+              }
             }
             if (fiber.child) {
               const found = searchFiber(fiber.child, depth + 1);
-              if (found) return found;
+              if (found) {
+                return found;
+              }
             }
             if (fiber.sibling) {
               const found = searchFiber(fiber.sibling, depth + 1);
-              if (found) return found;
+              if (found) {
+                return found;
+              }
             }
             return null;
           };
           const rootFiber = (reactRoot as any)[fiberKey];
           const found = searchFiber(rootFiber);
-          if (found) return found;
+          if (found) {
+            return found;
+          }
         }
       }
 
@@ -118,7 +140,9 @@ export async function getCommerceFeatureFlagsFromPage(
       const nextFlight = (window as any).self?.__next_f;
       if (Array.isArray(nextFlight)) {
         for (const entry of nextFlight) {
-          if (typeof entry[1] !== "string") continue;
+          if (typeof entry[1] !== "string") {
+            continue;
+          }
           // Find JSON objects within the string that look like feature flags
           const jsonMatches = entry[1].match(
             /\{[^{}]*"(?:guestCheckout|businessModel|newExperiencePdpEnable)"[^{}]*\}/g,
@@ -127,7 +151,9 @@ export async function getCommerceFeatureFlagsFromPage(
             for (const match of jsonMatches) {
               try {
                 const parsed = JSON.parse(match);
-                if (isFeatureFlagsObject(parsed)) return parsed;
+                if (isFeatureFlagsObject(parsed)) {
+                  return parsed;
+                }
               } catch {}
             }
           }
@@ -149,7 +175,9 @@ export async function getCommerceFeatureFlagsFromPage(
       return null;
     });
 
-    if (!flags) return null;
+    if (!flags) {
+      return null;
+    }
 
     // Normalize the found flags object into the CommerceFeatureFlags structure
     return {
@@ -339,9 +367,15 @@ export function mergeCommerceFeatureFlags(
   primary: CommerceFeatureFlags | null,
   secondary: CommerceFeatureFlags | null,
 ): CommerceFeatureFlags | null {
-  if (!primary && !secondary) return null;
-  if (!primary) return secondary;
-  if (!secondary) return primary;
+  if (!primary && !secondary) {
+    return null;
+  }
+  if (!primary) {
+    return secondary;
+  }
+  if (!secondary) {
+    return primary;
+  }
 
   const out: CommerceFeatureFlags = {
     capturedAt: primary.capturedAt || secondary.capturedAt,
@@ -478,7 +512,9 @@ export function setupRemoteConfigCapture(
 /** True if URL is likely the commerce BFF feature-flag JSON (not Firebase). */
 function matchesCommerceFeatureFlagUrl(url: string): boolean {
   const u = url.toLowerCase();
-  if (u.includes("firebase")) return false;
+  if (u.includes("firebase")) {
+    return false;
+  }
   return (
     u.includes("feature-flag") ||
     u.includes("feature-flags") ||
@@ -659,8 +695,9 @@ export function setupCommerceFeatureFlagCapture(
                     k++; // skip escaped character
                     continue;
                   }
-                  if (content[k] === "{") depth++;
-                  else if (content[k] === "}") {
+                  if (content[k] === "{") {
+                    depth++;
+                  } else if (content[k] === "}") {
                     depth--;
                     if (depth === 0) {
                       braceEnd = k;
@@ -786,46 +823,64 @@ export function setupCommerceFeatureFlagCapture(
 export function getCommerceFlagsByCategory(
   flags: CommerceFeatureFlags | null,
 ): Record<string, Record<string, unknown>> {
-  if (!flags) return {};
+  if (!flags) {
+    return {};
+  }
 
   const categories: Record<string, Record<string, unknown>> = {};
 
   // PDP Features
   const pdpFlags: Record<string, unknown> = {};
-  if (flags.displayStockOnProductDetailPage !== undefined)
+  if (flags.displayStockOnProductDetailPage !== undefined) {
     pdpFlags.displayStockOnProductDetailPage =
       flags.displayStockOnProductDetailPage;
-  if (flags.newExperiencePdpEnable !== undefined)
+  }
+  if (flags.newExperiencePdpEnable !== undefined) {
     pdpFlags.newExperiencePdpEnable = flags.newExperiencePdpEnable;
-  if (flags.enablePdpFreightCalculation !== undefined)
+  }
+  if (flags.enablePdpFreightCalculation !== undefined) {
     pdpFlags.enablePdpFreightCalculation = flags.enablePdpFreightCalculation;
-  if (flags.enableDisplayFreeShippingPdp !== undefined)
+  }
+  if (flags.enableDisplayFreeShippingPdp !== undefined) {
     pdpFlags.enableDisplayFreeShippingPdp = flags.enableDisplayFreeShippingPdp;
-  if (flags.freeShippingValue !== undefined)
+  }
+  if (flags.freeShippingValue !== undefined) {
     pdpFlags.freeShippingValue = flags.freeShippingValue;
-  if (flags.nePagesPdV2 !== undefined) pdpFlags.nePagesPdV2 = flags.nePagesPdV2;
-  if (flags.newExperienceEnableGiftPdp !== undefined)
+  }
+  if (flags.nePagesPdV2 !== undefined) {
+    pdpFlags.nePagesPdV2 = flags.nePagesPdV2;
+  }
+  if (flags.newExperienceEnableGiftPdp !== undefined) {
     pdpFlags.newExperienceEnableGiftPdp = flags.newExperienceEnableGiftPdp;
-  if (Object.keys(pdpFlags).length > 0)
+  }
+  if (Object.keys(pdpFlags).length > 0) {
     categories["🛍️ PDP Features"] = pdpFlags;
+  }
 
   // Gift & Packaging
   const giftFlags: Record<string, unknown> = {};
-  if (flags.giftPackaging !== undefined)
+  if (flags.giftPackaging !== undefined) {
     giftFlags.giftPackaging = flags.giftPackaging;
-  if (flags.enableGiftOnSite !== undefined)
+  }
+  if (flags.enableGiftOnSite !== undefined) {
     giftFlags.enableGiftOnSite = flags.enableGiftOnSite;
-  if (flags.giftSku !== undefined) giftFlags.giftSku = flags.giftSku;
-  if (Object.keys(giftFlags).length > 0)
+  }
+  if (flags.giftSku !== undefined) {
+    giftFlags.giftSku = flags.giftSku;
+  }
+  if (Object.keys(giftFlags).length > 0) {
     categories["🎁 Gift & Packaging"] = giftFlags;
+  }
 
   // Other
   const otherFlags: Record<string, unknown> = {};
 
-  if (flags.newExperienceEnable !== undefined)
+  if (flags.newExperienceEnable !== undefined) {
     otherFlags.newExperienceEnable = flags.newExperienceEnable;
-  if (Object.keys(otherFlags).length > 0)
+  }
+  if (Object.keys(otherFlags).length > 0) {
     categories["🔧 Other Commerce"] = otherFlags;
+  }
 
   return categories;
 }
@@ -834,7 +889,9 @@ export function getCommerceFlagsByCategory(
  * Counts total captured commerce flags
  */
 export function countCommerceFlags(flags: CommerceFeatureFlags | null): number {
-  if (!flags) return 0;
+  if (!flags) {
+    return 0;
+  }
 
   const flagKeys = Object.keys(flags).filter(
     (k) =>
@@ -1050,7 +1107,9 @@ export function getRecommendationMinCount(
  * Formats captured flags for console logging (summary view)
  */
 export function formatFlagsForLog(flags: RemoteConfigFlags | null): string {
-  if (!flags) return "(não capturado)";
+  if (!flags) {
+    return "(não capturado)";
+  }
 
   const parts: string[] = [];
 
@@ -1082,7 +1141,9 @@ export function formatFlagsForLog(flags: RemoteConfigFlags | null): string {
 export function getFlagsByCategory(
   flags: RemoteConfigFlags | null,
 ): Record<string, Record<string, unknown>> {
-  if (!flags) return {};
+  if (!flags) {
+    return {};
+  }
 
   const categories: Record<string, Record<string, unknown>> = {};
 
@@ -1103,62 +1164,83 @@ export function getFlagsByCategory(
 
   // PDP Flags
   const pdpFlags: Record<string, unknown> = {};
-  if (flags.pdp_new_experience !== undefined)
+  if (flags.pdp_new_experience !== undefined) {
     pdpFlags.pdp_new_experience = flags.pdp_new_experience;
-  if (flags.disable_omni_pickup_tab_on_pdp !== undefined)
+  }
+  if (flags.disable_omni_pickup_tab_on_pdp !== undefined) {
     pdpFlags.disable_omni_pickup_tab_on_pdp =
       flags.disable_omni_pickup_tab_on_pdp;
-  if (flags.enable_descount_amount_tag_pdp !== undefined)
+  }
+  if (flags.enable_descount_amount_tag_pdp !== undefined) {
     pdpFlags.enable_descount_amount_tag_pdp =
       flags.enable_descount_amount_tag_pdp;
-  if (flags.enable_gift_pdp_new_experience !== undefined)
+  }
+  if (flags.enable_gift_pdp_new_experience !== undefined) {
     pdpFlags.enable_gift_pdp_new_experience =
       flags.enable_gift_pdp_new_experience;
-  if (flags.enable_pdp_review !== undefined)
+  }
+  if (flags.enable_pdp_review !== undefined) {
     pdpFlags.enable_pdp_review = flags.enable_pdp_review;
-  if (flags.enable_vto_pdp !== undefined)
+  }
+  if (flags.enable_vto_pdp !== undefined) {
     pdpFlags.enable_vto_pdp = flags.enable_vto_pdp;
-  if (flags.enable_shoptheset_pdp !== undefined)
+  }
+  if (flags.enable_shoptheset_pdp !== undefined) {
     pdpFlags.enable_shoptheset_pdp = flags.enable_shoptheset_pdp;
-  if (flags.enable_shoptheset_pdp_einstein !== undefined)
+  }
+  if (flags.enable_shoptheset_pdp_einstein !== undefined) {
     pdpFlags.enable_shoptheset_pdp_einstein =
       flags.enable_shoptheset_pdp_einstein;
-  if (flags.wl_target_personalization_pdp_showcase !== undefined)
+  }
+  if (flags.wl_target_personalization_pdp_showcase !== undefined) {
     pdpFlags.wl_target_personalization_pdp_showcase =
       flags.wl_target_personalization_pdp_showcase;
-  if (flags.wl_target_personalization_pdp_showcase_v2 !== undefined)
+  }
+  if (flags.wl_target_personalization_pdp_showcase_v2 !== undefined) {
     pdpFlags.wl_target_personalization_pdp_showcase_v2 =
       flags.wl_target_personalization_pdp_showcase_v2;
-  if (Object.keys(pdpFlags).length > 0)
+  }
+  if (Object.keys(pdpFlags).length > 0) {
     categories["🛍️ PDP Features"] = pdpFlags;
+  }
 
   // Individual Reviews Flags
   const reviewFlags: Record<string, unknown> = {};
-  if (flags.enable_konfidency_review !== undefined)
+  if (flags.enable_konfidency_review !== undefined) {
     reviewFlags.enable_konfidency_review = flags.enable_konfidency_review;
-  if (flags.enable_review_ai_summary !== undefined)
+  }
+  if (flags.enable_review_ai_summary !== undefined) {
     reviewFlags.enable_review_ai_summary = flags.enable_review_ai_summary;
-  if (flags.enable_review_feedback !== undefined)
+  }
+  if (flags.enable_review_feedback !== undefined) {
     reviewFlags.enable_review_feedback = flags.enable_review_feedback;
-  if (flags.enable_reviews_filter !== undefined)
+  }
+  if (flags.enable_reviews_filter !== undefined) {
     reviewFlags.enable_reviews_filter = flags.enable_reviews_filter;
-  if (flags.enable_reviews_sorting !== undefined)
+  }
+  if (flags.enable_reviews_sorting !== undefined) {
     reviewFlags.enable_reviews_sorting = flags.enable_reviews_sorting;
-  if (flags.enable_image_and_upload_review !== undefined)
+  }
+  if (flags.enable_image_and_upload_review !== undefined) {
     reviewFlags.enable_image_and_upload_review =
       flags.enable_image_and_upload_review;
-  if (Object.keys(reviewFlags).length > 0)
+  }
+  if (Object.keys(reviewFlags).length > 0) {
     categories["⭐ Reviews (individual)"] = reviewFlags;
+  }
 
   // Product Card Flags
   const cardFlags: Record<string, unknown> = {};
-  if (flags.enable_product_card_rating !== undefined)
+  if (flags.enable_product_card_rating !== undefined) {
     cardFlags.enable_product_card_rating = flags.enable_product_card_rating;
-  if (flags.wl_show_rating_on_product_card !== undefined)
+  }
+  if (flags.wl_show_rating_on_product_card !== undefined) {
     cardFlags.wl_show_rating_on_product_card =
       flags.wl_show_rating_on_product_card;
-  if (Object.keys(cardFlags).length > 0)
+  }
+  if (Object.keys(cardFlags).length > 0) {
     categories["🃏 Product Card"] = cardFlags;
+  }
 
   return categories;
 }
@@ -1167,7 +1249,9 @@ export function getFlagsByCategory(
  * Counts total captured flags
  */
 export function countCapturedFlags(flags: RemoteConfigFlags | null): number {
-  if (!flags) return 0;
+  if (!flags) {
+    return 0;
+  }
 
   let count = 0;
 

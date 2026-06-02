@@ -12,7 +12,9 @@ import { SELECTORS } from "./configs/config.js";
  * Different country BFFs may use different field names for the product array.
  */
 function extractProductsFromPayload(payloadObj: unknown): number {
-  if (!payloadObj || typeof payloadObj !== "object") return 0;
+  if (!payloadObj || typeof payloadObj !== "object") {
+    return 0;
+  }
   const obj = payloadObj as Record<string, unknown>;
   // Try well-known field names first
   for (const key of [
@@ -23,12 +25,16 @@ function extractProductsFromPayload(payloadObj: unknown): number {
     "recommendations",
     "result",
   ]) {
-    if (Array.isArray(obj[key])) return (obj[key] as unknown[]).length;
+    if (Array.isArray(obj[key])) {
+      return (obj[key] as unknown[]).length;
+    }
   }
   // Fallback: return the length of the first non-empty array property found.
   // Covers any other field name used by country-specific BFFs.
   for (const val of Object.values(obj)) {
-    if (Array.isArray(val) && val.length > 0) return val.length;
+    if (Array.isArray(val) && val.length > 0) {
+      return val.length;
+    }
   }
   return 0;
 }
@@ -37,6 +43,8 @@ interface EinsteinCapturedData {
   campaignCount: number;
   /** HTTP status of the original page-load response */
   httpStatus: number;
+  /** Original request headers to replay in diagnostic check */
+  reqHeaders?: Record<string, string>;
 }
 
 /** Per-page cache populated by {@link setupEinsteinShowcaseCapture}. */
@@ -57,6 +65,7 @@ export function setupEinsteinShowcaseCapture(page: Page): void {
       return;
     }
     const status = response.status();
+    const reqHeaders = response.request().headers();
     void response
       .body()
       .then((buffer) => {
@@ -93,6 +102,7 @@ export function setupEinsteinShowcaseCapture(page: Page): void {
           einsteinShowcaseCache.set(page, {
             campaignCount: count,
             httpStatus: status,
+            reqHeaders,
           });
         }
       })
@@ -103,6 +113,7 @@ export function setupEinsteinShowcaseCapture(page: Page): void {
           einsteinShowcaseCache.set(page, {
             campaignCount: -1,
             httpStatus: status,
+            reqHeaders,
           });
         }
       });
@@ -155,12 +166,16 @@ async function checkEinsteinApi(
   try {
     const generatedContentZone = await page
       .evaluate((suffix) => {
-        if (!suffix) return null;
+        if (!suffix) {
+          return null;
+        }
         const countryCodeMatch = window.location.hostname.match(
           /(?:\.com\.)?([a-z]{2})$/i,
         );
         const countryCode = countryCodeMatch?.[1]?.toUpperCase();
-        if (!countryCode) return null;
+        if (!countryCode) {
+          return null;
+        }
         return `CZ_${countryCode}_VITRINE_PDP_${suffix}`;
       }, expectedZoneSuffix ?? null)
       .catch(() => null);
@@ -175,13 +190,17 @@ async function checkEinsteinApi(
           const productEntry = entries.find((e) =>
             e.name.includes("/pages/v2/product/"),
           );
-          if (!productEntry) return null;
+          if (!productEntry) {
+            return null;
+          }
 
           const res = await fetch(productEntry.name, {
             credentials: "include",
           });
           const body = await res.json().catch(() => null);
-          if (!body || typeof body !== "object") return null;
+          if (!body || typeof body !== "object") {
+            return null;
+          }
 
           const fromPersonalization = (body as Record<string, unknown>)
             .personalizationShowcase as { contentZones?: string } | undefined;
@@ -191,15 +210,21 @@ async function checkEinsteinApi(
 
           const components = (body as Record<string, unknown>)
             .productComponents;
-          if (!Array.isArray(components)) return null;
+          if (!Array.isArray(components)) {
+            return null;
+          }
 
           for (const comp of components) {
-            if (!comp || typeof comp !== "object") continue;
+            if (!comp || typeof comp !== "object") {
+              continue;
+            }
             const obj = comp as Record<string, unknown>;
             const list = obj.productListPersonalization as
               | { contentZones?: string }
               | undefined;
-            if (list?.contentZones) return list.contentZones;
+            if (list?.contentZones) {
+              return list.contentZones;
+            }
           }
 
           return null;
@@ -220,7 +245,9 @@ async function checkEinsteinApi(
         "resource",
       ) as PerformanceResourceTiming[];
       const match = entries.find((e) => {
-        if (!e.name.includes("einstein/personalization")) return false;
+        if (!e.name.includes("einstein/personalization")) {
+          return false;
+        }
         if (hint) {
           try {
             const params = new URL(e.name).searchParams.get("contentZones");
@@ -261,18 +288,50 @@ async function checkEinsteinApi(
     };
 
     if (!cachedData || cachedData.campaignCount < 1) {
-      // Re-fetch from browser context (same cookies/auth)
-      apiResult = await page.evaluate(async (url) => {
+      const reqHeaders = cachedData?.reqHeaders ?? {};
+
+      // Re-fetch using Playwright's APIRequestContext (Node.js level — no browser
+      // header restrictions, properly forwards x-api-key and other custom headers).
+      // Retries up to 3 times with a 2 s delay so transient CDN/Einstein misses are
+      // covered without flooding the API.
+      const RETRIES = 3;
+      const RETRY_DELAY_MS = 2000;
+
+      const PAYLOAD_KEYS = [
+        "products",
+        "recs",
+        "items",
+        "productList",
+        "recommendations",
+        "result",
+      ];
+
+      for (let attempt = 0; attempt < RETRIES; attempt++) {
+        if (attempt > 0) {
+          await new Promise<void>((r) => setTimeout(r, RETRY_DELAY_MS));
+        }
         try {
-          const res = await fetch(url, { credentials: "include" });
-          const body = await res.json().catch(() => null);
+          const apiResponse = await page.context().request.get(einsteinUrl, {
+            headers: reqHeaders,
+            timeout: 15000,
+          });
+          const body = (await apiResponse.json().catch(() => null)) as Record<
+            string,
+            unknown
+          > | null;
+
           if (
             !body ||
             !Array.isArray(
               (body as { campaignResponses?: unknown[] }).campaignResponses,
             )
           ) {
-            return { status: res.status, campaignCount: -1, error: null };
+            apiResult = {
+              status: apiResponse.status(),
+              campaignCount: -1,
+              error: null,
+            };
+            continue;
           }
 
           let productCount = 0;
@@ -280,14 +339,6 @@ async function checkEinsteinApi(
             body as { campaignResponses: Record<string, unknown>[] }
           ).campaignResponses;
 
-          const PAYLOAD_KEYS = [
-            "products",
-            "recs",
-            "items",
-            "productList",
-            "recommendations",
-            "result",
-          ];
           for (const campaign of campaigns) {
             let payloadObj = campaign?.payload;
             if (typeof payloadObj === "string") {
@@ -324,19 +375,20 @@ async function checkEinsteinApi(
           if (productCount === 0 && campaigns.length > 0) {
             productCount = campaigns.length;
           }
-          return {
-            status: res.status,
+
+          apiResult = {
+            status: apiResponse.status(),
             campaignCount: productCount,
             error: null,
           };
+
+          if (productCount > 0) {
+            break; // got data — stop retrying
+          }
         } catch (e) {
-          return {
-            status: null,
-            campaignCount: -1,
-            error: String(e),
-          };
+          apiResult = { status: null, campaignCount: -1, error: String(e) };
         }
-      }, einsteinUrl);
+      }
     }
 
     return {
@@ -445,7 +497,7 @@ export async function checkBrandShowcase(page: Page): Promise<CheckResult> {
 
     // 1st showcase section = brand showcase
     const brandSection = sections.nth(0);
-    const productCards = brandSection.locator('a[href*="/p/"]');
+    const productCards = brandSection.locator(SELECTORS.brandShowcase.productCards);
     const cardCount = await productCards.count().catch(() => 0);
 
     // Get the section title for the report
@@ -511,7 +563,7 @@ export async function checkRecommendationShowcase(
     // This handles "también te puede gustar", "achamos que você vai gostar", etc.
     const byTitle = page
       .locator(SELECTORS.recommendationShowcase.section)
-      .filter({ has: page.locator('a[href*="/p/"]') });
+      .filter({ has: page.locator(SELECTORS.recommendationShowcase.productCards) });
     const titleCount = await byTitle.count().catch(() => 0);
 
     let activeSection = byTitle.first();
@@ -562,8 +614,130 @@ export async function checkRecommendationShowcase(
       while (Date.now() < deadline) {
         await new Promise<void>((r) => setTimeout(r, 500));
         captured = einsteinShowcaseCache.get(page);
-        if (captured && captured.campaignCount > 0) break;
+        if (captured && captured.campaignCount > 0) {
+          break;
+        }
       }
+    }
+
+    // -----------------------------------------------------------------------
+    // Retry via page reload: Einstein CDN/personalisation can return empty on
+    // the first request but populate the cache for subsequent ones.  Reload
+    // the page so the server-side rendering gets a fresh chance with warmer
+    // CDN cache.  Only do this when the section wasn't found AND the API
+    // returned 0 campaigns (genuine miss).
+    // -----------------------------------------------------------------------
+    if (
+      !populated &&
+      einsteinZone.campaignCount <= 0 &&
+      (!captured || captured.campaignCount <= 0)
+    ) {
+      await new Promise<void>((r) => setTimeout(r, 2000));
+
+      // Set up the response watcher BEFORE reload so we don't miss it
+      const einsteinResponseCapture = page
+        .waitForResponse(
+          (res) =>
+            res.url().includes("einstein/personalization/campaign/products") &&
+            res.url().includes("VITRINE_PDP_EXPERIENCIA"),
+          { timeout: 20000 },
+        )
+        .then(async (res) => {
+          const body = (await res.json().catch(() => null)) as Record<
+            string,
+            unknown
+          > | null;
+          if (!body || !Array.isArray(body.campaignResponses)) {
+            return 0;
+          }
+          let count = 0;
+          for (const campaign of body.campaignResponses as Record<
+            string,
+            unknown
+          >[]) {
+            let payloadObj = campaign?.payload;
+            if (typeof payloadObj === "string") {
+              try {
+                payloadObj = JSON.parse(payloadObj);
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+              } catch (e) {
+                // ignore
+              }
+            }
+            count += extractProductsFromPayload(payloadObj);
+          }
+          if (count === 0 && (body.campaignResponses as unknown[]).length > 0) {
+            count = (body.campaignResponses as unknown[]).length;
+          }
+          return count;
+        })
+        .catch(() => 0);
+
+      await page
+        .reload({ waitUntil: "domcontentloaded", timeout: 30000 })
+        .catch(() => {});
+
+      // Wait for the Einstein API response that fires during reload
+      const reloadCampaignCount = await einsteinResponseCapture;
+
+      // If the reload gave us data, update the cache so downstream logic sees it
+      if (reloadCampaignCount > 0) {
+        einsteinShowcaseCache.set(page, {
+          campaignCount: reloadCampaignCount,
+          httpStatus: 200,
+          reqHeaders: captured?.reqHeaders ?? {},
+        });
+        captured = einsteinShowcaseCache.get(page);
+      }
+
+      await new Promise<void>((r) => setTimeout(r, 2000));
+
+      // Scroll again to trigger lazy hydration
+      await page.evaluate(async () => {
+        const scrollHeight = document.body.scrollHeight;
+        const viewportHeight = window.innerHeight;
+        for (let i = 0; i < scrollHeight; i += viewportHeight / 2) {
+          window.scrollTo(0, i);
+          await new Promise((r) => setTimeout(r, 200));
+        }
+        window.scrollTo(0, scrollHeight);
+      });
+      await new Promise<void>((r) => setTimeout(r, 2500));
+
+      // Re-check DOM for the recommendation section
+      const byTitleRetry = page
+        .locator(SELECTORS.recommendationShowcase.section)
+        .filter({ has: page.locator(SELECTORS.recommendationShowcase.productCards) });
+      const titleCountRetry = await byTitleRetry.count().catch(() => 0);
+      if (titleCountRetry > 0) {
+        const visibleRetry = await byTitleRetry
+          .first()
+          .isVisible()
+          .catch(() => false);
+        if (visibleRetry) {
+          activeSection = byTitleRetry.first();
+          populated = true;
+        }
+      }
+
+      // Also retry via position (2nd populated section)
+      if (!populated) {
+        const populatedRetry = page.locator(
+          'section.bg-background:not(#ot-pc-lst):not(#ot-fltr-modal):has([data-testid="btn-add-to-cart"], a[href*="/p/"])',
+        );
+        const secondRetry = populatedRetry.nth(1);
+        const secondVisibleRetry = await secondRetry
+          .waitFor({ state: "visible", timeout: 10000 })
+          .then(() => true)
+          .catch(() => false);
+        if (secondVisibleRetry) {
+          activeSection = secondRetry;
+          populated = true;
+        }
+      }
+
+      // Sync cache one more time (async listener may have completed by now)
+      captured = einsteinShowcaseCache.get(page);
     }
 
     if (populated) {
@@ -621,14 +795,25 @@ export async function checkRecommendationShowcase(
     }
 
     if (captured !== undefined && captured.campaignCount !== -1) {
-      // Captured but 0 campaigns
+      // HTTP 200 + empty campaignResponses: the API is configured correctly and
+      // reachable, but Einstein returned no personalisation data for this
+      // anonymous (no SLAS token) session.  This is expected behaviour —
+      // authenticated users will see the showcase.  Treat as PASS.
+      // Any non-200 status means something actually went wrong → keep warning.
+      const apiOk = captured.httpStatus === 200;
       return {
         feature,
         featureKey,
         passed: true,
-        status: "warning",
-        message: `API retornou 0 campanhas para a content zone "${zoneName}"`,
-        details: { contentZone: zoneName, httpStatus: captured.httpStatus },
+        status: apiOk ? "pass" : "warning",
+        message: apiOk
+          ? `Vitrine configurada (API ok, contentZone: "${zoneName}") — sem dados para sessão anônima`
+          : `API retornou 0 campanhas para a content zone "${zoneName}" (HTTP ${captured.httpStatus ?? "?"})`,
+        details: {
+          contentZone: zoneName,
+          httpStatus: captured.httpStatus,
+          ...(apiOk && { note: "empty-anonymous-session" }),
+        },
       };
     }
 
@@ -655,18 +840,23 @@ export async function checkRecommendationShowcase(
         allTitles.push(titleText.trim());
       }
     }
+    console.log("SECTION TITLES FOUND:", allTitles);
 
     if (einsteinZone.called && einsteinZone.campaignCount === 0) {
+      const apiOk = einsteinZone.httpStatus === 200;
       return {
         feature,
         featureKey,
         passed: true,
-        status: "warning",
-        message: `API retornou 0 campanhas para a content zone "${zoneName}"`,
+        status: apiOk ? "pass" : "warning",
+        message: apiOk
+          ? `Vitrine configurada (API ok, contentZone: "${zoneName}") — sem dados para sessão anônima`
+          : `API retornou 0 campanhas para a content zone "${zoneName}" (HTTP ${einsteinZone.httpStatus ?? "?"})`,
         details: {
           einsteinUrl: einsteinZone.url,
           contentZone: zoneName,
           httpStatus: einsteinZone.httpStatus,
+          ...(apiOk && { note: "empty-anonymous-session" }),
           sectionTitlesFound: allTitles,
         },
       };

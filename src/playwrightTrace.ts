@@ -16,21 +16,10 @@ export type PlaywrightTraceMode = "off" | "on-failure" | "always";
 
 export function getPlaywrightTraceMode(): PlaywrightTraceMode {
   const raw = process.env.PLAYWRIGHT_TRACE?.trim().toLowerCase() ?? "";
-  if (
-    !raw ||
-    raw === "0" ||
-    raw === "false" ||
-    raw === "off" ||
-    raw === "no"
-  ) {
+  if (!raw || raw === "0" || raw === "false" || raw === "off" || raw === "no") {
     return "off";
   }
-  if (
-    raw === "always" ||
-    raw === "all" ||
-    raw === "true" ||
-    raw === "1"
-  ) {
+  if (raw === "always" || raw === "all" || raw === "true" || raw === "1") {
     return "always";
   }
   if (
@@ -45,8 +34,12 @@ export function getPlaywrightTraceMode(): PlaywrightTraceMode {
 }
 
 export function describePlaywrightTraceMode(mode: PlaywrightTraceMode): string {
-  if (mode === "off") return "desligado";
-  if (mode === "always") return "sempre gravar";
+  if (mode === "off") {
+    return "desligado";
+  }
+  if (mode === "always") {
+    return "sempre gravar";
+  }
   return "gravar só em falha";
 }
 
@@ -57,7 +50,9 @@ export async function startBrowserTraceIfEnabled(
   context: BrowserContext,
   mode: PlaywrightTraceMode,
 ): Promise<boolean> {
-  if (mode === "off") return false;
+  if (mode === "off") {
+    return false;
+  }
   const sources = process.env.PLAYWRIGHT_TRACE_SOURCES !== "false";
   await context.tracing.start({
     screenshots: true,
@@ -79,10 +74,11 @@ export async function finalizeBrowserTrace(
   runSucceeded: boolean,
   traceZipPath: string,
 ): Promise<string | undefined> {
-  if (!hadStarted || mode === "off") return undefined;
+  if (!hadStarted || mode === "off") {
+    return undefined;
+  }
 
-  const persist =
-    mode === "always" || (mode === "on-failure" && !runSucceeded);
+  const persist = mode === "always" || (mode === "on-failure" && !runSucceeded);
 
   try {
     if (persist) {
