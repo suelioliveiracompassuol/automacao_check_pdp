@@ -19,7 +19,7 @@ async function getReportData(
   runId: string,
 ): Promise<ReportData | null> {
   try {
-    const res = await fetch(`/data/reports/${runId}/report.json`);
+    const res = await fetch(`./reports/${runId}/report.json`);
     if (!res.ok) {
       throw new Error(`Failed to fetch report for runId: ${runId}`);
     }
@@ -32,7 +32,7 @@ async function getReportData(
 
 async function getReports(): Promise<Report[]> {
   try {
-    const res = await fetch("/data/reports/index.json");
+    const res = await fetch("./reports/index.json");
     if (!res.ok) {
       throw new Error("Failed to fetch reports index");
     }
