@@ -167,7 +167,7 @@ export const DOMAINS: DomainConfig[] = [
       "rating",
       "ratingConsistency",
       "addToCart",
-      "favoriteButton",
+      // "favoriteButton", não tem no social commerce
       "productVariations",
     ],
   },
@@ -193,7 +193,7 @@ export const DOMAINS: DomainConfig[] = [
       "rating",
       "ratingConsistency",
       "addToCart",
-      "favoriteButton",
+      // "favoriteButton", não tem no social commerce
       "productVariations",
     ],
   },
