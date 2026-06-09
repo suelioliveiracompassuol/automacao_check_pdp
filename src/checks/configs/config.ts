@@ -157,8 +157,10 @@ export const SELECTORS = {
 
   // Rating (top of page)
   rating: {
-    stars: '[data-testid="review-stars"], [data-testid="star-icon"], [data-icon-name*="action-rating"]',
-    value: '[data-testid="reviews-summary"], div:has(> [data-testid="go-to-reviews-button"])',
+    stars:
+      '[data-testid="review-stars"], [data-testid="star-icon"], [data-icon-name*="action-rating"]',
+    value:
+      '[data-testid="reviews-summary"], div:has(> [data-testid="go-to-reviews-button"])',
   },
 
   // Shop the Set
@@ -179,7 +181,7 @@ export const SELECTORS = {
       'section.bg-white button[aria-label*="favorito" i]',
       'section.bg-white button[aria-label*="favorit" i]',
       'section.bg-white button[title*="favorito" i]',
-    ].join(', '),
+    ].join(", "),
   },
 
   // Add to Cart / Warn Me
@@ -206,8 +208,14 @@ export const SELECTORS = {
       'button:has-text("Buy")',
       'button:has-text("Warn me")',
       'button[aria-label*="buy" i]',
-      'button[aria-label*="warn" i]'
-    ].join(', '),
+      'button[aria-label*="warn" i]',
+    ].join(", "),
+  },
+
+  // Content Banners (widepic / product content banners)
+  contentBanners: {
+    section: '[data-gtm-product-content-type]',
+    image: 'img',
   },
 
   // Structural selector for showcase sections

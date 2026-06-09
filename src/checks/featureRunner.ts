@@ -32,6 +32,7 @@ import {
   checkAddToCart,
   checkFavoriteButton,
   checkProductVariations,
+  checkContentBanners,
 } from "./index.js";
 
 // ---------------------------------------------------------------------------
@@ -59,6 +60,7 @@ export const FEATURE_CHECKERS: Record<
   addToCart: checkAddToCart,
   favoriteButton: checkFavoriteButton,
   productVariations: checkProductVariations,
+  contentBanners: checkContentBanners,
 };
 
 // ---------------------------------------------------------------------------

@@ -31,3 +31,4 @@ export {
   checkProductVariations,
   setupProductVariationsCapture,
 } from "./productVariations.js";
+export { checkContentBanners } from "./contentBanners.js";

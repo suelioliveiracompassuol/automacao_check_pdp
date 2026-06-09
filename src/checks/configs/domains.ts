@@ -28,6 +28,7 @@ export const DOMAINS: DomainConfig[] = [
       "addToCart",
       "favoriteButton",
       "productVariations",
+      "contentBanners",
     ],
   },
   {
@@ -51,6 +52,7 @@ export const DOMAINS: DomainConfig[] = [
       "addToCart",
       "favoriteButton",
       "productVariations",
+      "contentBanners",
     ],
   },
   {
@@ -74,6 +76,7 @@ export const DOMAINS: DomainConfig[] = [
       "addToCart",
       "favoriteButton",
       "productVariations",
+      "contentBanners",
     ],
   },
   {
@@ -97,6 +100,7 @@ export const DOMAINS: DomainConfig[] = [
       "addToCart",
       "favoriteButton",
       "productVariations",
+      "contentBanners",
     ],
   },
   {
@@ -120,6 +124,7 @@ export const DOMAINS: DomainConfig[] = [
       "addToCart",
       "favoriteButton",
       "productVariations",
+      "contentBanners",
     ],
   },
   {
@@ -143,6 +148,7 @@ export const DOMAINS: DomainConfig[] = [
       "addToCart",
       "favoriteButton",
       "productVariations",
+      "contentBanners",
     ],
   },
   // ===== Natura Social Commerce (Minha Loja) =====
@@ -169,6 +175,7 @@ export const DOMAINS: DomainConfig[] = [
       "addToCart",
       // "favoriteButton", não tem no social commerce
       "productVariations",
+      "contentBanners",
     ],
   },
   // ===== Avon Social Commerce (Minha Loja) =====
@@ -195,6 +202,7 @@ export const DOMAINS: DomainConfig[] = [
       "addToCart",
       // "favoriteButton", não tem no social commerce
       "productVariations",
+      "contentBanners",
     ],
   },
   // ===== Avon Ecommerce =====
@@ -217,6 +225,7 @@ export const DOMAINS: DomainConfig[] = [
       "addToCart",
       "favoriteButton",
       "productVariations",
+      "contentBanners",
     ],
   },
   {
@@ -230,6 +239,8 @@ export const DOMAINS: DomainConfig[] = [
       //  "pricing"
       "addToCart",
       "favoriteButton",
+      "productVariations",
+      "contentBanners",
     ],
   },
   {
@@ -244,6 +255,8 @@ export const DOMAINS: DomainConfig[] = [
       //"shipping",
       "addToCart",
       "favoriteButton",
+      "productVariations",
+      "contentBanners",
     ],
   },
 ];
