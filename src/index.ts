@@ -262,7 +262,18 @@ async function checkPdp(params: CheckPdpParams): Promise<PdpCheckResult> {
       }
     }
 
-    // Run all feature checks
+    // Run all feature checks — parallelized for performance.
+    // Since scrollAndLoadContent() has already triggered all lazy content,
+    // checks can safely run in parallel (they only read DOM state).
+
+    // Phase 1: Pre-filter features (vendor support, remote config)
+    interface RunnableCheck {
+      featureConfig: (typeof applicableFeatures)[number];
+      checker: (typeof FEATURE_CHECKERS)[string];
+      rcCheck: ReturnType<typeof isFeatureEnabledByRemoteConfig>;
+    }
+    const runnableChecks: RunnableCheck[] = [];
+
     for (const featureConfig of applicableFeatures) {
       const checker = FEATURE_CHECKERS[featureConfig.key];
 
@@ -302,13 +313,23 @@ async function checkPdp(params: CheckPdpParams): Promise<PdpCheckResult> {
         continue;
       }
 
-      // Run the check
-      const result = await checker(page);
-      // Add flag info to result if available
-      if (rcCheck.flagKey) {
-        result.flagKey = rcCheck.flagKey;
-        result.flagValue = rcCheck.flagValue;
-      }
+      runnableChecks.push({ featureConfig, checker, rcCheck });
+    }
+
+    // Phase 2: Execute checks in parallel
+    const checkResults = await Promise.all(
+      runnableChecks.map(async ({ featureConfig, checker, rcCheck }) => {
+        const result = await checker(page);
+        if (rcCheck.flagKey) {
+          result.flagKey = rcCheck.flagKey;
+          result.flagValue = rcCheck.flagValue;
+        }
+        return { featureConfig, result };
+      }),
+    );
+
+    // Phase 3: Collect results and take screenshots sequentially for failures
+    for (const { featureConfig, result } of checkResults) {
       features.push(result);
 
       // Take screenshot on failure (skip na and disabled)
