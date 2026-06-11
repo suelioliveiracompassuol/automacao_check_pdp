@@ -50,8 +50,6 @@ import {
   CommerceFeatureFlags,
 } from "./checks/remoteConfig.js";
 import { SKUS } from "./checks/configs/skus/skus.js";
-import { runExploratoryJourney } from "./explore.js";
-import { DOMAINS } from "./checks/configs/domains.js";
 import { FEATURES } from "./checks/configs/features.js";
 import { PDP_ENDPOINT_RULES } from "./checks/configs/endpoints-rules.js";
 import { runWithConcurrency, jitter, parseConcurrency } from "./concurrency.js";
@@ -756,46 +754,6 @@ async function main() {
     );
     const groupedResults = await runWithConcurrency(skuTasks, concurrency);
     results.push(...groupedResults.flat());
-
-    // =========================================================================
-    // EXPLORATORY JOURNEYS — navigate via vitrines on the homepage
-    // =========================================================================
-    const skipExplore = isSmokeMode || process.env.SKIP_EXPLORE === "true";
-    if (!skipExplore) {
-      // Determine which domains to explore
-      let domainsToExplore = DOMAINS;
-      if (operationsFilter) {
-        domainsToExplore = DOMAINS.filter((d) => {
-          const key = `${d.vendor}-${d.country}${(d.channel || "ecommerce") === "socialcommerce" ? "-social" : ""}`;
-          return operationsFilter.includes(key);
-        });
-      }
-
-      console.log("\n" + "═".repeat(60));
-      console.log("🕵️  JORNADA EXPLORATÓRIA — Navegação via Vitrines");
-      console.log(`   Operações: ${domainsToExplore.length}`);
-      console.log("═".repeat(60));
-
-      // Each domain is its own task (1:1). Run in parallel with a random
-      // 0\u20132 s initial spread to avoid simultaneous first-request bursts.
-      const exploreTasks = domainsToExplore.map(
-        (domainConfig) => async (): Promise<PdpCheckResult> => {
-          await jitter(0, 2000);
-          const useFirefox =
-            browserFirefox !== null &&
-            domainConfig.vendor === "natura" &&
-            domainConfig.country !== "BR" &&
-            !domainConfig.channel;
-          const browser = useFirefox ? browserFirefox! : browserChromium;
-          return runExploratoryJourney(browser, domainConfig, outputDir);
-        },
-      );
-      const exploreResults = await runWithConcurrency(
-        exploreTasks,
-        concurrency,
-      );
-      results.push(...exploreResults);
-    }
   } finally {
     await browserChromium.close();
     if (browserFirefox) {

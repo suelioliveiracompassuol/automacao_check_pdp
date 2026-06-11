@@ -61,7 +61,6 @@ jobs:
         env:
           FEATURES_FILTER: ${{ inputs.features_filter }}
           OPERATIONS_FILTER: ${{ inputs.operations_filter }}
-          SKIP_EXPLORE: "true"
         continue-on-error: true
 
       - name: 📊 Find report directory
