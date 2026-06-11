@@ -579,7 +579,7 @@ async function main() {
   fs.mkdirSync(path.join(outputDir, "screenshots"), { recursive: true });
 
   // Parse optional env-based filters (set via workflow_dispatch inputs)
-  const featuresFilter: Set<string> | null = process.env.FEATURES_FILTER?.trim()
+  let featuresFilter: Set<string> | null = process.env.FEATURES_FILTER?.trim()
     ? new Set(
         process.env.FEATURES_FILTER.split(",")
           .map((f) => f.trim())
@@ -622,6 +622,33 @@ async function main() {
     skusToCheck = skusToCheck.filter((sku) => skuFilter.includes(sku.sku));
   }
 
+  // =========================================================================
+  // MODE=smoke — quick healthcheck: 1 SKU per domain, subset of features
+  // =========================================================================
+  const SMOKE_FEATURES = ["images", "addToCart", "pricing"];
+  const isSmokeMode = process.env.MODE === "smoke";
+
+  if (isSmokeMode) {
+    // Override features filter to smoke subset
+    if (!featuresFilter) {
+      featuresFilter = new Set(SMOKE_FEATURES);
+    } else {
+      // Intersect user filter with smoke subset
+      featuresFilter = new Set(
+        SMOKE_FEATURES.filter((f) => featuresFilter!.has(f)),
+      );
+    }
+
+    // Limit to 1 SKU per domain
+    const seen = new Set<string>();
+    skusToCheck = skusToCheck.filter((sku) => {
+      const key = `${sku.vendor}-${sku.country}${(sku.channel || "ecommerce") === "socialcommerce" ? "-social" : ""}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }
+
   console.log("🚀 PDP Feature Monitor");
   console.log(`📅 Started: ${startTime.toISOString()}`);
   console.log(`📂 Output: ${outputDir}`);
@@ -630,6 +657,11 @@ async function main() {
       ? ` (filtro: ${operationsFilter.join(", ")})`
       : "";
   console.log(`📦 SKUs to check: ${skusToCheck.length}${operationsFilterNote}`);
+  if (isSmokeMode) {
+    console.log(
+      `⚡ MODE=smoke — healthcheck rápido (1 SKU/domínio, features: ${SMOKE_FEATURES.join(", ")})`,
+    );
+  }
   if (featuresFilter) {
     console.log(`🔍 Features filter: ${[...featuresFilter].join(", ")}`);
   }
@@ -728,7 +760,7 @@ async function main() {
     // =========================================================================
     // EXPLORATORY JOURNEYS — navigate via vitrines on the homepage
     // =========================================================================
-    const skipExplore = process.env.SKIP_EXPLORE === "true";
+    const skipExplore = isSmokeMode || process.env.SKIP_EXPLORE === "true";
     if (!skipExplore) {
       // Determine which domains to explore
       let domainsToExplore = DOMAINS;
