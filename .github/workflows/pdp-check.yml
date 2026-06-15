@@ -114,6 +114,7 @@ jobs:
           cd dashboard
           npm ci
           # Ensure the reports symlink points to docs/reports for the build
+          mkdir -p public
           rm -rf public/reports
           ln -s ../../docs/reports public/reports
           npm run build
