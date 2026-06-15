@@ -1,0 +1,22 @@
+@import "tailwindcss";
+
+:root {
+  --color-pass: #10b981;
+  --color-fail: #ef4444;
+  --color-warn: #f59e0b;
+  --color-error: #f59e0b;
+  --color-na: #6b7280;
+  --color-disabled: #9ca3af;
+  --color-bg: #f8fafc;
+  --color-card: #ffffff;
+  --color-text: #1f2937;
+  --color-border: #e5e7eb;
+  --color-primary: #3b82f6;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text);
+}

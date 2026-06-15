@@ -641,7 +641,9 @@ async function main() {
     const seen = new Set<string>();
     skusToCheck = skusToCheck.filter((sku) => {
       const key = `${sku.vendor}-${sku.country}${(sku.channel || "ecommerce") === "socialcommerce" ? "-social" : ""}`;
-      if (seen.has(key)) return false;
+      if (seen.has(key)) {
+        return false;
+      }
       seen.add(key);
       return true;
     });

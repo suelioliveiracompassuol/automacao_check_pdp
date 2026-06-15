@@ -36,4 +36,9 @@ ncf-ssr/
 debug-**
 .vscode
 
+
+
+
 # Force git to see changes
+dashboard/.next
+dashboard/out
