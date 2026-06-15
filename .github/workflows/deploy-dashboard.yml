@@ -1,0 +1,74 @@
+name: Deploy Dashboard
+
+on:
+  # Run manually when you want to update the dashboard
+  workflow_dispatch:
+
+  # Run after PDP checks complete (optional - remove if you only want manual)
+  workflow_run:
+    workflows: ["PDP Feature Monitor"]
+    types: [completed]
+    branches: [master]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages-dashboard"
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: master
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: dashboard/package-lock.json
+
+      - name: 📦 Install dashboard dependencies
+        run: |
+          cd dashboard
+          npm ci
+
+      - name: 🏗️ Build React dashboard
+        run: |
+          cd dashboard
+          mkdir -p public/reports
+          cp -r ../docs/reports/* public/reports/ 2>/dev/null || true
+          npm run build
+        env:
+          NEXT_PUBLIC_BASE_PATH: "/${{ github.event.repository.name }}"
+
+      - name: 📁 Prepare GitHub Pages artifact
+        run: |
+          cp -r dashboard/out pages_output
+          rm -rf pages_output/reports
+          cp -r docs/reports pages_output/reports
+          cp docs/last-report.html pages_output/last-report.html 2>/dev/null || true
+          cp docs/last-report.json pages_output/last-report.json 2>/dev/null || true
+
+      - name: 📤 Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: pages_output
+
+      - name: 🚀 Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
