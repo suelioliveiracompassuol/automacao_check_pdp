@@ -37,3 +37,8 @@ debug-**
 .vscode
 
 # Force git to see changes
+dashboard/.next
+dashboard/out
+
+# Dev symlink for screenshots
+dashboard/public/reports
