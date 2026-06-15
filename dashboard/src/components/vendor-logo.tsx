@@ -1,11 +1,18 @@
-export function VendorLogo({ vendor }: { vendor: string }) {
+export function VendorLogo({
+  vendor,
+  size = "md",
+}: {
+  vendor: string;
+  size?: "sm" | "md";
+}) {
   const v = vendor.toLowerCase();
+  const scale = size === "sm" ? 0.6 : 1;
 
   if (v === "natura") {
     return (
       <svg
-        width="70"
-        height="30"
+        width={70 * scale}
+        height={30 * scale}
         viewBox="0 0 148 32"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -46,8 +53,8 @@ export function VendorLogo({ vendor }: { vendor: string }) {
   if (v === "avon") {
     return (
       <svg
-        width="47"
-        height="30"
+        width={47 * scale}
+        height={30 * scale}
         viewBox="0 0 171 54"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"

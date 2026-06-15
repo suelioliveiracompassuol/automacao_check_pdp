@@ -11,7 +11,7 @@ export function Card({
   return (
     <div
       className={cn(
-        "bg-white rounded-xl shadow-sm border border-gray-100 p-5",
+        "bg-white rounded-xl shadow-sm border border-gray-100/80 p-5 transition-all duration-200",
         className,
       )}
     >
@@ -30,7 +30,7 @@ export function Badge({
   return (
     <span
       className={cn(
-        "inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold",
+        "inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold",
         className,
       )}
     >

@@ -1,15 +1,20 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import type { Status, PdpCheckResult } from "./types";
+import { basePath } from "./config";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
 export function formatDuration(ms: number): string {
-  if (ms < 1000) return `${ms}ms`;
+  if (ms < 1000) {
+    return `${ms}ms`;
+  }
   const seconds = ms / 1000;
-  if (seconds < 60) return `${seconds.toFixed(1)}s`;
+  if (seconds < 60) {
+    return `${seconds.toFixed(1)}s`;
+  }
   const minutes = Math.floor(seconds / 60);
   const secs = Math.round(seconds % 60);
   return `${minutes}m ${secs}s`;
@@ -65,4 +70,14 @@ export function groupByOperation(
 
 export function getCountryFlag(country: string): string {
   return `https://flagcdn.com/20x15/${country.toLowerCase()}.png`;
+}
+
+/**
+ * Build the URL for a screenshot file.
+ * In production (GitHub Pages), screenshots are served from /reports/{runId}/...
+ * In dev, Next.js rewrites proxy /reports/ to the local docs folder.
+ */
+export function getScreenshotUrl(runId: string, path: string): string {
+  // path comes as "screenshots/FILE.png" from the report data
+  return `${basePath}/reports/${runId}/${path}`;
 }

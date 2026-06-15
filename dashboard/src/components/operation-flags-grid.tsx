@@ -183,9 +183,14 @@ export function OperationFlagsGrid({ results }: OperationFlagsGridProps) {
 
   return (
     <div>
-      <h2 className="text-lg font-semibold text-gray-900 mb-4">
-        🔧 Feature Flags por Operação
-      </h2>
+      <div className="flex items-center gap-2 mb-4">
+        <h2 className="text-lg font-semibold text-gray-900">
+          Feature Flags por Operação
+        </h2>
+        <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
+          {operations.length} operações
+        </span>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {operations.map((op) => {
           const rcFlags = op.remoteConfigFlags || {};
