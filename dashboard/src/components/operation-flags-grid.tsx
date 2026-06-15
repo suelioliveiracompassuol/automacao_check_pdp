@@ -177,88 +177,95 @@ export function OperationFlagsGrid({ results }: OperationFlagsGridProps) {
     return [...map.values()];
   }, [results]);
 
+  const [open, setOpen] = useState(false);
+
   if (operations.length === 0) {
     return null;
   }
 
   return (
-    <div>
-      <div className="flex items-center gap-2 mb-4">
+    <Collapsible.Root open={open} onOpenChange={setOpen}>
+      <Collapsible.Trigger className="flex items-center gap-2 w-full text-left py-3 px-4 rounded-xl bg-white border border-gray-100 shadow-sm hover:bg-gray-50 transition-colors cursor-pointer">
+        <ChevronDown
+          className={`w-4 h-4 text-gray-500 transition-transform ${open ? "rotate-0" : "-rotate-90"}`}
+        />
         <h2 className="text-lg font-semibold text-gray-900">
           Feature Flags por Operação
         </h2>
         <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
           {operations.length} operações
         </span>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {operations.map((op) => {
-          const rcFlags = op.remoteConfigFlags || {};
-          const commerceFlags = op.commerceFeatureFlags || {};
-          const rcCount = Object.keys(rcFlags).filter(
-            (k) => k !== "_raw" && k !== "capturedAt",
-          ).length;
-          const commerceCount = Object.keys(commerceFlags).filter(
-            (k) => k !== "_raw" && k !== "capturedAt",
-          ).length;
-          const locale = (rcFlags as Record<string, unknown>).locale as
-            | string
-            | undefined;
-          const isSocial = op.channel === "socialcommerce";
+      </Collapsible.Trigger>
+      <Collapsible.Content className="mt-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {operations.map((op) => {
+            const rcFlags = op.remoteConfigFlags || {};
+            const commerceFlags = op.commerceFeatureFlags || {};
+            const rcCount = Object.keys(rcFlags).filter(
+              (k) => k !== "_raw" && k !== "capturedAt",
+            ).length;
+            const commerceCount = Object.keys(commerceFlags).filter(
+              (k) => k !== "_raw" && k !== "capturedAt",
+            ).length;
+            const locale = (rcFlags as Record<string, unknown>).locale as
+              | string
+              | undefined;
+            const isSocial = op.channel === "socialcommerce";
 
-          return (
-            <Card key={op.key} className="space-y-3">
-              {/* Operation Header */}
-              <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-gray-900 capitalize">
-                  {op.vendor} / {op.country}
-                  {isSocial && (
-                    <span className="text-xs text-gray-400 font-normal ml-1">
-                      (Minha Loja)
+            return (
+              <Card key={op.key} className="space-y-3">
+                {/* Operation Header */}
+                <div className="flex items-center justify-between">
+                  <h3 className="font-semibold text-gray-900 capitalize">
+                    {op.vendor} / {op.country}
+                    {isSocial && (
+                      <span className="text-xs text-gray-400 font-normal ml-1">
+                        (Minha Loja)
+                      </span>
+                    )}
+                  </h3>
+                  <div className="flex items-center gap-2">
+                    <VendorLogo vendor={op.vendor} />
+                    <img
+                      src={getCountryFlag(op.country)}
+                      alt={op.country}
+                      width={20}
+                      height={15}
+                      className="rounded-sm"
+                    />
+                    <span className="text-xs font-semibold text-gray-600">
+                      {op.country}
                     </span>
-                  )}
-                </h3>
-                <div className="flex items-center gap-2">
-                  <VendorLogo vendor={op.vendor} />
-                  <img
-                    src={getCountryFlag(op.country)}
-                    alt={op.country}
-                    width={20}
-                    height={15}
-                    className="rounded-sm"
-                  />
-                  <span className="text-xs font-semibold text-gray-600">
-                    {op.country}
-                  </span>
-                  {isSocial && (
-                    <span className="text-[10px] font-bold px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded uppercase">
-                      Minha Loja
-                    </span>
-                  )}
+                    {isSocial && (
+                      <span className="text-[10px] font-bold px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded uppercase">
+                        Minha Loja
+                      </span>
+                    )}
+                  </div>
                 </div>
-              </div>
 
-              {/* Remote Config */}
-              {rcCount > 0 && (
-                <FlagsSection
-                  title={`🔧 Remote Config Flags (${rcCount} capturadas) - locale: ${locale || "?"}`}
-                  flags={rcFlags}
-                  count={rcCount}
-                />
-              )}
+                {/* Remote Config */}
+                {rcCount > 0 && (
+                  <FlagsSection
+                    title={`🔧 Remote Config Flags (${rcCount} capturadas) - locale: ${locale || "?"}`}
+                    flags={rcFlags}
+                    count={rcCount}
+                  />
+                )}
 
-              {/* Commerce Feature Flags */}
-              {commerceCount > 0 && (
-                <FlagsSection
-                  title={`🛒 Commerce Feature Flags`}
-                  flags={commerceFlags}
-                  count={commerceCount}
-                />
-              )}
-            </Card>
-          );
-        })}
-      </div>
-    </div>
+                {/* Commerce Feature Flags */}
+                {commerceCount > 0 && (
+                  <FlagsSection
+                    title={`🛒 Commerce Feature Flags`}
+                    flags={commerceFlags}
+                    count={commerceCount}
+                  />
+                )}
+              </Card>
+            );
+          })}
+        </div>
+      </Collapsible.Content>
+    </Collapsible.Root>
   );
 }

@@ -28,6 +28,11 @@ playwright/.cache/
 
 .playwright-cli/
 .playwright-mcp/
+
+# Test coverage
+coverage/
+dashboard/coverage/
+
 # Logs
 *.log
 npm-debug.log*

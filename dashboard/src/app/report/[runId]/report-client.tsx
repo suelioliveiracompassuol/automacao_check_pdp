@@ -22,6 +22,7 @@ export function ReportClient({
 }: ReportClientProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedVendor, setSelectedVendor] = useState("all");
+  const [selectedOperation, setSelectedOperation] = useState("all");
   const [selectedStatus, setSelectedStatus] = useState<FilterStatus>("all");
 
   const filteredResults = useMemo(() => {
@@ -31,6 +32,11 @@ export function ReportClient({
         r.vendor.toLowerCase() !== selectedVendor
       ) {
         return false;
+      }
+      if (selectedOperation !== "all") {
+        if (r.country.toUpperCase() !== selectedOperation) {
+          return false;
+        }
       }
       if (selectedStatus === "pass") {
         return r.success;
@@ -50,7 +56,7 @@ export function ReportClient({
 
       return true;
     });
-  }, [results, selectedVendor, selectedStatus, searchQuery]);
+  }, [results, selectedVendor, selectedOperation, selectedStatus, searchQuery]);
 
   return (
     <div className="space-y-6">
@@ -58,9 +64,11 @@ export function ReportClient({
         results={results}
         searchQuery={searchQuery}
         selectedVendor={selectedVendor}
+        selectedOperation={selectedOperation}
         selectedStatus={selectedStatus}
         onSearchChange={setSearchQuery}
         onVendorChange={setSelectedVendor}
+        onOperationChange={setSelectedOperation}
         onStatusChange={setSelectedStatus}
       />
       <OperationFlagsGrid results={filteredResults} />
