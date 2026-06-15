@@ -109,33 +109,10 @@ jobs:
           git push origin HEAD:${{ github.ref_name }}
           echo "✅ Report published to GitHub Pages"
 
-      - name: 🏗️ Build React dashboard
-        run: |
-          cd dashboard
-          npm ci
-          # Ensure the reports symlink points to docs/reports for the build
-          mkdir -p public
-          rm -rf public/reports
-          ln -s ../../docs/reports public/reports
-          npm run build
-        env:
-          NEXT_PUBLIC_BASE_PATH: "/${{ github.event.repository.name }}"
-
-      - name: 📁 Prepare GitHub Pages artifact
-        run: |
-          # Copy static export of React app as the site root
-          cp -r dashboard/out pages_output
-
-          # Ensure reports are present (overwrite with latest from docs/)
-          rm -rf pages_output/reports
-          cp -r docs/reports pages_output/reports
-          cp docs/last-report.html pages_output/last-report.html 2>/dev/null || true
-          cp docs/last-report.json pages_output/last-report.json 2>/dev/null || true
-
-      - name: 📤 Upload Pages artifact
+      - name: 📤 Upload Pages artifact (static reports)
         uses: actions/upload-pages-artifact@v3
         with:
-          path: pages_output
+          path: docs
 
       - name: 🚀 Deploy to GitHub Pages
         id: deploy
