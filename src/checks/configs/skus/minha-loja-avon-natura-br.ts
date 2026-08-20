@@ -3,10 +3,16 @@ import { RawSkuConfig } from "../../../types";
 export const MINHA_LOJA_AVON_NATURA_BR_SKUS: RawSkuConfig[] = [
   // ===== SOCIAL COMMERCE - MINHA LOJA (BR) =====
   // Natura no Minha Loja
+  // {404
+  //   sku: "NATBRA-249685",
+  //   name: "Kaiak Extremo Masculino (Social Commerce)",
+  //   slug: "desodorante-colonia-kaiak-extremo-masculino-promocao-vai-dar-onda-100-ml",
+  //   channel: "socialcommerce",
+  // },
   {
-    sku: "NATBRA-249685",
-    name: "Kaiak Extremo Masculino (Social Commerce)",
-    slug: "desodorante-colonia-kaiak-extremo-masculino-promocao-vai-dar-onda-100-ml",
+    sku: "NATBRA-108404",
+    name: "Deo Colônia Masculino Kaiak Aero 100 ml (Social Commerce)",
+    slug: "desodorante-colonia-kaiak-aero-masculino-100-ml",
     channel: "socialcommerce",
   },
   {
