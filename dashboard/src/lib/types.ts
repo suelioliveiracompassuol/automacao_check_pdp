@@ -66,3 +66,37 @@ export interface ReportIndexEntry {
 export interface ReportIndex {
   reports: ReportIndexEntry[];
 }
+
+export type Vendor = 'natura' | 'avon';
+export type Country = 'BR' | 'AR' | 'CL' | 'CO' | 'MX' | 'PE';
+export type Channel = 'ecommerce' | 'socialcommerce';
+export type FeatureKey =
+  | 'reviews'
+  | 'aiReviewSummary'
+  | 'reviewFilter'
+  | 'reviewSort'
+  | 'reviewPhotos'
+  | 'reviewRecommendation'
+  | 'brandShowcase'
+  | 'recommendationShowcase'
+  | 'shopTheSet'
+  | 'images'
+  | 'pricing'
+  | 'shipping'
+  | 'ratingConsistency'
+  | 'rating'
+  | 'addToCart'
+  | 'favoriteButton'
+  | 'productVariations'
+  | 'contentBanners';
+
+export interface SkuEntry {
+  id: string;
+  sku: string;
+  name: string;
+  slug?: string;
+  vendor: Vendor;
+  country: Country;
+  channel: Channel;
+  expectedFeatures: FeatureKey[];
+}

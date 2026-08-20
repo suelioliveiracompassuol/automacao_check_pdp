@@ -1,0 +1,288 @@
+[
+  {
+    "id": "NATBRA-70983",
+    "sku": "NATBRA-70983",
+    "name": "Creme Hidratante para as Mãos Ekos Castanha 75g",
+    "slug": "creme-hidratante-para-as-maos-ekos-castanha-75-g",
+    "vendor": "natura",
+    "country": "BR",
+    "channel": "ecommerce",
+    "expectedFeatures": []
+  },
+  {
+    "id": "NATBRA-76420",
+    "sku": "NATBRA-76420",
+    "name": "Desodorante Perfume Essencial Masculino 100ml",
+    "slug": "desodorante-perfume-essencial-masculino-100-ml",
+    "vendor": "natura",
+    "country": "BR",
+    "channel": "ecommerce",
+    "expectedFeatures": []
+  },
+  {
+    "id": "NATBRA-92786",
+    "sku": "NATBRA-92786",
+    "name": "Mamãe e Bebê Água de Colônia 100ml",
+    "slug": "mamae-e-bebe-agua-de-colonia-100-ml",
+    "vendor": "natura",
+    "country": "BR",
+    "channel": "ecommerce",
+    "expectedFeatures": []
+  },
+  {
+    "id": "NATBRA-110181",
+    "sku": "NATBRA-110181",
+    "name": "Base Sérum Nude Me Una 30ml",
+    "slug": "base-serum-nude-me-una-30-ml",
+    "vendor": "natura",
+    "country": "BR",
+    "channel": "ecommerce",
+    "expectedFeatures": []
+  },
+  {
+    "id": "NATBRA-2830",
+    "sku": "NATBRA-2830",
+    "name": "Sabonete em Barra Puro Vegetal Tododia Algodão 5 un de 90g cada",
+    "slug": "sabonete-em-barra-puro-vegetal-tododia-algodao-5-un-de-90-g-cada",
+    "vendor": "natura",
+    "country": "BR",
+    "channel": "ecommerce",
+    "expectedFeatures": []
+  },
+  {
+    "id": "NATBRA-169786",
+    "sku": "NATBRA-169786",
+    "name": "Kaiak Ultra Masculino 100ml",
+    "slug": "deo-colonia-kaiak-ultra-masculino-100ml",
+    "vendor": "natura",
+    "country": "BR",
+    "channel": "ecommerce",
+    "expectedFeatures": []
+  },
+  {
+    "id": "NATBRA-172407",
+    "sku": "NATBRA-172407",
+    "name": "Óleo em Creme Tododia Jambo Rosa e Flor de Caju",
+    "slug": "oleo-em-creme-ultranutritivo-restaurador-tododia-jambo-rosa-e-flor-de-caju-200-ml",
+    "vendor": "natura",
+    "country": "BR",
+    "channel": "ecommerce",
+    "expectedFeatures": [
+      "shopTheSet"
+    ]
+  },
+  {
+    "id": "NATARG-81950",
+    "sku": "NATARG-81950",
+    "name": "Homem Potence EDP 100ml",
+    "slug": "homem-potence-edp-100-ml",
+    "vendor": "natura",
+    "country": "AR",
+    "channel": "ecommerce",
+    "expectedFeatures": []
+  },
+  {
+    "id": "NATARG-00068",
+    "sku": "NATARG-00068",
+    "name": "Base serum nude me",
+    "slug": "base-serum-nude-me",
+    "vendor": "natura",
+    "country": "AR",
+    "channel": "ecommerce",
+    "expectedFeatures": []
+  },
+  {
+    "id": "NATARG-83323",
+    "sku": "NATARG-83323",
+    "name": "Kriska Shock EDT Femenino 100ml",
+    "slug": "kriska-shock-eau-de-toilette-femenino-100ml",
+    "vendor": "natura",
+    "country": "AR",
+    "channel": "ecommerce",
+    "expectedFeatures": [
+      "shopTheSet"
+    ]
+  },
+  {
+    "id": "NATCHL-81950",
+    "sku": "NATCHL-81950",
+    "name": "Homem Potence EDP Masculino 100ml",
+    "slug": "homem-potence-edp-masculino-homem-100ml",
+    "vendor": "natura",
+    "country": "CL",
+    "channel": "ecommerce",
+    "expectedFeatures": []
+  },
+  {
+    "id": "NATCHL-111172",
+    "sku": "NATCHL-111172",
+    "name": "Kaiak Urbe EDT Masculino 100ml",
+    "slug": "kaiak-urbe-eau-de-toilette-masculino-100-ml",
+    "vendor": "natura",
+    "country": "CL",
+    "channel": "ecommerce",
+    "expectedFeatures": []
+  },
+  {
+    "id": "NATCOL-73573",
+    "sku": "NATCOL-73573",
+    "name": "Ekos Pitanga EDT Femenino 150ml",
+    "slug": "eau-de-toilette-ekos-pitanga-femenino-150ml",
+    "vendor": "natura",
+    "country": "CO",
+    "channel": "ecommerce",
+    "expectedFeatures": []
+  },
+  {
+    "id": "NATCOL-111174",
+    "sku": "NATCOL-111174",
+    "name": "Kaiak Aero EDT Masculino 100ml",
+    "slug": "eau-de-toilette-kaiak-aero-masculino-100-ml",
+    "vendor": "natura",
+    "country": "CO",
+    "channel": "ecommerce",
+    "expectedFeatures": []
+  },
+  {
+    "id": "NATMEX-81950",
+    "sku": "NATMEX-81950",
+    "name": "Homem Potence EDP Masculino",
+    "slug": "natura-homem-eau-de-parfum-masculino-potence",
+    "vendor": "natura",
+    "country": "MX",
+    "channel": "ecommerce",
+    "expectedFeatures": []
+  },
+  {
+    "id": "NATMEX-111172",
+    "sku": "NATMEX-111172",
+    "name": "Kaiak Urbe EDT Masculino",
+    "slug": "kaiak-urbe-eau-de-toilette-masculino",
+    "vendor": "natura",
+    "country": "MX",
+    "channel": "ecommerce",
+    "expectedFeatures": []
+  },
+  {
+    "id": "NATPER-64746",
+    "sku": "NATPER-64746",
+    "name": "Meu Primeiro Humor EDT Femenino 75ml",
+    "slug": "humor-eau-de-toilette-femenina-meu-primeiro-humor-75-ml",
+    "vendor": "natura",
+    "country": "PE",
+    "channel": "ecommerce",
+    "expectedFeatures": []
+  },
+  {
+    "id": "NATPER-111172",
+    "sku": "NATPER-111172",
+    "name": "Kaiak Urbe EDT Masculino 100ml",
+    "slug": "kaiak-eau-de-toilette-masculino-urbe-100-ml",
+    "vendor": "natura",
+    "country": "PE",
+    "channel": "ecommerce",
+    "expectedFeatures": []
+  },
+  {
+    "id": "NATBRA-108404:sc",
+    "sku": "NATBRA-108404",
+    "name": "Deo Colônia Masculino Kaiak Aero 100 ml (Social Commerce)",
+    "slug": "desodorante-colonia-kaiak-aero-masculino-100-ml",
+    "vendor": "natura",
+    "country": "BR",
+    "channel": "socialcommerce",
+    "expectedFeatures": []
+  },
+  {
+    "id": "NATBRA-172407:sc",
+    "sku": "NATBRA-172407",
+    "name": "Óleo em Creme Tododia Jambo Rosa (Social Commerce)",
+    "slug": "oleo-em-creme-ultranutritivo-restaurador-tododia-jambo-rosa-e-flor-de-caju-200-ml",
+    "vendor": "natura",
+    "country": "BR",
+    "channel": "socialcommerce",
+    "expectedFeatures": [
+      "shopTheSet"
+    ]
+  },
+  {
+    "id": "AVNBRA-251533:sc",
+    "sku": "AVNBRA-251533",
+    "name": "Iconic Batom Crystal (Social Commerce)",
+    "slug": "avon-iconic-batom-labial-24-g",
+    "vendor": "avon",
+    "country": "BR",
+    "channel": "socialcommerce",
+    "expectedFeatures": []
+  },
+  {
+    "id": "AVNBRA-222050:sc",
+    "sku": "AVNBRA-222050",
+    "name": "Volume Max Máscara Para Cílios (Social Commerce)",
+    "slug": "avon-supershock-volume-max-mascara-para-cilios-10-ml",
+    "vendor": "avon",
+    "country": "BR",
+    "channel": "socialcommerce",
+    "expectedFeatures": []
+  },
+  {
+    "id": "AVNBRA-251533",
+    "sku": "AVNBRA-251533",
+    "name": "Iconic Batom Crystal",
+    "slug": "avon-iconic-batom-labial-24-g",
+    "vendor": "avon",
+    "country": "BR",
+    "channel": "ecommerce",
+    "expectedFeatures": []
+  },
+  {
+    "id": "AVNBRA-222050",
+    "sku": "AVNBRA-222050",
+    "name": "Volume Max Máscara Para Cílios",
+    "slug": "avon-supershock-volume-max-mascara-para-cilios-10-ml",
+    "vendor": "avon",
+    "country": "BR",
+    "channel": "ecommerce",
+    "expectedFeatures": []
+  },
+  {
+    "id": "AVNARG-207446",
+    "sku": "AVNARG-207446",
+    "name": "Perfume de Mujer Lov/u",
+    "slug": "perfume-de-mujer-lov-u",
+    "vendor": "avon",
+    "country": "AR",
+    "channel": "ecommerce",
+    "expectedFeatures": []
+  },
+  {
+    "id": "AVNARG-135885",
+    "sku": "AVNARG-135885",
+    "name": "Musk+ Instinct Masculino 75ml",
+    "slug": "eau-de-toilette-musk-instinct-masculino-75-ml",
+    "vendor": "avon",
+    "country": "AR",
+    "channel": "ecommerce",
+    "expectedFeatures": []
+  },
+  {
+    "id": "AVNMEX-201619",
+    "sku": "AVNMEX-201619",
+    "name": "ANEW SERUM FAC POWER RENOVADOR 30ML",
+    "slug": "anew-serum-fac-power-renovador-30ml",
+    "vendor": "avon",
+    "country": "MX",
+    "channel": "ecommerce",
+    "expectedFeatures": []
+  },
+  {
+    "id": "NATBRA-122112",
+    "sku": "NATBRA-122112",
+    "name": "Corretivo Cobertura Extrema 24h Una",
+    "slug": "corretivo-cobertura-extrema-24h-una-8-ml",
+    "vendor": "natura",
+    "country": "BR",
+    "channel": "ecommerce",
+    "expectedFeatures": []
+  }
+]
