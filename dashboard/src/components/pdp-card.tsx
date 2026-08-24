@@ -35,11 +35,10 @@ export function PdpCard({ result, runId, screenshots }: PdpCardProps) {
 
   return (
     <Card
-      className={`border-l-4 overflow-hidden transition-all duration-200 hover:shadow-md ${
-        result.success
-          ? "border-l-emerald-500 hover:border-l-emerald-600"
-          : "border-l-red-500 hover:border-l-red-600"
-      }`}
+      className={`border-l-4 overflow-hidden transition-all duration-200 hover:shadow-md ${result.success
+        ? "border-l-emerald-500 hover:border-l-emerald-600"
+        : "border-l-red-500 hover:border-l-red-600"
+        }`}
     >
       <button
         onClick={() => setExpanded(!expanded)}
@@ -48,9 +47,8 @@ export function PdpCard({ result, runId, screenshots }: PdpCardProps) {
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
             <div
-              className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
-                result.success ? "bg-emerald-100" : "bg-red-100"
-              }`}
+              className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${result.success ? "bg-emerald-100" : "bg-red-100"
+                }`}
             >
               <span className="text-lg">{result.success ? "✅" : "❌"}</span>
             </div>
@@ -76,6 +74,11 @@ export function PdpCard({ result, runId, screenshots }: PdpCardProps) {
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
+            {result.channel === 'socialcommerce' && (
+              <Badge className="bg-purple-50 text-purple-700 border border-purple-200 font-semibold">
+                Minha Loja
+              </Badge>
+            )}
             <VendorLogo vendor={result.vendor} />
             <Badge className="bg-gray-50 text-gray-700 border border-gray-200">
               <img
