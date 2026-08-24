@@ -1,21 +1,26 @@
 'use client';
 
 import { Plus } from 'lucide-react';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { SkuDeleteDialog } from '@/components/sku-manager/sku-delete-dialog';
 import { SkuForm } from '@/components/sku-manager/sku-form';
 import { SkuList } from '@/components/sku-manager/sku-list';
+import { createSku, deleteSku, readSkus, updateSku } from '@/lib/sku-data-client';
 import type { SkuEntry } from '@/lib/types';
 
-interface SkusClientProps {
-  initialSkus: SkuEntry[];
-}
-
-export function SkusClient({ initialSkus }: SkusClientProps) {
-  const [skus, setSkus] = useState<SkuEntry[]>(initialSkus);
+export function SkusClient() {
+  const [skus, setSkus] = useState<SkuEntry[]>([]);
+  const [loading, setLoading] = useState(true);
   const [formOpen, setFormOpen] = useState(false);
   const [editingEntry, setEditingEntry] = useState<SkuEntry | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  useEffect(() => {
+    readSkus()
+      .then(setSkus)
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
 
   const deletingName = deletingId !== null ? (skus.find((s) => s.id === deletingId)?.name ?? null) : null;
 
@@ -35,26 +40,15 @@ export function SkusClient({ initialSkus }: SkusClientProps) {
   }, []);
 
   const handleCreate = useCallback(async (data: Omit<SkuEntry, 'id'>) => {
-    const res = await fetch('/api/skus', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
-    if (!res.ok) throw new Error('Falha ao criar SKU');
-    const created: SkuEntry = await res.json();
+    const created = await createSku(data);
     setSkus((prev) => [...prev, created]);
     closeForm();
   }, [closeForm]);
 
   const handleUpdate = useCallback(async (data: Omit<SkuEntry, 'id'>) => {
     if (editingEntry === null) return;
-    const res = await fetch(`/api/skus/${editingEntry.id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
-    if (!res.ok) throw new Error('Falha ao atualizar SKU');
-    const updated: SkuEntry = await res.json();
+    const updated = await updateSku(editingEntry.id, data);
+    if (updated === null) throw new Error('SKU não encontrado');
     setSkus((prev) => prev.map((s) => (s.id === updated.id ? updated : s)));
     closeForm();
   }, [editingEntry, closeForm]);
@@ -72,11 +66,18 @@ export function SkusClient({ initialSkus }: SkusClientProps) {
 
   const handleDelete = useCallback(async () => {
     if (deletingId === null) return;
-    const res = await fetch(`/api/skus/${deletingId}`, { method: 'DELETE' });
-    if (!res.ok) throw new Error('Falha ao excluir SKU');
+    await deleteSku(deletingId);
     setSkus((prev) => prev.filter((s) => s.id !== deletingId));
     setDeletingId(null);
   }, [deletingId]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-24 text-sm text-gray-400">
+        Carregando SKUs…
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-6">

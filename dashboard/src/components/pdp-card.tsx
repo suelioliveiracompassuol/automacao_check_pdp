@@ -76,6 +76,11 @@ export function PdpCard({ result, runId, screenshots }: PdpCardProps) {
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
+            {result.channel === 'socialcommerce' && (
+              <Badge className="bg-purple-50 text-purple-700 border border-purple-200 font-semibold">
+                Minha Loja
+              </Badge>
+            )}
             <VendorLogo vendor={result.vendor} />
             <Badge className="bg-gray-50 text-gray-700 border border-gray-200">
               <img

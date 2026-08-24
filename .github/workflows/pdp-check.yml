@@ -64,6 +64,9 @@ jobs:
         env:
           FEATURES_FILTER: ${{ inputs.features_filter }}
           OPERATIONS_FILTER: ${{ inputs.operations_filter }}
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+          FIREBASE_CLIENT_EMAIL: ${{ secrets.FIREBASE_CLIENT_EMAIL }}
+          FIREBASE_PRIVATE_KEY: ${{ secrets.FIREBASE_PRIVATE_KEY }}
         continue-on-error: true
 
       - name: 📊 Find report directory

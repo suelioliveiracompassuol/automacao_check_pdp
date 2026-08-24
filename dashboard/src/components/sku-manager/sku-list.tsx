@@ -82,7 +82,7 @@ export function SkuList({ skus, onEdit, onDelete }: SkuListProps) {
     const q = search.toLowerCase().trim();
 
     const filtered = skus.filter((s) => {
-      if (vendor !== ALL_OPTION && s.vendor !== vendor) return false;
+      if (vendor !== ALL_OPTION && s.vendor !== vendor) {return false;}
       if (country !== ALL_OPTION && s.country !== country) return false;
       if (channel !== ALL_OPTION && s.channel !== channel) return false;
       if (q !== '' && !s.name.toLowerCase().includes(q) && !s.sku.toLowerCase().includes(q))
