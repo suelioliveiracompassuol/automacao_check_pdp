@@ -90,10 +90,18 @@ describe("OperationFlagsGrid", () => {
     expect(screen.getByText("2 operações")).toBeInTheDocument();
   });
 
-  it("renders flag values", () => {
+  it("renders flag keys as row headers", () => {
     render(<OperationFlagsGrid results={resultsWithFlags} />);
-    const flags = screen.getAllByText("show_reviews");
-    expect(flags.length).toBeGreaterThanOrEqual(1);
+    const flagRows = screen.getAllByText("show_reviews");
+    expect(flagRows.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("flattens nested objects with dot notation", () => {
+    render(<OperationFlagsGrid results={resultsWithFlags} />);
+    expect(screen.getByText("product_reviews.enabled")).toBeInTheDocument();
+    expect(
+      screen.getByText("product_reviews.recommendation.enabled"),
+    ).toBeInTheDocument();
   });
 
   it("deduplicates operations with same key", () => {
@@ -102,27 +110,20 @@ describe("OperationFlagsGrid", () => {
       { ...resultsWithFlags[0], sku: "SKU-003" }, // same vendor+country
     ];
     render(<OperationFlagsGrid results={duplicateResults} />);
-    // Should only have 1 operation card
     expect(screen.getByText("1 operações")).toBeInTheDocument();
   });
 
-  it("renders vendor logo and country info", () => {
-    render(<OperationFlagsGrid results={resultsWithFlags} />);
-    // natura / br should be displayed
-    const naturaTexts = screen.getAllByText(/natura/);
-    expect(naturaTexts.length).toBeGreaterThanOrEqual(1);
-  });
-
-  it("renders nested category from RC_CATEGORIES mapping", () => {
-    render(<OperationFlagsGrid results={resultsWithFlags} />);
-    // product_reviews is in RC_CATEGORIES with icon 📝
-    expect(screen.getByText(/Reviews \(product_reviews\)/)).toBeInTheDocument();
-  });
-
-  it("renders nested-inner flags with dot notation", () => {
-    render(<OperationFlagsGrid results={resultsWithFlags} />);
-    // recommendation.enabled should be rendered as "recommendation.enabled"
-    expect(screen.getByText("recommendation.enabled")).toBeInTheDocument();
+  it("renders one column header per operation plus the Flag column", () => {
+    const { container } = render(
+      <OperationFlagsGrid results={resultsWithFlags} />,
+    );
+    // RC table has Flag + natura/br + avon/ar = 3 columns
+    // Commerce table has Flag + natura/br only = 2 columns (avon/ar has no commerceFeatureFlags)
+    const tables = container.querySelectorAll("table");
+    const rcHeaderThs = tables[0].querySelectorAll("thead th");
+    expect(rcHeaderThs.length).toBe(3);
+    const commerceHeaderThs = tables[1].querySelectorAll("thead th");
+    expect(commerceHeaderThs.length).toBe(2);
   });
 
   it("renders boolean true as checkmark", () => {
@@ -137,8 +138,26 @@ describe("OperationFlagsGrid", () => {
     expect(crosses.length).toBeGreaterThanOrEqual(1);
   });
 
+  it("renders null/undefined as em dash", () => {
+    render(<OperationFlagsGrid results={resultsWithFlags} />);
+    const dashes = screen.getAllByText("—");
+    expect(dashes.length).toBeGreaterThanOrEqual(1);
+  });
+
   it("renders number values as string", () => {
     render(<OperationFlagsGrid results={resultsWithFlags} />);
     expect(screen.getByText("42")).toBeInTheDocument();
+  });
+
+  it("renders separate tables for RC and commerce flags", () => {
+    render(<OperationFlagsGrid results={resultsWithFlags} />);
+    expect(screen.getByText(/Remote Config Flags/)).toBeInTheDocument();
+    expect(screen.getByText(/Commerce Feature Flags/)).toBeInTheDocument();
+  });
+
+  it("renders 'Flag' as the first column header", () => {
+    render(<OperationFlagsGrid results={resultsWithFlags} />);
+    const flagHeaders = screen.getAllByText("Flag");
+    expect(flagHeaders.length).toBeGreaterThanOrEqual(1);
   });
 });

@@ -276,15 +276,15 @@ export interface RemoteConfigFlags {
   wl_target_personalization_pdp_showcase?: boolean;
   wl_target_personalization_pdp_showcase_v2?: boolean;
 
-  // =========================================================================
-  // REVIEWS FLAGS (individual)
-  // =========================================================================
-  enable_konfidency_review?: boolean;
-  enable_review_ai_summary?: boolean;
-  enable_review_feedback?: boolean;
-  enable_reviews_filter?: boolean;
-  enable_reviews_sorting?: boolean;
-  enable_image_and_upload_review?: boolean;
+  // // =========================================================================
+  // // REVIEWS FLAGS (individual)
+  // // =========================================================================
+  // enable_konfidency_review?: boolean;
+  // enable_review_ai_summary?: boolean;
+  // enable_review_feedback?: boolean;
+  // enable_reviews_filter?: boolean;
+  // enable_reviews_sorting?: boolean;
+  // enable_image_and_upload_review?: boolean;
 
   // =========================================================================
   // PRODUCT CARD FLAGS
@@ -1012,12 +1012,12 @@ function parseRemoteConfigEntries(
     "wl_target_personalization_pdp_showcase",
     "wl_target_personalization_pdp_showcase_v2",
     // Reviews flags
-    "enable_konfidency_review",
-    "enable_review_ai_summary",
-    "enable_review_feedback",
-    "enable_reviews_filter",
-    "enable_reviews_sorting",
-    "enable_image_and_upload_review",
+    // "enable_konfidency_review",
+    // "enable_review_ai_summary",
+    // "enable_review_feedback",
+    // "enable_reviews_filter",
+    // "enable_reviews_sorting",
+    // "enable_image_and_upload_review",
     // Product card flags
     "enable_product_card_rating",
     "wl_show_rating_on_product_card",
@@ -1204,30 +1204,30 @@ export function getFlagsByCategory(
     categories["🛍️ PDP Features"] = pdpFlags;
   }
 
-  // Individual Reviews Flags
-  const reviewFlags: Record<string, unknown> = {};
-  if (flags.enable_konfidency_review !== undefined) {
-    reviewFlags.enable_konfidency_review = flags.enable_konfidency_review;
-  }
-  if (flags.enable_review_ai_summary !== undefined) {
-    reviewFlags.enable_review_ai_summary = flags.enable_review_ai_summary;
-  }
-  if (flags.enable_review_feedback !== undefined) {
-    reviewFlags.enable_review_feedback = flags.enable_review_feedback;
-  }
-  if (flags.enable_reviews_filter !== undefined) {
-    reviewFlags.enable_reviews_filter = flags.enable_reviews_filter;
-  }
-  if (flags.enable_reviews_sorting !== undefined) {
-    reviewFlags.enable_reviews_sorting = flags.enable_reviews_sorting;
-  }
-  if (flags.enable_image_and_upload_review !== undefined) {
-    reviewFlags.enable_image_and_upload_review =
-      flags.enable_image_and_upload_review;
-  }
-  if (Object.keys(reviewFlags).length > 0) {
-    categories["⭐ Reviews (individual)"] = reviewFlags;
-  }
+  // // Individual Reviews Flags
+  // const reviewFlags: Record<string, unknown> = {};
+  // if (flags.enable_konfidency_review !== undefined) {
+  //   reviewFlags.enable_konfidency_review = flags.enable_konfidency_review;
+  // }
+  // if (flags.enable_review_ai_summary !== undefined) {
+  //   reviewFlags.enable_review_ai_summary = flags.enable_review_ai_summary;
+  // }
+  // if (flags.enable_review_feedback !== undefined) {
+  //   reviewFlags.enable_review_feedback = flags.enable_review_feedback;
+  // }
+  // if (flags.enable_reviews_filter !== undefined) {
+  //   reviewFlags.enable_reviews_filter = flags.enable_reviews_filter;
+  // }
+  // if (flags.enable_reviews_sorting !== undefined) {
+  //   reviewFlags.enable_reviews_sorting = flags.enable_reviews_sorting;
+  // }
+  // if (flags.enable_image_and_upload_review !== undefined) {
+  //   reviewFlags.enable_image_and_upload_review =
+  //     flags.enable_image_and_upload_review;
+  // }
+  // if (Object.keys(reviewFlags).length > 0) {
+  //   categories["⭐ Reviews (individual)"] = reviewFlags;
+  // }
 
   // Product Card Flags
   const cardFlags: Record<string, unknown> = {};
