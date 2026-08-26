@@ -88,15 +88,21 @@ describe("data.ts", () => {
   });
 
   describe("getScreenshotsForRun", () => {
-    it("returns png files from screenshots directory", () => {
+    it("returns only full-page and error screenshots", () => {
       vi.mocked(fs.existsSync).mockReturnValue(true);
       vi.mocked(fs.readdirSync).mockReturnValue([
         "shot1.png",
+        "product_fullpage_001.png",
+        "product_error_002.png",
         "shot2.png",
-        "readme.txt",
-      ] as unknown as fs.Dirent<NonSharedBuffer>[]);
+      ] as unknown as ReturnType<typeof fs.readdirSync>);
+
       const result = getScreenshotsForRun("run_123");
-      expect(result).toEqual(["shot1.png", "shot2.png"]);
+
+      expect(result).toEqual([
+        "product_fullpage_001.png",
+        "product_error_002.png",
+      ]);
     });
 
     it("returns empty array when directory does not exist", () => {

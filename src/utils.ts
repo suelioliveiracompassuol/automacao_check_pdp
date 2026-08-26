@@ -1,5 +1,4 @@
 import { Page } from "@playwright/test";
-import * as path from "path";
 
 /**
  * Formats a boolean or unknown flag value into a visual emoji for logging.
@@ -12,26 +11,6 @@ export function formatFlagLogValue(value: unknown): string {
     return "❌";
   }
   return String(value);
-}
-
-/**
- * Safely takes a screenshot and returns the relative path to the output directory.
- * Returns undefined if the screenshot fails.
- */
-export async function safeScreenshot(
-  page: Page,
-  outputDir: string,
-  filenamePrefix: string,
-  fullPage = false,
-): Promise<string | undefined> {
-  const screenshotName = `${filenamePrefix}_${Date.now()}.png`;
-  const screenshotPath = path.join(outputDir, "screenshots", screenshotName);
-  try {
-    await page.screenshot({ path: screenshotPath, fullPage });
-    return path.relative(outputDir, screenshotPath);
-  } catch {
-    return undefined;
-  }
 }
 
 /**

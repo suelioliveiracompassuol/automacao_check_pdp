@@ -30,5 +30,11 @@ export function getScreenshotsForRun(runId: string): string[] {
   if (!fs.existsSync(dir)) {
     return [];
   }
-  return fs.readdirSync(dir).filter((f) => f.endsWith(".png"));
+  return fs
+    .readdirSync(dir)
+    .filter(
+      (f) =>
+        f.endsWith(".png") &&
+        (f.includes("_fullpage_") || f.includes("_error_")),
+    );
 }

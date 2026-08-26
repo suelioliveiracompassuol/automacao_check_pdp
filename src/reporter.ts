@@ -173,7 +173,6 @@ export function generateHtmlReport(report: MonitoringReport): string {
     <tr class="${statusClass(feature.passed, feature.status)}">
       <td>${statusEmoji(feature.passed, feature.status)} ${feature.feature}</td>
       <td>${feature.message}</td>
-            <td>${feature.screenshot ? `<a href="${feature.screenshot}" target="_blank">📷</a>` : "-"}</td>
     </tr>
   `;
   };
@@ -236,7 +235,6 @@ export function generateHtmlReport(report: MonitoringReport): string {
         <tr class="feature-group-header status-${reviewGroupStatus} expanded" onclick="this.classList.toggle('expanded');var rows=this.parentElement.querySelectorAll('.group-review-rating');rows.forEach(function(r){r.classList.toggle('group-hidden')})" style="cursor:pointer">
           <td>${reviewGroupEmoji} ⭐ Avaliações & Rating <span class="group-toggle">▶</span> <span class="group-summary">(${reviewPassCount}/${reviewTotal} ok${disabledNote})</span></td>
           <td>${reviewFailCount > 0 ? `${reviewFailCount} falha(s)` : "Todas as sub-features ok"}</td>
-          <td>-</td>
         </tr>
       `;
       for (const f of reviewFeatures) {
@@ -244,7 +242,7 @@ export function generateHtmlReport(report: MonitoringReport): string {
         <tr class="group-review-rating ${statusClass(f.passed, f.status)}">
           <td style="padding-left:32px">${statusEmoji(f.passed, f.status)} ${f.feature}</td>
           <td>${f.message}</td>
-          <td>${f.screenshot ? `<a href="${f.screenshot}" target="_blank">📷</a>` : "-"}</td>        </tr>
+        </tr>
         `;
       }
     }
@@ -255,7 +253,6 @@ export function generateHtmlReport(report: MonitoringReport): string {
         <tr class="feature-group-header status-${endpointGroupStatus}" onclick="this.classList.toggle('expanded');var rows=this.parentElement.querySelectorAll('.group-endpoint');rows.forEach(function(r){r.classList.toggle('group-hidden')})" style="cursor:pointer">
           <td>${endpointGroupEmoji} 🌐 Endpoints de API <span class="group-toggle">▶</span> <span class="group-summary">(${endpointPassCount}/${endpointTotal} ok)</span></td>
           <td>${endpointFailCount > 0 ? `${endpointFailCount} falha(s)` : "Todos os endpoints ok"}</td>
-          <td>-</td>
         </tr>
       `;
       for (const f of endpointFeatures) {
@@ -280,7 +277,6 @@ export function generateHtmlReport(report: MonitoringReport): string {
         <tr class="group-endpoint group-hidden ${statusClass(f.passed, f.status)}">
           <td style="padding-left:32px">${statusEmoji(f.passed, f.status)} ${f.feature}</td>
           <td>${f.message}${bodyPreview}${calls ? `<br><small>${calls}</small>` : ""}</td>
-          <td>-</td>
         </tr>
         `;
       }
@@ -515,8 +511,7 @@ export function generateHtmlReport(report: MonitoringReport): string {
         <thead>
           <tr>
             <th>Feature</th>
-            <th>Status</th>
-            <th>Screenshot</th>
+            <th>Detalhes</th>
           </tr>
         </thead>
         <tbody>

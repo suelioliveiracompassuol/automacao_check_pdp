@@ -22,8 +22,6 @@ export interface CheckResult {
    */
   status: "pass" | "fail" | "disabled" | "na" | "error" | "warning";
   message: string;
-  /** Screenshot path if failed */
-  screenshot?: string;
   /** Additional details for debugging */
   details?: Record<string, unknown>;
   /** Remote Config flag key that controls this feature */

@@ -139,9 +139,6 @@ export function FeatureTable({
               <th className="py-2.5 px-3 font-semibold text-gray-600 text-xs uppercase tracking-wide">
                 Detalhes
               </th>
-              <th className="py-2.5 px-3 font-semibold text-gray-600 text-xs uppercase tracking-wide w-12 text-center">
-                <Camera className="w-3.5 h-3.5 mx-auto text-gray-400" />
-              </th>
             </tr>
           </thead>
           <tbody>
@@ -153,7 +150,7 @@ export function FeatureTable({
                   f.status === "fail" && "bg-red-50/60 hover:bg-red-50",
                   f.status === "pass" && "hover:bg-gray-50/80",
                   f.status === "warning" &&
-                    "bg-amber-50/40 hover:bg-amber-50/60",
+                  "bg-amber-50/40 hover:bg-amber-50/60",
                   f.status === "error" && "bg-amber-50/40 hover:bg-amber-50/60",
                   f.status === "na" && "opacity-60 hover:opacity-80",
                   f.status === "disabled" && "opacity-50",
@@ -167,24 +164,6 @@ export function FeatureTable({
                 </td>
                 <td className="py-2 px-3 text-gray-600 max-w-md text-xs leading-relaxed">
                   {f.message}
-                </td>
-                <td className="py-2 px-3 text-center">
-                  {f.screenshot ? (
-                    <button
-                      onClick={() =>
-                        openScreenshot(
-                          getScreenshotUrl(f.screenshot!),
-                          f.feature,
-                        )
-                      }
-                      className="inline-flex items-center justify-center w-7 h-7 rounded-md bg-indigo-50 hover:bg-indigo-100 text-indigo-600 hover:text-indigo-700 transition-colors cursor-pointer"
-                      title="Ver screenshot"
-                    >
-                      <Camera className="w-3.5 h-3.5" />
-                    </button>
-                  ) : (
-                    <span className="text-gray-300">-</span>
-                  )}
                 </td>
               </tr>
             ))}

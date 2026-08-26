@@ -11,7 +11,6 @@ export interface CheckResult {
   passed: boolean;
   status: Status;
   message: string;
-  screenshot?: string;
   details?: Record<string, unknown>;
   flagKey?: string;
   flagValue?: unknown;

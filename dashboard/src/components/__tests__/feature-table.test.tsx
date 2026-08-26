@@ -29,7 +29,6 @@ const mockFeatures: CheckResult[] = [
     passed: false,
     status: "fail",
     message: "Price not found",
-    screenshot: "screenshots/price.png",
   },
   {
     feature: "Reviews",
@@ -77,12 +76,6 @@ describe("FeatureTable", () => {
     expect(screen.getByText("67%")).toBeInTheDocument();
   });
 
-  it("shows screenshot button for features with screenshots", () => {
-    render(<FeatureTable features={mockFeatures} runId="run_123" />);
-    const buttons = screen.getAllByTitle("Ver screenshot");
-    expect(buttons.length).toBe(1);
-  });
-
   it("renders page screenshot link when provided", () => {
     render(
       <FeatureTable
@@ -101,13 +94,6 @@ describe("FeatureTable", () => {
     expect(
       screen.queryByText("Ver screenshot da página completa"),
     ).not.toBeInTheDocument();
-  });
-
-  it("opens screenshot dialog when clicking screenshot button", () => {
-    render(<FeatureTable features={mockFeatures} runId="run_123" />);
-    const button = screen.getByTitle("Ver screenshot");
-    fireEvent.click(button);
-    expect(button).toBeInTheDocument();
   });
 
   it("opens page screenshot dialog when clicking page screenshot link", () => {
