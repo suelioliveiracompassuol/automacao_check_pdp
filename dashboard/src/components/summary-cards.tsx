@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { motion } from "framer-motion";
-import { Card } from "./ui/card";
-import { CheckCircle2, XCircle, AlertTriangle, BarChart3 } from "lucide-react";
+import { motion } from 'framer-motion';
+import { Card } from './ui/card';
+import { CheckCircle2, XCircle, AlertTriangle, BarChart3 } from 'lucide-react';
 
 interface SummaryCardsProps {
   total: number;
@@ -11,15 +11,7 @@ interface SummaryCardsProps {
   errors: number;
 }
 
-function ProgressRing({
-  value,
-  max,
-  color,
-}: {
-  value: number;
-  max: number;
-  color: string;
-}) {
+function ProgressRing({ value, max, color }: { value: number; max: number; color: string }) {
   const percentage = max > 0 ? (value / max) * 100 : 0;
   const circumference = 2 * Math.PI * 38;
   const offset = circumference - (percentage / 100) * circumference;
@@ -46,7 +38,7 @@ function ProgressRing({
         strokeDasharray={circumference}
         strokeDashoffset={offset}
         className="transition-all duration-1000 ease-out"
-        style={{ animation: "progressRing 1s ease-out forwards" }}
+        style={{ animation: 'progressRing 1s ease-out forwards' }}
       />
     </svg>
   );
@@ -54,45 +46,40 @@ function ProgressRing({
 
 const items = [
   {
-    key: "total",
-    label: "Total de PDPs",
+    key: 'total',
+    label: 'Total de PDPs',
     icon: BarChart3,
-    color: "#2563eb",
-    bgGradient: "from-blue-50 to-indigo-50",
-    borderColor: "border-l-blue-500",
+    color: '#2563eb',
+    bgGradient: 'from-blue-50 to-indigo-50',
+    borderColor: 'border-l-blue-500',
   },
   {
-    key: "passed",
-    label: "Passou",
+    key: 'passed',
+    label: 'Passou',
     icon: CheckCircle2,
-    color: "#059669",
-    bgGradient: "from-emerald-50 to-green-50",
-    borderColor: "border-l-emerald-500",
+    color: '#059669',
+    bgGradient: 'from-emerald-50 to-green-50',
+    borderColor: 'border-l-emerald-500',
   },
   {
-    key: "failed",
-    label: "Falhou",
+    key: 'failed',
+    label: 'Falhou',
     icon: XCircle,
-    color: "#dc2626",
-    bgGradient: "from-red-50 to-rose-50",
-    borderColor: "border-l-red-500",
+    color: '#dc2626',
+    bgGradient: 'from-red-50 to-rose-50',
+    borderColor: 'border-l-red-500',
   },
   {
-    key: "errors",
-    label: "Erros",
+    key: 'errors',
+    label: 'Erros',
     icon: AlertTriangle,
-    color: "#d97706",
-    bgGradient: "from-amber-50 to-yellow-50",
-    borderColor: "border-l-amber-500",
+    color: '#d97706',
+    bgGradient: 'from-amber-50 to-yellow-50',
+    borderColor: 'border-l-amber-500',
   },
 ] as const;
 
-export function SummaryCards({
-  total,
-  passed,
-  failed,
-  errors,
-}: SummaryCardsProps) {
+export function SummaryCards({ total, passed, failed, errors }: SummaryCardsProps) {
   const values = { total, passed, failed, errors };
   const passRate = total > 0 ? Math.round((passed / total) * 100) : 0;
 
@@ -107,9 +94,7 @@ export function SummaryCards({
         <Card className="bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 text-white border-0 shadow-lg shadow-indigo-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-indigo-200 text-sm font-medium">
-                Taxa de aprovação
-              </p>
+              <p className="text-indigo-200 text-sm font-medium">Taxa de aprovação</p>
               <p className="text-4xl font-bold mt-1">{passRate}%</p>
               <p className="text-indigo-200 text-xs mt-2">
                 {passed} de {total} PDPs passaram em todas as verificações
@@ -146,15 +131,10 @@ export function SummaryCards({
                     <Icon className="w-4 h-4" style={{ color: item.color }} />
                   </div>
                   <div>
-                    <div
-                      className="text-2xl font-bold"
-                      style={{ color: item.color }}
-                    >
+                    <div className="text-2xl font-bold" style={{ color: item.color }}>
                       {values[item.key]}
                     </div>
-                    <div className="text-xs text-gray-600 font-medium">
-                      {item.label}
-                    </div>
+                    <div className="text-xs text-gray-600 font-medium">{item.label}</div>
                   </div>
                 </div>
               </Card>

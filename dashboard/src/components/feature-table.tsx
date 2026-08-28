@@ -1,19 +1,12 @@
-"use client";
+'use client';
 
-import type { CheckResult } from "@/lib/types";
-import { StatusBadge } from "./status-badge";
-import { cn } from "@/lib/utils";
-import { basePath } from "@/lib/config";
-import {
-  Camera,
-  X,
-  Image as ImageIcon,
-  ZoomIn,
-  ZoomOut,
-  RotateCcw,
-} from "lucide-react";
-import * as Dialog from "@radix-ui/react-dialog";
-import { useState, useRef, useCallback } from "react";
+import type { CheckResult } from '@/lib/types';
+import { StatusBadge } from './status-badge';
+import { cn } from '@/lib/utils';
+import { basePath } from '@/lib/config';
+import { Camera, X, Image as ImageIcon, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
+import * as Dialog from '@radix-ui/react-dialog';
+import { useState, useRef, useCallback } from 'react';
 
 interface FeatureTableProps {
   features: CheckResult[];
@@ -21,11 +14,7 @@ interface FeatureTableProps {
   pageScreenshot?: string;
 }
 
-export function FeatureTable({
-  features,
-  runId,
-  pageScreenshot,
-}: FeatureTableProps) {
+export function FeatureTable({ features, runId, pageScreenshot }: FeatureTableProps) {
   const [selectedScreenshot, setSelectedScreenshot] = useState<{
     src: string;
     title: string;
@@ -87,18 +76,13 @@ export function FeatureTable({
   }
 
   // Only count features that are actually testable (exclude na)
-  const testable = features.filter((f) => f.status !== "na");
-  const passed = testable.filter(
-    (f) => f.passed || f.status === "disabled",
-  ).length;
-  const failed = testable.filter(
-    (f) => !f.passed && f.status !== "disabled",
-  ).length;
+  const testable = features.filter((f) => f.status !== 'na');
+  const passed = testable.filter((f) => f.passed || f.status === 'disabled').length;
+  const failed = testable.filter((f) => !f.passed && f.status !== 'disabled').length;
   const total = testable.length;
   const percentage = total > 0 ? Math.round((passed / total) * 100) : 0;
 
-  const getScreenshotUrl = (path: string) =>
-    `${basePath}/reports/${runId}/${path}`;
+  const getScreenshotUrl = (path: string) => `${basePath}/reports/${runId}/${path}`;
 
   return (
     <div className="space-y-2">
@@ -109,18 +93,18 @@ export function FeatureTable({
         <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
           <div
             className={cn(
-              "h-full rounded-full transition-all duration-500",
+              'h-full rounded-full transition-all duration-500',
               failed > 0
-                ? "bg-gradient-to-r from-emerald-400 to-emerald-500"
-                : "bg-gradient-to-r from-emerald-400 to-emerald-500",
+                ? 'bg-gradient-to-r from-emerald-400 to-emerald-500'
+                : 'bg-gradient-to-r from-emerald-400 to-emerald-500',
             )}
             style={{ width: `${percentage}%` }}
           />
         </div>
         <span
           className={cn(
-            "text-xs font-bold whitespace-nowrap",
-            failed > 0 ? "text-red-600" : "text-emerald-600",
+            'text-xs font-bold whitespace-nowrap',
+            failed > 0 ? 'text-red-600' : 'text-emerald-600',
           )}
         >
           {percentage}%
@@ -146,22 +130,19 @@ export function FeatureTable({
               <tr
                 key={`${f.featureKey}-${i}`}
                 className={cn(
-                  "border-t border-gray-50 transition-colors",
-                  f.status === "fail" && "bg-red-50/60 hover:bg-red-50",
-                  f.status === "pass" && "hover:bg-gray-50/80",
-                  f.status === "warning" &&
-                  "bg-amber-50/40 hover:bg-amber-50/60",
-                  f.status === "error" && "bg-amber-50/40 hover:bg-amber-50/60",
-                  f.status === "na" && "opacity-60 hover:opacity-80",
-                  f.status === "disabled" && "opacity-50",
+                  'border-t border-gray-50 transition-colors',
+                  f.status === 'fail' && 'bg-red-50/60 hover:bg-red-50',
+                  f.status === 'pass' && 'hover:bg-gray-50/80',
+                  f.status === 'warning' && 'bg-amber-50/40 hover:bg-amber-50/60',
+                  f.status === 'error' && 'bg-amber-50/40 hover:bg-amber-50/60',
+                  f.status === 'na' && 'opacity-60 hover:opacity-80',
+                  f.status === 'disabled' && 'opacity-50',
                 )}
               >
                 <td className="py-2 px-3">
                   <StatusBadge status={f.status} />
                 </td>
-                <td className="py-2 px-3 font-medium text-gray-800 text-xs">
-                  {f.feature}
-                </td>
+                <td className="py-2 px-3 font-medium text-gray-800 text-xs">{f.feature}</td>
                 <td className="py-2 px-3 text-gray-600 max-w-md text-xs leading-relaxed">
                   {f.message}
                 </td>
@@ -175,10 +156,7 @@ export function FeatureTable({
       {pageScreenshot && (
         <button
           onClick={() =>
-            openScreenshot(
-              getScreenshotUrl(pageScreenshot),
-              "Screenshot da página completa",
-            )
+            openScreenshot(getScreenshotUrl(pageScreenshot), 'Screenshot da página completa')
           }
           className="flex items-center gap-2 text-xs text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-3 py-2 rounded-lg transition-colors cursor-pointer mt-2"
         >
@@ -188,10 +166,7 @@ export function FeatureTable({
       )}
 
       {/* Screenshot Modal */}
-      <Dialog.Root
-        open={!!selectedScreenshot}
-        onOpenChange={() => setSelectedScreenshot(null)}
-      >
+      <Dialog.Root open={!!selectedScreenshot} onOpenChange={() => setSelectedScreenshot(null)}>
         <Dialog.Portal>
           <Dialog.Overlay className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50" />
           <Dialog.Content className="fixed inset-4 md:inset-8 lg:inset-12 z-50 bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col">
@@ -238,7 +213,7 @@ export function FeatureTable({
               onMouseUp={handleMouseUp}
               onMouseLeave={handleMouseUp}
               style={{
-                cursor: zoom > 1 ? (dragging ? "grabbing" : "grab") : "default",
+                cursor: zoom > 1 ? (dragging ? 'grabbing' : 'grab') : 'default',
               }}
             >
               {selectedScreenshot && (
@@ -249,7 +224,7 @@ export function FeatureTable({
                   draggable={false}
                   style={{
                     transform: `scale(${zoom}) translate(${position.x / zoom}px, ${position.y / zoom}px)`,
-                    transition: dragging ? "none" : "transform 0.2s ease",
+                    transition: dragging ? 'none' : 'transform 0.2s ease',
                   }}
                 />
               )}

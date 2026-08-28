@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { useState, useMemo } from "react";
-import type { PdpCheckResult } from "@/lib/types";
-import { FilterBar } from "@/components/filter-bar";
-import { PdpCard } from "@/components/pdp-card";
-import { OperationFlagsGrid } from "@/components/operation-flags-grid";
-import { motion } from "framer-motion";
+import { useState, useMemo } from 'react';
+import type { PdpCheckResult } from '@/lib/types';
+import { FilterBar } from '@/components/filter-bar';
+import { PdpCard } from '@/components/pdp-card';
+import { OperationFlagsGrid } from '@/components/operation-flags-grid';
+import { motion } from 'framer-motion';
 
-type FilterStatus = "all" | "pass" | "fail";
+type FilterStatus = 'all' | 'pass' | 'fail';
 
 interface ReportClientProps {
   results: PdpCheckResult[];
@@ -15,33 +15,26 @@ interface ReportClientProps {
   screenshots: string[];
 }
 
-export function ReportClient({
-  results,
-  runId,
-  screenshots,
-}: ReportClientProps) {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedVendor, setSelectedVendor] = useState("all");
-  const [selectedOperation, setSelectedOperation] = useState("all");
-  const [selectedStatus, setSelectedStatus] = useState<FilterStatus>("all");
+export function ReportClient({ results, runId, screenshots }: ReportClientProps) {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedVendor, setSelectedVendor] = useState('all');
+  const [selectedOperation, setSelectedOperation] = useState('all');
+  const [selectedStatus, setSelectedStatus] = useState<FilterStatus>('all');
 
   const filteredResults = useMemo(() => {
     return results.filter((r) => {
-      if (
-        selectedVendor !== "all" &&
-        r.vendor.toLowerCase() !== selectedVendor
-      ) {
+      if (selectedVendor !== 'all' && r.vendor.toLowerCase() !== selectedVendor) {
         return false;
       }
-      if (selectedOperation !== "all") {
+      if (selectedOperation !== 'all') {
         if (r.country.toUpperCase() !== selectedOperation) {
           return false;
         }
       }
-      if (selectedStatus === "pass") {
+      if (selectedStatus === 'pass') {
         return r.success;
       }
-      if (selectedStatus === "fail") {
+      if (selectedStatus === 'fail') {
         return !r.success;
       }
 
@@ -75,12 +68,9 @@ export function ReportClient({
 
       {/* Results section header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-900">
-          Resultados por PDP
-        </h2>
+        <h2 className="text-lg font-semibold text-gray-900">Resultados por PDP</h2>
         <span className="text-xs text-gray-500 bg-gray-100 px-2.5 py-1 rounded-full">
-          {filteredResults.length}{" "}
-          {filteredResults.length === 1 ? "item" : "itens"}
+          {filteredResults.length} {filteredResults.length === 1 ? 'item' : 'itens'}
         </span>
       </div>
 
@@ -98,12 +88,8 @@ export function ReportClient({
         {filteredResults.length === 0 && (
           <div className="text-center py-16">
             <div className="text-4xl mb-3">🔍</div>
-            <p className="text-gray-500 font-medium">
-              Nenhum resultado encontrado
-            </p>
-            <p className="text-gray-400 text-sm mt-1">
-              Tente ajustar os filtros ou a busca
-            </p>
+            <p className="text-gray-500 font-medium">Nenhum resultado encontrado</p>
+            <p className="text-gray-400 text-sm mt-1">Tente ajustar os filtros ou a busca</p>
           </div>
         )}
       </div>

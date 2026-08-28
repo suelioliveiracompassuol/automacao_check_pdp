@@ -1,40 +1,37 @@
-import { cn } from "@/lib/utils";
-import type { Status } from "@/lib/types";
-import { Check, X, AlertTriangle, Minus, Ban } from "lucide-react";
+import { cn } from '@/lib/utils';
+import type { Status } from '@/lib/types';
+import { Check, X, AlertTriangle, Minus, Ban } from 'lucide-react';
 
-const statusConfig: Record<
-  Status,
-  { label: string; icon: typeof Check; colors: string }
-> = {
+const statusConfig: Record<Status, { label: string; icon: typeof Check; colors: string }> = {
   pass: {
-    label: "Passou",
+    label: 'Passou',
     icon: Check,
-    colors: "bg-emerald-100 text-emerald-700 border-emerald-200",
+    colors: 'bg-emerald-100 text-emerald-700 border-emerald-200',
   },
   fail: {
-    label: "Falhou",
+    label: 'Falhou',
     icon: X,
-    colors: "bg-red-100 text-red-700 border-red-200",
+    colors: 'bg-red-100 text-red-700 border-red-200',
   },
   error: {
-    label: "Erro",
+    label: 'Erro',
     icon: AlertTriangle,
-    colors: "bg-amber-100 text-amber-700 border-amber-200",
+    colors: 'bg-amber-100 text-amber-700 border-amber-200',
   },
   warning: {
-    label: "Alerta",
+    label: 'Alerta',
     icon: AlertTriangle,
-    colors: "bg-amber-100 text-amber-700 border-amber-200",
+    colors: 'bg-amber-100 text-amber-700 border-amber-200',
   },
   disabled: {
-    label: "Off",
+    label: 'Off',
     icon: Ban,
-    colors: "bg-gray-100 text-gray-500 border-gray-200",
+    colors: 'bg-gray-100 text-gray-500 border-gray-200',
   },
   na: {
-    label: "N/A",
+    label: 'N/A',
     icon: Minus,
-    colors: "bg-gray-50 text-gray-400 border-gray-200",
+    colors: 'bg-gray-50 text-gray-400 border-gray-200',
   },
 };
 
@@ -50,7 +47,7 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold border",
+        'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold border',
         config.colors,
         className,
       )}

@@ -1,14 +1,8 @@
-export function VendorLogo({
-  vendor,
-  size = "md",
-}: {
-  vendor: string;
-  size?: "sm" | "md";
-}) {
+export function VendorLogo({ vendor, size = 'md' }: { vendor: string; size?: 'sm' | 'md' }) {
   const v = vendor.toLowerCase();
-  const scale = size === "sm" ? 0.6 : 1;
+  const scale = size === 'sm' ? 0.6 : 1;
 
-  if (v === "natura") {
+  if (v === 'natura') {
     return (
       <svg
         width={70 * scale}
@@ -50,7 +44,7 @@ export function VendorLogo({
     );
   }
 
-  if (v === "avon") {
+  if (v === 'avon') {
     return (
       <svg
         width={47 * scale}

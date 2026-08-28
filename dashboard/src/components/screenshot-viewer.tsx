@@ -1,19 +1,16 @@
-"use client";
+'use client';
 
-import * as Dialog from "@radix-ui/react-dialog";
-import { X, ZoomIn, ZoomOut, RotateCcw } from "lucide-react";
-import { useState, useRef, useCallback } from "react";
-import { basePath } from "@/lib/config";
+import * as Dialog from '@radix-ui/react-dialog';
+import { X, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
+import { useState, useRef, useCallback } from 'react';
+import { basePath } from '@/lib/config';
 
 interface ScreenshotViewerProps {
   screenshots: string[];
   runId: string;
 }
 
-export function ScreenshotViewer({
-  screenshots,
-  runId,
-}: ScreenshotViewerProps) {
+export function ScreenshotViewer({ screenshots, runId }: ScreenshotViewerProps) {
   const [selected, setSelected] = useState<string | null>(null);
   const [zoom, setZoom] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -78,12 +75,12 @@ export function ScreenshotViewer({
             onClick={() => handleOpen(file)}
             className="text-xs text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-2 py-1 rounded transition-colors cursor-pointer"
           >
-            📷{" "}
+            📷{' '}
             {file
-              .replace(/\.png$/, "")
-              .split("_")
+              .replace(/\.png$/, '')
+              .split('_')
               .slice(-2, -1)
-              .join("")}
+              .join('')}
           </button>
         ))}
       </div>
@@ -134,7 +131,7 @@ export function ScreenshotViewer({
               onMouseUp={handleMouseUp}
               onMouseLeave={handleMouseUp}
               style={{
-                cursor: zoom > 1 ? (dragging ? "grabbing" : "grab") : "default",
+                cursor: zoom > 1 ? (dragging ? 'grabbing' : 'grab') : 'default',
               }}
             >
               {selected && (
@@ -145,7 +142,7 @@ export function ScreenshotViewer({
                   draggable={false}
                   style={{
                     transform: `scale(${zoom}) translate(${position.x / zoom}px, ${position.y / zoom}px)`,
-                    transition: dragging ? "none" : "transform 0.2s ease",
+                    transition: dragging ? 'none' : 'transform 0.2s ease',
                   }}
                 />
               )}

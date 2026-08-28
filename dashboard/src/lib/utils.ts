@@ -1,7 +1,7 @@
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
-import type { Status, PdpCheckResult } from "./types";
-import { basePath } from "./config";
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+import type { Status, PdpCheckResult } from './types';
+import { basePath } from './config';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -21,45 +21,43 @@ export function formatDuration(ms: number): string {
 }
 
 export function formatDate(iso: string): string {
-  return new Date(iso).toLocaleString("pt-BR", {
-    dateStyle: "short",
-    timeStyle: "medium",
-    timeZone: "America/Sao_Paulo",
+  return new Date(iso).toLocaleString('pt-BR', {
+    dateStyle: 'short',
+    timeStyle: 'medium',
+    timeZone: 'America/Sao_Paulo',
   });
 }
 
 export function getStatusColor(status: Status): string {
   const colors: Record<Status, string> = {
-    pass: "text-emerald-600 bg-emerald-50",
-    fail: "text-red-600 bg-red-50",
-    error: "text-amber-600 bg-amber-50",
-    warning: "text-amber-600 bg-amber-50",
-    disabled: "text-gray-500 bg-gray-100",
-    na: "text-gray-400 bg-gray-50",
+    pass: 'text-emerald-600 bg-emerald-50',
+    fail: 'text-red-600 bg-red-50',
+    error: 'text-amber-600 bg-amber-50',
+    warning: 'text-amber-600 bg-amber-50',
+    disabled: 'text-gray-500 bg-gray-100',
+    na: 'text-gray-400 bg-gray-50',
   };
-  return colors[status] || "text-gray-500 bg-gray-50";
+  return colors[status] || 'text-gray-500 bg-gray-50';
 }
 
 export function getStatusIcon(status: Status): string {
   const icons: Record<Status, string> = {
-    pass: "✅",
-    fail: "❌",
-    error: "⚠️",
-    warning: "⚠️",
-    disabled: "🚫",
-    na: "➖",
+    pass: '✅',
+    fail: '❌',
+    error: '⚠️',
+    warning: '⚠️',
+    disabled: '🚫',
+    na: '➖',
   };
-  return icons[status] || "❓";
+  return icons[status] || '❓';
 }
 
 export function getOperationKey(result: PdpCheckResult): string {
-  const channel = result.channel || "ecommerce";
-  return `${result.vendor}-${result.country}${channel === "socialcommerce" ? "-social" : ""}`;
+  const channel = result.channel || 'ecommerce';
+  return `${result.vendor}-${result.country}${channel === 'socialcommerce' ? '-social' : ''}`;
 }
 
-export function groupByOperation(
-  results: PdpCheckResult[],
-): Map<string, PdpCheckResult[]> {
+export function groupByOperation(results: PdpCheckResult[]): Map<string, PdpCheckResult[]> {
   const map = new Map<string, PdpCheckResult[]>();
   for (const r of results) {
     const key = getOperationKey(r);

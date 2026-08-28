@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import type { PdpCheckResult } from "@/lib/types";
-import { useMemo } from "react";
-import { Search, X, Globe } from "lucide-react";
-import { VendorLogo } from "./vendor-logo";
-import { getCountryFlag } from "@/lib/utils";
+import type { PdpCheckResult } from '@/lib/types';
+import { useMemo } from 'react';
+import { Search, X, Globe } from 'lucide-react';
+import { VendorLogo } from './vendor-logo';
+import { getCountryFlag } from '@/lib/utils';
 
-type FilterStatus = "all" | "pass" | "fail";
+type FilterStatus = 'all' | 'pass' | 'fail';
 
 interface FilterBarProps {
   results: PdpCheckResult[];
@@ -34,9 +34,7 @@ export function FilterBar({
   const vendors = useMemo(() => {
     const set = new Set<string>();
     for (const r of results) {
-      set.add(
-        r.vendor.charAt(0).toUpperCase() + r.vendor.slice(1).toLowerCase(),
-      );
+      set.add(r.vendor.charAt(0).toUpperCase() + r.vendor.slice(1).toLowerCase());
     }
     return [...set].sort();
   }, [results]);
@@ -45,28 +43,25 @@ export function FilterBar({
   const countries = useMemo(() => {
     const set = new Set<string>();
     for (const r of results) {
-      if (
-        selectedVendor === "all" ||
-        r.vendor.toLowerCase() === selectedVendor
-      ) {
+      if (selectedVendor === 'all' || r.vendor.toLowerCase() === selectedVendor) {
         set.add(r.country.toUpperCase());
       }
     }
     return [...set].sort();
   }, [results, selectedVendor]);
 
-  const vendorTabs = ["Todos", ...vendors];
+  const vendorTabs = ['Todos', ...vendors];
   const statusTabs: { key: FilterStatus; label: string; icon: string }[] = [
-    { key: "all", label: "Todos", icon: "📋" },
-    { key: "pass", label: "Aprovados", icon: "✅" },
-    { key: "fail", label: "Reprovados", icon: "❌" },
+    { key: 'all', label: 'Todos', icon: '📋' },
+    { key: 'pass', label: 'Aprovados', icon: '✅' },
+    { key: 'fail', label: 'Reprovados', icon: '❌' },
   ];
 
   const hasActiveFilters =
-    searchQuery !== "" ||
-    selectedVendor !== "all" ||
-    selectedOperation !== "all" ||
-    selectedStatus !== "all";
+    searchQuery !== '' ||
+    selectedVendor !== 'all' ||
+    selectedOperation !== 'all' ||
+    selectedStatus !== 'all';
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 space-y-3">
@@ -91,8 +86,8 @@ export function FilterBar({
               onClick={() => onStatusChange(tab.key)}
               className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all cursor-pointer ${
                 selectedStatus === tab.key
-                  ? "bg-white text-gray-900 shadow-sm"
-                  : "text-gray-500 hover:text-gray-700"
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'text-gray-500 hover:text-gray-700'
               }`}
             >
               <span className="flex items-center gap-1">
@@ -107,10 +102,10 @@ export function FilterBar({
         {hasActiveFilters && (
           <button
             onClick={() => {
-              onSearchChange("");
-              onVendorChange("all");
-              onOperationChange("all");
-              onStatusChange("all");
+              onSearchChange('');
+              onVendorChange('all');
+              onOperationChange('all');
+              onStatusChange('all');
             }}
             className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-all cursor-pointer"
           >
@@ -130,29 +125,27 @@ export function FilterBar({
           <div className="flex items-center gap-1 bg-gray-50 p-1 rounded-lg">
             {vendorTabs.map((vendor) => {
               const isActive =
-                (vendor === "Todos" && selectedVendor === "all") ||
+                (vendor === 'Todos' && selectedVendor === 'all') ||
                 vendor.toLowerCase() === selectedVendor;
               return (
                 <button
                   key={vendor}
                   onClick={() => {
-                    onVendorChange(
-                      vendor === "Todos" ? "all" : vendor.toLowerCase(),
-                    );
-                    onOperationChange("all");
+                    onVendorChange(vendor === 'Todos' ? 'all' : vendor.toLowerCase());
+                    onOperationChange('all');
                   }}
                   className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all cursor-pointer ${
                     isActive
-                      ? "bg-white text-gray-900 shadow-sm"
-                      : "text-gray-500 hover:text-gray-700"
+                      ? 'bg-white text-gray-900 shadow-sm'
+                      : 'text-gray-500 hover:text-gray-700'
                   }`}
                 >
-                  {vendor !== "Todos" ? (
+                  {vendor !== 'Todos' ? (
                     <span className="flex items-center gap-1.5">
                       <VendorLogo vendor={vendor} size="sm" />
                     </span>
                   ) : (
-                    "Todos"
+                    'Todos'
                   )}
                 </button>
               );
@@ -168,11 +161,11 @@ export function FilterBar({
           </span>
           <div className="flex items-center gap-1 bg-gray-50 p-1 rounded-lg flex-wrap">
             <button
-              onClick={() => onOperationChange("all")}
+              onClick={() => onOperationChange('all')}
               className={`px-2.5 py-1 text-xs font-medium rounded-md transition-all cursor-pointer ${
-                selectedOperation === "all"
-                  ? "bg-white text-gray-900 shadow-sm"
-                  : "text-gray-500 hover:text-gray-700"
+                selectedOperation === 'all'
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'text-gray-500 hover:text-gray-700'
               }`}
             >
               Todas
@@ -183,8 +176,8 @@ export function FilterBar({
                 onClick={() => onOperationChange(country)}
                 className={`px-2.5 py-1 text-xs font-medium rounded-md transition-all cursor-pointer ${
                   selectedOperation === country
-                    ? "bg-white text-gray-900 shadow-sm"
-                    : "text-gray-500 hover:text-gray-700"
+                    ? 'bg-white text-gray-900 shadow-sm'
+                    : 'text-gray-500 hover:text-gray-700'
                 }`}
               >
                 <span className="flex items-center gap-1">

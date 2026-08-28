@@ -1,12 +1,8 @@
-import { notFound } from "next/navigation";
-import {
-  getReportById,
-  getReportIndex,
-  getScreenshotsForRun,
-} from "@/lib/data";
-import { SummaryCards } from "@/components/summary-cards";
-import { formatDuration, formatDate } from "@/lib/utils";
-import { ReportClient } from "./report-client";
+import { notFound } from 'next/navigation';
+import { getReportById, getReportIndex, getScreenshotsForRun } from '@/lib/data';
+import { SummaryCards } from '@/components/summary-cards';
+import { formatDuration, formatDate } from '@/lib/utils';
+import { ReportClient } from './report-client';
 
 interface Props {
   params: Promise<{ runId: string }>;
@@ -41,8 +37,8 @@ export default async function ReportPage({ params }: Props) {
             PDP Feature Monitor
           </h1>
           <p className="text-indigo-200/80 text-sm mt-2 max-w-xl">
-            Verificação automatizada de features nas páginas de produto (PDP)
-            das operações Natura & Avon em múltiplos países.
+            Verificação automatizada de features nas páginas de produto (PDP) das operações Natura &
+            Avon em múltiplos países.
           </p>
           <div className="flex flex-wrap items-center gap-3 mt-4">
             <span className="inline-flex items-center gap-1.5 text-xs text-slate-300 bg-white/5 border border-white/10 rounded-full px-3 py-1.5">
@@ -65,11 +61,7 @@ export default async function ReportPage({ params }: Props) {
         failed={report.summary.failed}
         errors={report.summary.errors}
       />
-      <ReportClient
-        results={report.results}
-        runId={runId}
-        screenshots={screenshots}
-      />
+      <ReportClient results={report.results} runId={runId} screenshots={screenshots} />
     </div>
   );
 }
