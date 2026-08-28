@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useState, useRef, useEffect } from "react";
-import Link from "next/link";
-import { History, ChevronDown, Check } from "lucide-react";
-import { usePathname } from "next/navigation";
-import type { ReportIndexEntry } from "@/lib/types";
-import { formatDate, formatDuration } from "@/lib/utils";
+import { useState, useRef, useEffect } from 'react';
+import Link from 'next/link';
+import { History, ChevronDown, Check } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import type { ReportIndexEntry } from '@/lib/types';
+import { formatDate, formatDuration } from '@/lib/utils';
 
 interface HistoryDropdownProps {
   runs: ReportIndexEntry[];
@@ -17,8 +17,8 @@ export function HistoryDropdown({ runs }: HistoryDropdownProps) {
   const pathname = usePathname();
 
   // Determine current runId from URL
-  const currentRunId = pathname.includes("/report/")
-    ? pathname.split("/report/")[1]?.replace(/\/$/, "")
+  const currentRunId = pathname.includes('/report/')
+    ? pathname.split('/report/')[1]?.replace(/\/$/, '')
     : runs[0]?.runId; // Home = latest
 
   // Close on outside click
@@ -28,8 +28,8 @@ export function HistoryDropdown({ runs }: HistoryDropdownProps) {
         setOpen(false);
       }
     }
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
   return (
@@ -40,9 +40,7 @@ export function HistoryDropdown({ runs }: HistoryDropdownProps) {
       >
         <History className="w-4 h-4" />
         <span className="hidden sm:inline">Histórico</span>
-        <ChevronDown
-          className={`w-3.5 h-3.5 transition-transform ${open ? "rotate-180" : ""}`}
-        />
+        <ChevronDown className={`w-3.5 h-3.5 transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
 
       {open && (
@@ -55,8 +53,7 @@ export function HistoryDropdown({ runs }: HistoryDropdownProps) {
           <ul className="max-h-96 overflow-y-auto py-1">
             {runs.map((run, i) => {
               const isCurrent = run.runId === currentRunId;
-              const href =
-                i === 0 ? "/" : `/report/${run.runId}/`;
+              const href = i === 0 ? '/' : `/report/${run.runId}/`;
 
               return (
                 <li key={run.runId}>
@@ -64,15 +61,11 @@ export function HistoryDropdown({ runs }: HistoryDropdownProps) {
                     href={href}
                     onClick={() => setOpen(false)}
                     className={`flex items-center justify-between px-3 py-2.5 text-sm transition-colors ${
-                      isCurrent
-                        ? "bg-blue-50 text-blue-700"
-                        : "text-gray-700 hover:bg-gray-50"
+                      isCurrent ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50'
                     }`}
                   >
                     <div className="flex flex-col">
-                      <span className="font-medium">
-                        {formatDate(run.startTime)}
-                      </span>
+                      <span className="font-medium">{formatDate(run.startTime)}</span>
                       <span className="text-xs text-gray-400 mt-0.5">
                         {formatDuration(run.durationMs)}
                       </span>
@@ -84,9 +77,7 @@ export function HistoryDropdown({ runs }: HistoryDropdownProps) {
                       <span className="text-xs text-red-600 font-semibold">
                         ❌{run.summary.failed}
                       </span>
-                      {isCurrent && (
-                        <Check className="w-4 h-4 text-blue-600" />
-                      )}
+                      {isCurrent && <Check className="w-4 h-4 text-blue-600" />}
                     </div>
                   </Link>
                 </li>

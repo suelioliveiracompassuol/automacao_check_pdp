@@ -119,9 +119,10 @@ export const SELECTORS = {
   // Brand showcase
   brandShowcase: {
     section:
-      'section:has-text("mais produtos da marca"), section:has-text("más productos de la marca"), [data-testid="product-showcase-carousel"], [data-testid="mock-product-showcase-carousel"]',
+      'section:has-text("mais produtos da marca"), section:has-text("más productos de la marca"), [data-testid="product-showcase-carousel"], [data-testid="mock-product-showcase-carousel"], [data-testid="product-container"]',
+    // Covers: legacy testids, NCF SSR dynamic testid (product-card-{id}), class-based, and both /p/ and /products/ link patterns
     productCards:
-      '[data-testid="btn-add-to-cart"], [data-testid="product-card"], [class*="product-card"], [class*="showcase"] a[href*="/p/"]',
+      '[data-testid="btn-add-to-cart"], [data-testid="product-card"], [data-testid^="product-card-"], [class*="product-card"], [class*="showcase"] a[href*="/p/"], a[href*="/products/"]',
   },
 
   // Recommendation showcase

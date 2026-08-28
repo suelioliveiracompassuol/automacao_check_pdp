@@ -3,7 +3,7 @@
  * Mirrors the report JSON structure from the PDP Monitor.
  */
 
-export type Status = "pass" | "fail" | "disabled" | "na" | "error" | "warning";
+export type Status = 'pass' | 'fail' | 'disabled' | 'na' | 'error' | 'warning';
 
 export interface CheckResult {
   feature: string;
@@ -11,7 +11,6 @@ export interface CheckResult {
   passed: boolean;
   status: Status;
   message: string;
-  screenshot?: string;
   details?: Record<string, unknown>;
   flagKey?: string;
   flagValue?: unknown;

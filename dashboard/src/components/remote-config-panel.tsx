@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import * as Collapsible from "@radix-ui/react-collapsible";
-import { useState } from "react";
+import * as Collapsible from '@radix-ui/react-collapsible';
+import { useState } from 'react';
 
 interface RemoteConfigPanelProps {
   flags: Record<string, unknown> | undefined;
@@ -18,7 +18,7 @@ function renderValue(value: unknown): React.ReactNode {
   if (value === null || value === undefined) {
     return <span className="text-gray-400">-</span>;
   }
-  if (typeof value === "object") {
+  if (typeof value === 'object') {
     return null;
   } // skip nested
   return <span className="text-gray-700">{String(value)}</span>;
@@ -33,24 +33,14 @@ export function RemoteConfigPanel({ flags }: RemoteConfigPanelProps) {
 
   // Filter out _raw and nested objects for display
   const entries = Object.entries(flags).filter(
-    ([key, val]) => key !== "_raw" && typeof val !== "object",
+    ([key, val]) => key !== '_raw' && typeof val !== 'object',
   );
   const nested = Object.entries(flags).filter(
-    ([key, val]) => key !== "_raw" && typeof val === "object" && val !== null,
+    ([key, val]) => key !== '_raw' && typeof val === 'object' && val !== null,
   );
 
   return (
     <Collapsible.Root open={open} onOpenChange={setOpen}>
-      {/* <Collapsible.Trigger className="flex items-center gap-2 w-full text-left py-2 px-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors text-sm font-semibold text-gray-700 cursor-pointer">
-        <ChevronDown
-          className={`w-4 h-4 transition-transform ${open ? "rotate-0" : "-rotate-90"}`}
-        />
-        🔧 Remote Config {locale && <span className="text-gray-400 font-normal text-xs">({locale})</span>}
-        <span className="text-gray-400 font-normal text-xs ml-auto">
-          {entries.length + nested.length} flags
-        </span>
-      </Collapsible.Trigger> */}
-
       <Collapsible.Content className="mt-2 space-y-2">
         {entries.length > 0 && (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1 px-3">
@@ -69,11 +59,11 @@ export function RemoteConfigPanel({ flags }: RemoteConfigPanelProps) {
         {nested.map(([category, obj]) => (
           <div key={category} className="px-3">
             <h4 className="text-xs font-semibold text-gray-500 mb-1 capitalize">
-              {category.replace(/_/g, " ")}
+              {category.replace(/_/g, ' ')}
             </h4>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-1">
               {Object.entries(obj as Record<string, unknown>)
-                .filter(([, v]) => typeof v !== "object")
+                .filter(([, v]) => typeof v !== 'object')
                 .map(([k, v]) => (
                   <div
                     key={k}

@@ -58,9 +58,12 @@ const einsteinShowcaseCache = new WeakMap<Page, EinsteinCapturedData>();
 export function setupEinsteinShowcaseCapture(page: Page): void {
   page.on("response", (response) => {
     const url = response.url();
+    // Capture any recommendation vitrine call: covers EXPERIENCIA, EXPERIENCIA_V2, etc.
+    // Excludes the brand showcase (MAIS_PRODUTOS_DA_MARCA) which has its own check.
     if (
       !url.includes("einstein/personalization/campaign/products") ||
-      !url.includes("VITRINE_PDP_EXPERIENCIA")
+      !url.includes("VITRINE_PDP") ||
+      url.includes("MAIS_PRODUTOS")
     ) {
       return;
     }
@@ -239,12 +242,15 @@ async function checkEinsteinApi(
         ? (productApiContentZone ?? generatedContentZone)
         : generatedContentZone;
 
-    // Find the Einstein URL from the page's resource timing entries
+    // Find the Einstein URL from the page's resource timing entries.
+    // Falls back to any VITRINE_PDP call when the specific hint finds nothing
+    // (handles wl_target_personalization_pdp_showcase_v2 which may use a different zone).
     const einsteinUrl: string | null = await page.evaluate((hint) => {
       const entries = performance.getEntriesByType(
         "resource",
       ) as PerformanceResourceTiming[];
-      const match = entries.find((e) => {
+      // Primary: match by specific hint (e.g. "EXPERIENCIA")
+      let match = entries.find((e) => {
         if (!e.name.includes("einstein/personalization")) {
           return false;
         }
@@ -258,6 +264,15 @@ async function checkEinsteinApi(
         }
         return true;
       });
+      // Fallback: any recommendation vitrine call (excludes brand showcase)
+      if (!match) {
+        match = entries.find(
+          (e) =>
+            e.name.includes("einstein/personalization") &&
+            e.name.includes("VITRINE_PDP") &&
+            !e.name.includes("MAIS_PRODUTOS"),
+        );
+      }
       return match?.name ?? null;
     }, contentZoneHint ?? null);
 
@@ -498,7 +513,14 @@ export async function checkBrandShowcase(page: Page): Promise<CheckResult> {
     // 1st showcase section = brand showcase
     const brandSection = sections.nth(0);
     const productCards = brandSection.locator(SELECTORS.brandShowcase.productCards);
-    const cardCount = await productCards.count().catch(() => 0);
+    let cardCount = await productCards.count().catch(() => 0);
+    // Fallback: NCF SSR and some country sites use plain <a href="/p/"> or <a href="/products/">
+    if (cardCount === 0) {
+      cardCount = await brandSection
+        .locator('a[href*="/p/"], a[href*="/products/"]')
+        .count()
+        .catch(() => 0);
+    }
 
     // Get the section title for the report
     const title = await brandSection
@@ -506,6 +528,23 @@ export async function checkBrandShowcase(page: Page): Promise<CheckResult> {
       .first()
       .textContent()
       .catch(() => "");
+
+    if (cardCount === 0) {
+      return {
+        feature,
+        featureKey,
+        passed: false,
+        status: "warning",
+        message: `Vitrine "${title?.trim() || "mais produtos da marca"}" presente mas sem produtos carregados [contentZone: ${zoneName}]`,
+        details: {
+          productCount: 0,
+          title: title?.trim(),
+          einsteinContentZone: zoneName,
+          einsteinCampaignCount: einstein.campaignCount,
+          note: "section found in DOM but no product cards detected after all selector fallbacks",
+        },
+      };
+    }
 
     return {
       feature,

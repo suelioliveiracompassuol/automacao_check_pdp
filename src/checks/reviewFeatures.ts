@@ -325,47 +325,63 @@ export async function checkReviewRecommendation(
   const feature = "Recomendação de avaliações";
 
   try {
-    // Recommendation chip can be in the product header area (near go-to-reviews button)
-    // or inside the #reviews section
-    const recommendation = await page.evaluate(() => {
-      // Look for bg-success chip anywhere on the page (it's part of reviews summary)
-      const chip = document.querySelector(".bg-success");
-      if (!chip) {
-        return null;
-      }
+    // Wait for the chip to appear — reviews load async so querySelector fires too early.
+    // The chip uses .bg-success (NCF SSR / Tailwind) or aria-label with "recomendam".
+    const chipLocator = page
+      .locator(".bg-success")
+      .filter({ hasText: /\d+%/ })
+      .first();
 
-      // The chip contains the percentage text
-      const chipText = chip.textContent?.trim() || "";
+    const chipVisible = await chipLocator
+      .waitFor({ state: "visible", timeout: 8000 })
+      .then(() => true)
+      .catch(() => false);
+
+    if (chipVisible) {
+      const chipText = (await chipLocator.textContent().catch(() => "")) ?? "";
       const percentMatch = chipText.match(/(\d+)%/);
       const percentage = percentMatch ? parseInt(percentMatch[1]) : 0;
 
-      // Get the sibling recommendation label text
-      const parent = chip.closest("div[class*='flex'][class*='items-center']");
-      const siblingText = parent
-        ? Array.from(parent.children)
-            .filter((c) => c !== chip)
-            .map((c) => c.textContent?.trim())
-            .join(" ")
-        : "";
+      const labelEl = chipLocator.locator("xpath=..");
+      const labelText = await labelEl.textContent().catch(() => "");
 
-      return {
-        percentage,
-        labelText: siblingText.substring(0, 60),
-      };
-    });
+      if (percentage > 0) {
+        return {
+          feature,
+          featureKey,
+          passed: true,
+          status: "pass",
+          message: `${percentage}% de recomendação exibido`,
+          details: {
+            percentage,
+            text: labelText?.trim().substring(0, 60),
+          },
+        };
+      }
+    }
 
-    if (recommendation && recommendation.percentage > 0) {
-      return {
-        feature,
-        featureKey,
-        passed: true,
-        status: "pass",
-        message: `${recommendation.percentage}% de recomendação exibido`,
-        details: {
-          percentage: recommendation.percentage,
-          text: recommendation.labelText,
-        },
-      };
+    // Fallback: aria-label approach (parent div wraps chip + label text)
+    const ariaChip = page
+      .locator("[aria-label*='recomendam'], [aria-label*='recomiendan'], [aria-label*='recomiendan']")
+      .first();
+    const ariaVisible = await ariaChip
+      .isVisible({ timeout: 2000 })
+      .catch(() => false);
+
+    if (ariaVisible) {
+      const ariaLabel = await ariaChip.getAttribute("aria-label").catch(() => "");
+      const percentMatch = ariaLabel?.match(/(\d+)%/);
+      const percentage = percentMatch ? parseInt(percentMatch[1]) : 0;
+      if (percentage > 0) {
+        return {
+          feature,
+          featureKey,
+          passed: true,
+          status: "pass",
+          message: `${percentage}% de recomendação exibido`,
+          details: { percentage, text: ariaLabel?.substring(0, 60) },
+        };
+      }
     }
 
     // Check if reviews exist but recommendation doesn't appear

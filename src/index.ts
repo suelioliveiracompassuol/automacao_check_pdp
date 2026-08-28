@@ -326,50 +326,14 @@ async function checkPdp(params: CheckPdpParams): Promise<PdpCheckResult> {
       }),
     );
 
-    // Phase 3: Collect results and take screenshots sequentially for failures
-    for (const { featureConfig, result } of checkResults) {
+    // Phase 3: Collect results sequentially for failures
+    for (const { result } of checkResults) {
       features.push(result);
-
-      // Take screenshot on failure (skip na and disabled)
-      if (
-        !result.passed &&
-        result.status !== "na" &&
-        result.status !== "disabled"
-      ) {
-        const screenshotName = `${sku.sku}_${featureConfig.key}_${Date.now()}.png`;
-        const screenshotPath = path.join(
-          outputDir,
-          "screenshots",
-          screenshotName,
-        );
-
-        try {
-          await page.screenshot({ path: screenshotPath, fullPage: false });
-          result.screenshot = path.relative(outputDir, screenshotPath);
-        } catch {
-          // Ignore screenshot errors
-        }
-      }
     }
 
     // Check for untranslated i18n keys (runs on every PDP)
     const i18nResult = await checkI18nKeys(page);
     features.push(i18nResult);
-
-    if (!i18nResult.passed && i18nResult.status !== "na") {
-      const screenshotName = `${sku.sku}_i18n_${Date.now()}.png`;
-      const screenshotPath = path.join(
-        outputDir,
-        "screenshots",
-        screenshotName,
-      );
-      try {
-        await page.screenshot({ path: screenshotPath, fullPage: false });
-        i18nResult.screenshot = path.relative(outputDir, screenshotPath);
-      } catch {
-        // Ignore screenshot errors
-      }
-    }
 
     // Structured PDP endpoint results (status + body validation)
     if (collectEndpointResults) {

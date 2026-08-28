@@ -1,7 +1,7 @@
-import Link from "next/link";
-import { Activity, Database, Zap } from "lucide-react";
-import { getReportIndex } from "@/lib/data";
-import { HistoryDropdown } from "./history-dropdown";
+import Link from 'next/link';
+import { Activity, Database, Zap } from 'lucide-react';
+import { getReportIndex } from '@/lib/data';
+import { HistoryDropdown } from './history-dropdown';
 
 export function NavHeader() {
   const index = getReportIndex();
@@ -21,9 +21,7 @@ export function NavHeader() {
             </div>
           </div>
           <div className="flex items-baseline gap-1.5">
-            <span className="font-bold text-lg tracking-tight">
-              PDP Monitor
-            </span>
+            <span className="font-bold text-lg tracking-tight">PDP Monitor</span>
             <span className="text-[10px] font-medium text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded-full">
               v2.0
             </span>
