@@ -247,6 +247,39 @@ export interface ProductReviewsConfig {
 }
 
 /**
+ * Gift Search Category configuration from Remote Config
+ */
+export interface GiftSearchCategoryConfig {
+  web?: {
+    category_name: string;
+  };
+  app_android?: {
+    category_name: string;
+  };
+  app_ios?: {
+    category_name: string;
+  };
+}
+
+/**
+ * Enable Module Gift configuration from Remote Config
+ */
+export interface EnableModuleGiftConfig {
+  enable_module_gift_web?: {
+    card_message: boolean;
+    search_bag: boolean;
+  };
+  enable_module_gift_app_android?: {
+    card_message: boolean;
+    search_bag: boolean;
+  };
+  enable_module_gift_app_ios?: {
+    card_message: boolean;
+    search_bag: boolean;
+  };
+}
+
+/**
  * Captured Remote Config flags relevant to PDP
  */
 export interface RemoteConfigFlags {
@@ -275,6 +308,9 @@ export interface RemoteConfigFlags {
   enable_shoptheset_pdp_einstein?: boolean;
   wl_target_personalization_pdp_showcase?: boolean;
   wl_target_personalization_pdp_showcase_v2?: boolean;
+  enable_image_zoom_pdp_web_responsive?: boolean;
+  enable_media_video_carousel_pdp?: boolean;
+  free_freight_tag?: boolean;
 
   // // =========================================================================
   // // REVIEWS FLAGS (individual)
@@ -285,6 +321,11 @@ export interface RemoteConfigFlags {
   // enable_reviews_filter?: boolean;
   // enable_reviews_sorting?: boolean;
   // enable_image_and_upload_review?: boolean;
+  //=========================================================================
+  // GIFT MODULE (structured objects)
+  // =========================================================================
+  gift_search_category_cart?: GiftSearchCategoryConfig;
+  enable_module_gift_cart?: EnableModuleGiftConfig;
 
   // =========================================================================
   // PRODUCT CARD FLAGS
@@ -998,6 +1039,32 @@ function parseRemoteConfigEntries(
     }
   }
 
+  // Parse gift_search_category_cart
+  if (entries.gift_search_category_cart) {
+    try {
+      const parsed = JSON.parse(entries.gift_search_category_cart);
+      const localeValue = parsed[locale] || parsed["pt-BR"];
+      if (localeValue) {
+        flags.gift_search_category_cart = localeValue;
+      }
+    } catch {
+      // Invalid JSON
+    }
+  }
+
+  // Parse enable_module_gift_cart
+  if (entries.enable_module_gift_cart) {
+    try {
+      const parsed = JSON.parse(entries.enable_module_gift_cart);
+      const localeValue = parsed[locale] || parsed["pt-BR"];
+      if (localeValue) {
+        flags.enable_module_gift_cart = localeValue;
+      }
+    } catch {
+      // Invalid JSON
+    }
+  }
+
   // Parse ALL boolean flags (including locale-specific ones)
   const booleanFlags = [
     // PDP flags
@@ -1011,14 +1078,9 @@ function parseRemoteConfigEntries(
     "enable_shoptheset_pdp_einstein",
     "wl_target_personalization_pdp_showcase",
     "wl_target_personalization_pdp_showcase_v2",
-    // Reviews flags
-    // "enable_konfidency_review",
-    // "enable_review_ai_summary",
-    // "enable_review_feedback",
-    // "enable_reviews_filter",
-    // "enable_reviews_sorting",
-    // "enable_image_and_upload_review",
-    // Product card flags
+    "enable_image_zoom_pdp_web_responsive",
+    "enable_media_video_carousel_pdp",
+    "free_freight_tag",
     "enable_product_card_rating",
     "wl_show_rating_on_product_card",
   ] as const;
@@ -1200,34 +1262,21 @@ export function getFlagsByCategory(
     pdpFlags.wl_target_personalization_pdp_showcase_v2 =
       flags.wl_target_personalization_pdp_showcase_v2;
   }
+  if (flags.enable_image_zoom_pdp_web_responsive !== undefined) {
+    pdpFlags.enable_image_zoom_pdp_web_responsive =
+      flags.enable_image_zoom_pdp_web_responsive;
+  }
+  if (flags.enable_media_video_carousel_pdp !== undefined) {
+    pdpFlags.enable_media_video_carousel_pdp =
+      flags.enable_media_video_carousel_pdp;
+  }
+  if (flags.free_freight_tag !== undefined) {
+    pdpFlags.free_freight_tag = flags.free_freight_tag;
+  }
   if (Object.keys(pdpFlags).length > 0) {
     categories["🛍️ PDP Features"] = pdpFlags;
   }
 
-  // // Individual Reviews Flags
-  // const reviewFlags: Record<string, unknown> = {};
-  // if (flags.enable_konfidency_review !== undefined) {
-  //   reviewFlags.enable_konfidency_review = flags.enable_konfidency_review;
-  // }
-  // if (flags.enable_review_ai_summary !== undefined) {
-  //   reviewFlags.enable_review_ai_summary = flags.enable_review_ai_summary;
-  // }
-  // if (flags.enable_review_feedback !== undefined) {
-  //   reviewFlags.enable_review_feedback = flags.enable_review_feedback;
-  // }
-  // if (flags.enable_reviews_filter !== undefined) {
-  //   reviewFlags.enable_reviews_filter = flags.enable_reviews_filter;
-  // }
-  // if (flags.enable_reviews_sorting !== undefined) {
-  //   reviewFlags.enable_reviews_sorting = flags.enable_reviews_sorting;
-  // }
-  // if (flags.enable_image_and_upload_review !== undefined) {
-  //   reviewFlags.enable_image_and_upload_review =
-  //     flags.enable_image_and_upload_review;
-  // }
-  // if (Object.keys(reviewFlags).length > 0) {
-  //   categories["⭐ Reviews (individual)"] = reviewFlags;
-  // }
 
   // Product Card Flags
   const cardFlags: Record<string, unknown> = {};
@@ -1258,6 +1307,13 @@ export function countCapturedFlags(flags: RemoteConfigFlags | null): number {
   // Count product_reviews fields
   if (flags.product_reviews) {
     count += 7; // enabled, ai_summary, filter, sort, photos, feedback, recommendation
+  }
+
+  // Count gift module fields
+  if (flags.gift_search_category_cart) {
+    count += 3; // web, app_android, app_ios
+  }if (flags.enable_module_gift_cart) {
+    count += 6; // 3 platforms x 2 properties each
   }
 
   // Count all other defined boolean flags
