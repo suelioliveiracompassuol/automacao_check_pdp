@@ -2,6 +2,20 @@
   "generatedAt": "2026-05-21T12:25:05Z",
   "reports": [
     {
+      "runId": "run_1788096792431",
+      "startTime": "2026-08-30T13:33:12.431Z",
+      "endTime": "2026-08-30T13:37:36.665Z",
+      "durationMs": 264234,
+      "summary": {
+        "total": 27,
+        "passed": 19,
+        "failed": 8,
+        "errors": 0
+      },
+      "htmlPath": "reports/run_1788096792431/report.html",
+      "jsonPath": "reports/run_1788096792431/report.json"
+    },
+    {
       "runId": "run_1788010693932",
       "startTime": "2026-08-29T13:38:13.932Z",
       "endTime": "2026-08-29T13:42:15.088Z",
@@ -1386,20 +1400,6 @@
       },
       "htmlPath": "reports/run_1780135205970/report.html",
       "jsonPath": "reports/run_1780135205970/report.json"
-    },
-    {
-      "runId": "run_1780054118199",
-      "startTime": "2026-05-29T11:28:38.199Z",
-      "endTime": "2026-05-29T11:36:01.111Z",
-      "durationMs": 442912,
-      "summary": {
-        "total": 27,
-        "passed": 8,
-        "failed": 19,
-        "errors": 0
-      },
-      "htmlPath": "reports/run_1780054118199/report.html",
-      "jsonPath": "reports/run_1780054118199/report.json"
     }
   ]
 }
