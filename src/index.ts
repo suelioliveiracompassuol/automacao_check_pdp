@@ -140,7 +140,7 @@ async function checkPdp(params: CheckPdpParams): Promise<PdpCheckResult> {
   setupEinsteinShowcaseCapture(page);
 
   // Setup rating consistency capture BEFORE navigation (intercepts API responses)
-  setupRatingConsistencyCapture(page);
+  setupRatingConsistencyCapture(page, sku.sku);
 
   // Setup product variations capture BEFORE navigation (intercepts BFF API + SSR)
   setupProductVariationsCapture(page);

@@ -1,6 +1,59 @@
 import { Page } from "@playwright/test";
 import { CheckResult } from "../types.js";
-import { getReviewCount } from "../utils.js";
+import {
+  getReviewCount,
+  getGoToReviewsButtonReviewCount,
+  pollUntilVisible,
+} from "../utils.js";
+
+const REVIEWS_CONTAINER_SELECTOR = '[data-testid="reviews-component"], #reviews';
+const REVIEWS_FILTER_ICON_SELECTOR =
+  '#reviews [data-testid="reviews-filter"], #reviews i[class*="natds-icons-outlined-action-filter"]';
+
+/**
+ * #reviews may fail to become "visible" within the wait timeout even when the
+ * product genuinely has reviews (e.g. long review lists take longer to
+ * hydrate). The go-to-reviews-button lives outside #reviews and always
+ * reflects the real review count, so we use it to tell a true zero-review
+ * product apart from a container that simply didn't render in time —
+ * the latter is a real failure, not a "not applicable" warning.
+ */
+async function resolveMissingReviewsContainer(
+  page: Page,
+  feature: string,
+  featureKey: string,
+  notApplicableMessage: string,
+): Promise<CheckResult> {
+  const btnReviewCount = await getGoToReviewsButtonReviewCount(page);
+
+  if (btnReviewCount === null) {
+    return {
+      feature,
+      featureKey,
+      passed: false,
+      status: "fail",
+      message: "Container #reviews não encontrado",
+    };
+  }
+
+  if (btnReviewCount === 0) {
+    return {
+      feature,
+      featureKey,
+      passed: true,
+      status: "warning",
+      message: notApplicableMessage,
+    };
+  }
+
+  return {
+    feature,
+    featureKey,
+    passed: false,
+    status: "fail",
+    message: `Container #reviews não carregou a tempo (produto tem ${btnReviewCount} avaliação(ões))`,
+  };
+}
 
 /**
  * Check if reviews filter button is present in the reviews section.
@@ -14,39 +67,15 @@ export async function checkReviewFilter(page: Page): Promise<CheckResult> {
   const feature = "Filtro de avaliações";
 
   try {
-    const reviewsContainer = page
-      .locator('[data-testid="reviews-component"], #reviews')
-      .first();
-    const hasReviews = await reviewsContainer
-      .waitFor({ state: "visible", timeout: 5000 })
-      .then(() => true)
-      .catch(() => false);
+    const hasReviews = await pollUntilVisible(page, REVIEWS_CONTAINER_SELECTOR, 20000);
 
     if (!hasReviews) {
-      // When #reviews is absent, check if the go-to-reviews-button is in the DOM.
-      // Products with 0 reviews may not render #reviews but the button is still present.
-      const goToReviewsBtnCount = await page
-        .locator('[data-testid="go-to-reviews-button"]')
-        .count()
-        .catch(() => 0);
-
-      if (goToReviewsBtnCount > 0) {
-        return {
-          feature,
-          featureKey,
-          passed: true,
-          status: "warning",
-          message: "Produto sem avaliações — filtro não se aplica",
-        };
-      }
-
-      return {
+      return resolveMissingReviewsContainer(
+        page,
         feature,
         featureKey,
-        passed: false,
-        status: "fail",
-        message: "Container #reviews não encontrado",
-      };
+        "Produto sem avaliações — filtro não se aplica",
+      );
     }
 
     // If product has no reviews, filter/sort/photos won't appear — that's expected
@@ -62,16 +91,7 @@ export async function checkReviewFilter(page: Page): Promise<CheckResult> {
     }
 
     // Look for filter icon inside reviews
-    const filterIcon = reviewsContainer
-      .locator(
-        '[data-testid="reviews-filter"], i[class*="natds-icons-outlined-action-filter"]',
-      )
-      .first();
-
-    const hasFilter = await filterIcon
-      .waitFor({ state: "visible", timeout: 5000 })
-      .then(() => true)
-      .catch(() => false);
+    const hasFilter = await pollUntilVisible(page, REVIEWS_FILTER_ICON_SELECTOR);
 
     if (hasFilter) {
       return {
@@ -113,22 +133,15 @@ export async function checkReviewSort(page: Page): Promise<CheckResult> {
   const feature = "Ordenação de avaliações";
 
   try {
-    const reviewsContainer = page
-      .locator('[data-testid="reviews-component"], #reviews')
-      .first();
-    const hasReviews = await reviewsContainer
-      .waitFor({ state: "visible", timeout: 5000 })
-      .then(() => true)
-      .catch(() => false);
+    const hasReviews = await pollUntilVisible(page, REVIEWS_CONTAINER_SELECTOR, 20000);
 
     if (!hasReviews) {
-      return {
+      return resolveMissingReviewsContainer(
+        page,
         feature,
         featureKey,
-        passed: false,
-        status: "fail",
-        message: "Container #reviews não encontrado",
-      };
+        "Produto sem avaliações — ordenação não se aplica",
+      );
     }
 
     // If product has no reviews, sort dropdown won't appear — that's expected
@@ -144,16 +157,10 @@ export async function checkReviewSort(page: Page): Promise<CheckResult> {
     }
 
     // Look for sort dropdown arrow icon inside reviews
-    const sortIcon = reviewsContainer
-      .locator(
-        '[data-testid="reviews-sort"], i[class*="natds-icons-outlined-navigation-arrowbottom"]',
-      )
-      .first();
-
-    const hasSortIcon = await sortIcon
-      .waitFor({ state: "visible", timeout: 5000 })
-      .then(() => true)
-      .catch(() => false);
+    const hasSortIcon = await pollUntilVisible(
+      page,
+      '#reviews [data-testid="reviews-sort"], #reviews i[class*="natds-icons-outlined-navigation-arrowbottom"]',
+    );
 
     if (hasSortIcon) {
       return {
@@ -166,17 +173,11 @@ export async function checkReviewSort(page: Page): Promise<CheckResult> {
     }
 
     // Fallback: look for button with aria-label for sorting
-    const sortButton = reviewsContainer
-      .locator("button[aria-label]")
-      .filter({
-        has: page.locator('i[class*="natds-icons"]'),
-      })
-      .first();
-
-    const hasSortButton = await sortButton
-      .waitFor({ state: "visible", timeout: 3000 })
-      .then(() => true)
-      .catch(() => false);
+    const hasSortButton = await pollUntilVisible(
+      page,
+      '#reviews button[aria-label] i[class*="natds-icons"]',
+      3000,
+    );
 
     if (hasSortButton) {
       return {
@@ -219,22 +220,15 @@ export async function checkReviewPhotos(page: Page): Promise<CheckResult> {
   const feature = "Fotos nas avaliações";
 
   try {
-    const reviewsContainer = page
-      .locator('[data-testid="reviews-component"], #reviews')
-      .first();
-    const hasReviews = await reviewsContainer
-      .waitFor({ state: "visible", timeout: 5000 })
-      .then(() => true)
-      .catch(() => false);
+    const hasReviews = await pollUntilVisible(page, REVIEWS_CONTAINER_SELECTOR, 20000);
 
     if (!hasReviews) {
-      return {
+      return resolveMissingReviewsContainer(
+        page,
         feature,
         featureKey,
-        passed: false,
-        status: "fail",
-        message: "Container #reviews não encontrado",
-      };
+        "Produto sem avaliações — fotos não se aplicam",
+      );
     }
 
     // If product has no reviews, photos won't appear — that's expected
@@ -250,17 +244,13 @@ export async function checkReviewPhotos(page: Page): Promise<CheckResult> {
     }
 
     // Check for review card images (h-32 w-32 thumbnails inside review cards)
-    const imgsCount = await reviewsContainer
-      .locator('img[class*="h-32"][class*="w-32"], img[class*="rounded-micro"]')
+    const imgsCount = await page
+      .locator(
+        '#reviews img[class*="h-32"][class*="w-32"], #reviews img[class*="rounded-micro"]',
+      )
       .count()
       .catch(() => 0);
-    const hasFilter = await reviewsContainer
-      .locator(
-        '[data-testid="reviews-filter"], i[class*="natds-icons-outlined-action-filter"]',
-      )
-      .first()
-      .isVisible()
-      .catch(() => false);
+    const hasFilter = await pollUntilVisible(page, REVIEWS_FILTER_ICON_SELECTOR);
 
     const reviewPhotos = {
       count: imgsCount,
@@ -327,15 +317,15 @@ export async function checkReviewRecommendation(
   try {
     // Wait for the chip to appear — reviews load async so querySelector fires too early.
     // The chip uses .bg-success (NCF SSR / Tailwind) or aria-label with "recomendam".
+    const chipVisible = await pollUntilVisible(
+      page,
+      ".bg-success",
+      15000,
+    );
     const chipLocator = page
       .locator(".bg-success")
       .filter({ hasText: /\d+%/ })
       .first();
-
-    const chipVisible = await chipLocator
-      .waitFor({ state: "visible", timeout: 8000 })
-      .then(() => true)
-      .catch(() => false);
 
     if (chipVisible) {
       const chipText = (await chipLocator.textContent().catch(() => "")) ?? "";
