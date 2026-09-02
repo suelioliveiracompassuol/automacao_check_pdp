@@ -1,5 +1,6 @@
 import { Page } from "@playwright/test";
 import { CheckResult } from "../types.js";
+import { getReviewCount, sleepMs } from "../utils.js";
 
 interface CapturedRatingData {
   /** rating field from /pages/v2/product/:id */
@@ -112,8 +113,15 @@ export async function captureRatingFromDOM(page: Page): Promise<void> {
  * Intercepts the product and reviews API responses and stores them for later
  * use by checkRatingConsistency — avoiding the need to re-request the APIs
  * with authentication headers that are not available outside the page context.
+ *
+ * @param expectedProductId When provided, ignores reviews/product API calls for
+ * other productIds (e.g. star ratings fetched by recommendation carousels),
+ * which would otherwise overwrite the current product's captured data.
  */
-export function setupRatingConsistencyCapture(page: Page): void {
+export function setupRatingConsistencyCapture(
+  page: Page,
+  expectedProductId?: string,
+): void {
   page.on("response", async (response) => {
     const url = response.url();
 
@@ -200,7 +208,18 @@ export function setupRatingConsistencyCapture(page: Page): void {
       const existing = captureCache.get(page) ?? {};
 
       if (url.includes("/reviews/v2/details")) {
+        // Skip media-filtered subqueries (e.g. filterMedia=pictures, used by the
+        // photos filter) — their reviewsCount reflects the filtered subset, not
+        // the product's total, and would overwrite the correct captured value.
+        if (url.includes("filterMedia=")) {
+          return;
+        }
+
         const productId = new URL(url).searchParams.get("productId");
+        if (expectedProductId && productId !== expectedProductId) {
+          return;
+        }
+
         captureCache.set(page, {
           ...existing,
           aggregatedRating: json.aggregatedRating as number | undefined,
@@ -213,7 +232,8 @@ export function setupRatingConsistencyCapture(page: Page): void {
         // Only store if this is the main product page (not a recommendations list)
         if (
           typeof json.productId === "string" &&
-          typeof json.rating === "number"
+          typeof json.rating === "number" &&
+          (!expectedProductId || json.productId === expectedProductId)
         ) {
           captureCache.set(page, {
             ...existing,
@@ -258,7 +278,21 @@ export async function checkRatingConsistency(page: Page): Promise<CheckResult> {
   const feature = "Consistência da Nota (Rating)";
 
   try {
-    const captured = captureCache.get(page);
+    let captured = captureCache.get(page);
+
+    // The reviews API response is captured asynchronously via page.on("response"),
+    // which can resolve after this check has already started reading the cache
+    // (both run concurrently — see featureRunner's Promise.all). Give it a brief
+    // window to land before falling back to a DOM-based reviewsCount guess.
+    const pollStart = Date.now();
+    while (
+      captured?.aggregatedRating === undefined &&
+      captured?.reviewsCount === undefined &&
+      Date.now() - pollStart < 15000
+    ) {
+      await sleepMs(300);
+      captured = captureCache.get(page);
+    }
 
     // If the product has no reviews, consistency check is not applicable.
     // aggregatedRating === 0 with reviewsCount === 0 is the expected state.
@@ -308,6 +342,20 @@ export async function checkRatingConsistency(page: Page): Promise<CheckResult> {
     }
 
     if (aggregatedRating === undefined) {
+      // API capture may have raced with navigation (reviewsCount stayed undefined
+      // instead of 0); confirm via DOM before reporting a hard error.
+      const domReviewCount = await getReviewCount(page);
+      if (domReviewCount === 0) {
+        return {
+          feature,
+          featureKey,
+          passed: true,
+          status: "warning",
+          message:
+            "Produto sem avaliações — consistência de nota não se aplica.",
+        };
+      }
+
       return {
         feature,
         featureKey,

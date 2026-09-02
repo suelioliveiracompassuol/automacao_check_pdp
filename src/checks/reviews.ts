@@ -1,5 +1,10 @@
 import { Page } from "@playwright/test";
 import { CheckResult } from "../types.js";
+import {
+  getReviewCount,
+  getGoToReviewsButtonReviewCount,
+  pollUntilVisible,
+} from "../utils.js";
 
 /**
  * Check if Reviews section is present and has content.
@@ -15,65 +20,26 @@ export async function checkReviews(page: Page): Promise<CheckResult> {
   const feature = "Avaliações do produto";
 
   try {
-    // Scroll to bottom to ensure reviews lazy-loading is triggered
-    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-
     // Primary: look for #reviews container or data-testid
     const reviewsContainer = page
       .locator('[data-testid="reviews-component"], #reviews')
       .first();
 
-    // Use waitFor instead of isVisible with setTimeout
-    const hasReviews = await reviewsContainer
-      .waitFor({ state: "visible", timeout: 10000 })
-      .then(() => true)
-      .catch(() => false);
+    // pollUntilVisible (not locator.waitFor) stays reliable when ~15 other
+    // checks run concurrently against this same page (see featureRunner).
+    const hasReviews = await pollUntilVisible(
+      page,
+      '[data-testid="reviews-component"], #reviews',
+      20000,
+    );
 
     if (!hasReviews) {
-      // Fallback: check for go-to-reviews-button in product header
-      // Use count() instead of isVisible() — the button may exist in the DOM
-      // but have no visible dimensions when the product has 0 reviews
-      const goToReviewsBtnCount = await page
-        .locator('[data-testid="go-to-reviews-button"]')
-        .count()
-        .catch(() => 0);
+      // Fallback: the go-to-reviews-button lives outside #reviews and always
+      // reflects the real review count, even when the container itself
+      // failed to render/hydrate in time.
+      const btnReviewCount = await getGoToReviewsButtonReviewCount(page);
 
-      if (goToReviewsBtnCount === 0) {
-        // Check if it's because there are 0 reviews
-        try {
-          const reviewsApiUrl = await page.evaluate(() => {
-            const entries = performance.getEntriesByType("resource");
-            const reviewEntry = entries.find((e) =>
-              e.name.includes("/reviews/v2/details"),
-            );
-            return reviewEntry ? reviewEntry.name : null;
-          });
-
-          if (reviewsApiUrl) {
-            const reviewsData = await page.evaluate(async (url) => {
-              try {
-                const res = await fetch(url);
-                return await res.json();
-              } catch {
-                return null;
-              }
-            }, reviewsApiUrl);
-
-            if (reviewsData && reviewsData.reviewsCount === 0) {
-              return {
-                feature,
-                featureKey,
-                passed: true,
-                status: "warning",
-                message:
-                  "Seção de avaliações não encontrada, mas a API indica 0 avaliações (comportamento esperado)",
-              };
-            }
-          }
-        } catch {
-          // Ignore errors and fallback to fail
-        }
-
+      if (btnReviewCount === null) {
         return {
           feature,
           featureKey,
@@ -84,21 +50,30 @@ export async function checkReviews(page: Page): Promise<CheckResult> {
         };
       }
 
+      if (btnReviewCount === 0) {
+        return {
+          feature,
+          featureKey,
+          passed: true,
+          status: "warning",
+          message:
+            "Botão go-to-reviews presente mas container #reviews não carregou — produto sem avaliações",
+        };
+      }
+
       return {
         feature,
         featureKey,
-        passed: true,
-        status: "warning",
-        message:
-          "Botão go-to-reviews presente mas container #reviews não carregou — produto sem avaliações",
+        passed: false,
+        status: "fail",
+        message: `Container #reviews não carregou a tempo (produto tem ${btnReviewCount} avaliação(ões))`,
       };
     }
 
-    // Structural check: count review cards and rating icons using locators
-    const cardsCount = await page
-      .locator('[data-testid="review-card"], [class*="review-card"]')
-      .count()
-      .catch(() => 0);
+    // Structural check: rating icons plus the real review count (the
+    // "review-card" selector below never matches production markup, so the
+    // total is read from getReviewCount instead, same as the other review checks)
+    const cardsCount = await getReviewCount(page);
     const hasRating = await page
       .locator(
         '[data-testid="review-stars"], [data-testid="star-icon"], i[class*="natds-icons-filled-action-rating"]',
