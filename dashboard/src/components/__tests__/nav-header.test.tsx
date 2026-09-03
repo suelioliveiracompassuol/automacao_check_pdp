@@ -44,8 +44,14 @@ describe('NavHeader', () => {
 
   it('renders link to home', () => {
     render(<NavHeader />);
-    const link = screen.getByRole('link');
+    const link = screen.getByRole('link', { name: /PDP Monitor/i });
     expect(link).toHaveAttribute('href', '/');
+  });
+
+  it('renders link to SKUs page', () => {
+    render(<NavHeader />);
+    const link = screen.getByRole('link', { name: /SKUs/i });
+    expect(link).toHaveAttribute('href', '/skus');
   });
 
   it('renders HistoryDropdown component', () => {
