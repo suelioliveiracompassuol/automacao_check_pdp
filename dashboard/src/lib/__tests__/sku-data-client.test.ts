@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
   getDocs: vi.fn(),
-  getDoc: vi.fn(),
+  getDoc: vi.fn().mockResolvedValue({ exists: () => false }),
   setDoc: vi.fn().mockResolvedValue(undefined),
   updateDoc: vi.fn().mockResolvedValue(undefined),
   deleteDoc: vi.fn().mockResolvedValue(undefined),
@@ -62,17 +62,28 @@ describe('readSkus', () => {
 });
 
 describe('createSku', () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mocks.getDoc.mockResolvedValue({ exists: () => false, id: 'NATBRA-70983' });
+    mocks.doc.mockImplementation((...args: unknown[]) => String(args[2] ?? 'doc-ref'));
+  });
 
   it('usa o sku como document ID para canal ecommerce', async () => {
     await createSku(BASE);
     expect(mocks.doc).toHaveBeenCalledWith({}, 'skus', 'NATBRA-70983');
-    expect(mocks.setDoc).toHaveBeenCalledWith('doc-ref', BASE);
+    expect(mocks.setDoc).toHaveBeenCalledWith('NATBRA-70983', BASE);
   });
 
   it('adiciona :sc ao document ID para canal socialcommerce', async () => {
     await createSku({ ...BASE, channel: 'socialcommerce' });
     expect(mocks.doc).toHaveBeenCalledWith({}, 'skus', 'NATBRA-70983:sc');
+  });
+
+  it('lança erro quando o documento já existe para esse identificador', async () => {
+    mocks.getDoc.mockResolvedValue({ exists: () => true });
+
+    await expect(createSku(BASE)).rejects.toThrow('SKU já cadastrado');
+    expect(mocks.setDoc).not.toHaveBeenCalled();
   });
 
   it('retorna a entrada criada com o id correto', async () => {
@@ -82,20 +93,51 @@ describe('createSku', () => {
 });
 
 describe('updateSku', () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mocks.doc.mockImplementation((...args: unknown[]) => String(args[2] ?? 'doc-ref'));
+    mocks.getDoc.mockImplementation(async (ref: unknown) => {
+      const id = String(ref);
+
+      if (id === 'NATBRA-70983') {
+        return { exists: () => true, id, data: () => ({ ...BASE }) };
+      }
+
+      if (id === 'NATBRA-70983:sc') {
+        return { exists: () => false, id };
+      }
+
+      return { exists: () => false, id };
+    });
+  });
 
   it('retorna null e não chama updateDoc quando doc não existe', async () => {
-    mocks.getDoc.mockResolvedValue({ exists: () => false });
+    mocks.getDoc.mockResolvedValue({ exists: () => false, id: 'NATBRA-70983' });
     const result = await updateSku('NATBRA-70983', { name: 'Novo Nome' });
     expect(result).toBeNull();
     expect(mocks.updateDoc).not.toHaveBeenCalled();
   });
 
   it('atualiza e retorna entrada mesclada quando doc existe', async () => {
-    mocks.getDoc.mockResolvedValue({ exists: () => true, data: () => ({ ...BASE }) });
+    mocks.getDoc.mockResolvedValue({
+      exists: () => true,
+      id: 'NATBRA-70983',
+      data: () => ({ ...BASE }),
+    });
     const result = await updateSku('NATBRA-70983', { name: 'Novo Nome' });
-    expect(mocks.updateDoc).toHaveBeenCalledWith('doc-ref', { name: 'Novo Nome' });
+    expect(mocks.updateDoc).toHaveBeenCalledWith('NATBRA-70983', { name: 'Novo Nome' });
     expect(result).toMatchObject({ id: 'NATBRA-70983', name: 'Novo Nome' });
+  });
+
+  it('migra o documento quando o canal muda e o ID do Firestore precisa ser recalculado', async () => {
+    const result = await updateSku('NATBRA-70983', { channel: 'socialcommerce' });
+
+    expect(mocks.setDoc).toHaveBeenCalledWith('NATBRA-70983:sc', {
+      ...BASE,
+      channel: 'socialcommerce',
+    });
+    expect(mocks.deleteDoc).toHaveBeenCalledWith('NATBRA-70983');
+    expect(result).toMatchObject({ id: 'NATBRA-70983:sc', channel: 'socialcommerce' });
   });
 });
 
@@ -103,16 +145,16 @@ describe('deleteSku', () => {
   beforeEach(() => vi.clearAllMocks());
 
   it('retorna false e não chama deleteDoc quando doc não existe', async () => {
-    mocks.getDoc.mockResolvedValue({ exists: () => false });
+    mocks.getDoc.mockResolvedValue({ exists: () => false, id: 'NATBRA-70983' });
     const result = await deleteSku('NATBRA-70983');
     expect(result).toBe(false);
     expect(mocks.deleteDoc).not.toHaveBeenCalled();
   });
 
   it('deleta e retorna true quando doc existe', async () => {
-    mocks.getDoc.mockResolvedValue({ exists: () => true });
+    mocks.getDoc.mockResolvedValue({ exists: () => true, id: 'NATBRA-70983' });
     const result = await deleteSku('NATBRA-70983');
     expect(result).toBe(true);
-    expect(mocks.deleteDoc).toHaveBeenCalledWith('doc-ref');
+    expect(mocks.deleteDoc).toHaveBeenCalledWith('NATBRA-70983');
   });
 });

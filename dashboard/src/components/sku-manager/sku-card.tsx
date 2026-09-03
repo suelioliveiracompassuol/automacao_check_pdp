@@ -64,7 +64,10 @@ export function SkuCard({ entry, onEdit, onDelete }: SkuCardProps) {
       {entry.expectedFeatures.length > 0 && (
         <div className="flex flex-wrap gap-1">
           {entry.expectedFeatures.map((f) => (
-            <span key={f} className="rounded bg-indigo-50 px-1.5 py-0.5 text-[9px] font-medium text-indigo-600">
+            <span
+              key={f}
+              className="rounded bg-indigo-50 px-1.5 py-0.5 text-[9px] font-medium text-indigo-600"
+            >
               {f}
             </span>
           ))}

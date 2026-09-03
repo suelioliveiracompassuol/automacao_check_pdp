@@ -24,7 +24,13 @@ describe('SkuDeleteDialog', () => {
 
   it('chama onCancel ao clicar em Cancelar', async () => {
     const onCancel = vi.fn();
-    render(<SkuDeleteDialog skuName="Produto A" onConfirm={vi.fn().mockResolvedValue(undefined)} onCancel={onCancel} />);
+    render(
+      <SkuDeleteDialog
+        skuName="Produto A"
+        onConfirm={vi.fn().mockResolvedValue(undefined)}
+        onCancel={onCancel}
+      />,
+    );
     await userEvent.click(screen.getByRole('button', { name: /cancelar/i }));
     expect(onCancel).toHaveBeenCalledOnce();
   });

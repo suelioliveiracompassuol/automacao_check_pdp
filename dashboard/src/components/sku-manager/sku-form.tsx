@@ -73,11 +73,13 @@ function toFormState(entry: SkuEntry | null): FormState {
 export function SkuForm({ open, initialData, onSubmit, onClose }: SkuFormProps) {
   const [form, setForm] = useState<FormState>(DEFAULT_STATE);
   const [loading, setLoading] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
 
   useEffect(() => {
     setForm(toFormState(initialData));
     setErrors({});
+    setSubmitError(null);
   }, [open, initialData]);
 
   const setField = <K extends keyof FormState>(key: K, value: FormState[K]) => {
@@ -114,6 +116,8 @@ export function SkuForm({ open, initialData, onSubmit, onClose }: SkuFormProps) 
     e.preventDefault();
     if (!validate()) return;
     setLoading(true);
+    setSubmitError(null);
+
     try {
       await onSubmit({
         sku: form.sku.trim(),
@@ -124,6 +128,9 @@ export function SkuForm({ open, initialData, onSubmit, onClose }: SkuFormProps) 
         channel: form.channel,
         expectedFeatures: form.expectedFeatures,
       });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Não foi possível salvar o SKU.';
+      setSubmitError(message);
     } finally {
       setLoading(false);
     }
@@ -132,7 +139,12 @@ export function SkuForm({ open, initialData, onSubmit, onClose }: SkuFormProps) 
   const isEditing = initialData !== null;
 
   return (
-    <Dialog.Root open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
+    <Dialog.Root
+      open={open}
+      onOpenChange={(o) => {
+        if (!o) onClose();
+      }}
+    >
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
         <Dialog.Content
@@ -151,15 +163,25 @@ export function SkuForm({ open, initialData, onSubmit, onClose }: SkuFormProps) 
             </Dialog.Close>
           </div>
           <p id="sku-form-description" className="sr-only">
-            {isEditing === true ? 'Formulário para editar SKU existente' : 'Formulário para criar novo SKU'}
+            {isEditing === true
+              ? 'Formulário para editar SKU existente'
+              : 'Formulário para criar novo SKU'}
           </p>
           <form onSubmit={handleSubmit} className="flex flex-1 flex-col overflow-hidden">
             <div className="flex-1 overflow-y-auto px-6 py-4">
+              {submitError !== null && (
+                <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                  {submitError}
+                </div>
+              )}
               <div className="flex flex-col gap-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex flex-col gap-1">
                     <label htmlFor="sku-field" className="text-xs font-medium text-gray-700">
-                      SKU <span className="text-red-500" aria-hidden="true">*</span>
+                      SKU{' '}
+                      <span className="text-red-500" aria-hidden="true">
+                        *
+                      </span>
                     </label>
                     <input
                       id="sku-field"
@@ -179,7 +201,10 @@ export function SkuForm({ open, initialData, onSubmit, onClose }: SkuFormProps) 
                   </div>
                   <div className="flex flex-col gap-1">
                     <label htmlFor="name-field" className="text-xs font-medium text-gray-700">
-                      Nome <span className="text-red-500" aria-hidden="true">*</span>
+                      Nome{' '}
+                      <span className="text-red-500" aria-hidden="true">
+                        *
+                      </span>
                     </label>
                     <input
                       id="name-field"
@@ -277,7 +302,9 @@ export function SkuForm({ open, initialData, onSubmit, onClose }: SkuFormProps) 
                       >
                         Marcar todas
                       </button>
-                      <span className="text-gray-300" aria-hidden="true">|</span>
+                      <span className="text-gray-300" aria-hidden="true">
+                        |
+                      </span>
                       <button
                         type="button"
                         onClick={clearAllFeatures}
@@ -320,7 +347,11 @@ export function SkuForm({ open, initialData, onSubmit, onClose }: SkuFormProps) 
                 disabled={loading === true}
                 className="rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-indigo-700 disabled:opacity-50"
               >
-                {loading === true ? 'Salvando…' : isEditing === true ? 'Salvar alterações' : 'Criar SKU'}
+                {loading === true
+                  ? 'Salvando…'
+                  : isEditing === true
+                    ? 'Salvar alterações'
+                    : 'Criar SKU'}
               </button>
             </div>
           </form>

@@ -44,7 +44,13 @@ describe('SkuCard', () => {
   });
 
   it('aplica estilo purple para canal socialcommerce', () => {
-    render(<SkuCard entry={{ ...entry, channel: 'socialcommerce' }} onEdit={vi.fn()} onDelete={vi.fn()} />);
+    render(
+      <SkuCard
+        entry={{ ...entry, channel: 'socialcommerce' }}
+        onEdit={vi.fn()}
+        onDelete={vi.fn()}
+      />,
+    );
     expect(screen.getByText('Social').className).toContain('purple');
   });
 });

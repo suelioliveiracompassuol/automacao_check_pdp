@@ -23,7 +23,12 @@ export function SkuDeleteDialog({ skuName, onConfirm, onCancel }: SkuDeleteDialo
   };
 
   return (
-    <Dialog.Root open={skuName !== null} onOpenChange={(open) => { if (!open) onCancel(); }}>
+    <Dialog.Root
+      open={skuName !== null}
+      onOpenChange={(open) => {
+        if (!open) onCancel();
+      }}
+    >
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
         <Dialog.Content
@@ -46,8 +51,8 @@ export function SkuDeleteDialog({ skuName, onConfirm, onCancel }: SkuDeleteDialo
               </Dialog.Title>
               <p id="delete-dialog-description" className="mt-1 text-sm text-gray-500">
                 Tem certeza que deseja excluir{' '}
-                <span className="font-medium text-gray-700">{skuName}</span>? Esta ação não pode
-                ser desfeita.
+                <span className="font-medium text-gray-700">{skuName}</span>? Esta ação não pode ser
+                desfeita.
               </p>
             </div>
             <div className="flex w-full gap-3">

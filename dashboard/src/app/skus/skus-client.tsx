@@ -22,7 +22,8 @@ export function SkusClient() {
       .finally(() => setLoading(false));
   }, []);
 
-  const deletingName = deletingId !== null ? (skus.find((s) => s.id === deletingId)?.name ?? null) : null;
+  const deletingName =
+    deletingId !== null ? (skus.find((s) => s.id === deletingId)?.name ?? null) : null;
 
   const openCreate = useCallback(() => {
     setEditingEntry(null);
@@ -39,19 +40,25 @@ export function SkusClient() {
     setEditingEntry(null);
   }, []);
 
-  const handleCreate = useCallback(async (data: Omit<SkuEntry, 'id'>) => {
-    const created = await createSku(data);
-    setSkus((prev) => [...prev, created]);
-    closeForm();
-  }, [closeForm]);
+  const handleCreate = useCallback(
+    async (data: Omit<SkuEntry, 'id'>) => {
+      const created = await createSku(data);
+      setSkus((prev) => [...prev, created]);
+      closeForm();
+    },
+    [closeForm],
+  );
 
-  const handleUpdate = useCallback(async (data: Omit<SkuEntry, 'id'>) => {
-    if (editingEntry === null) return;
-    const updated = await updateSku(editingEntry.id, data);
-    if (updated === null) throw new Error('SKU não encontrado');
-    setSkus((prev) => prev.map((s) => (s.id === updated.id ? updated : s)));
-    closeForm();
-  }, [editingEntry, closeForm]);
+  const handleUpdate = useCallback(
+    async (data: Omit<SkuEntry, 'id'>) => {
+      if (editingEntry === null) return;
+      const updated = await updateSku(editingEntry.id, data);
+      if (updated === null) throw new Error('SKU não encontrado');
+      setSkus((prev) => prev.map((s) => (s.id === updated.id ? updated : s)));
+      closeForm();
+    },
+    [editingEntry, closeForm],
+  );
 
   const handleSubmit = useCallback(
     async (data: Omit<SkuEntry, 'id'>) => {
