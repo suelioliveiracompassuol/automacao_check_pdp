@@ -49,7 +49,7 @@ import {
   RemoteConfigFlags,
   CommerceFeatureFlags,
 } from "./checks/remoteConfig.js";
-import { SKUS } from "./checks/configs/skus/skus.js";
+import { loadSkus } from "./checks/configs/skus/skus.js";
 import { FEATURES } from "./checks/configs/features.js";
 import { PDP_ENDPOINT_RULES } from "./checks/configs/endpoints-rules.js";
 import { runWithConcurrency, jitter, parseConcurrency } from "./concurrency.js";
@@ -539,6 +539,9 @@ async function main() {
 
   // Create output directories
   fs.mkdirSync(path.join(outputDir, "screenshots"), { recursive: true });
+
+  // Carrega SKUs do Firestore (ou JSON como fallback)
+  const SKUS = await loadSkus();
 
   // Parse optional env-based filters (set via workflow_dispatch inputs)
   let featuresFilter: Set<string> | null = process.env.FEATURES_FILTER?.trim()

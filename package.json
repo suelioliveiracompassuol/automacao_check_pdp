@@ -31,5 +31,8 @@
     "eslint-plugin-playwright": "^2.10.2",
     "typescript": "^5.4.0",
     "typescript-eslint": "^8.59.2"
+  },
+  "dependencies": {
+    "firebase-admin": "^14.3.0"
   }
 }

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Activity, Zap } from 'lucide-react';
+import { Activity, Database, Zap } from 'lucide-react';
 import { getReportIndex } from '@/lib/data';
 import { HistoryDropdown } from './history-dropdown';
 
@@ -32,6 +32,13 @@ export function NavHeader() {
             <Zap className="w-3 h-3 text-amber-500" />
             <span>Automação ativa</span>
           </div>
+          <Link
+            href="/skus"
+            className="hidden sm:flex items-center gap-1.5 text-xs text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-full transition-colors hover:bg-indigo-100"
+          >
+            <Database className="w-3 h-3" />
+            <span>SKUs</span>
+          </Link>
           <HistoryDropdown runs={runs} />
         </div>
       </div>
