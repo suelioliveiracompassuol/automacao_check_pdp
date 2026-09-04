@@ -1,24 +1,24 @@
-import { getReportIndex, getReportById } from '@/lib/data';
-import { Card } from '@/components/ui/card';
-import { HeroSection } from '@/components/apresentacao/hero-section';
-import { CoverageSection } from '@/components/apresentacao/coverage-section';
-import { EvolutionSection } from '@/components/apresentacao/evolution-section';
-import { ErrorMatrixSection } from '@/components/apresentacao/error-matrix-section';
-import { ImpactSection } from '@/components/apresentacao/impact-section';
-import { NextStepsSection } from '@/components/apresentacao/next-steps-section';
-import type { MonitoringReport } from '@/lib/types';
 import { BarChart3 } from 'lucide-react';
 
-const COUNTRY_INFO: Record<string, { label: string }> = {
-  AR: { label: 'Argentina' },
-  BR: { label: 'Brasil' },
-  CL: { label: 'Chile' },
-  CO: { label: 'Colômbia' },
-  MX: { label: 'México' },
-  PE: { label: 'Peru' },
-};
+import { CoverageSection } from '@/components/apresentacao/coverage-section';
+import { ErrorMatrixSection } from '@/components/apresentacao/error-matrix-section';
+import { EvolutionSection } from '@/components/apresentacao/evolution-section';
+import { HeroSection } from '@/components/apresentacao/hero-section';
+import { HighlightsSection } from '@/components/apresentacao/highlights-section';
+import { PresentationControls } from '@/components/apresentacao/presentation-controls';
+import { Card } from '@/components/ui/card';
+import { getReportById, getReportIndex } from '@/lib/data';
+import { COUNTRY_INFO, type MonitoringReport } from '@/lib/types';
+import { TOTAL_CHECKS } from '@/lib/checks-catalog';
 
-const CHECK_CARDS_COUNT = 10;
+/** Section ids used both for anchor scrolling (PresentationControls) and print page-breaks. */
+const PRESENTATION_SECTIONS = [
+  { id: 'hero', label: 'Início' },
+  { id: 'coverage', label: 'Cobertura' },
+  { id: 'evolution', label: 'Evolução' },
+  { id: 'errors', label: 'Erros' },
+  { id: 'highlights', label: 'Destaques' },
+];
 
 export default function ApresentacaoPage() {
   const index = getReportIndex();
@@ -67,24 +67,43 @@ export default function ApresentacaoPage() {
       }, new Map())
     : new Map<string, Set<string>>();
 
+  const vendorsByCountry = latestReport
+    ? latestReport.results.reduce<Map<string, Set<string>>>((vendors, result) => {
+        const country = result.country.toUpperCase();
+        const countryVendors = vendors.get(country) ?? new Set<string>();
+        countryVendors.add(result.vendor.toLowerCase());
+        vendors.set(country, countryVendors);
+        return vendors;
+      }, new Map())
+    : new Map<string, Set<string>>();
+
   return (
     <div className="space-y-14">
-      <HeroSection
-        totalRuns={totalRuns}
-        latestPassRate={latestPassRate}
-        countriesCount={countries.length || Object.keys(COUNTRY_INFO).length}
-        checksCount={CHECK_CARDS_COUNT}
-      />
-
-      <CoverageSection countries={countries} channelsByCountry={channelsByCountry} />
-
-      <EvolutionSection evolutionData={evolutionData} />
-
-      <ErrorMatrixSection reports={last4Reports} />
-
-      <ImpactSection />
-
-      <NextStepsSection />
+      <PresentationControls sections={PRESENTATION_SECTIONS} />
+      <div id="hero" className="scroll-mt-24">
+        <HeroSection
+          totalRuns={totalRuns}
+          latestPassRate={latestPassRate}
+          countriesCount={countries.length || Object.keys(COUNTRY_INFO).length}
+          checksCount={TOTAL_CHECKS}
+        />
+      </div>
+      <div id="coverage" className="scroll-mt-24">
+        <CoverageSection
+          countries={countries}
+          channelsByCountry={channelsByCountry}
+          vendorsByCountry={vendorsByCountry}
+        />
+      </div>
+      <div id="evolution" className="scroll-mt-24">
+        <EvolutionSection evolutionData={evolutionData} />
+      </div>
+      <div id="errors" className="scroll-mt-24">
+        <ErrorMatrixSection reports={last4Reports} />
+      </div>
+      <div id="highlights" className="scroll-mt-24">
+        <HighlightsSection />
+      </div>
     </div>
   );
 }

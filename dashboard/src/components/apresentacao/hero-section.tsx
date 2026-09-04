@@ -16,8 +16,8 @@ export function HeroSection({
 }: HeroSectionProps) {
   return (
     <section aria-labelledby="hero-heading" className="-mx-4 -mt-6 sm:-mx-6">
-      <div className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 px-8 py-12shadow-xl">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-indigo-500 via-transparent to-transparent opacity-30" />
+      <div className="relative overflow-hidden bg-linear-to-br from-slate-900 via-indigo-950 to-slate-900 px-8 py-12 shadow-xl">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,var(--tw-gradient-stops))] from-indigo-500 via-transparent to-transparent opacity-30" />
         <div className="relative z-10 mx-auto max-w-7xl">
           <span className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-indigo-400/20 bg-indigo-500/20 px-3 py-1 text-xs font-medium text-indigo-300">
             <Zap className="h-3 w-3" />

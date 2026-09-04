@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Activity, Database, Zap } from 'lucide-react';
+import { Activity, Database, Presentation, Zap } from 'lucide-react';
 import { getReportIndex } from '@/lib/data';
 import { HistoryDropdown } from './history-dropdown';
 
@@ -8,15 +8,18 @@ export function NavHeader() {
   const runs = index.reports.slice(0, 15);
 
   return (
-    <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-lg border-b border-gray-200/60 shadow-sm">
+    <header
+      id="app-nav-header"
+      className="sticky top-0 z-40 bg-white/80 backdrop-blur-lg border-b border-gray-200/60 shadow-sm"
+    >
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
         <Link
           href="/"
           className="flex items-center gap-2.5 text-gray-900 hover:text-indigo-600 transition-colors group"
         >
           <div className="relative">
-            <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg opacity-20 group-hover:opacity-40 transition-opacity blur" />
-            <div className="relative bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg p-1.5">
+            <div className="absolute -inset-1 bg-linear-to-r from-indigo-500 to-purple-500 rounded-lg opacity-20 group-hover:opacity-40 transition-opacity blur" />
+            <div className="relative bg-linear-to-br from-indigo-600 to-purple-600 rounded-lg p-1.5">
               <Activity className="w-4 h-4 text-white" />
             </div>
           </div>
@@ -38,6 +41,13 @@ export function NavHeader() {
           >
             <Database className="w-3 h-3" />
             <span>SKUs</span>
+          </Link>
+          <Link
+            href="/apresentacao"
+            className="hidden sm:flex items-center gap-1.5 text-xs text-purple-600 bg-purple-50 px-3 py-1.5 rounded-full transition-colors hover:bg-purple-100"
+          >
+            <Presentation className="w-3 h-3" />
+            <span>Apresentação</span>
           </Link>
           <HistoryDropdown runs={runs} />
         </div>

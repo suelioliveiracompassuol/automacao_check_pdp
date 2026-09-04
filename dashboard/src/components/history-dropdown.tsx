@@ -65,7 +65,7 @@ export function HistoryDropdown({ runs }: HistoryDropdownProps) {
                     }`}
                   >
                     <div className="flex flex-col">
-                      <span className="font-medium">{formatDate(run.startTime)}</span>
+                      <span className="font-medium">{formatDate(run?.startTime)}</span>
                       <span className="text-xs text-gray-400 mt-0.5">
                         {formatDuration(run.durationMs)}
                       </span>

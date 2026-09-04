@@ -1,30 +1,10 @@
 import { Card } from '@/components/ui/card';
 import { cn, getCountryFlag } from '@/lib/utils';
-import type { MonitoringReport } from '@/lib/types';
+import { COUNTRY_INFO, type Country, type MonitoringReport } from '@/lib/types';
+import { ALL_CHECKLIST_ITEMS } from '@/lib/checks-catalog';
+import { VENDOR_LABELS } from './content';
 
 const EXCLUDED_CHECKS = new Set(['pricing', 'shipping']);
-
-const CHECK_CARDS = [
-  { key: 'contentBanners', name: 'Banners de Conteúdo' },
-  { key: 'i18nKeys', name: 'Chaves de i18n' },
-  { key: 'ratingConsistency', name: 'API de Reviews' },
-  { key: 'reviewPhotos', name: 'Fotos nas Avaliações' },
-  { key: 'reviewRecommendation', name: 'Recomendação de Reviews' },
-  { key: 'addToCart', name: 'Adicionar ao Carrinho' },
-  { key: 'favoriteButton', name: 'Botão de Favorito' },
-  { key: 'productVariations', name: 'Variações do Produto' },
-  { key: 'remoteConfig', name: 'Feature Flags' },
-  { key: 'aiReviewSummary', name: 'AI Review Summary' },
-] as const;
-
-const COUNTRY_INFO: Record<string, { label: string }> = {
-  AR: { label: 'Argentina' },
-  BR: { label: 'Brasil' },
-  CL: { label: 'Chile' },
-  CO: { label: 'Colômbia' },
-  MX: { label: 'México' },
-  PE: { label: 'Peru' },
-};
 
 interface MatrixRow {
   checkKey: string;
@@ -62,7 +42,7 @@ function computeErrorMatrix(reports: MonitoringReport[]): MatrixRow[] {
     });
   });
 
-  const labelMap = Object.fromEntries(CHECK_CARDS.map((c) => [c.key, c.name]));
+  const labelMap = Object.fromEntries(ALL_CHECKLIST_ITEMS.map((c) => [c.key, c.name]));
 
   return Array.from(matrix.values())
     .map((row) => ({
@@ -82,7 +62,7 @@ interface MatrixRowItemProps {
 }
 
 function MatrixRowItem({ row, totalRuns }: MatrixRowItemProps) {
-  const countryInfo = COUNTRY_INFO[row.country];
+  const countryInfo = COUNTRY_INFO[row.country as Country];
 
   return (
     <tr className="transition-colors hover:bg-gray-50/50">
@@ -96,7 +76,7 @@ function MatrixRowItem({ row, totalRuns }: MatrixRowItemProps) {
             row.vendor === 'natura' ? 'bg-orange-50 text-orange-700' : 'bg-pink-50 text-pink-700',
           )}
         >
-          {row.vendor === 'natura' ? 'Natura' : 'Avon'}
+          {VENDOR_LABELS[row.vendor]?.label ?? row.vendor}
         </span>
       </td>
       <td className="px-4 py-3">
@@ -119,7 +99,7 @@ function MatrixRowItem({ row, totalRuns }: MatrixRowItemProps) {
               <div
                 className={cn(
                   'h-4 w-4 rounded-full border-2',
-                  failed ? 'border-red-600bg-red-500' : 'border-gray-200bg-gray-100',
+                  failed ? 'border-red-600 bg-red-500' : 'border-gray-200 bg-gray-100',
                 )}
               />
             </div>
@@ -150,6 +130,7 @@ interface ErrorMatrixSectionProps {
 
 export function ErrorMatrixSection({ reports }: ErrorMatrixSectionProps) {
   const errorMatrix = computeErrorMatrix(reports);
+  const topFailures = errorMatrix.filter((row) => row.persistenceCount >= 2).slice(0, 3);
 
   return (
     <section aria-labelledby="matrix-heading">
@@ -161,11 +142,40 @@ export function ErrorMatrixSection({ reports }: ErrorMatrixSectionProps) {
           Checks com falhas nas últimas {reports.length} execuções — ordenados por persistência
         </p>
       </div>
+
+      {topFailures.length > 0 && (
+        <div className="mb-6 grid gap-3 sm:grid-cols-3">
+          {topFailures.map((row) => {
+            const countryInfo = COUNTRY_INFO[row.country as Country];
+            return (
+              <div
+                key={`${row.checkKey}-${row.vendor}-${row.country}`}
+                className="rounded-xl border border-red-100 bg-red-50 p-4"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold uppercase tracking-wide text-red-600">
+                    Falha persistente
+                  </span>
+                  <span className="rounded-full bg-red-600 px-2 py-0.5 text-[10px] font-bold text-white">
+                    {row.persistenceCount}/{reports.length} runs
+                  </span>
+                </div>
+                <p className="mt-2 font-semibold text-gray-900">{row.checkLabel}</p>
+                <p className="mt-0.5 text-xs text-gray-500">
+                  {VENDOR_LABELS[row.vendor]?.label ?? row.vendor} ·{' '}
+                  {countryInfo?.label ?? row.country}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
       <Card className="overflow-hidden p-0">
         <div className="overflow-x-auto">
           <table className="w-full text-sm" role="table">
             <thead>
-              <tr className="border-b border-gray-100bg-gray-50">
+              <tr className="border-b border-gray-100 bg-gray-50">
                 <th scope="col" className="w-48 px-4 py-3 text-left font-semibold text-gray-700">
                   Verificação
                 </th>

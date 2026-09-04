@@ -94,3 +94,30 @@ body::before {
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
+
+/* /apresentacao "presentation mode" (toggled via PresentationControls fullscreen button) */
+body.presentation-mode #app-nav-header {
+  display: none;
+}
+
+body.presentation-mode #app-main {
+  max-width: none;
+  padding: 0;
+}
+
+/* Print / export-to-PDF for /apresentacao */
+@media print {
+  #app-nav-header,
+  .no-print {
+    display: none !important;
+  }
+
+  #app-main {
+    max-width: none !important;
+    padding: 0 !important;
+  }
+
+  section {
+    break-inside: avoid;
+  }
+}
