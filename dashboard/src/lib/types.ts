@@ -69,6 +69,17 @@ export interface ReportIndex {
 export type Vendor = 'natura' | 'avon';
 export type Country = 'BR' | 'AR' | 'CL' | 'CO' | 'MX' | 'PE';
 export type Channel = 'ecommerce' | 'socialcommerce';
+
+/** Single source of truth for country display labels — used across the /visao-geral page. */
+export const COUNTRY_INFO: Record<Country, { label: string }> = {
+  AR: { label: 'Argentina' },
+  BR: { label: 'Brasil' },
+  CL: { label: 'Chile' },
+  CO: { label: 'Colômbia' },
+  MX: { label: 'México' },
+  PE: { label: 'Peru' },
+};
+
 export type FeatureKey =
   | 'reviews'
   | 'aiReviewSummary'
@@ -88,6 +99,28 @@ export type FeatureKey =
   | 'favoriteButton'
   | 'productVariations'
   | 'contentBanners';
+
+/** Runtime list of every FeatureKey — single source of truth for "how many checks we run". */
+export const ALL_FEATURE_KEYS: FeatureKey[] = [
+  'reviews',
+  'aiReviewSummary',
+  'reviewFilter',
+  'reviewSort',
+  'reviewPhotos',
+  'reviewRecommendation',
+  'brandShowcase',
+  'recommendationShowcase',
+  'shopTheSet',
+  'images',
+  'pricing',
+  'shipping',
+  'ratingConsistency',
+  'rating',
+  'addToCart',
+  'favoriteButton',
+  'productVariations',
+  'contentBanners',
+];
 
 export interface SkuEntry {
   id: string;
