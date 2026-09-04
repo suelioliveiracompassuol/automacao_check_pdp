@@ -95,7 +95,7 @@ body::before {
   background: #94a3b8;
 }
 
-/* /apresentacao "presentation mode" (toggled via PresentationControls fullscreen button) */
+/* /visao-geral "presentation mode" (toggled via PresentationControls fullscreen button) */
 body.presentation-mode #app-nav-header {
   display: none;
 }
@@ -105,7 +105,7 @@ body.presentation-mode #app-main {
   padding: 0;
 }
 
-/* Print / export-to-PDF for /apresentacao */
+/* Print / export-to-PDF for /visao-geral */
 @media print {
   #app-nav-header,
   .no-print {

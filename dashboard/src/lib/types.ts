@@ -70,7 +70,7 @@ export type Vendor = 'natura' | 'avon';
 export type Country = 'BR' | 'AR' | 'CL' | 'CO' | 'MX' | 'PE';
 export type Channel = 'ecommerce' | 'socialcommerce';
 
-/** Single source of truth for country display labels — used across the /apresentacao page. */
+/** Single source of truth for country display labels — used across the /visao-geral page. */
 export const COUNTRY_INFO: Record<Country, { label: string }> = {
   AR: { label: 'Argentina' },
   BR: { label: 'Brasil' },

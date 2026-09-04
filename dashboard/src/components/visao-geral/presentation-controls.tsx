@@ -13,7 +13,7 @@ interface PresentationControlsProps {
 }
 
 /**
- * Floating controls for the /apresentacao page: fullscreen "presentation mode"
+ * Floating controls for the /visao-geral page: fullscreen "presentation mode"
  * (hides the app nav header via a body class, see globals.css), keyboard/dot
  * navigation between sections, and print-to-PDF.
  */

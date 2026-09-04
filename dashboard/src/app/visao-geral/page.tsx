@@ -1,26 +1,26 @@
 import { BarChart3 } from 'lucide-react';
 
-import { CoverageSection } from '@/components/apresentacao/coverage-section';
-import { ErrorMatrixSection } from '@/components/apresentacao/error-matrix-section';
-import { EvolutionSection } from '@/components/apresentacao/evolution-section';
-import { HeroSection } from '@/components/apresentacao/hero-section';
-import { HighlightsSection } from '@/components/apresentacao/highlights-section';
-import { PresentationControls } from '@/components/apresentacao/presentation-controls';
+import { CoverageSection } from '@/components/visao-geral/coverage-section';
+import { ErrorMatrixSection } from '@/components/visao-geral/error-matrix-section';
+import { EvolutionSection } from '@/components/visao-geral/evolution-section';
+import { HeroSection } from '@/components/visao-geral/hero-section';
+import { HighlightsSection } from '@/components/visao-geral/highlights-section';
+// import { PresentationControls } from '@/components/visao-geral/presentation-controls';
 import { Card } from '@/components/ui/card';
 import { getReportById, getReportIndex } from '@/lib/data';
 import { COUNTRY_INFO, type MonitoringReport } from '@/lib/types';
 import { TOTAL_CHECKS } from '@/lib/checks-catalog';
 
 /** Section ids used both for anchor scrolling (PresentationControls) and print page-breaks. */
-const PRESENTATION_SECTIONS = [
-  { id: 'hero', label: 'Início' },
-  { id: 'coverage', label: 'Cobertura' },
-  { id: 'evolution', label: 'Evolução' },
-  { id: 'errors', label: 'Erros' },
-  { id: 'highlights', label: 'Destaques' },
-];
+// const PRESENTATION_SECTIONS = [
+//   { id: 'hero', label: 'Início' },
+//   { id: 'coverage', label: 'Cobertura' },
+//   { id: 'evolution', label: 'Evolução' },
+//   { id: 'errors', label: 'Erros' },
+//   { id: 'highlights', label: 'Destaques' },
+// ];
 
-export default function ApresentacaoPage() {
+export default function VisaoGeralPage() {
   const index = getReportIndex();
   const allRuns = index.reports;
 
@@ -31,7 +31,7 @@ export default function ApresentacaoPage() {
         <BarChart3 className="mx-auto mb-3 h-8 w-8 text-gray-300" />
         <h1 className="text-lg font-semibold text-gray-900">Nenhuma execução disponível</h1>
         <p className="mt-1 text-sm text-gray-500">
-          As métricas de apresentação aparecerão após a primeira execução.
+          As métricas aparecerão aqui após a primeira execução.
         </p>
       </Card>
     );
@@ -79,7 +79,7 @@ export default function ApresentacaoPage() {
 
   return (
     <div className="space-y-14">
-      <PresentationControls sections={PRESENTATION_SECTIONS} />
+      {/* <PresentationControls sections={PRESENTATION_SECTIONS} /> */}
       <div id="hero" className="scroll-mt-24">
         <HeroSection
           totalRuns={totalRuns}

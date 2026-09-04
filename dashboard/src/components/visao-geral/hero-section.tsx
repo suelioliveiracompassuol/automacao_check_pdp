@@ -27,7 +27,7 @@ export function HeroSection({
             id="hero-heading"
             className="mb-3 text-3xl font-bold tracking-tight text-white md:text-4xl"
           >
-            Valor de Negócio da Automação
+            Visão Geral da Automação
           </h1>
           <p className="mb-8 max-w-2xl text-base text-indigo-200/80">
             Monitoramento contínuo de features nas páginas de produto das operações Natura &amp;

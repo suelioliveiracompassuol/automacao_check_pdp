@@ -43,11 +43,11 @@ export function NavHeader() {
             <span>SKUs</span>
           </Link>
           <Link
-            href="/apresentacao"
+            href="/visao-geral"
             className="hidden sm:flex items-center gap-1.5 text-xs text-purple-600 bg-purple-50 px-3 py-1.5 rounded-full transition-colors hover:bg-purple-100"
           >
             <Presentation className="w-3 h-3" />
-            <span>Apresentação</span>
+            <span>Visão Geral</span>
           </Link>
           <HistoryDropdown runs={runs} />
         </div>

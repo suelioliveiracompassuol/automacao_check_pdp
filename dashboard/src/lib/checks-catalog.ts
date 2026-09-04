@@ -13,7 +13,7 @@ export interface ChecklistCategory {
 
 /**
  * Single source of truth for "what we check on every PDP" — used both on the home page
- * (ChecksOverview) and on the /apresentacao coverage section, so the two never drift apart.
+ * (ChecksOverview) and on the /visao-geral coverage section, so the two never drift apart.
  */
 export const CHECKS_CATALOG: ChecklistCategory[] = [
   {

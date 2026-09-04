@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils';
 import { CHECKS_CATALOG, TOTAL_CHECKS } from '@/lib/checks-catalog';
 
-/** Shared with the /apresentacao coverage section — same catalog, same card style, always in sync. */
+/** Shared with the /visao-geral coverage section — same catalog, same card style, always in sync. */
 export function ChecksOverview() {
   return (
     <section aria-labelledby="checks-overview-heading" className="space-y-6">
