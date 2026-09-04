@@ -41,6 +41,8 @@ export interface PdpCheckResult {
   country: string;
   /** Channel: ecommerce (default) or socialcommerce (Minha Loja) */
   channel?: Channel;
+  /** Platform the check ran on. Defaults to "web" when omitted (legacy reports). */
+  platform?: Platform;
   timestamp: string;
   /** Overall status: true if all required checks passed */
   success: boolean;
@@ -83,6 +85,7 @@ export interface MonitoringReport {
  * Base interface for feature checker functions
  */
 export type FeatureChecker = (page: Page) => Promise<CheckResult>;
+export type Platform = "web" | "android";
 export type Vendor = "natura" | "avon";
 export type Country = "BR" | "AR" | "CL" | "CO" | "MX" | "PE";
 export type Channel = "ecommerce" | "socialcommerce";

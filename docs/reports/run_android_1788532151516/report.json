@@ -1,0 +1,28 @@
+{
+  "runId": "android_1788532151516",
+  "startTime": "2026-09-04T14:29:11.516Z",
+  "endTime": "2026-09-04T14:29:37.832Z",
+  "durationMs": 26316,
+  "summary": {
+    "total": 1,
+    "passed": 0,
+    "failed": 1,
+    "errors": 1
+  },
+  "results": [
+    {
+      "sku": "NATBRA-70983",
+      "name": "Creme Hidratante para as Mãos Ekos Castanha 75g",
+      "url": "https://www.natura.com.br/p/creme-hidratante-para-as-maos-ekos-castanha-75-g/NATBRA-70983",
+      "vendor": "natura",
+      "country": "BR",
+      "platform": "android",
+      "timestamp": "2026-09-04T14:29:11.518Z",
+      "success": false,
+      "features": [],
+      "error": "WebDriverError: An unknown server-side error occurred while processing the command. Original error: Error attempting to start URI. Original error: Error: Starting: Intent { act=android.intent.action.VIEW dat=https://hml-natura-br.hml.naturacloud.com/... pkg=com.naturaeco.app }\nError: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat=https://hml-natura-br.hml.naturacloud.com/... flg=0x10000000 pkg=com.naturaeco.app } when running \"execute/sync\" with method \"POST\"",
+      "remoteConfigFlags": null,
+      "commerceFeatureFlags": null
+    }
+  ]
+}

@@ -8,6 +8,7 @@
     "check": "tsc && node dist/index.js",
     "check:headed": "tsc && cross-env HEADLESS=false node dist/index.js",
     "check:smoke": "tsc && cross-env MODE=smoke node dist/index.js",
+    "check:android": "tsc && node dist/index.android.js",
     "test": "npx playwright test",
     "test:unit": "npx playwright test src/tests/",
     "lint": "eslint src/",
@@ -33,6 +34,8 @@
     "typescript-eslint": "^8.59.2"
   },
   "dependencies": {
-    "firebase-admin": "^14.3.0"
+    "dotenv": "^17.4.2",
+    "firebase-admin": "^14.3.0",
+    "webdriverio": "^9.31.5"
   }
 }
