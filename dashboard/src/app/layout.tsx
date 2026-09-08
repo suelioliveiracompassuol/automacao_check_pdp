@@ -18,9 +18,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           rel="stylesheet"
         />
       </head>
-      <body className="min-h-screen bg-[var(--color-bg)]">
+      <body className="min-h-screen bg-(--color-bg)">
         <NavHeader />
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6">{children}</main>
+        <main id="app-main" className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+          {children}
+        </main>
       </body>
     </html>
   );

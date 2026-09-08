@@ -3,28 +3,10 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { ALL_FEATURE_KEYS } from '@/lib/types';
 import type { Channel, Country, FeatureKey, SkuEntry, Vendor } from '@/lib/types';
 
-const ALL_FEATURES: FeatureKey[] = [
-  'reviews',
-  'aiReviewSummary',
-  'reviewFilter',
-  'reviewSort',
-  'reviewPhotos',
-  'reviewRecommendation',
-  'brandShowcase',
-  'recommendationShowcase',
-  'shopTheSet',
-  'images',
-  'pricing',
-  'shipping',
-  'ratingConsistency',
-  'rating',
-  'addToCart',
-  'favoriteButton',
-  'productVariations',
-  'contentBanners',
-];
+const ALL_FEATURES: FeatureKey[] = ALL_FEATURE_KEYS;
 
 const VENDORS: Vendor[] = ['natura', 'avon'];
 const COUNTRIES: Country[] = ['BR', 'AR', 'CL', 'CO', 'MX', 'PE'];

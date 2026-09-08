@@ -7,6 +7,7 @@ interface SkuCardProps {
   entry: SkuEntry;
   onEdit: (entry: SkuEntry) => void;
   onDelete: (id: string) => void;
+  disabled?: boolean;
 }
 
 const VENDOR_STYLES: Record<string, string> = {
@@ -19,9 +20,11 @@ const CHANNEL_STYLES: Record<string, string> = {
   socialcommerce: 'bg-purple-100 text-purple-700',
 };
 
-export function SkuCard({ entry, onEdit, onDelete }: SkuCardProps) {
+export function SkuCard({ entry, onEdit, onDelete, disabled }: SkuCardProps) {
   return (
-    <div className="flex flex-col gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md">
+    <div
+      className={`flex flex-col gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md ${disabled ? 'opacity-60 cursor-not-allowed' : ''}`}
+    >
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
           <p className="truncate font-mono text-[10px] text-gray-400">{entry.id}</p>
@@ -31,16 +34,20 @@ export function SkuCard({ entry, onEdit, onDelete }: SkuCardProps) {
           <button
             type="button"
             onClick={() => onEdit(entry)}
-            className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-indigo-50 hover:text-indigo-600"
+            disabled={disabled}
+            className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-indigo-50 hover:text-indigo-600 disabled:cursor-not-allowed disabled:opacity-50"
             aria-label={`Editar ${entry.name}`}
+            title={disabled ? 'Faça login para editar' : undefined}
           >
             <Edit2 className="h-3.5 w-3.5" />
           </button>
           <button
             type="button"
             onClick={() => onDelete(entry.id)}
-            className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-600"
+            disabled={disabled}
+            className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
             aria-label={`Excluir ${entry.name}`}
+            title={disabled ? 'Faça login para excluir' : undefined}
           >
             <Trash2 className="h-3.5 w-3.5" />
           </button>

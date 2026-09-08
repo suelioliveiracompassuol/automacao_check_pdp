@@ -20,8 +20,8 @@ Automação para monitorar features e seções das páginas de produto (PDP) dos
 | Rating | Estrelas/nota do produto |
 | Rating Consistency | Validação de consistência entre rating e reviews |
 | Imagens | Carrossel/galeria de imagens |
-| Preço e desconto | Informação de preço e promoções |
-| Simulação de frete | Campo de CEP e cálculo de entrega |
+<!-- | Preço e desconto | Informação de preço e promoções |
+| Simulação de frete | Campo de CEP e cálculo de entrega | -->
 | Adicionar ao carrinho | Botão de compra |
 | Favoritar | Botão de favoritar produto |
 | Variações | Seletor de variações do produto |

@@ -91,7 +91,7 @@ export function SummaryCards({ total, passed, failed, errors }: SummaryCardsProp
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.4 }}
       >
-        <Card className="bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 text-white border-0 shadow-lg shadow-indigo-200">
+        <Card className="bg-linear-to-r from-indigo-600 via-purple-600 to-indigo-700 text-white border-0 shadow-lg shadow-indigo-200">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-indigo-200 text-sm font-medium">Taxa de aprovação</p>
@@ -124,7 +124,7 @@ export function SummaryCards({ total, passed, failed, errors }: SummaryCardsProp
               transition={{ delay: 0.2 + i * 0.08 }}
             >
               <Card
-                className={`border-l-4 ${item.borderColor} bg-gradient-to-br ${item.bgGradient} hover:shadow-md transition-shadow`}
+                className={`border-l-4 ${item.borderColor} bg-linear-to-br ${item.bgGradient} hover:shadow-md transition-shadow`}
               >
                 <div className="flex items-center gap-3">
                   <div className="p-2 rounded-lg bg-white/60 shadow-sm">

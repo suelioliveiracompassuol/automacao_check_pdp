@@ -9,6 +9,7 @@ interface SkuListProps {
   skus: SkuEntry[];
   onEdit: (entry: SkuEntry) => void;
   onDelete: (id: string) => void;
+  disabled?: boolean;
 }
 
 interface SkuGroup {
@@ -72,7 +73,7 @@ const SKU_GROUPS: SkuGroup[] = [
 
 const ALL_OPTION = 'all';
 
-export function SkuList({ skus, onEdit, onDelete }: SkuListProps) {
+export function SkuList({ skus, onEdit, onDelete, disabled }: SkuListProps) {
   const [search, setSearch] = useState('');
   const [vendor, setVendor] = useState<Vendor | typeof ALL_OPTION>(ALL_OPTION);
   const [country, setCountry] = useState<Country | typeof ALL_OPTION>(ALL_OPTION);
@@ -195,7 +196,13 @@ export function SkuList({ skus, onEdit, onDelete }: SkuListProps) {
               </div>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {entries.map((entry) => (
-                  <SkuCard key={entry.id} entry={entry} onEdit={onEdit} onDelete={onDelete} />
+                  <SkuCard
+                    key={entry.id}
+                    entry={entry}
+                    onEdit={onEdit}
+                    onDelete={onDelete}
+                    disabled={disabled}
+                  />
                 ))}
               </div>
             </section>

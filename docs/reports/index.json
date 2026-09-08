@@ -2,6 +2,76 @@
   "generatedAt": "2026-05-21T12:25:05Z",
   "reports": [
     {
+      "runId": "run_1788871097914",
+      "startTime": "2026-09-08T12:38:17.914Z",
+      "endTime": "2026-09-08T12:42:24.471Z",
+      "durationMs": 246557,
+      "summary": {
+        "total": 28,
+        "passed": 26,
+        "failed": 2,
+        "errors": 0
+      },
+      "htmlPath": "reports/run_1788871097914/report.html",
+      "jsonPath": "reports/run_1788871097914/report.json"
+    },
+    {
+      "runId": "run_1788789555913",
+      "startTime": "2026-09-07T13:59:15.913Z",
+      "endTime": "2026-09-07T14:03:21.774Z",
+      "durationMs": 245861,
+      "summary": {
+        "total": 28,
+        "passed": 26,
+        "failed": 2,
+        "errors": 0
+      },
+      "htmlPath": "reports/run_1788789555913/report.html",
+      "jsonPath": "reports/run_1788789555913/report.json"
+    },
+    {
+      "runId": "run_1788695915029",
+      "startTime": "2026-09-06T11:58:35.029Z",
+      "endTime": "2026-09-06T12:02:50.974Z",
+      "durationMs": 255945,
+      "summary": {
+        "total": 28,
+        "passed": 26,
+        "failed": 2,
+        "errors": 0
+      },
+      "htmlPath": "reports/run_1788695915029/report.html",
+      "jsonPath": "reports/run_1788695915029/report.json"
+    },
+    {
+      "runId": "run_1788608361193",
+      "startTime": "2026-09-05T11:39:21.193Z",
+      "endTime": "2026-09-05T11:43:25.424Z",
+      "durationMs": 244231,
+      "summary": {
+        "total": 28,
+        "passed": 26,
+        "failed": 2,
+        "errors": 0
+      },
+      "htmlPath": "reports/run_1788608361193/report.html",
+      "jsonPath": "reports/run_1788608361193/report.json"
+    },
+    {
+      "runId": "run_1788525039572",
+      "startTime": "2026-09-04T12:30:39.572Z",
+      "endTime": "2026-09-04T12:34:59.217Z",
+      "durationMs": 259645,
+      "summary": {
+        "total": 28,
+        "passed": 26,
+        "failed": 2,
+        "errors": 0
+      },
+      "htmlPath": "reports/run_1788525039572/report.html",
+      "jsonPath": "reports/run_1788525039572/report.json"
+    },
+    {
       "runId": "run_1788454666821",
       "startTime": "2026-09-03T16:57:46.821Z",
       "endTime": "2026-09-03T17:01:57.781Z",
@@ -1330,76 +1400,6 @@
       },
       "htmlPath": "reports/run_1781091508100/report.html",
       "jsonPath": "reports/run_1781091508100/report.json"
-    },
-    {
-      "runId": "run_1781035446759",
-      "startTime": "2026-06-09T20:04:06.759Z",
-      "endTime": "2026-06-09T20:12:09.616Z",
-      "durationMs": 482857,
-      "summary": {
-        "total": 27,
-        "passed": 11,
-        "failed": 16,
-        "errors": 0
-      },
-      "htmlPath": "reports/run_1781035446759/report.html",
-      "jsonPath": "reports/run_1781035446759/report.json"
-    },
-    {
-      "runId": "run_1781002801309",
-      "startTime": "2026-06-09T11:00:01.309Z",
-      "endTime": "2026-06-09T11:07:42.969Z",
-      "durationMs": 461660,
-      "summary": {
-        "total": 27,
-        "passed": 12,
-        "failed": 15,
-        "errors": 0
-      },
-      "htmlPath": "reports/run_1781002801309/report.html",
-      "jsonPath": "reports/run_1781002801309/report.json"
-    },
-    {
-      "runId": "run_1780921685998",
-      "startTime": "2026-06-08T12:28:05.998Z",
-      "endTime": "2026-06-08T12:35:38.032Z",
-      "durationMs": 452034,
-      "summary": {
-        "total": 27,
-        "passed": 12,
-        "failed": 15,
-        "errors": 0
-      },
-      "htmlPath": "reports/run_1780921685998/report.html",
-      "jsonPath": "reports/run_1780921685998/report.json"
-    },
-    {
-      "runId": "run_1780828122362",
-      "startTime": "2026-06-07T10:28:42.362Z",
-      "endTime": "2026-06-07T10:36:11.878Z",
-      "durationMs": 449516,
-      "summary": {
-        "total": 27,
-        "passed": 12,
-        "failed": 15,
-        "errors": 0
-      },
-      "htmlPath": "reports/run_1780828122362/report.html",
-      "jsonPath": "reports/run_1780828122362/report.json"
-    },
-    {
-      "runId": "run_1780740212913",
-      "startTime": "2026-06-06T10:03:32.913Z",
-      "endTime": "2026-06-06T10:11:12.002Z",
-      "durationMs": 459089,
-      "summary": {
-        "total": 27,
-        "passed": 12,
-        "failed": 15,
-        "errors": 0
-      },
-      "htmlPath": "reports/run_1780740212913/report.html",
-      "jsonPath": "reports/run_1780740212913/report.json"
     }
   ]
 }
