@@ -7,7 +7,20 @@ export async function checkAddToCartAndroid(
 ): Promise<CheckResult> {
   try {
     const button = driver.$(`android=${ANDROID_SELECTORS.addToCart.anyButton}`);
-    const isDisplayed = await button.isDisplayed().catch(() => false);
+    // PDP renders shimmer/skeleton placeholders first — poll instead of a single isDisplayed check.
+    let isDisplayed = await button
+      .waitForDisplayed({ timeout: 15000 })
+      .catch(() => false);
+
+    if (!isDisplayed) {
+      // Fallback for brands/countries where cv_buy_button isn't the resource-id
+      const fallbackButton = driver.$(
+        `android=${ANDROID_SELECTORS.addToCart.textFallback}`,
+      );
+      isDisplayed = await fallbackButton
+        .waitForDisplayed({ timeout: 5000 })
+        .catch(() => false);
+    }
 
     if (isDisplayed) {
       return {

@@ -11,7 +11,7 @@ import { SELECTORS } from "./configs/config.js";
  * Extract product/item count from an Einstein campaign payload.
  * Different country BFFs may use different field names for the product array.
  */
-function extractProductsFromPayload(payloadObj: unknown): number {
+export function extractProductsFromPayload(payloadObj: unknown): number {
   if (!payloadObj || typeof payloadObj !== "object") {
     return 0;
   }
@@ -512,7 +512,9 @@ export async function checkBrandShowcase(page: Page): Promise<CheckResult> {
 
     // 1st showcase section = brand showcase
     const brandSection = sections.nth(0);
-    const productCards = brandSection.locator(SELECTORS.brandShowcase.productCards);
+    const productCards = brandSection.locator(
+      SELECTORS.brandShowcase.productCards,
+    );
     let cardCount = await productCards.count().catch(() => 0);
     // Fallback: NCF SSR and some country sites use plain <a href="/p/"> or <a href="/products/">
     if (cardCount === 0) {
@@ -602,7 +604,9 @@ export async function checkRecommendationShowcase(
     // This handles "también te puede gustar", "achamos que você vai gostar", etc.
     const byTitle = page
       .locator(SELECTORS.recommendationShowcase.section)
-      .filter({ has: page.locator(SELECTORS.recommendationShowcase.productCards) });
+      .filter({
+        has: page.locator(SELECTORS.recommendationShowcase.productCards),
+      });
     const titleCount = await byTitle.count().catch(() => 0);
 
     let activeSection = byTitle.first();
@@ -746,7 +750,9 @@ export async function checkRecommendationShowcase(
       // Re-check DOM for the recommendation section
       const byTitleRetry = page
         .locator(SELECTORS.recommendationShowcase.section)
-        .filter({ has: page.locator(SELECTORS.recommendationShowcase.productCards) });
+        .filter({
+          has: page.locator(SELECTORS.recommendationShowcase.productCards),
+        });
       const titleCountRetry = await byTitleRetry.count().catch(() => 0);
       if (titleCountRetry > 0) {
         const visibleRetry = await byTitleRetry

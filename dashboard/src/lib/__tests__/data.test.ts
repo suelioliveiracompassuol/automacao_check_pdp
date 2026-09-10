@@ -94,6 +94,22 @@ describe('data.ts', () => {
       expect(result).toEqual(['product_fullpage_001.png', 'product_error_002.png']);
     });
 
+    it('accepts Android screenshots produced with generic timestamped names', () => {
+      vi.mocked(fs.existsSync).mockReturnValue(true);
+      vi.mocked(fs.readdirSync).mockReturnValue([
+        'NATBRA-70983_1725971234567.png',
+        'NATBRA-70983_login_debug_1725971234567.png',
+        'not-a-screenshot.txt',
+      ] as unknown as ReturnType<typeof fs.readdirSync>);
+
+      const result = getScreenshotsForRun('run_android_123');
+
+      expect(result).toEqual([
+        'NATBRA-70983_1725971234567.png',
+        'NATBRA-70983_login_debug_1725971234567.png',
+      ]);
+    });
+
     it('returns empty array when directory does not exist', () => {
       vi.mocked(fs.existsSync).mockReturnValue(false);
       const result = getScreenshotsForRun('run_nonexistent');

@@ -66,6 +66,11 @@ export function PdpCard({ result, runId, screenshots }: PdpCardProps) {
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
+            {result.platform === 'android' && (
+              <Badge className="bg-emerald-50 text-emerald-700 border border-emerald-200 font-semibold">
+                📱 Android
+              </Badge>
+            )}
             {result.channel === 'socialcommerce' && (
               <Badge className="bg-purple-50 text-purple-700 border border-purple-200 font-semibold">
                 Minha Loja

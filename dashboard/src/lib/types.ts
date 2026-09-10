@@ -23,6 +23,8 @@ export interface PdpCheckResult {
   vendor: string;
   country: string;
   channel?: string;
+  /** Platform the check ran on. Defaults to 'web' when omitted (legacy reports). */
+  platform?: 'web' | 'android';
   timestamp: string;
   success: boolean;
   loadTime?: number;
@@ -58,8 +60,11 @@ export interface ReportIndexEntry {
     failed: number;
     errors: number;
   };
-  htmlPath: string;
+  /** Present for web runs (static report.html); Android runs are JSON-only. */
+  htmlPath?: string;
   jsonPath: string;
+  /** Defaults to 'web' when omitted (legacy reports). */
+  platform?: 'web' | 'android';
 }
 
 export interface ReportIndex {

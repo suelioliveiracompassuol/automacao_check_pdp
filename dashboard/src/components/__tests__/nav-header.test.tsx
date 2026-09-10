@@ -29,6 +29,7 @@ vi.mock('@/lib/data', () => ({
       },
     ],
   }),
+  getLastReport: () => ({ runId: 'run_1' }),
 }));
 
 describe('NavHeader', () => {

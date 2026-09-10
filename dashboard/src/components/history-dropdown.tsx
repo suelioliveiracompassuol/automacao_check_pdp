@@ -9,17 +9,31 @@ import { formatDate, formatDuration } from '@/lib/utils';
 
 interface HistoryDropdownProps {
   runs: ReportIndexEntry[];
+  /** runId currently shown at `homeHref` — NOT necessarily runs[0], since other platforms
+   * (e.g. Android) can be inserted at the front of the same index without updating
+   * last-report.json. */
+  homeRunId?: string;
+  /** Route prefix for non-home entries. Defaults to '/report' (web reports). */
+  basePath?: string;
+  /** Link used for the "home" entry (the one matching homeRunId). Defaults to '/'. */
+  homeHref?: string;
 }
 
-export function HistoryDropdown({ runs }: HistoryDropdownProps) {
+export function HistoryDropdown({
+  runs,
+  homeRunId,
+  basePath = '/report',
+  homeHref = '/',
+}: HistoryDropdownProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
+  const resolvedHomeRunId = homeRunId ?? runs[0]?.runId;
 
   // Determine current runId from URL
-  const currentRunId = pathname.includes('/report/')
-    ? pathname.split('/report/')[1]?.replace(/\/$/, '')
-    : runs[0]?.runId; // Home = latest
+  const currentRunId = pathname.includes(`${basePath}/`)
+    ? pathname.split(`${basePath}/`)[1]?.replace(/\/$/, '')
+    : resolvedHomeRunId; // Home = whatever last-report.json actually holds
 
   // Close on outside click
   useEffect(() => {
@@ -51,9 +65,9 @@ export function HistoryDropdown({ runs }: HistoryDropdownProps) {
             </span>
           </div>
           <ul className="max-h-96 overflow-y-auto py-1">
-            {runs.map((run, i) => {
+            {runs.map((run) => {
               const isCurrent = run.runId === currentRunId;
-              const href = i === 0 ? '/' : `/report/${run.runId}/`;
+              const href = run.runId === resolvedHomeRunId ? homeHref : `${basePath}/${run.runId}/`;
 
               return (
                 <li key={run.runId}>
@@ -65,7 +79,10 @@ export function HistoryDropdown({ runs }: HistoryDropdownProps) {
                     }`}
                   >
                     <div className="flex flex-col">
-                      <span className="font-medium">{formatDate(run?.startTime)}</span>
+                      <span className="font-medium">
+                        {run.platform === 'android' && '📱 '}
+                        {formatDate(run?.startTime)}
+                      </span>
                       <span className="text-xs text-gray-400 mt-0.5">
                         {formatDuration(run.durationMs)}
                       </span>

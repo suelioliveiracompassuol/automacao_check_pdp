@@ -1,11 +1,13 @@
 import Link from 'next/link';
-import { Activity, Database, Presentation, Zap } from 'lucide-react';
-import { getReportIndex } from '@/lib/data';
+import { Activity, Database, Presentation, Smartphone, Zap } from 'lucide-react';
+import { getLastReport, getReportIndex } from '@/lib/data';
 import { HistoryDropdown } from './history-dropdown';
 
 export function NavHeader() {
   const index = getReportIndex();
-  const runs = index.reports.slice(0, 15);
+  // Android runs get their own page/history (see /android) to avoid mixing platforms here.
+  const runs = index.reports.filter((r) => r.platform !== 'android').slice(0, 15);
+  const homeRunId = getLastReport().runId;
 
   return (
     <header
@@ -49,7 +51,14 @@ export function NavHeader() {
             <Presentation className="w-3 h-3" />
             <span>Visão Geral</span>
           </Link>
-          <HistoryDropdown runs={runs} />
+          <Link
+            href="/android"
+            className="hidden sm:flex items-center gap-1.5 text-xs text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full transition-colors hover:bg-emerald-100"
+          >
+            <Smartphone className="w-3 h-3" />
+            <span>Android</span>
+          </Link>
+          <HistoryDropdown runs={runs} homeRunId={homeRunId} />
         </div>
       </div>
     </header>

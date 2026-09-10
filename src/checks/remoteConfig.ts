@@ -1020,7 +1020,7 @@ export async function captureRemoteConfig(
 /**
  * Parses Firebase Remote Config entries and extracts locale-specific values
  */
-function parseRemoteConfigEntries(
+export function parseRemoteConfigEntries(
   entries: Record<string, string>,
   locale: string,
 ): Partial<RemoteConfigFlags> {
@@ -1277,7 +1277,6 @@ export function getFlagsByCategory(
     categories["🛍️ PDP Features"] = pdpFlags;
   }
 
-
   // Product Card Flags
   const cardFlags: Record<string, unknown> = {};
   if (flags.enable_product_card_rating !== undefined) {
@@ -1312,7 +1311,8 @@ export function countCapturedFlags(flags: RemoteConfigFlags | null): number {
   // Count gift module fields
   if (flags.gift_search_category_cart) {
     count += 3; // web, app_android, app_ios
-  }if (flags.enable_module_gift_cart) {
+  }
+  if (flags.enable_module_gift_cart) {
     count += 6; // 3 platforms x 2 properties each
   }
 
