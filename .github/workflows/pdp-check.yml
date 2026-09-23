@@ -58,7 +58,7 @@ jobs:
       - name: 🎭 Install Playwright browsers
         run: npx playwright install chromium firefox --with-deps
 
-      - name: 🔍 Run PDP checks
+      - name: 🔍 Run PDP checks (Web)
         id: checks
         run: npm run check
         env:
@@ -69,30 +69,73 @@ jobs:
           FIREBASE_PRIVATE_KEY: ${{ secrets.FIREBASE_PRIVATE_KEY }}
         continue-on-error: true
 
-      - name: 📊 Find report directory
+      - name: 📱 Run PDP checks (Android)
+        id: android_checks
+        run: npm run check:android
+        env:
+          OPERATIONS_FILTER: ${{ inputs.operations_filter }}
+          # Device farm (required — GitHub-hosted runners have no Android virtualization)
+          DEVICE_FARM_PROVIDER: ${{ vars.DEVICE_FARM_PROVIDER || 'lambdatest' }}
+          BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
+          BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+          BROWSERSTACK_APP_ID: ${{ secrets.BROWSERSTACK_APP_ID }}
+          LAMBDATEST_USERNAME: ${{ secrets.LAMBDATEST_USERNAME }}
+          LAMBDATEST_ACCESS_KEY: ${{ secrets.LAMBDATEST_ACCESS_KEY }}
+          LAMBDATEST_APP_ID: ${{ secrets.LAMBDATEST_APP_ID }}
+          # Firebase Remote Config do app mobile (projeto distinto do Firestore usado pelo Web)
+          ANDROID_FIREBASE_PROJECT_ID: ${{ secrets.ANDROID_FIREBASE_PROJECT_ID }}
+          ANDROID_FIREBASE_PROJECT_NUMBER: ${{ secrets.ANDROID_FIREBASE_PROJECT_NUMBER }}
+          ANDROID_FIREBASE_API_KEY: ${{ secrets.ANDROID_FIREBASE_API_KEY }}
+          ANDROID_FIREBASE_APP_ID: ${{ secrets.ANDROID_FIREBASE_APP_ID }}
+          ANDROID_FIREBASE_PACKAGE_NAME: ${{ secrets.ANDROID_FIREBASE_PACKAGE_NAME }}
+          ANDROID_FIREBASE_APPS_JSON: ${{ secrets.ANDROID_FIREBASE_APPS_JSON }}
+          # Login opcional (roda anônimo se não definido) e seleção de SKUs/concorrência
+          ANDROID_LOGIN_EMAIL: ${{ secrets.ANDROID_LOGIN_EMAIL }}
+          ANDROID_LOGIN_PASSWORD: ${{ secrets.ANDROID_LOGIN_PASSWORD }}
+          ANDROID_SKUS: ${{ vars.ANDROID_SKUS }}
+          ANDROID_CONCURRENCY: ${{ vars.ANDROID_CONCURRENCY }}
+        # POC ainda dependente de device farm externo — não deve travar o job caso falhe
+        continue-on-error: true
+
+      - name: 📊 Find report directories
         id: find_report
         run: |
-          # The check script writes directly to docs/reports/run_*/
-          REPORT_DIR=$(ls -td docs/reports/run_* 2>/dev/null | head -1)
+          # Web writes to docs/reports/run_<timestamp>/, Android to docs/reports/run_android_<timestamp>/
+          REPORT_DIR=$(ls -td docs/reports/run_[0-9]* 2>/dev/null | head -1)
+          ANDROID_REPORT_DIR=$(ls -td docs/reports/run_android_* 2>/dev/null | head -1)
           echo "report_dir=$REPORT_DIR" >> $GITHUB_OUTPUT
+          echo "android_report_dir=$ANDROID_REPORT_DIR" >> $GITHUB_OUTPUT
           if [ -f "$REPORT_DIR/report.json" ]; then
             SUMMARY=$(cat "$REPORT_DIR/report.json" | jq -r '"Total: \(.summary.total), Passed: \(.summary.passed), Failed: \(.summary.failed), Errors: \(.summary.errors)"')
             echo "summary=$SUMMARY" >> $GITHUB_OUTPUT
           fi
+          if [ -f "$ANDROID_REPORT_DIR/report.json" ]; then
+            ANDROID_SUMMARY=$(cat "$ANDROID_REPORT_DIR/report.json" | jq -r '"Total: \(.summary.total), Passed: \(.summary.passed), Failed: \(.summary.failed), Errors: \(.summary.errors)"')
+            echo "android_summary=$ANDROID_SUMMARY" >> $GITHUB_OUTPUT
+          fi
 
-      - name: 📤 Upload report artifact
+      - name: 📤 Upload report artifact (Web)
         uses: actions/upload-artifact@v4
         with:
           name: pdp-monitor-report-${{ github.run_number }}
           path: ${{ steps.find_report.outputs.report_dir }}
           retention-days: 30
 
+      - name: 📤 Upload report artifact (Android)
+        if: steps.find_report.outputs.android_report_dir != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: pdp-monitor-report-android-${{ github.run_number }}
+          path: ${{ steps.find_report.outputs.android_report_dir }}
+          retention-days: 30
+
       - name: 🌐 Publish report to GitHub Pages
         run: |
-          # The check script already writes reports to docs/reports/run_*/ and
-          # updates docs/reports/index.json.  We only need to refresh the
-          # last-report shortcuts and commit everything in docs/.
-          REPORT_DIR=$(ls -td docs/reports/run_* 2>/dev/null | head -1)
+          # The check scripts already write reports to docs/reports/run_*/ (web) and
+          # docs/reports/run_android_*/ (android), and both update docs/reports/index.json.
+          # last-report.html/json is a Web-only shortcut (the dashboard Home page reads it
+          # directly), so it must always come from the Web run dir, never the Android one.
+          REPORT_DIR=$(ls -td docs/reports/run_[0-9]* 2>/dev/null | head -1)
           if [ ! -f "$REPORT_DIR/report.html" ]; then
             echo "⚠️  No report found in docs/reports/ — skipping publish"
             exit 0
@@ -122,7 +165,7 @@ jobs:
         uses: actions/deploy-pages@v4
 
       - name: 📧 Send email notification (on failure)
-        if: steps.checks.outcome == 'failure' || inputs.send_email_always == 'true'
+        if: steps.checks.outcome == 'failure' || steps.android_checks.outcome == 'failure' || inputs.send_email_always == 'true'
         uses: dawidd6/action-send-mail@v3
         continue-on-error: true
         with:
@@ -136,7 +179,8 @@ jobs:
           body: |
             ⚠️ O monitoramento de PDPs detectou problemas!
 
-            📊 Resumo: ${{ steps.find_report.outputs.summary }}
+            🌐 Resumo (Web): ${{ steps.find_report.outputs.summary }}
+            📱 Resumo (Android): ${{ steps.find_report.outputs.android_summary || 'sem execução' }}
 
             📅 Execução: ${{ github.run_number }}
             🔗 Workflow: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}

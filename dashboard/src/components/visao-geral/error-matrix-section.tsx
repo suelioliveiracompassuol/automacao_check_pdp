@@ -126,9 +126,14 @@ function MatrixRowItem({ row, totalRuns }: MatrixRowItemProps) {
 
 interface ErrorMatrixSectionProps {
   reports: MonitoringReport[];
+  /** Overrides the section title — e.g. "Matriz de Erros — Android" on a per-platform breakdown. */
+  title?: string;
 }
 
-export function ErrorMatrixSection({ reports }: ErrorMatrixSectionProps) {
+export function ErrorMatrixSection({
+  reports,
+  title = 'Matriz de Erros',
+}: ErrorMatrixSectionProps) {
   const errorMatrix = computeErrorMatrix(reports);
   const topFailures = errorMatrix.filter((row) => row.persistenceCount >= 2).slice(0, 3);
 
@@ -136,7 +141,7 @@ export function ErrorMatrixSection({ reports }: ErrorMatrixSectionProps) {
     <section aria-labelledby="matrix-heading">
       <div className="mb-6">
         <h2 id="matrix-heading" className="text-2xl font-bold text-gray-900">
-          Matriz de Erros
+          {title}
         </h2>
         <p className="mt-1 text-sm text-gray-500">
           Checks com falhas nas últimas {reports.length} execuções — ordenados por persistência

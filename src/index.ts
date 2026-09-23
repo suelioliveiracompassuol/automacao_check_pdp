@@ -27,6 +27,7 @@ import {
   scrollAndLoadContent,
 } from "./checks/featureRunner.js";
 import { generateHtmlReport, generateJsonReport } from "./reporter.js";
+import { upsertReportIndexEntry } from "./reportIndex.js";
 import { setupEndpointMonitor } from "./checks/endpointResponse.js";
 import { checkI18nKeys } from "./checks/i18n.js";
 import { setupEinsteinShowcaseCapture } from "./checks/showcases.js";
@@ -758,33 +759,14 @@ async function main() {
   // Copy to last-report files and update index
   try {
     const docsDir = path.join(process.cwd(), "docs");
-    const reportsDir = path.join(docsDir, "reports");
 
     // Copy to last-report
     fs.copyFileSync(htmlPath, path.join(docsDir, "last-report.html"));
     fs.copyFileSync(jsonPath, path.join(docsDir, "last-report.json"));
 
-    // Update index.json
-    const indexJsonPath = path.join(reportsDir, "index.json");
-    let reportsIndex: { reports: MonitoringReport[] } = { reports: [] };
-
-    if (fs.existsSync(indexJsonPath)) {
-      try {
-        const data = JSON.parse(fs.readFileSync(indexJsonPath, "utf-8"));
-        if (data && Array.isArray(data.reports)) {
-          reportsIndex = data;
-        }
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      } catch (e) {
-        console.log("Could not parse existing report index, creating new one.");
-      }
-    }
-
-    // Create a new entry for the index, removing full results to keep it small
-    const reportForIndex: Partial<MonitoringReport> & {
-      htmlPath: string;
-      jsonPath: string;
-    } = {
+    // Update index.json (upsert by runId, lock-protected against concurrent writers —
+    // see reportIndex.ts, shared with the Android orchestrator)
+    await upsertReportIndexEntry({
       runId: report.runId,
       startTime: report.startTime,
       endTime: report.endTime,
@@ -793,17 +775,8 @@ async function main() {
       // Paths relative to the /docs root for the frontend
       htmlPath: path.join("reports", runId, "report.html").replace(/\\/g, "/"),
       jsonPath: path.join("reports", runId, "report.json").replace(/\\/g, "/"),
-    };
-
-    reportsIndex.reports.unshift(reportForIndex as MonitoringReport);
-
-    // Limit to 100 most recent reports
-    if (reportsIndex.reports.length > 100) {
-      reportsIndex.reports = reportsIndex.reports.slice(0, 100);
-    }
-
-    fs.writeFileSync(indexJsonPath, JSON.stringify(reportsIndex, null, 2));
-    console.log(`\n✅  Índice de relatórios atualizado: ${indexJsonPath}`);
+    });
+    console.log(`\n✅  Índice de relatórios atualizado`);
   } catch (e) {
     console.error("\n❌ Erro ao atualizar o histórico de relatórios:", e);
   }

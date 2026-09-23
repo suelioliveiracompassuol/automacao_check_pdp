@@ -3,10 +3,10 @@ import type { Capabilities } from "@wdio/types";
 import type { SkuConfig } from "./types.js";
 
 /**
- * Creates an Appium session against a device farm.
+ * Creates an Appium session against a device farm or a local Android emulator/device.
  * Mirrors browserSetup.ts's role for the web checks, but for a native Android app via Appium.
  *
- * Provider is selected via DEVICE_FARM_PROVIDER ("browserstack" | "lambdatest"), default "browserstack".
+ * Provider is selected via DEVICE_FARM_PROVIDER ("browserstack" | "lambdatest" | "local"), default "browserstack".
  * Note: LambdaTest's automated Appium product is "App Automate" (not the manual "App Live" UI) —
  * both share the same uploaded app storage, so an app uploaded via https://applive.lambdatest.com/app
  * can be reused here through its `lt://` id.
@@ -16,10 +16,41 @@ export async function createAndroidSession(): Promise<WebdriverIO.Browser> {
     process.env.DEVICE_FARM_PROVIDER || "browserstack"
   ).toLowerCase();
 
+  if (provider === "local") {
+    return createLocalSession();
+  }
   if (provider === "lambdatest") {
     return createLambdaTestSession();
   }
   return createBrowserStackSession();
+}
+
+function createLocalSession(): Promise<WebdriverIO.Browser> {
+  const host = process.env.APPIUM_HOST || "127.0.0.1";
+  const port = Number.parseInt(process.env.APPIUM_PORT || "4723", 10);
+  const appPath = process.env.ANDROID_APP_PATH || process.env.ANDROID_APK_PATH;
+
+  const capabilities: Capabilities.WebdriverIOConfig["capabilities"] = {
+    platformName: "Android",
+    "appium:automationName": "UiAutomator2",
+    ...(appPath ? { "appium:app": appPath } : {}),
+    "appium:deviceName": process.env.ANDROID_DEVICE_NAME || "Android Emulator",
+    "appium:platformVersion": process.env.ANDROID_OS_VERSION || "13.0",
+    "appium:noReset": true,
+    "appium:autoLaunch": false,
+    "appium:autoGrantPermissions": true,
+    "appium:disableWindowAnimation": true,
+    "appium:newCommandTimeout": 180,
+  };
+
+  return remote({
+    protocol: "http",
+    hostname: host,
+    port,
+    path: process.env.APPIUM_PATH || "/",
+    logLevel: "warn",
+    capabilities,
+  });
 }
 
 function createBrowserStackSession(): Promise<WebdriverIO.Browser> {
@@ -47,6 +78,9 @@ function createBrowserStackSession(): Promise<WebdriverIO.Browser> {
     // onCreate — auto-launching it first would make our deepLink call a warm onNewIntent
     // that the app ignores, landing on Home instead of the PDP.
     "appium:autoLaunch": false,
+    "appium:autoGrantPermissions": true,
+    "appium:disableWindowAnimation": true,
+    "appium:newCommandTimeout": 180,
     "bstack:options": {
       userName,
       accessKey,
@@ -93,6 +127,9 @@ function createLambdaTestSession(): Promise<WebdriverIO.Browser> {
     "appium:noReset": true,
     // See comment in createBrowserStackSession: avoids a warm onNewIntent that the app ignores.
     "appium:autoLaunch": false,
+    "appium:autoGrantPermissions": true,
+    "appium:disableWindowAnimation": true,
+    "appium:newCommandTimeout": 180,
     "LT:Options": {
       username: userName,
       accessKey,
@@ -150,11 +187,25 @@ export async function openPdpDeepLink(
 ): Promise<void> {
   const appPackage = resolveAndroidAppPackage(sku);
 
-  // In device farms, terminateApp() is asynchronous and the process may still be tearing down
-  // when the next deep-link intent is dispatched. Give the OS a brief window to complete the kill
-  // before launching the new intent; otherwise the app may stay on Home and ignore the deep link.
-  await driver.terminateApp(appPackage).catch(() => {});
-  await driver.pause(1500);
+  // In device farms, terminateApp() is asynchronous. Wait deterministically for the app
+  // to transition to NOT_RUNNING (0) rather than using an arbitrary pause.
+  await driver
+    .terminateApp(appPackage)
+    .catch((e) => console.debug("   (debug) terminateApp falhou (best-effort):", e));
+  await driver
+    .waitUntil(
+      async () => {
+        try {
+          const state = await driver.queryAppState(appPackage);
+          // 0 = NOT_RUNNING, 1 = NOT_RUNNING (cached/stopped)
+          return state === 0 || state === 1;
+        } catch {
+          return true; // if queryAppState is unsupported, proceed
+        }
+      },
+      { timeout: 3000, interval: 200 },
+    )
+    .catch(() => {});
 
   await driver.execute("mobile: deepLink", {
     url,
@@ -166,5 +217,12 @@ export async function openPdpDeepLink(
 export async function closeAndroidSession(
   driver: WebdriverIO.Browser,
 ): Promise<void> {
-  await driver.deleteSession().catch(() => {});
+  await driver
+    .deleteSession()
+    .catch((e) =>
+      console.warn(
+        "⚠️  deleteSession falhou — a sessão pode ter ficado presa/consumindo cota no device farm:",
+        e,
+      ),
+    );
 }

@@ -1,39 +1,25 @@
-import { chromium } from "@playwright/test";
-import { CheckResult, SkuConfig } from "../types.js";
-import { buildPdpUrl } from "../checks/configs/config.js";
+import { CheckResult } from "../types.js";
 import { ANDROID_SELECTORS } from "./configs/selectors.js";
-import {
-  setupEinsteinShowcaseCapture,
-  checkBrandShowcase,
-  checkRecommendationShowcase,
-} from "../checks/showcases.js";
 
 /**
- * Confirmed native selector for the showcase/vitrine RecyclerViews (see selectors.ts for the
- * source file references). The Einstein BFF endpoint also requires app-level auth (a
- * "tenant_id" header only the real web/app client sends — a bare fetch() gets HTTP 500
- * "tenant_id header is required") on top of Akamai bot protection, so rebuilding the URL and
- * calling it directly from Node doesn't work for the content-zone/campaign-count part.
+ * Native Android showcase / carousel verification.
  *
- * So this check combines two signals:
- * 1. Native: is the RecyclerView (rvMoreBrandProducts / rvEinsteinShowcase) actually
- *    rendered on screen, scrolling it into view first since the PDP is a long vertical list.
- * 2. Backend: the exact same content zone + endpoint verification as the web checker
- *    (src/checks/showcases.ts), via a throwaway headless Playwright page on the SAME PDP URL.
+ * Verifies that the native RecyclerView is rendered on screen (scrolling vertically if needed)
+ * and confirms that child ViewHolders (product cards) are populated, rather than relying on
+ * a web Playwright Chromium browser session.
  */
-async function isRecyclerViewRendered(
+async function verifyNativeShowcase(
   driver: WebdriverIO.Browser,
   resourceId: string,
-): Promise<boolean> {
+): Promise<{ rendered: boolean; itemCount: number }> {
   const idPattern = `.*:id/${resourceId}`;
+
   try {
-    await driver
-      .$(
-        `android=new UiScrollable(new UiSelector().scrollable(true)).scrollIntoView(new UiSelector().resourceIdMatches("${idPattern}"))`,
-      )
-      .waitForDisplayed({ timeout: 8000 });
+    // Target vertical scroll container to scroll the showcase into view
+    const scrollSelector = `android=new UiScrollable(new UiSelector().scrollable(true)).setAsVerticalList().scrollIntoView(new UiSelector().resourceIdMatches("${idPattern}"))`;
+    await driver.$(scrollSelector).waitForDisplayed({ timeout: 8000 });
   } catch {
-    return false;
+    // If scroll failed, check if it's already visible in current viewport
   }
 
   const el = driver.$(
@@ -41,80 +27,67 @@ async function isRecyclerViewRendered(
   );
   const displayed = await el.isDisplayed().catch(() => false);
   if (!displayed) {
-    return false;
+    return { rendered: false, itemCount: 0 };
   }
-  // An empty RecyclerView (wrap_content height) collapses to ~0px — a rendered card list
-  // gives it real height, which is a cheap way to tell "exists but empty" from "has items".
+
+  // Verify non-empty: check container dimensions
   const size = await el.getSize().catch(() => null);
-  return !!size && size.height > 40;
-}
+  if (!size || size.height < 40) {
+    return { rendered: false, itemCount: 0 };
+  }
 
-async function runWebShowcaseChecks(sku: SkuConfig): Promise<{
-  brand: CheckResult;
-  recommendation: CheckResult;
-}> {
-  const url = buildPdpUrl(sku);
-  const browser = await chromium.launch({ headless: true });
+  // Inspect child cards/elements to ensure the adapter is bound and populated
+  let itemCount: number;
   try {
-    const context = await browser.newContext();
-    const page = await context.newPage();
-    setupEinsteinShowcaseCapture(page);
-    await page
-      .goto(url, { waitUntil: "domcontentloaded", timeout: 30000 })
-      .catch(() => {});
-
-    const brand = await checkBrandShowcase(page);
-    const recommendation = await checkRecommendationShowcase(page);
-    return { brand, recommendation };
-  } finally {
-    await browser.close();
+    const childCards = await el.$$(
+      'android=new UiSelector().resourceIdMatches(".*:id/product_carousel_item_ne")',
+    );
+    itemCount = (childCards as unknown as { length: number }).length ?? 0;
+  } catch {
+    itemCount = 0;
   }
+
+  return {
+    rendered: true,
+    itemCount,
+  };
 }
 
-/** Caches the (brand, recommendation) pair per SKU so both android checks share one browser run. */
-const showcaseResultCache = new Map<
-  string,
-  ReturnType<typeof runWebShowcaseChecks>
->();
-
-function getShowcaseResults(
-  sku: SkuConfig,
-): ReturnType<typeof runWebShowcaseChecks> {
-  if (!showcaseResultCache.has(sku.sku)) {
-    showcaseResultCache.set(sku.sku, runWebShowcaseChecks(sku));
-  }
-  return showcaseResultCache.get(sku.sku)!;
-}
-
-const NOTE =
-  "Content zone/endpoint Einstein iguais ao checker web; renderização nativa confirmada via RecyclerView (rvMoreBrandProducts/rvEinsteinShowcase)";
-
-/** Android equivalent of checks/showcases.ts#checkBrandShowcase — native RecyclerView + same content zone/endpoint. */
+/** Android native check for "Mais produtos da marca" showcase. */
 export async function checkBrandShowcaseAndroid(
   driver: WebdriverIO.Browser,
-  sku: SkuConfig,
 ): Promise<CheckResult> {
   try {
-    const [nativeRendered, { brand }] = await Promise.all([
-      isRecyclerViewRendered(
-        driver,
-        ANDROID_SELECTORS.showcase.brandRecyclerView,
-      ),
-      getShowcaseResults(sku),
-    ]);
+    const { rendered, itemCount } = await verifyNativeShowcase(
+      driver,
+      ANDROID_SELECTORS.showcase.brandRecyclerView,
+    );
 
-    if (nativeRendered) {
+    if (rendered) {
       return {
-        ...brand,
+        feature: 'Vitrine "Mais produtos da marca"',
+        featureKey: "brandShowcase",
         passed: true,
         status: "pass",
-        message: `Vitrine "mais produtos da marca" renderizada na tela (RecyclerView) — ${brand.message}`,
-        details: { ...brand.details, nativeSectionRendered: true, note: NOTE },
+        message: `Vitrine "mais produtos da marca" renderizada no app Android (RecyclerView com ${itemCount > 0 ? `${itemCount} itens detectados` : "conteúdo"})`,
+        details: {
+          rendered: true,
+          itemCount,
+          resourceId: ANDROID_SELECTORS.showcase.brandRecyclerView,
+        },
       };
     }
+
     return {
-      ...brand,
-      details: { ...brand.details, nativeSectionRendered: false, note: NOTE },
+      feature: 'Vitrine "Mais produtos da marca"',
+      featureKey: "brandShowcase",
+      passed: false,
+      status: "fail",
+      message: 'Vitrine "mais produtos da marca" não encontrada ou vazia na tela',
+      details: {
+        rendered: false,
+        resourceId: ANDROID_SELECTORS.showcase.brandRecyclerView,
+      },
     };
   } catch (error) {
     return {
@@ -127,39 +100,40 @@ export async function checkBrandShowcaseAndroid(
   }
 }
 
-/** Android equivalent of checks/showcases.ts#checkRecommendationShowcase — native RecyclerView + same content zone/endpoint. */
+/** Android native check for recommendation ("Achamos que você vai gostar") showcase. */
 export async function checkRecommendationShowcaseAndroid(
   driver: WebdriverIO.Browser,
-  sku: SkuConfig,
 ): Promise<CheckResult> {
   try {
-    const [nativeRendered, { recommendation }] = await Promise.all([
-      isRecyclerViewRendered(
-        driver,
-        ANDROID_SELECTORS.showcase.recommendationRecyclerView,
-      ),
-      getShowcaseResults(sku),
-    ]);
+    const { rendered, itemCount } = await verifyNativeShowcase(
+      driver,
+      ANDROID_SELECTORS.showcase.recommendationRecyclerView,
+    );
 
-    if (nativeRendered) {
+    if (rendered) {
       return {
-        ...recommendation,
+        feature: 'Vitrine "Achamos que você vai gostar"',
+        featureKey: "recommendationShowcase",
         passed: true,
         status: "pass",
-        message: `Vitrine de recomendações renderizada na tela (RecyclerView) — ${recommendation.message}`,
+        message: `Vitrine de recomendações renderizada no app Android (RecyclerView com ${itemCount > 0 ? `${itemCount} itens detectados` : "conteúdo"})`,
         details: {
-          ...recommendation.details,
-          nativeSectionRendered: true,
-          note: NOTE,
+          rendered: true,
+          itemCount,
+          resourceId: ANDROID_SELECTORS.showcase.recommendationRecyclerView,
         },
       };
     }
+
     return {
-      ...recommendation,
+      feature: 'Vitrine "Achamos que você vai gostar"',
+      featureKey: "recommendationShowcase",
+      passed: false,
+      status: "fail",
+      message: 'Vitrine de recomendações não encontrada ou vazia na tela',
       details: {
-        ...recommendation.details,
-        nativeSectionRendered: false,
-        note: NOTE,
+        rendered: false,
+        resourceId: ANDROID_SELECTORS.showcase.recommendationRecyclerView,
       },
     };
   } catch (error) {

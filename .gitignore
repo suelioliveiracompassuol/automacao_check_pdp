@@ -7,6 +7,9 @@ dist/
 # Reports (generated at runtime)
 /reports/
 
+# Local scratch/debug artifacts (may contain auth debug screenshots — never commit)
+.tmp/
+
 # Environment
 .env
 .env.local

@@ -30,4 +30,21 @@ export const ANDROID_SELECTORS = {
     brandRecyclerView: "rvMoreBrandProducts",
     recommendationRecyclerView: "rvEinsteinShowcase",
   },
+  /**
+   * Auth flow locators confirmed against ncf-natura-cf-automation-mobile
+   */
+  login: {
+    accountTab: 'new UiSelector().resourceIdMatches(".*:id/page_account")',
+    emailContainer:
+      'new UiSelector().resourceIdMatches(".*:id/text_field_input_main").instance(0)',
+    emailInput:
+      'new UiSelector().resourceIdMatches(".*:id/text_field_input_value").instance(0)',
+    passwordContainer:
+      'new UiSelector().resourceIdMatches(".*:id/text_field_input_main").instance(1)',
+    passwordInput:
+      'new UiSelector().resourceIdMatches(".*:id/text_field_input_value").instance(1)',
+    loginButton: 'new UiSelector().resourceIdMatches(".*:id/btn_login")',
+    permissionAllowButton:
+      'new UiSelector().resourceIdMatches(".*:id/permission_allow_button")',
+  },
 };

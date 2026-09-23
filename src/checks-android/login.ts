@@ -1,3 +1,5 @@
+import { ANDROID_SELECTORS } from "./configs/selectors.js";
+
 /**
  * Native login flow for the Android app, ported from ncf-natura-cf-automation-mobile's
  * login.screen.js / permissionAlerts.js (Account tab -> email/password fields -> "entrar").
@@ -20,19 +22,18 @@ export function getAndroidCredentialsFromEnv(): AndroidCredentials | null {
   return { email, password };
 }
 
-/** Dismisses the Android runtime permission dialog (location/notifications) if one is shown after launch. */
+/** Dismisses the Android runtime permission dialog if one is shown after launch. */
 async function dismissPermissionDialogIfPresent(
   driver: WebdriverIO.Browser,
 ): Promise<void> {
   const allowButton = driver.$(
-    'android=new UiSelector().resourceIdMatches(".*:id/permission_allow_button")',
+    `android=${ANDROID_SELECTORS.login.permissionAllowButton}`,
   );
   const displayed = await allowButton
-    .waitForDisplayed({ timeout: 5000 })
+    .waitForDisplayed({ timeout: 3000 })
     .catch(() => false);
   if (displayed) {
     await allowButton.click().catch(() => {});
-    await driver.pause(1000);
   }
 }
 
@@ -40,11 +41,6 @@ async function dismissPermissionDialogIfPresent(
  * Logs into the app via the Account tab. Returns true once the login form (email/password
  * fields) is confirmed GONE after re-opening the Account tab, false otherwise — callers
  * should treat a false result as "continue as anonymous session" rather than a hard failure.
- *
- * Everything here uses resourceId selectors, NEVER text/content-desc: this is a whitelabel
- * app that ships BR, LATAM (Spanish) and Avon builds from the same shared UI modules —
- * resource-ids are compile-time identifiers shared across all of them, but visible text and
- * accessibility labels are translated per locale/brand and must not be relied upon.
  */
 export async function loginAndroid(
   driver: WebdriverIO.Browser,
@@ -54,56 +50,56 @@ export async function loginAndroid(
     await dismissPermissionDialogIfPresent(driver);
 
     const accountTab = driver.$(
-      'android=new UiSelector().resourceIdMatches(".*:id/page_account")',
+      `android=${ANDROID_SELECTORS.login.accountTab}`,
     );
     await accountTab.waitForDisplayed({ timeout: 8000 });
     await accountTab.click();
     console.log("      ✓ Aba Conta aberta");
 
-    // Resource-ids confirmed in ncf-natura-cf-automation-mobile/tests/elements/android/elementsAndroid.js
     const emailClickable = driver.$(
-      'android=new UiSelector().resourceIdMatches(".*:id/text_field_input_main").instance(0)',
+      `android=${ANDROID_SELECTORS.login.emailContainer}`,
     );
     await emailClickable.waitForDisplayed({ timeout: 15000 });
     await emailClickable.click();
     console.log("      ✓ Campo de e-mail aberto");
 
     const emailField = driver.$(
-      'android=new UiSelector().resourceIdMatches(".*:id/text_field_input_value").instance(0)',
+      `android=${ANDROID_SELECTORS.login.emailInput}`,
     );
     await emailField.waitForDisplayed({ timeout: 5000 });
     await emailField.setValue(credentials.email);
     console.log("      ✓ E-mail preenchido");
 
     const passwordClickable = driver.$(
-      'android=new UiSelector().resourceIdMatches(".*:id/text_field_input_main").instance(1)',
+      `android=${ANDROID_SELECTORS.login.passwordContainer}`,
     );
+    await passwordClickable.waitForDisplayed({ timeout: 5000 });
     await passwordClickable.click();
 
     const passwordField = driver.$(
-      'android=new UiSelector().resourceIdMatches(".*:id/text_field_input_value").instance(1)',
+      `android=${ANDROID_SELECTORS.login.passwordInput}`,
     );
     await passwordField.waitForDisplayed({ timeout: 5000 });
     await passwordField.setValue(credentials.password);
     console.log("      ✓ Senha preenchida");
 
     const loginButton = driver.$(
-      'android=new UiSelector().resourceIdMatches(".*:id/btn_login")',
+      `android=${ANDROID_SELECTORS.login.loginButton}`,
     );
     await loginButton.waitForDisplayed({ timeout: 5000 });
     await loginButton.click();
     console.log("      ✓ Botão entrar clicado, aguardando confirmação...");
-    await driver.pause(3000);
+
+    // Wait dynamically for login button/modal dismissal instead of hardcoded pause
+    await loginButton
+      .waitForDisplayed({ timeout: 8000, reverse: true })
+      .catch(() => {});
 
     // Login renders as a modal over Home; re-open Account and check whether the login
-    // form (email/password fields) is gone — that's the only reliably locale-independent
-    // signal available (the app's current bottom nav has no separate "logged in" tab).
+    // form is gone.
     await accountTab.click().catch(() => {});
-    const loginFormStillVisible = await driver
-      .$(
-        'android=new UiSelector().resourceIdMatches(".*:id/text_field_input_main").instance(0)',
-      )
-      .waitForDisplayed({ timeout: 5000 })
+    const loginFormStillVisible = await emailClickable
+      .isDisplayed()
       .catch(() => false);
 
     return !loginFormStillVisible;

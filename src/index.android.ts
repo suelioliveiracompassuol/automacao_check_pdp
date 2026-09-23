@@ -19,7 +19,9 @@ import {
   PdpCheckResult,
   SkuConfig,
 } from "./types.js";
-import { generateJsonReport } from "./reporter.js";
+import { generateHtmlReport, generateJsonReport } from "./reporter.js";
+import { upsertReportIndexEntry } from "./reportIndex.js";
+import { distributeIntoChunks, parseAndroidConcurrency } from "./androidConcurrency.js";
 import {
   createAndroidSession,
   openPdpDeepLink,
@@ -56,7 +58,6 @@ function applyDeepLinkHostOverride(url: string): string {
 async function loginOnceOnDriver(
   driver: WebdriverIO.Browser,
   sessionSku: SkuConfig,
-  outputDir: string,
 ): Promise<void> {
   const credentials = getAndroidCredentialsFromEnv();
   if (!credentials) {
@@ -67,7 +68,7 @@ async function loginOnceOnDriver(
   // persists on device, so it survives the terminateApp() inside openPdpDeepLink below.
   await driver
     .activateApp(resolveAndroidAppPackage(sessionSku))
-    .catch(() => {});
+    .catch((e) => console.debug("   (debug) activateApp falhou (best-effort):", e));
   const loggedIn = await loginAndroid(driver, credentials);
   console.log(
     loggedIn
@@ -76,14 +77,15 @@ async function loginOnceOnDriver(
   );
   if (!loggedIn) {
     try {
-      const screenshotsDir = path.join(outputDir, "screenshots");
-      fs.mkdirSync(screenshotsDir, { recursive: true });
-      await driver.saveScreenshot(
-        path.join(
-          screenshotsDir,
-          `${sessionSku.sku}_login_debug_${Date.now()}.png`,
-        ),
+      // Isolate sensitive auth debug artifacts outside public docs/ directory to avoid credential/PII leaks
+      const authDebugDir = path.join(process.cwd(), ".tmp", "artifacts", "auth");
+      fs.mkdirSync(authDebugDir, { recursive: true });
+      const screenshotPath = path.join(
+        authDebugDir,
+        `${sessionSku.sku}_login_debug_${Date.now()}.png`,
       );
+      await driver.saveScreenshot(screenshotPath);
+      console.log(`   🔒 Screenshot de debug de autenticação salvo em local seguro: ${screenshotPath}`);
     } catch {
       // best-effort debug artifact only
     }
@@ -100,7 +102,6 @@ async function checkPdpOnDriver(
   const deepLinkUrl = applyDeepLinkHostOverride(url);
   const timestamp = new Date().toISOString();
   const features: CheckResult[] = [];
-  const startTime = Date.now();
   let loadTime: number | undefined;
   let error: string | undefined;
   let pageScreenshot: string | undefined;
@@ -121,16 +122,17 @@ async function checkPdpOnDriver(
   });
 
   try {
+    const navStartTime = Date.now();
     await openPdpDeepLink(driver, deepLinkUrl, sku);
-    // Give the app time to resolve the deep link and render the PDP
-    await driver.pause(5000);
-    loadTime = Date.now() - startTime;
 
-    features.push(await checkAddToCartAndroid(driver));
-    // Showcase checks confirm the RecyclerView renders natively AND cross-check the
-    // same Einstein content zone/endpoint as the web checker.
-    features.push(await checkBrandShowcaseAndroid(driver, sku));
-    features.push(await checkRecommendationShowcaseAndroid(driver, sku));
+    // Verify Add to Cart button and capture load time without duplicate waits
+    const addToCartResult = await checkAddToCartAndroid(driver, navStartTime);
+    loadTime = addToCartResult.loadTime ?? Date.now() - navStartTime;
+    features.push(addToCartResult);
+
+    // Native showcase checks verify native RecyclerView rendering with populated items
+    features.push(await checkBrandShowcaseAndroid(driver));
+    features.push(await checkRecommendationShowcaseAndroid(driver));
   } catch (e) {
     error = e instanceof Error ? e.message : String(e);
     console.log(`   ❌ Erro: ${error}`);
@@ -140,6 +142,43 @@ async function checkPdpOnDriver(
           "se o build enviado ao device farm é o flavor certo (ex.: naturaBra p/ prod BR), ou " +
           "tente outro host via ANDROID_DEEPLINK_HOST (ex.: dev/hml).",
       );
+    }
+
+    // Capture device logcat for native crash / error diagnostics
+    try {
+      type LogcatEntry = { timestamp?: number | string; level?: string; message?: string };
+      const rawLogs = await driver.getLogs("logcat").catch((e) => {
+        console.debug("   (debug) getLogs(logcat) falhou (best-effort):", e);
+        return [];
+      });
+      const logs = (Array.isArray(rawLogs) ? rawLogs : []) as LogcatEntry[];
+      if (logs.length > 0) {
+        const logsDir = path.join(outputDir, "logs");
+        fs.mkdirSync(logsDir, { recursive: true });
+        const crashLogs = logs
+          .filter(
+            (l) =>
+              l.level === "SEVERE" ||
+              l.level === "ERROR" ||
+              (typeof l.message === "string" &&
+                (l.message.includes("FATAL EXCEPTION") ||
+                  l.message.includes("AndroidRuntime") ||
+                  l.message.includes("ANR in"))),
+          )
+          .map((l) => `[${l.timestamp ?? ""}] [${l.level ?? ""}] ${l.message ?? ""}`)
+          .join("\n");
+
+        if (crashLogs.trim().length > 0) {
+          const logPath = path.join(
+            logsDir,
+            `${sku.sku.replace(/[^a-zA-Z0-9._-]+/g, "_")}_error.log`,
+          );
+          fs.writeFileSync(logPath, crashLogs);
+          console.log(`   📋 Logcat de erros salvo em: ${logPath}`);
+        }
+      }
+    } catch {
+      // best-effort logcat capture
     }
   } finally {
     try {
@@ -181,7 +220,29 @@ async function checkPdpOnDriver(
   };
 }
 
-/** Opens one device session, logs in once, then checks every SKU in `skus` sequentially before closing it. */
+/** Builds a failed PdpCheckResult for a SKU that never got a real check attempt (e.g. the
+ * session/driver itself threw outside checkPdpOnDriver's own error handling). Keeps the SKU
+ * visible in the report instead of silently vanishing from the run. */
+function buildErrorResult(sku: SkuConfig, error: string): PdpCheckResult {
+  return {
+    sku: sku.sku,
+    name: sku.name,
+    url: buildPdpUrl(sku),
+    vendor: sku.vendor,
+    country: sku.country,
+    channel: sku.channel,
+    platform: "android",
+    timestamp: new Date().toISOString(),
+    success: false,
+    features: [],
+    error,
+  };
+}
+
+/** Opens one device session, logs in once, then checks every SKU in `skus` sequentially before closing it.
+ * Each SKU check is isolated: if checkPdpOnDriver throws (outside its own internal error handling,
+ * e.g. buildPdpUrl failing), the SKU is recorded as a failure instead of aborting the rest of the
+ * session's SKUs. */
 async function runSessionForSkus(
   skus: SkuConfig[],
   outputDir: string,
@@ -189,9 +250,17 @@ async function runSessionForSkus(
   const driver = await createAndroidSession();
   const results: PdpCheckResult[] = [];
   try {
-    await loginOnceOnDriver(driver, skus[0], outputDir);
+    await loginOnceOnDriver(driver, skus[0]);
     for (const sku of skus) {
-      results.push(await checkPdpOnDriver(driver, sku, outputDir));
+      try {
+        results.push(await checkPdpOnDriver(driver, sku, outputDir));
+      } catch (e) {
+        const error = e instanceof Error ? e.message : String(e);
+        console.error(
+          `   ❌ Falha inesperada em ${sku.sku}, pulando para o próximo SKU da sessão: ${error}`,
+        );
+        results.push(buildErrorResult(sku, error));
+      }
     }
   } finally {
     await closeAndroidSession(driver);
@@ -199,18 +268,20 @@ async function runSessionForSkus(
   return results;
 }
 
-/** Splits `items` round-robin across `numChunks` groups, dropping empty groups (e.g. more sessions than SKUs). */
-function distributeIntoChunks<T>(items: T[], numChunks: number): T[][] {
-  const chunks: T[][] = Array.from({ length: numChunks }, () => []);
-  items.forEach((item, i) => chunks[i % numChunks].push(item));
-  return chunks.filter((chunk) => chunk.length > 0);
-}
-
-/** ANDROID_CONCURRENCY = how many device sessions run in parallel; default 2, hard-capped at 5 (device farm plans usually limit concurrent sessions). */
-function parseAndroidConcurrency(maxTasks: number): number {
-  const raw = Number.parseInt(process.env.ANDROID_CONCURRENCY ?? "2", 10);
-  const bounded = Math.min(Math.max(1, Number.isNaN(raw) ? 2 : raw), 5);
-  return Math.min(bounded, maxTasks);
+/** Deletes login-failure debug screenshots older than maxAgeDays so .tmp/artifacts/auth/ doesn't
+ * grow unbounded across runs. */
+function pruneOldAuthDebugScreenshots(maxAgeDays = 7): void {
+  const dir = path.join(process.cwd(), ".tmp", "artifacts", "auth");
+  if (!fs.existsSync(dir)) {
+    return;
+  }
+  const cutoff = Date.now() - maxAgeDays * 24 * 60 * 60 * 1000;
+  for (const file of fs.readdirSync(dir)) {
+    const filePath = path.join(dir, file);
+    if (fs.statSync(filePath).mtimeMs < cutoff) {
+      fs.rmSync(filePath);
+    }
+  }
 }
 
 async function main() {
@@ -219,6 +290,8 @@ async function main() {
   const runId = `run_android_${startTime}`;
   const outputDir = path.join(process.cwd(), "docs", "reports", runId);
   fs.mkdirSync(outputDir, { recursive: true });
+
+  pruneOldAuthDebugScreenshots();
 
   const allSkus = await loadSkus();
   // Which SKUs to check, in priority order:
@@ -258,10 +331,26 @@ async function main() {
     `🧵 Sessões paralelas: ${sessionChunks.length} (login 1x por sessão, PDPs navegados em sequência dentro dela)`,
   );
 
-  const resultsPerSession = await Promise.all(
+  // Promise.allSettled (not Promise.all): one session rejecting outright must not discard the
+  // results other sessions already completed. The session's SKUs are instead recorded as
+  // failures so they stay visible in the report.
+  const sessionOutcomes = await Promise.allSettled(
     sessionChunks.map((chunk) => runSessionForSkus(chunk, outputDir)),
   );
-  const results = resultsPerSession.flat();
+  const results: PdpCheckResult[] = [];
+  sessionOutcomes.forEach((outcome, i) => {
+    if (outcome.status === "fulfilled") {
+      results.push(...outcome.value);
+    } else {
+      const chunk = sessionChunks[i];
+      const error = outcome.reason instanceof Error ? outcome.reason.message : String(outcome.reason);
+      console.error(
+        `❌ Sessão ${i + 1} falhou por completo (SKUs perdidos: ${chunk.map((s) => s.sku).join(", ")}):`,
+        outcome.reason,
+      );
+      results.push(...chunk.map((sku) => buildErrorResult(sku, error)));
+    }
+  });
 
   const report: MonitoringReport = {
     runId,
@@ -277,49 +366,26 @@ async function main() {
     results,
   };
 
-  fs.writeFileSync(
-    path.join(outputDir, "report.json"),
-    generateJsonReport(report),
-  );
-  console.log(`\n✅ Relatório salvo em ${outputDir}`);
+  const htmlPath = path.join(outputDir, "report.html");
+  const jsonPath = path.join(outputDir, "report.json");
 
-  // Register in docs/reports/index.json so the dashboard's history/report page can find
-  // this run — the Next.js /report/[runId] route reads report.json directly by runId,
-  // no report.html needed (android runs are JSON-only, unlike the web orchestrator).
+  fs.writeFileSync(htmlPath, generateHtmlReport(report));
+  fs.writeFileSync(jsonPath, generateJsonReport(report));
+  console.log(`\n✅ Relatórios salvos em ${outputDir} (HTML + JSON)`);
+
+  // Register in docs/reports/index.json so dashboard and CI publish steps can find this run
   try {
-    const indexJsonPath = path.join(
-      process.cwd(),
-      "docs",
-      "reports",
-      "index.json",
-    );
-    let reportsIndex: { reports: Record<string, unknown>[] } = { reports: [] };
-    if (fs.existsSync(indexJsonPath)) {
-      try {
-        const data = JSON.parse(fs.readFileSync(indexJsonPath, "utf-8"));
-        if (data && Array.isArray(data.reports)) {
-          reportsIndex = data;
-        }
-      } catch {
-        console.log("Índice de relatórios existente inválido, recriando.");
-      }
-    }
-
-    reportsIndex.reports.unshift({
+    await upsertReportIndexEntry({
       runId: report.runId,
       startTime: report.startTime,
       endTime: report.endTime,
       durationMs: report.durationMs,
       summary: report.summary,
+      htmlPath: path.join("reports", runId, "report.html").replace(/\\/g, "/"),
       jsonPath: path.join("reports", runId, "report.json").replace(/\\/g, "/"),
       platform: "android",
     });
-    if (reportsIndex.reports.length > 100) {
-      reportsIndex.reports = reportsIndex.reports.slice(0, 100);
-    }
-
-    fs.writeFileSync(indexJsonPath, JSON.stringify(reportsIndex, null, 2));
-    console.log(`✅ Índice de relatórios atualizado: ${indexJsonPath}`);
+    console.log(`✅ Índice de relatórios atualizado`);
   } catch (e) {
     console.error("❌ Erro ao atualizar o histórico de relatórios:", e);
   }

@@ -1,14 +1,7 @@
 import Link from 'next/link';
-import { Activity, Database, Presentation, Smartphone, Zap } from 'lucide-react';
-import { getLastReport, getReportIndex } from '@/lib/data';
-import { HistoryDropdown } from './history-dropdown';
+import { Activity, Zap } from 'lucide-react';
 
 export function NavHeader() {
-  const index = getReportIndex();
-  // Android runs get their own page/history (see /android) to avoid mixing platforms here.
-  const runs = index.reports.filter((r) => r.platform !== 'android').slice(0, 15);
-  const homeRunId = getLastReport().runId;
-
   return (
     <header
       id="app-nav-header"
@@ -26,9 +19,8 @@ export function NavHeader() {
             </div>
           </div>
           <div className="flex items-baseline gap-1.5">
-            <span className="font-bold text-lg tracking-tight">PDP Monitor</span>
-            <span className="text-[10px] font-medium text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded-full">
-              v2.0
+            <span className="font-bold text-lg tracking-tight">
+              Página de Detalhes de Produto PDP-Monitor
             </span>
           </div>
         </Link>
@@ -37,28 +29,6 @@ export function NavHeader() {
             <Zap className="w-3 h-3 text-amber-500" />
             <span>Automação ativa</span>
           </div>
-          <Link
-            href="/skus"
-            className="hidden sm:flex items-center gap-1.5 text-xs text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-full transition-colors hover:bg-indigo-100"
-          >
-            <Database className="w-3 h-3" />
-            <span>SKUs</span>
-          </Link>
-          <Link
-            href="/visao-geral"
-            className="hidden sm:flex items-center gap-1.5 text-xs text-purple-600 bg-purple-50 px-3 py-1.5 rounded-full transition-colors hover:bg-purple-100"
-          >
-            <Presentation className="w-3 h-3" />
-            <span>Visão Geral</span>
-          </Link>
-          <Link
-            href="/android"
-            className="hidden sm:flex items-center gap-1.5 text-xs text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full transition-colors hover:bg-emerald-100"
-          >
-            <Smartphone className="w-3 h-3" />
-            <span>Android</span>
-          </Link>
-          <HistoryDropdown runs={runs} homeRunId={homeRunId} />
         </div>
       </div>
     </header>

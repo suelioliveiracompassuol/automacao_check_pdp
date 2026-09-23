@@ -9,6 +9,7 @@ import { getCountryFlag } from '@/lib/utils';
 import type { PdpCheckResult } from '@/lib/types';
 import { useState } from 'react';
 import { ChevronDown, ExternalLink, Clock, AlertCircle } from 'lucide-react';
+import { FaAndroid } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface PdpCardProps {
@@ -67,8 +68,8 @@ export function PdpCard({ result, runId, screenshots }: PdpCardProps) {
 
           <div className="flex items-center gap-2 shrink-0">
             {result.platform === 'android' && (
-              <Badge className="bg-emerald-50 text-emerald-700 border border-emerald-200 font-semibold">
-                📱 Android
+              <Badge className="flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-200 font-semibold">
+                <FaAndroid className="w-3 h-3" /> Android
               </Badge>
             )}
             {result.channel === 'socialcommerce' && (

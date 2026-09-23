@@ -13,7 +13,14 @@ vi.mock('node:fs', () => ({
   readdirSync: vi.fn(),
 }));
 
-import { getLastReport, getReportIndex, getReportById, getScreenshotsForRun } from '../data';
+import {
+  getLastReport,
+  getReportIndex,
+  getReportById,
+  getScreenshotsForRun,
+  getReportsByPlatform,
+  getLastReportByPlatform,
+} from '../data';
 
 const mockReport = {
   runId: 'run_123',
@@ -114,6 +121,69 @@ describe('data.ts', () => {
       vi.mocked(fs.existsSync).mockReturnValue(false);
       const result = getScreenshotsForRun('run_nonexistent');
       expect(result).toEqual([]);
+    });
+  });
+
+  describe('getReportsByPlatform / getLastReportByPlatform', () => {
+    const mockMultiPlatformIndex = {
+      reports: [
+        {
+          runId: 'run_android_2',
+          startTime: '2024-01-03T00:00:00Z',
+          endTime: '2024-01-03T00:05:00Z',
+          durationMs: 300000,
+          summary: { total: 3, passed: 3, failed: 0, errors: 0 },
+          jsonPath: 'reports/run_android_2/report.json',
+          platform: 'android',
+        },
+        {
+          runId: 'run_web_1',
+          startTime: '2024-01-02T00:00:00Z',
+          endTime: '2024-01-02T00:05:00Z',
+          durationMs: 300000,
+          summary: { total: 5, passed: 4, failed: 1, errors: 0 },
+          jsonPath: 'reports/run_web_1/report.json',
+          // no `platform` field — legacy entry, should be treated as 'web'
+        },
+        {
+          runId: 'run_android_1',
+          startTime: '2024-01-01T00:00:00Z',
+          endTime: '2024-01-01T00:05:00Z',
+          durationMs: 300000,
+          summary: { total: 3, passed: 2, failed: 1, errors: 0 },
+          jsonPath: 'reports/run_android_1/report.json',
+          platform: 'android',
+        },
+      ],
+    };
+
+    beforeEach(() => {
+      vi.mocked(fs.readFileSync).mockImplementation((filePath) => {
+        if (String(filePath).includes('index.json')) {
+          return JSON.stringify(mockMultiPlatformIndex);
+        }
+        const runId = String(filePath).match(/run_\w+/)?.[0];
+        return JSON.stringify({ ...mockReport, runId });
+      });
+      vi.mocked(fs.existsSync).mockReturnValue(true);
+    });
+
+    it('filters index entries by platform, treating a missing platform as web', () => {
+      expect(getReportsByPlatform('android').map((r) => r.runId)).toEqual([
+        'run_android_2',
+        'run_android_1',
+      ]);
+      expect(getReportsByPlatform('web').map((r) => r.runId)).toEqual(['run_web_1']);
+      expect(getReportsByPlatform('ios')).toEqual([]);
+    });
+
+    it('returns the most recent report for a platform', () => {
+      const result = getLastReportByPlatform('android');
+      expect(result?.runId).toBe('run_android_2');
+    });
+
+    it('returns null when the platform has no runs yet', () => {
+      expect(getLastReportByPlatform('ios')).toBeNull();
     });
   });
 });

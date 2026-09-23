@@ -54,9 +54,14 @@ function EvolutionRow({ run, isLatest }: EvolutionRowProps) {
 
 interface EvolutionSectionProps {
   evolutionData: ReportIndexEntry[];
+  /** Overrides the section title — e.g. "Evolução — Android" on a per-platform breakdown. */
+  title?: string;
 }
 
-export function EvolutionSection({ evolutionData }: EvolutionSectionProps) {
+export function EvolutionSection({
+  evolutionData,
+  title = 'Evolução Histórica',
+}: EvolutionSectionProps) {
   const chartData = evolutionData.map((run) => ({
     label: formatShortDate(run?.startTime),
     passRate:
@@ -67,7 +72,7 @@ export function EvolutionSection({ evolutionData }: EvolutionSectionProps) {
     <section aria-labelledby="evolution-heading">
       <div className="mb-6">
         <h2 id="evolution-heading" className="text-2xl font-bold text-gray-900">
-          Evolução Histórica
+          {title}
         </h2>
         <p className="mt-1 text-sm text-gray-500">
           Taxa de aprovação nas últimas {evolutionData.length} execuções

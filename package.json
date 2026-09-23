@@ -34,6 +34,7 @@
     "typescript-eslint": "^8.59.2"
   },
   "dependencies": {
+    "@radix-ui/react-tabs": "^1.1.21",
     "dotenv": "^17.4.2",
     "firebase-admin": "^14.3.0",
     "webdriverio": "^9.31.5"

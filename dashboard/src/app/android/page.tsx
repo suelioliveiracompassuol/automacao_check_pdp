@@ -2,7 +2,8 @@ import { getLastAndroidReport, getScreenshotsForRun } from '@/lib/data';
 import { SummaryCards } from '@/components/summary-cards';
 import { AndroidHistoryDropdown } from '@/components/android-history-dropdown';
 import { formatDuration, formatDate } from '@/lib/utils';
-import { ReportClient } from '../report/[runId]/report-client';
+import { ReportClient } from '../web/[runId]/report-client';
+import { FaAndroid } from 'react-icons/fa';
 
 export default function AndroidPage() {
   const report = getLastAndroidReport();
@@ -10,7 +11,9 @@ export default function AndroidPage() {
   if (!report) {
     return (
       <div className="max-w-2xl mx-auto text-center py-20">
-        <div className="text-5xl mb-4">📱</div>
+        <div className="flex justify-center text-5xl mb-4">
+          <FaAndroid />
+        </div>
         <h1 className="text-xl font-bold text-gray-900">Nenhuma execução Android ainda</h1>
         <p className="text-gray-500 text-sm mt-2">
           Rode <code className="bg-gray-100 px-1.5 py-0.5 rounded">npm run check:android</code> no
@@ -29,8 +32,8 @@ export default function AndroidPage() {
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSA2MCAwIEwgMCAwIDAgNjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-60" />
         <div className="relative z-10">
           <div className="flex items-center justify-between gap-3 mb-2">
-            <span className="text-xs font-medium text-emerald-300 bg-emerald-500/20 px-2.5 py-1 rounded-full border border-emerald-400/20">
-              📱 App Android · Natura&Co
+            <span className="flex items-center gap-1.5 text-xs font-medium text-emerald-300 bg-emerald-500/20 px-2.5 py-1 rounded-full border border-emerald-400/20">
+              <FaAndroid className="w-3.5 h-3.5" /> App Android · Natura&Co
             </span>
             <AndroidHistoryDropdown />
           </div>

@@ -151,7 +151,7 @@ describe('AuthDisabledButton', () => {
     });
 
     it('deve renderizar tooltip com mensagem', () => {
-      const { container } = render(
+      render(
         <AuthDisabledButton>
           <button>Clique aqui</button>
         </AuthDisabledButton>,

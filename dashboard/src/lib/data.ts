@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import type { MonitoringReport, ReportIndex } from './types';
+import type { MonitoringReport, Platform, ReportIndex, ReportIndexEntry } from './types';
 
 // Next.js guarantees cwd() = package root (dashboard/).
 // In CI the workflow does `cd dashboard && npm run build`, so ../docs resolves correctly.
@@ -31,6 +31,19 @@ export function getReportById(runId: string): MonitoringReport | null {
 export function getLastAndroidReport(): MonitoringReport | null {
   const index = getReportIndex();
   const latest = index.reports.find((r) => r.platform === 'android');
+  return latest ? getReportById(latest.runId) : null;
+}
+
+/** Index entries for `platform`, most recent first. Entries with no `platform` field
+ * (legacy reports, predating multi-platform support) are treated as 'web'. */
+export function getReportsByPlatform(platform: Platform): ReportIndexEntry[] {
+  const index = getReportIndex();
+  return index.reports.filter((r) => (r.platform ?? 'web') === platform);
+}
+
+/** Most recent run for `platform`, or null if none have been recorded yet. */
+export function getLastReportByPlatform(platform: Platform): MonitoringReport | null {
+  const latest = getReportsByPlatform(platform)[0];
   return latest ? getReportById(latest.runId) : null;
 }
 

@@ -6,7 +6,7 @@ import {
   parseRemoteConfigEntries,
 } from "../checks/remoteConfig.js";
 
-interface FirebaseAppCreds {
+export interface FirebaseAppCreds {
   projectId: string;
   projectNumber: string;
   apiKey: string;
@@ -15,49 +15,51 @@ interface FirebaseAppCreds {
 }
 
 /**
- * Firebase app identifiers per Android package. This is intentionally extensible so the
- * feature monitor can scale beyond Natura BR without code changes for each new package.
+ * Loads Firebase app configurations securely from environment variables.
+ * Secrets and identifiers must NEVER be hardcoded in source code.
  *
- * Supported override format via env variable:
- *   ANDROID_FIREBASE_APPS_JSON='{"com.naturaeco.app.natura":{"projectId":"...","projectNumber":"...","apiKey":"...","appId":"...","packageName":"com.naturaeco.app.natura"}}'
- *
- * The JSON is merged on top of the static base map, letting CI/device-farm teams register new apps
- * without modifying the source every time a new brand/package is added.
+ * Supported formats:
+ * 1. Multi-app JSON via `ANDROID_FIREBASE_APPS_JSON`:
+ *    '{"net.natura.semprepresente":{"projectId":"...","projectNumber":"...","apiKey":"...","appId":"...","packageName":"net.natura.semprepresente"}}'
+ * 2. Single-app individual env vars (PROJECT_ID / ANDROID_FIREBASE_PROJECT_ID, API_KEY, etc.)
  */
-const BASE_FIREBASE_APPS: Record<string, FirebaseAppCreds> = {
-  "net.natura.semprepresente": {
-    projectId: "app-natura-4961a",
-    projectNumber: "865562389217",
-    apiKey: "AIzaSyArC2ee8qeBXSZrCobtI0QNaOFgGL_EhXc",
-    appId: "1:865562389217:android:5679cc15b02e59b4",
-    packageName: "net.natura.semprepresente",
-  },
-};
+export function loadFirebaseAppsFromEnv(): Record<string, FirebaseAppCreds> {
+  const apps: Record<string, FirebaseAppCreds> = {};
 
-function loadFirebaseAppsFromEnv(): Record<string, FirebaseAppCreds> {
+  // Single-app configuration via direct env vars
+  const projectId = process.env.PROJECT_ID;
+  const projectNumber = process.env.PROJECT_NUMBER;
+  const apiKey = process.env.API_KEY;
+  const appId = process.env.APP_ID;
+  const packageName = process.env.PACKAGE_NAME;
+
+  if (projectId && projectNumber && apiKey && appId && packageName) {
+    apps[packageName] = {
+      projectId,
+      projectNumber,
+      apiKey,
+      appId,
+      packageName,
+    };
+  }
+
+  // Multi-app JSON configuration
   const raw = process.env.ANDROID_FIREBASE_APPS_JSON;
-  if (!raw) {
-    return {};
-  }
-
-  try {
-    const parsed = JSON.parse(raw) as Record<string, FirebaseAppCreds>;
-    if (!parsed || typeof parsed !== "object") {
-      return {};
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw) as Record<string, FirebaseAppCreds>;
+      if (parsed && typeof parsed === "object") {
+        Object.assign(apps, parsed);
+      }
+    } catch {
+      console.warn(
+        "⚠️ ANDROID_FIREBASE_APPS_JSON inválido — ignorei a configuração extra de Firebase apps.",
+      );
     }
-    return parsed;
-  } catch {
-    console.warn(
-      "⚠️ ANDROID_FIREBASE_APPS_JSON inválido — ignorei a configuração extra de Firebase apps.",
-    );
-    return {};
   }
-}
 
-const FIREBASE_APPS: Record<string, FirebaseAppCreds> = {
-  ...BASE_FIREBASE_APPS,
-  ...loadFirebaseAppsFromEnv(),
-};
+  return apps;
+}
 
 /** A valid Firebase Installations FID: 17 random bytes with the first nibble forced to 0111 (0x7-). */
 function generateFid(): string {
@@ -136,11 +138,12 @@ export async function fetchRemoteConfigFlagsAndroid(
   sku: SkuConfig,
   packageName: string,
 ): Promise<RemoteConfigFlags | null> {
-  const app = FIREBASE_APPS[packageName];
+  const apps = loadFirebaseAppsFromEnv();
+  const app = apps[packageName];
   if (!app) {
     console.warn(
       `⚠️ Remote Config Android sem mapeamento Firebase para package ${packageName}. ` +
-        "Adicione o app no mapa estático ou via ANDROID_FIREBASE_APPS_JSON para escalar para outras marcas/packagens.",
+        "Configure ANDROID_FIREBASE_APPS_JSON ou variáveis de ambiente (PROJECT_ID, API_KEY, etc.) para habilitar.",
     );
     return null;
   }

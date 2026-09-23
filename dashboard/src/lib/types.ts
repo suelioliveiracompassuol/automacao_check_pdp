@@ -5,6 +5,9 @@
 
 export type Status = 'pass' | 'fail' | 'disabled' | 'na' | 'error' | 'warning';
 
+/** Defaults to 'web' when omitted on a report/index entry (legacy reports predate this field). */
+export type Platform = 'web' | 'android' | 'ios';
+
 export interface CheckResult {
   feature: string;
   featureKey: string;
@@ -24,7 +27,7 @@ export interface PdpCheckResult {
   country: string;
   channel?: string;
   /** Platform the check ran on. Defaults to 'web' when omitted (legacy reports). */
-  platform?: 'web' | 'android';
+  platform?: Platform;
   timestamp: string;
   success: boolean;
   loadTime?: number;
@@ -64,7 +67,7 @@ export interface ReportIndexEntry {
   htmlPath?: string;
   jsonPath: string;
   /** Defaults to 'web' when omitted (legacy reports). */
-  platform?: 'web' | 'android';
+  platform?: Platform;
 }
 
 export interface ReportIndex {

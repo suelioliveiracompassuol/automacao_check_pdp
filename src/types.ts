@@ -85,7 +85,7 @@ export interface MonitoringReport {
  * Base interface for feature checker functions
  */
 export type FeatureChecker = (page: Page) => Promise<CheckResult>;
-export type Platform = "web" | "android";
+export type Platform = "web" | "android" | "ios";
 export type Vendor = "natura" | "avon";
 export type Country = "BR" | "AR" | "CL" | "CO" | "MX" | "PE";
 export type Channel = "ecommerce" | "socialcommerce";

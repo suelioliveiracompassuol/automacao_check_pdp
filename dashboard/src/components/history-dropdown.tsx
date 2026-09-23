@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { History, ChevronDown, Check } from 'lucide-react';
+import { FaAndroid } from 'react-icons/fa';
 import { usePathname } from 'next/navigation';
 import type { ReportIndexEntry } from '@/lib/types';
 import { formatDate, formatDuration } from '@/lib/utils';
@@ -79,8 +80,8 @@ export function HistoryDropdown({
                     }`}
                   >
                     <div className="flex flex-col">
-                      <span className="font-medium">
-                        {run.platform === 'android' && '📱 '}
+                      <span className="flex items-center gap-1 font-medium">
+                        {run.platform === 'android' && <FaAndroid className="w-3 h-3" />}
                         {formatDate(run?.startTime)}
                       </span>
                       <span className="text-xs text-gray-400 mt-0.5">
