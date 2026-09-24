@@ -9,10 +9,11 @@ import {
 } from '@/components/visao-geral/platform-breakdown-section';
 import { Card } from '@/components/ui/card';
 import { getReportById, getReportIndex } from '@/lib/data';
+import { TOTAL_CHECKS } from '@/lib/checks-catalog';
+import { PLATFORMS } from '@/lib/platforms';
 import { type MonitoringReport, type Platform, type ReportIndexEntry } from '@/lib/types';
 
-const PLATFORMS: Platform[] = ['web', 'android', 'ios'];
-const PLATFORM_LABELS: Record<Platform, string> = { web: 'Web', android: 'Android', ios: 'iOS' };
+const PLATFORM_IDS: Platform[] = PLATFORMS.map((p) => p.platform);
 
 function passRateOf(report: MonitoringReport | null): number | null {
   if (!report || report.summary.total === 0) return null;
@@ -33,9 +34,9 @@ export default function HomePage() {
   if (!latestEntry) {
     return (
       <Card className="py-16 text-center">
-        <BarChart3 className="mx-auto mb-3 h-8 w-8 text-gray-300" />
-        <h1 className="text-lg font-semibold text-gray-900">Nenhuma execução disponível</h1>
-        <p className="mt-1 text-sm text-gray-500">
+        <BarChart3 className="mx-auto mb-3 h-8 w-8 text-primary-light" />
+        <h1 className="text-lg font-bold text-highlight">Nenhuma execução disponível</h1>
+        <p className="mt-1 text-sm text-medium-emphasis">
           As métricas aparecerão aqui após a primeira execução.
         </p>
       </Card>
@@ -43,7 +44,7 @@ export default function HomePage() {
   }
 
   const runsByPlatform = Object.fromEntries(
-    PLATFORMS.map((p) => [p, allRuns.filter((r) => (r.platform ?? 'web') === p)]),
+    PLATFORM_IDS.map((p) => [p, allRuns.filter((r) => (r.platform ?? 'web') === p)]),
   ) as Record<Platform, ReportIndexEntry[]>;
 
   // Coverage (countries/channels/vendors) reflects site operations, so it's grounded in the
@@ -78,28 +79,45 @@ export default function HomePage() {
       }, new Map())
     : new Map<string, Set<string>>();
 
-  const platformStats: PlatformStat[] = PLATFORMS.map((p) => {
-    const runs = runsByPlatform[p];
+  const platformStats: PlatformStat[] = PLATFORMS.map((meta) => {
+    const runs = meta.upcoming ? [] : runsByPlatform[meta.platform];
     const latest = runs[0] ? getReportById(runs[0].runId) : null;
-    return { label: PLATFORM_LABELS[p], passRate: passRateOf(latest), runsCount: runs.length };
+    return {
+      meta,
+      passRate: passRateOf(latest),
+      runsCount: runs.length,
+      lastRunAt: runs[0]?.startTime ?? null,
+      trend: runs
+        .slice(0, 10)
+        .reverse()
+        .map((r) =>
+          r.summary.total > 0 ? Math.round((r.summary.passed / r.summary.total) * 100) : 0,
+        ),
+    };
   });
 
   const platformBreakdown: PlatformBreakdownData[] = PLATFORMS.filter(
-    (p) => runsByPlatform[p].length > 0,
-  ).map((p) => {
-    const runs = runsByPlatform[p];
+    (meta) => !meta.upcoming && runsByPlatform[meta.platform].length > 0,
+  ).map(({ platform, label }) => {
+    const runs = runsByPlatform[platform];
     return {
-      platform: p,
-      label: PLATFORM_LABELS[p],
+      platform,
+      label,
       evolutionData: runs.slice(0, 10).reverse(),
       reports: loadReports(runs.slice(0, 4)).reverse(),
     };
   });
 
   return (
-    <div className="space-y-14">
+    <div className="space-y-16 animate-fade-in-up">
       <div id="hero" className="scroll-mt-24">
-        <HeroSection totalRuns={totalRuns} platformStats={platformStats} />
+        <HeroSection
+          totalRuns={totalRuns}
+          countriesCount={countries.length}
+          checksCount={TOTAL_CHECKS}
+          lastRunAt={latestEntry.startTime}
+          platformStats={platformStats}
+        />
       </div>
       <div id="coverage" className="scroll-mt-24">
         <CoverageSection
@@ -112,9 +130,6 @@ export default function HomePage() {
       <div id="platform-breakdown" className="scroll-mt-24">
         <PlatformBreakdownSection data={platformBreakdown} />
       </div>
-
-      {/* Evolução histórica e matriz de erros por stack, em tabs (Web primeiro) — plataformas
-          sem execuções ainda (ex.: iOS antes do primeiro run) não geram uma tab vazia. */}
 
       <div id="highlights" className="scroll-mt-24">
         <HighlightsSection />

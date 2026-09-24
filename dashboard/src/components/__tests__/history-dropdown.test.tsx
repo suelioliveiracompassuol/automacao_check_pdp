@@ -97,7 +97,7 @@ describe('HistoryDropdown', () => {
 
     const links = screen.getAllByRole('link');
 
-    expect(links[0]).toHaveClass('bg-blue-50');
+    expect(links[0]).toHaveClass('bg-primary-wash');
   });
 
   it('first entry links to home (/)', () => {

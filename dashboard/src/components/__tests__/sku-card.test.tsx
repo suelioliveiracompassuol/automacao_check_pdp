@@ -38,12 +38,12 @@ describe('SkuCard', () => {
     expect(onDelete).toHaveBeenCalledWith('NATBRA-70983');
   });
 
-  it('aplica estilo rose para vendor avon', () => {
+  it('aplica estilo pink para vendor avon', () => {
     render(<SkuCard entry={{ ...entry, vendor: 'avon' }} onEdit={vi.fn()} onDelete={vi.fn()} />);
-    expect(screen.getByText('avon').className).toContain('rose');
+    expect(screen.getByText('avon').className).toContain('pink');
   });
 
-  it('aplica estilo purple para canal socialcommerce', () => {
+  it('aplica estilo info para canal socialcommerce', () => {
     render(
       <SkuCard
         entry={{ ...entry, channel: 'socialcommerce' }}
@@ -51,6 +51,6 @@ describe('SkuCard', () => {
         onDelete={vi.fn()}
       />,
     );
-    expect(screen.getByText('Social').className).toContain('purple');
+    expect(screen.getByText('Social').className).toContain('info');
   });
 });

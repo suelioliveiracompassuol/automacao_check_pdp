@@ -17,7 +17,7 @@ export function TabsList({ children, className }: TabsListProps) {
   return (
     <RadixTabs.List
       className={cn(
-        'inline-flex items-center gap-1 rounded-xl bg-gray-100/80 p-1 w-fit',
+        'inline-flex w-fit items-center gap-1 rounded-full border border-neutral-75 bg-surface p-1 shadow-tiny',
         className,
       )}
     >
@@ -40,15 +40,15 @@ export function TabsTrigger({ value, isActive, children, className }: TabsTrigge
     <RadixTabs.Trigger
       value={value}
       className={cn(
-        'relative z-0 flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-sm font-medium transition-colors cursor-pointer outline-none',
-        isActive ? 'text-gray-900' : 'text-gray-500 hover:text-gray-700',
+        'relative z-0 flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition-colors cursor-pointer outline-none',
+        isActive ? 'font-bold text-white' : 'text-medium-emphasis hover:text-high-emphasis',
         className,
       )}
     >
       {isActive && (
         <motion.span
           layoutId="tabs-active-indicator"
-          className="absolute inset-0 -z-10 rounded-lg bg-white shadow-sm"
+          className="absolute inset-0 -z-10 rounded-full bg-highlight"
           transition={{ type: 'spring', stiffness: 500, damping: 35 }}
         />
       )}

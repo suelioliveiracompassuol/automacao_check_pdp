@@ -1,48 +1,100 @@
 @import 'tailwindcss';
 
+/*
+ * Design tokens — natds-themes `natura_v3` (light), the same source the ncf-ssr storefront
+ * (www.natura.com.br) feeds into its Tailwind config. Declared via @theme so every token is also
+ * a utility class (bg-primary, text-alert-dark, border-neutral-100, ...).
+ */
+@theme {
+  --font-sans: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  --font-mono: 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Logo orange (ncf-ssr logo.tsx) */
+  --color-brand: #ff6b0b;
+
+  --color-primary: #f48646;
+  --color-primary-light: #f7a576;
+  --color-primary-lightest: #fac3a3;
+  --color-primary-dark: #e05a0d;
+  --color-primary-darkest: #953c09;
+  /* Not in natds — a wash for tinted surfaces (active nav item, hero background) */
+  --color-primary-wash: #fff4ec;
+
+  --color-secondary: #f6be00;
+  --color-secondary-light: #ffd138;
+  --color-secondary-lightest: #ffe07a;
+  --color-secondary-dark: #b88d00;
+  --color-secondary-darkest: #7a5e00;
+
+  --color-success: #2f833e;
+  --color-success-light: #92d492;
+  --color-success-lightest: #d9f7d5;
+  --color-success-dark: #205829;
+  --color-success-darkest: #08280d;
+
+  --color-warning: #e5b815;
+  --color-warning-light: #ffd75d;
+  --color-warning-lightest: #ffefcd;
+  --color-warning-dark: #a38520;
+  --color-warning-darkest: #5c4b14;
+
+  --color-alert: #de3529;
+  --color-alert-light: #ffa392;
+  --color-alert-lightest: #ffedea;
+  --color-alert-dark: #8c2116;
+  --color-alert-darkest: #470703;
+
+  --color-info: #1267cf;
+  --color-info-light: #a5c0fc;
+  --color-info-lightest: #edf0ff;
+  --color-info-dark: #154e99;
+  --color-info-darkest: #052149;
+
+  --color-neutral-0: #ffffff;
+  --color-neutral-50: #fafafa;
+  --color-neutral-75: #eeeeee;
+  --color-neutral-100: #e1e1e1;
+  --color-neutral-200: #c9c9c9;
+  --color-neutral-300: #bdbdbd;
+  --color-neutral-400: #a4a4a4;
+  --color-neutral-500: #8c8c8c;
+  --color-neutral-600: #737373;
+  --color-neutral-700: #4e4e4e;
+  --color-neutral-800: #363636;
+  --color-neutral-900: #111111;
+
+  --color-background: #fafafa;
+  --color-surface: #ffffff;
+  --color-highlight: #111111;
+  --color-high-emphasis: #363636;
+  --color-medium-emphasis: #737373;
+  --color-low-emphasis: #8c8c8c;
+
+  /* natds elevation scale */
+  --shadow-tiny: 0 2px 2px 0 rgba(0, 0, 0, 0.14);
+  --shadow-small: 0 3px 4px 0 rgba(0, 0, 0, 0.14);
+  --shadow-soft: 0 1px 2px rgba(17, 17, 17, 0.04), 0 4px 16px rgba(17, 17, 17, 0.06);
+  --shadow-lift: 0 2px 4px rgba(17, 17, 17, 0.04), 0 12px 32px rgba(17, 17, 17, 0.1);
+
+  /* natds borderRadius: medium 4 / large 8 / huge 16 */
+  --radius-card: 16px;
+}
+
 :root {
-  --color-pass: #10b981;
-  --color-fail: #ef4444;
-  --color-warn: #f59e0b;
-  --color-error: #f59e0b;
-  --color-na: #6b7280;
-  --color-disabled: #9ca3af;
-  --color-bg: #f9fafb;
-  --color-card: #ffffff;
-  --color-text: #111827;
-  --color-border: #e5e7eb;
-  --color-primary: #2563eb;
-  --color-primary-light: #3b82f6;
-  --color-accent: #7c3aed;
-  --gradient-hero: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%);
-  --gradient-card: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
+  /* Natura's signature orange→yellow ribbon */
+  --gradient-brand: linear-gradient(90deg, #ff6b0b 0%, #f48646 45%, #f6be00 100%);
 }
 
 body {
-  font-family:
-    'Inter',
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    Oxygen,
-    Ubuntu,
-    sans-serif;
-  background: var(--color-bg);
-  color: var(--color-text);
+  font-family: var(--font-sans);
+  background: var(--color-background);
+  color: var(--color-high-emphasis);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Subtle background pattern */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background-image: radial-gradient(circle at 1px 1px, rgba(0, 0, 0, 0.03) 1px, transparent 0);
-  background-size: 24px 24px;
-  pointer-events: none;
+.bg-brand-gradient {
+  background-image: var(--gradient-brand);
 }
 
 /* Smooth page transitions */
@@ -87,12 +139,12 @@ body::before {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: var(--color-neutral-200);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: var(--color-neutral-400);
 }
 
 /* /visao-geral "presentation mode" (toggled via PresentationControls fullscreen button) */

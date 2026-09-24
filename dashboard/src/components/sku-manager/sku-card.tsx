@@ -11,31 +11,31 @@ interface SkuCardProps {
 }
 
 const VENDOR_STYLES: Record<string, string> = {
-  natura: 'bg-emerald-100 text-emerald-700',
-  avon: 'bg-rose-100 text-rose-700',
+  natura: 'bg-success-lightest text-success-dark',
+  avon: 'bg-pink-100 text-pink-800',
 };
 
 const CHANNEL_STYLES: Record<string, string> = {
-  ecommerce: 'bg-blue-100 text-blue-700',
-  socialcommerce: 'bg-purple-100 text-purple-700',
+  ecommerce: 'bg-primary-lightest text-primary-dark',
+  socialcommerce: 'bg-info-lightest text-info-dark',
 };
 
 export function SkuCard({ entry, onEdit, onDelete, disabled }: SkuCardProps) {
   return (
     <div
-      className={`flex flex-col gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md ${disabled ? 'opacity-60 cursor-not-allowed' : ''}`}
+      className={`flex flex-col gap-3 rounded-xl border border-neutral-100 bg-white p-4 shadow-sm transition-shadow hover:shadow-md ${disabled ? 'opacity-60 cursor-not-allowed' : ''}`}
     >
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
-          <p className="truncate font-mono text-[10px] text-gray-400">{entry.id}</p>
-          <h3 className="mt-0.5 text-sm font-semibold leading-snug text-gray-900">{entry.name}</h3>
+          <p className="truncate font-mono text-[10px] text-low-emphasis">{entry.id}</p>
+          <h3 className="mt-0.5 text-sm font-semibold leading-snug text-highlight">{entry.name}</h3>
         </div>
         <div className="flex shrink-0 items-center gap-1">
           <button
             type="button"
             onClick={() => onEdit(entry)}
             disabled={disabled}
-            className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-indigo-50 hover:text-indigo-600 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-lg p-1.5 text-low-emphasis transition-colors hover:bg-primary-wash hover:text-primary-dark disabled:cursor-not-allowed disabled:opacity-50"
             aria-label={`Editar ${entry.name}`}
             title={disabled ? 'Faça login para editar' : undefined}
           >
@@ -45,7 +45,7 @@ export function SkuCard({ entry, onEdit, onDelete, disabled }: SkuCardProps) {
             type="button"
             onClick={() => onDelete(entry.id)}
             disabled={disabled}
-            className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-lg p-1.5 text-low-emphasis transition-colors hover:bg-alert-lightest/50 hover:text-alert-dark disabled:cursor-not-allowed disabled:opacity-50"
             aria-label={`Excluir ${entry.name}`}
             title={disabled ? 'Faça login para excluir' : undefined}
           >
@@ -55,15 +55,15 @@ export function SkuCard({ entry, onEdit, onDelete, disabled }: SkuCardProps) {
       </div>
       <div className="flex flex-wrap gap-1.5">
         <span
-          className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase ${VENDOR_STYLES[entry.vendor] ?? 'bg-gray-100 text-gray-600'}`}
+          className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase ${VENDOR_STYLES[entry.vendor] ?? 'bg-neutral-75 text-medium-emphasis'}`}
         >
           {entry.vendor}
         </span>
-        <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-semibold uppercase text-gray-600">
+        <span className="rounded-full bg-neutral-75 px-2 py-0.5 text-[10px] font-semibold uppercase text-medium-emphasis">
           {entry.country}
         </span>
         <span
-          className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${CHANNEL_STYLES[entry.channel] ?? 'bg-gray-100 text-gray-600'}`}
+          className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${CHANNEL_STYLES[entry.channel] ?? 'bg-neutral-75 text-medium-emphasis'}`}
         >
           {entry.channel === 'socialcommerce' ? 'Social' : 'E-com'}
         </span>
@@ -73,7 +73,7 @@ export function SkuCard({ entry, onEdit, onDelete, disabled }: SkuCardProps) {
           {entry.expectedFeatures.map((f) => (
             <span
               key={f}
-              className="rounded bg-indigo-50 px-1.5 py-0.5 text-[9px] font-medium text-indigo-600"
+              className="rounded bg-primary-wash px-1.5 py-0.5 text-[9px] font-medium text-primary-dark"
             >
               {f}
             </span>
@@ -81,7 +81,7 @@ export function SkuCard({ entry, onEdit, onDelete, disabled }: SkuCardProps) {
         </div>
       )}
       {entry.slug !== undefined && (
-        <p className="truncate font-mono text-[10px] text-gray-400">{entry.slug}</p>
+        <p className="truncate font-mono text-[10px] text-low-emphasis">{entry.slug}</p>
       )}
     </div>
   );

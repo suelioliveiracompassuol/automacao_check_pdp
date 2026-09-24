@@ -87,16 +87,16 @@ export function FeatureTable({ features, runId, pageScreenshot }: FeatureTablePr
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-3 px-1">
-        <span className="text-xs font-medium text-gray-500 whitespace-nowrap">
+        <span className="text-xs font-medium text-medium-emphasis whitespace-nowrap">
           {passed}/{total} verificações
         </span>
-        <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+        <div className="flex-1 h-1.5 bg-neutral-75 rounded-full overflow-hidden">
           <div
             className={cn(
               'h-full rounded-full transition-all duration-500',
               failed > 0
-                ? 'bg-gradient-to-r from-emerald-400 to-emerald-500'
-                : 'bg-gradient-to-r from-emerald-400 to-emerald-500',
+                ? 'bg-gradient-to-r from-success-light to-success'
+                : 'bg-gradient-to-r from-success-light to-success',
             )}
             style={{ width: `${percentage}%` }}
           />
@@ -104,23 +104,23 @@ export function FeatureTable({ features, runId, pageScreenshot }: FeatureTablePr
         <span
           className={cn(
             'text-xs font-bold whitespace-nowrap',
-            failed > 0 ? 'text-red-600' : 'text-emerald-600',
+            failed > 0 ? 'text-alert-dark' : 'text-success-dark',
           )}
         >
           {percentage}%
         </span>
       </div>
-      <div className="overflow-x-auto rounded-lg border border-gray-100">
+      <div className="overflow-x-auto rounded-lg border border-neutral-75">
         <table className="w-full text-sm">
           <thead>
-            <tr className="bg-gray-50/80 text-left">
-              <th className="py-2.5 px-3 font-semibold text-gray-600 text-xs uppercase tracking-wide w-24">
+            <tr className="bg-neutral-50/80 text-left">
+              <th className="py-2.5 px-3 font-semibold text-medium-emphasis text-xs uppercase tracking-wide w-24">
                 Status
               </th>
-              <th className="py-2.5 px-3 font-semibold text-gray-600 text-xs uppercase tracking-wide">
+              <th className="py-2.5 px-3 font-semibold text-medium-emphasis text-xs uppercase tracking-wide">
                 Feature
               </th>
-              <th className="py-2.5 px-3 font-semibold text-gray-600 text-xs uppercase tracking-wide">
+              <th className="py-2.5 px-3 font-semibold text-medium-emphasis text-xs uppercase tracking-wide">
                 Detalhes
               </th>
             </tr>
@@ -130,11 +130,11 @@ export function FeatureTable({ features, runId, pageScreenshot }: FeatureTablePr
               <tr
                 key={`${f.featureKey}-${i}`}
                 className={cn(
-                  'border-t border-gray-50 transition-colors',
-                  f.status === 'fail' && 'bg-red-50/60 hover:bg-red-50',
-                  f.status === 'pass' && 'hover:bg-gray-50/80',
-                  f.status === 'warning' && 'bg-amber-50/40 hover:bg-amber-50/60',
-                  f.status === 'error' && 'bg-amber-50/40 hover:bg-amber-50/60',
+                  'border-t border-neutral-50 transition-colors',
+                  f.status === 'fail' && 'bg-alert-lightest/60 hover:bg-alert-lightest/50',
+                  f.status === 'pass' && 'hover:bg-neutral-50/80',
+                  f.status === 'warning' && 'bg-warning-lightest/40 hover:bg-warning-lightest/60',
+                  f.status === 'error' && 'bg-warning-lightest/40 hover:bg-warning-lightest/60',
                   f.status === 'na' && 'opacity-60 hover:opacity-80',
                   f.status === 'disabled' && 'opacity-50',
                 )}
@@ -142,8 +142,8 @@ export function FeatureTable({ features, runId, pageScreenshot }: FeatureTablePr
                 <td className="py-2 px-3">
                   <StatusBadge status={f.status} />
                 </td>
-                <td className="py-2 px-3 font-medium text-gray-800 text-xs">{f.feature}</td>
-                <td className="py-2 px-3 text-gray-600 max-w-md text-xs leading-relaxed">
+                <td className="py-2 px-3 font-medium text-high-emphasis text-xs">{f.feature}</td>
+                <td className="py-2 px-3 text-medium-emphasis max-w-md text-xs leading-relaxed">
                   {f.message}
                 </td>
               </tr>
@@ -158,7 +158,7 @@ export function FeatureTable({ features, runId, pageScreenshot }: FeatureTablePr
           onClick={() =>
             openScreenshot(getScreenshotUrl(pageScreenshot), 'Screenshot da página completa')
           }
-          className="flex items-center gap-2 text-xs text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-3 py-2 rounded-lg transition-colors cursor-pointer mt-2"
+          className="flex items-center gap-2 text-xs text-primary-dark hover:text-primary-dark bg-primary-wash hover:bg-primary-lightest px-3 py-2 rounded-lg transition-colors cursor-pointer mt-2"
         >
           <ImageIcon className="w-3.5 h-3.5" />
           Ver screenshot da página completa
@@ -170,43 +170,43 @@ export function FeatureTable({ features, runId, pageScreenshot }: FeatureTablePr
         <Dialog.Portal>
           <Dialog.Overlay className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50" />
           <Dialog.Content className="fixed inset-4 md:inset-8 lg:inset-12 z-50 bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-gray-50/80">
-              <Dialog.Title className="text-sm font-semibold text-gray-700 truncate flex items-center gap-2">
-                <Camera className="w-4 h-4 text-indigo-500" />
+            <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-75 bg-neutral-50/80">
+              <Dialog.Title className="text-sm font-semibold text-high-emphasis truncate flex items-center gap-2">
+                <Camera className="w-4 h-4 text-primary" />
                 {selectedScreenshot?.title}
               </Dialog.Title>
               <div className="flex items-center gap-1">
                 <button
                   onClick={handleZoomOut}
-                  className="p-1.5 rounded hover:bg-gray-200 text-gray-600 cursor-pointer"
+                  className="p-1.5 rounded hover:bg-neutral-100 text-medium-emphasis cursor-pointer"
                   title="Zoom out"
                 >
                   <ZoomOut className="w-4 h-4" />
                 </button>
-                <span className="text-xs text-gray-500 w-12 text-center">
+                <span className="text-xs text-medium-emphasis w-12 text-center">
                   {Math.round(zoom * 100)}%
                 </span>
                 <button
                   onClick={handleZoomIn}
-                  className="p-1.5 rounded hover:bg-gray-200 text-gray-600 cursor-pointer"
+                  className="p-1.5 rounded hover:bg-neutral-100 text-medium-emphasis cursor-pointer"
                   title="Zoom in"
                 >
                   <ZoomIn className="w-4 h-4" />
                 </button>
                 <button
                   onClick={resetZoom}
-                  className="p-1.5 rounded hover:bg-gray-200 text-gray-600 cursor-pointer"
+                  className="p-1.5 rounded hover:bg-neutral-100 text-medium-emphasis cursor-pointer"
                   title="Reset zoom"
                 >
                   <RotateCcw className="w-4 h-4" />
                 </button>
-                <Dialog.Close className="p-1.5 rounded-lg hover:bg-gray-200 transition-colors cursor-pointer ml-2">
-                  <X className="w-5 h-5 text-gray-500" />
+                <Dialog.Close className="p-1.5 rounded-lg hover:bg-neutral-100 transition-colors cursor-pointer ml-2">
+                  <X className="w-5 h-5 text-medium-emphasis" />
                 </Dialog.Close>
               </div>
             </div>
             <div
-              className="flex-1 overflow-hidden p-4 flex items-center justify-center bg-gray-50/50"
+              className="flex-1 overflow-hidden p-4 flex items-center justify-center bg-neutral-50/50"
               onWheel={handleWheel}
               onMouseDown={handleMouseDown}
               onMouseMove={handleMouseMove}
@@ -220,7 +220,7 @@ export function FeatureTable({ features, runId, pageScreenshot }: FeatureTablePr
                 <img
                   src={selectedScreenshot.src}
                   alt={selectedScreenshot.title}
-                  className="max-w-full max-h-full object-contain rounded-lg shadow-lg border border-gray-200 select-none"
+                  className="max-w-full max-h-full object-contain rounded-lg shadow-lg border border-neutral-100 select-none"
                   draggable={false}
                   style={{
                     transform: `scale(${zoom}) translate(${position.x / zoom}px, ${position.y / zoom}px)`,

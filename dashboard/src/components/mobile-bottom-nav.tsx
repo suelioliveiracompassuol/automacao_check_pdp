@@ -28,7 +28,7 @@ export function MobileBottomNav() {
   return (
     <nav
       aria-label="Navegação principal"
-      className="md:hidden fixed inset-x-0 bottom-0 z-40 flex border-t border-gray-200 bg-white/95 backdrop-blur-lg pb-[env(safe-area-inset-bottom)]"
+      className="md:hidden fixed inset-x-0 bottom-0 z-40 flex border-t border-neutral-75 bg-surface/95 backdrop-blur-lg pb-[env(safe-area-inset-bottom)]"
     >
       {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
         const active =
@@ -39,10 +39,16 @@ export function MobileBottomNav() {
             href={href}
             aria-current={active ? 'page' : undefined}
             className={cn(
-              'flex flex-1 flex-col items-center gap-0.5 py-2 text-[10px] font-medium transition-colors',
-              active ? 'text-indigo-600' : 'text-gray-500',
+              'relative flex flex-1 flex-col items-center gap-1 py-2.5 text-[10px] font-medium transition-colors',
+              active ? 'font-bold text-primary-dark' : 'text-medium-emphasis',
             )}
           >
+            {active && (
+              <span
+                aria-hidden="true"
+                className="absolute inset-x-5 top-0 h-0.5 rounded-b-full bg-brand"
+              />
+            )}
             <Icon className="w-5 h-5" />
             {label}
           </Link>

@@ -10,18 +10,18 @@ interface RemoteConfigPanelProps {
 
 function renderValue(value: unknown): React.ReactNode {
   if (value === true) {
-    return <span className="text-emerald-600 font-bold">✓</span>;
+    return <span className="text-success-dark font-bold">✓</span>;
   }
   if (value === false) {
-    return <span className="text-red-500 font-bold">✗</span>;
+    return <span className="text-alert font-bold">✗</span>;
   }
   if (value === null || value === undefined) {
-    return <span className="text-gray-400">-</span>;
+    return <span className="text-low-emphasis">-</span>;
   }
   if (typeof value === 'object') {
     return null;
   } // skip nested
-  return <span className="text-gray-700">{String(value)}</span>;
+  return <span className="text-high-emphasis">{String(value)}</span>;
 }
 
 export function RemoteConfigPanel({ flags }: RemoteConfigPanelProps) {
@@ -47,9 +47,9 @@ export function RemoteConfigPanel({ flags }: RemoteConfigPanelProps) {
             {entries.map(([key, val]) => (
               <div
                 key={key}
-                className="flex items-center justify-between gap-2 px-2 py-1 bg-gray-50 rounded text-xs"
+                className="flex items-center justify-between gap-2 px-2 py-1 bg-neutral-50 rounded text-xs"
               >
-                <code className="text-gray-600 truncate">{key}</code>
+                <code className="text-medium-emphasis truncate">{key}</code>
                 {renderValue(val)}
               </div>
             ))}
@@ -58,7 +58,7 @@ export function RemoteConfigPanel({ flags }: RemoteConfigPanelProps) {
 
         {nested.map(([category, obj]) => (
           <div key={category} className="px-3">
-            <h4 className="text-xs font-semibold text-gray-500 mb-1 capitalize">
+            <h4 className="text-xs font-semibold text-medium-emphasis mb-1 capitalize">
               {category.replace(/_/g, ' ')}
             </h4>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-1">
@@ -67,9 +67,9 @@ export function RemoteConfigPanel({ flags }: RemoteConfigPanelProps) {
                 .map(([k, v]) => (
                   <div
                     key={k}
-                    className="flex items-center justify-between gap-2 px-2 py-1 bg-white border border-gray-100 rounded text-xs"
+                    className="flex items-center justify-between gap-2 px-2 py-1 bg-white border border-neutral-75 rounded text-xs"
                   >
-                    <code className="text-gray-600 truncate">{k}</code>
+                    <code className="text-medium-emphasis truncate">{k}</code>
                     {renderValue(v)}
                   </div>
                 ))}

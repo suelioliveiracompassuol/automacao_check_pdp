@@ -34,12 +34,18 @@ function NavLink({
     <Link
       href={href}
       className={cn(
-        'flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+        'relative flex items-center gap-3 rounded-full px-4 py-2.5 text-sm font-medium transition-colors',
         active
-          ? 'bg-indigo-50 text-indigo-700'
-          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900',
+          ? 'bg-primary-wash font-bold text-primary-darkest'
+          : 'text-medium-emphasis hover:bg-neutral-50 hover:text-highlight',
       )}
     >
+      {active && (
+        <span
+          aria-hidden="true"
+          className="absolute top-1/2 -left-3 h-6 w-1 -translate-y-1/2 rounded-r-full bg-brand"
+        />
+      )}
       {children}
     </Link>
   );
@@ -52,16 +58,16 @@ export function Sidebar() {
   const [platformsOpen, setPlatformsOpen] = useState(true);
 
   return (
-    <aside className="hidden md:block w-56 shrink-0 border-r border-gray-200/60 bg-white/60">
-      <div className="sticky top-14.25">
-        <nav className="flex flex-col gap-1 p-3">
+    <aside className="hidden w-60 shrink-0 self-stretch border-r border-neutral-75 bg-surface md:block">
+      <div className="sticky top-17">
+        <nav className="flex flex-col gap-1 px-3 py-6">
           <NavLink href="/" active={pathname === '/'}>
             <BarChart3 className="w-4 h-4" />
             Visão Geral
           </NavLink>
 
-          <Collapsible.Root open={platformsOpen} onOpenChange={setPlatformsOpen} className="mt-2">
-            <Collapsible.Trigger className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-xs font-semibold uppercase tracking-wide text-gray-400 hover:text-gray-600 cursor-pointer">
+          <Collapsible.Root open={platformsOpen} onOpenChange={setPlatformsOpen} className="mt-4">
+            <Collapsible.Trigger className="flex w-full items-center justify-between rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-low-emphasis hover:text-high-emphasis cursor-pointer">
               <span>Plataformas</span>
               <ChevronDown
                 className={cn('w-3.5 h-3.5 transition-transform', platformsOpen && 'rotate-180')}
@@ -77,7 +83,7 @@ export function Sidebar() {
                   {icon}
                   <span className="flex-1">{label}</span>
                   {badge && (
-                    <span className="text-[9px] font-bold uppercase tracking-wide text-gray-400 bg-gray-100 rounded-full px-1.5 py-0.5">
+                    <span className="rounded-full bg-secondary-lightest/60 px-2 py-0.5 text-[9px] font-bold tracking-wide text-secondary-darkest uppercase">
                       {badge}
                     </span>
                   )}
@@ -86,7 +92,7 @@ export function Sidebar() {
             </Collapsible.Content>
           </Collapsible.Root>
 
-          <div className="mt-2 pt-2 border-t border-gray-100">
+          <div className="mt-4 border-t border-neutral-75 pt-4">
             <NavLink href="/skus" active={pathname === '/skus'}>
               <Database className="w-4 h-4" />
               SKUs

@@ -9,7 +9,7 @@ export const metadata = {
 export default function SkusPage() {
   return (
     <AuthProvider>
-      <main className="min-h-screen bg-gray-50 px-4 py-8 sm:px-6 lg:px-8">
+      <main className="min-h-screen bg-neutral-50 px-4 py-8 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <div className="mb-6 flex items-center justify-end gap-4">
             <AuthLogin />

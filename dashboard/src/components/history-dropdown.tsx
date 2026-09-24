@@ -51,7 +51,7 @@ export function HistoryDropdown({
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer"
+        className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-high-emphasis hover:bg-neutral-75 transition-colors cursor-pointer"
       >
         <History className="w-4 h-4" />
         <span className="hidden sm:inline">Histórico</span>
@@ -59,9 +59,9 @@ export function HistoryDropdown({
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-72 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden z-50">
-          <div className="px-3 py-2 border-b border-gray-100 bg-gray-50">
-            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+        <div className="absolute right-0 top-full mt-2 w-72 bg-white rounded-xl shadow-xl border border-neutral-100 overflow-hidden z-50">
+          <div className="px-3 py-2 border-b border-neutral-75 bg-neutral-50">
+            <span className="text-xs font-semibold text-medium-emphasis uppercase tracking-wide">
               Execuções recentes
             </span>
           </div>
@@ -76,7 +76,9 @@ export function HistoryDropdown({
                     href={href}
                     onClick={() => setOpen(false)}
                     className={`flex items-center justify-between px-3 py-2.5 text-sm transition-colors ${
-                      isCurrent ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50'
+                      isCurrent
+                        ? 'bg-primary-wash text-primary-dark'
+                        : 'text-high-emphasis hover:bg-neutral-50'
                     }`}
                   >
                     <div className="flex flex-col">
@@ -84,18 +86,18 @@ export function HistoryDropdown({
                         {run.platform === 'android' && <FaAndroid className="w-3 h-3" />}
                         {formatDate(run?.startTime)}
                       </span>
-                      <span className="text-xs text-gray-400 mt-0.5">
+                      <span className="text-xs text-low-emphasis mt-0.5">
                         {formatDuration(run.durationMs)}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs text-emerald-600 font-semibold">
+                      <span className="text-xs text-success-dark font-semibold">
                         ✅{run.summary.passed}
                       </span>
-                      <span className="text-xs text-red-600 font-semibold">
+                      <span className="text-xs text-alert-dark font-semibold">
                         ❌{run.summary.failed}
                       </span>
-                      {isCurrent && <Check className="w-4 h-4 text-blue-600" />}
+                      {isCurrent && <Check className="w-4 h-4 text-primary-dark" />}
                     </div>
                   </Link>
                 </li>

@@ -12,12 +12,12 @@ vi.mock('next/link', () => ({
 describe('NavHeader', () => {
   it('renders the title', () => {
     render(<NavHeader />);
-    expect(screen.getByText('Página de Detalhes de Produto PDP-Monitor')).toBeInTheDocument();
+    expect(screen.getByText('PDP Monitor')).toBeInTheDocument();
   });
 
   it('renders link to home', () => {
     render(<NavHeader />);
-    const link = screen.getByRole('link', { name: /PDP-Monitor/i });
+    const link = screen.getByRole('link', { name: /PDP Monitor/i });
     expect(link).toHaveAttribute('href', '/');
   });
 });

@@ -15,7 +15,7 @@ describe('Card', () => {
 
   it('has default styling classes', () => {
     const { container } = render(<Card>Content</Card>);
-    expect(container.firstChild).toHaveClass('bg-white', 'rounded-xl');
+    expect(container.firstChild).toHaveClass('bg-surface', 'rounded-card');
   });
 });
 
@@ -32,6 +32,6 @@ describe('Badge', () => {
 
   it('has default styling classes', () => {
     const { container } = render(<Badge>Text</Badge>);
-    expect(container.firstChild).toHaveClass('inline-flex', 'rounded-md');
+    expect(container.firstChild).toHaveClass('inline-flex', 'rounded-full');
   });
 });

@@ -1,3 +1,4 @@
+import { SectionHeader } from '@/components/ui/card';
 import { cn, getCountryFlag } from '@/lib/utils';
 import { COUNTRY_INFO } from '@/lib/types';
 import { VENDOR_LABELS } from './content';
@@ -16,22 +17,22 @@ export function CoverageSection({
 }: CoverageSectionProps) {
   return (
     <section aria-labelledby="coverage-heading">
-      <div className="mb-6">
-        <h2 id="coverage-heading" className="text-2xl font-bold text-gray-900">
-          Cobertura
-        </h2>
-        <p className="mt-1 text-sm text-gray-500">Países e tipos de verificação monitorados</p>
-      </div>
+      <SectionHeader
+        id="coverage-heading"
+        eyebrow="Escopo"
+        title="Cobertura"
+        description="Países e tipos de verificação monitorados"
+      />
 
       <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-6">
         {Object.entries(COUNTRY_INFO).map(([code, { label }]) => (
           <div
             key={code}
             className={cn(
-              'flex flex-col items-center rounded-xl border p-4 text-center',
+              'flex flex-col items-center rounded-2xl border p-4 text-center',
               countries.includes(code)
-                ? 'border-indigo-100 bg-indigo-50'
-                : 'border-gray-100 bg-white',
+                ? 'border-primary-lightest bg-primary-wash'
+                : 'border-neutral-75 bg-surface opacity-60',
             )}
           >
             <img
@@ -41,7 +42,7 @@ export function CoverageSection({
               height={20}
               className="mb-1 h-5 w-7 rounded-sm object-cover"
             />
-            <span className="text-sm font-bold text-gray-800">{label}</span>
+            <span className="text-sm font-bold text-high-emphasis">{label}</span>
             <div className="mt-2 flex flex-wrap justify-center gap-1">
               {[...(vendorsByCountry.get(code) ?? [])].map((vendor) => {
                 const info = VENDOR_LABELS[vendor];
@@ -56,7 +57,7 @@ export function CoverageSection({
                 );
               })}
               {channelsByCountry.get(code)?.has('socialcommerce') && (
-                <span className="rounded-full bg-purple-100 px-2 py-0.5 text-[10px] font-bold text-purple-800">
+                <span className="rounded-full bg-info-lightest px-2 py-0.5 text-[10px] font-bold text-info-dark">
                   Minha Loja
                 </span>
               )}

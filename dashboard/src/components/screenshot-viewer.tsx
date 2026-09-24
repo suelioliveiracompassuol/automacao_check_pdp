@@ -73,7 +73,7 @@ export function ScreenshotViewer({ screenshots, runId }: ScreenshotViewerProps) 
           <button
             key={file}
             onClick={() => handleOpen(file)}
-            className="text-xs text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-2 py-1 rounded transition-colors cursor-pointer"
+            className="text-xs text-primary-dark hover:text-primary-dark bg-primary-wash hover:bg-primary-lightest px-2 py-1 rounded transition-colors cursor-pointer"
           >
             📷{' '}
             {file
@@ -90,41 +90,41 @@ export function ScreenshotViewer({ screenshots, runId }: ScreenshotViewerProps) 
           <Dialog.Overlay className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50" />
           <Dialog.Content className="fixed inset-4 md:inset-12 z-50 bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col">
             <div className="flex items-center justify-between px-4 py-3 border-b">
-              <Dialog.Title className="text-sm font-medium text-gray-700 truncate">
+              <Dialog.Title className="text-sm font-medium text-high-emphasis truncate">
                 {selected}
               </Dialog.Title>
               <div className="flex items-center gap-1">
                 <button
                   onClick={handleZoomOut}
-                  className="p-1.5 rounded hover:bg-gray-100 text-gray-600 cursor-pointer"
+                  className="p-1.5 rounded hover:bg-neutral-75 text-medium-emphasis cursor-pointer"
                   title="Zoom out"
                 >
                   <ZoomOut className="w-4 h-4" />
                 </button>
-                <span className="text-xs text-gray-500 w-12 text-center">
+                <span className="text-xs text-medium-emphasis w-12 text-center">
                   {Math.round(zoom * 100)}%
                 </span>
                 <button
                   onClick={handleZoomIn}
-                  className="p-1.5 rounded hover:bg-gray-100 text-gray-600 cursor-pointer"
+                  className="p-1.5 rounded hover:bg-neutral-75 text-medium-emphasis cursor-pointer"
                   title="Zoom in"
                 >
                   <ZoomIn className="w-4 h-4" />
                 </button>
                 <button
                   onClick={resetZoom}
-                  className="p-1.5 rounded hover:bg-gray-100 text-gray-600 cursor-pointer"
+                  className="p-1.5 rounded hover:bg-neutral-75 text-medium-emphasis cursor-pointer"
                   title="Reset zoom"
                 >
                   <RotateCcw className="w-4 h-4" />
                 </button>
-                <Dialog.Close className="p-1 rounded hover:bg-gray-100 cursor-pointer ml-2">
+                <Dialog.Close className="p-1 rounded hover:bg-neutral-75 cursor-pointer ml-2">
                   <X className="w-5 h-5" />
                 </Dialog.Close>
               </div>
             </div>
             <div
-              className="flex-1 overflow-hidden p-4 flex items-center justify-center bg-gray-50"
+              className="flex-1 overflow-hidden p-4 flex items-center justify-center bg-neutral-50"
               onWheel={handleWheel}
               onMouseDown={handleMouseDown}
               onMouseMove={handleMouseMove}
