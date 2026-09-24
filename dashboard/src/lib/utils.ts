@@ -30,14 +30,14 @@ export function formatDate(iso: string): string {
 
 export function getStatusColor(status: Status): string {
   const colors: Record<Status, string> = {
-    pass: 'text-emerald-600 bg-emerald-50',
-    fail: 'text-red-600 bg-red-50',
-    error: 'text-amber-600 bg-amber-50',
-    warning: 'text-amber-600 bg-amber-50',
-    disabled: 'text-gray-500 bg-gray-100',
-    na: 'text-gray-400 bg-gray-50',
+    pass: 'text-success-dark bg-success-lightest/50',
+    fail: 'text-alert-dark bg-alert-lightest/50',
+    error: 'text-warning-darkest bg-warning-lightest/50',
+    warning: 'text-warning-darkest bg-warning-lightest/50',
+    disabled: 'text-medium-emphasis bg-neutral-75',
+    na: 'text-low-emphasis bg-neutral-50',
   };
-  return colors[status] || 'text-gray-500 bg-gray-50';
+  return colors[status] || 'text-medium-emphasis bg-neutral-50';
 }
 
 export function getStatusIcon(status: Status): string {

@@ -85,7 +85,7 @@ export function SkusClient() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-24 text-sm text-gray-400">
+      <div className="flex items-center justify-center py-24 text-sm text-low-emphasis">
         Carregando SKUs…
       </div>
     );
@@ -95,8 +95,8 @@ export function SkusClient() {
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-semibold text-gray-900">Gerenciar SKUs</h1>
-          <p className="mt-0.5 text-sm text-gray-500">
+          <h1 className="text-xl font-semibold text-highlight">Gerenciar SKUs</h1>
+          <p className="mt-0.5 text-sm text-medium-emphasis">
             Cadastro de produtos monitorados pela automação
           </p>
         </div>
@@ -105,7 +105,7 @@ export function SkusClient() {
             type="button"
             onClick={openCreate}
             disabled={!user || authLoading}
-            className="flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Plus className="h-4 w-4" aria-hidden="true" />
             Novo SKU

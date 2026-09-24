@@ -50,28 +50,28 @@ describe('formatDate', () => {
 });
 
 describe('getStatusColor', () => {
-  it('returns emerald for pass', () => {
-    expect(getStatusColor('pass')).toContain('emerald');
+  it('returns success for pass', () => {
+    expect(getStatusColor('pass')).toContain('success');
   });
 
-  it('returns red for fail', () => {
-    expect(getStatusColor('fail')).toContain('red');
+  it('returns alert for fail', () => {
+    expect(getStatusColor('fail')).toContain('alert');
   });
 
-  it('returns amber for error', () => {
-    expect(getStatusColor('error')).toContain('amber');
+  it('returns warning for error', () => {
+    expect(getStatusColor('error')).toContain('warning');
   });
 
-  it('returns amber for warning', () => {
-    expect(getStatusColor('warning')).toContain('amber');
+  it('returns warning for warning', () => {
+    expect(getStatusColor('warning')).toContain('warning');
   });
 
-  it('returns gray for disabled', () => {
-    expect(getStatusColor('disabled')).toContain('gray');
+  it('returns neutral for disabled', () => {
+    expect(getStatusColor('disabled')).toContain('neutral');
   });
 
-  it('returns gray for na', () => {
-    expect(getStatusColor('na')).toContain('gray');
+  it('returns neutral for na', () => {
+    expect(getStatusColor('na')).toContain('neutral');
   });
 });
 

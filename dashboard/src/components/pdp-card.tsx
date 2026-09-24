@@ -9,6 +9,7 @@ import { getCountryFlag } from '@/lib/utils';
 import type { PdpCheckResult } from '@/lib/types';
 import { useState } from 'react';
 import { ChevronDown, ExternalLink, Clock, AlertCircle } from 'lucide-react';
+import { FaAndroid } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface PdpCardProps {
@@ -34,8 +35,8 @@ export function PdpCard({ result, runId, screenshots }: PdpCardProps) {
     <Card
       className={`border-l-4 overflow-hidden transition-all duration-200 hover:shadow-md ${
         result.success
-          ? 'border-l-emerald-500 hover:border-l-emerald-600'
-          : 'border-l-red-500 hover:border-l-red-600'
+          ? 'border-l-success hover:border-l-success'
+          : 'border-l-alert hover:border-l-alert'
       }`}
     >
       <button onClick={() => setExpanded(!expanded)} className="w-full text-left cursor-pointer">
@@ -43,36 +44,41 @@ export function PdpCard({ result, runId, screenshots }: PdpCardProps) {
           <div className="flex items-center gap-3 min-w-0">
             <div
               className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
-                result.success ? 'bg-emerald-100' : 'bg-red-100'
+                result.success ? 'bg-success-lightest' : 'bg-alert-lightest'
               }`}
             >
               <span className="text-lg">{result.success ? '✅' : '❌'}</span>
             </div>
             <div className="min-w-0">
-              <h3 className="font-semibold text-gray-900 truncate text-sm">{result.name}</h3>
+              <h3 className="font-semibold text-highlight truncate text-sm">{result.name}</h3>
               <div className="flex items-center gap-2 mt-1">
-                <span className="text-xs text-gray-500 font-mono bg-gray-50 px-1.5 py-0.5 rounded">
+                <span className="text-xs text-medium-emphasis font-mono bg-neutral-50 px-1.5 py-0.5 rounded">
                   {result.sku}
                 </span>
                 {result.loadTime && (
-                  <span className="flex items-center gap-0.5 text-xs text-gray-400">
+                  <span className="flex items-center gap-0.5 text-xs text-low-emphasis">
                     <Clock className="w-3 h-3" />
                     {result.loadTime}ms
                   </span>
                 )}
-                <span className="text-xs text-gray-400">{passPercentage}% features ok</span>
+                <span className="text-xs text-low-emphasis">{passPercentage}% features ok</span>
               </div>
             </div>
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
+            {result.platform === 'android' && (
+              <Badge className="flex items-center gap-1 bg-success-lightest/50 text-success-dark border border-success-light/60 font-semibold">
+                <FaAndroid className="w-3 h-3" /> Android
+              </Badge>
+            )}
             {result.channel === 'socialcommerce' && (
-              <Badge className="bg-purple-50 text-purple-700 border border-purple-200 font-semibold">
+              <Badge className="bg-info-lightest/50 text-info-dark border border-info-light/60 font-semibold">
                 Minha Loja
               </Badge>
             )}
             <VendorLogo vendor={result.vendor} />
-            <Badge className="bg-gray-50 text-gray-700 border border-gray-200">
+            <Badge className="bg-neutral-50 text-high-emphasis border border-neutral-100">
               <img
                 src={getCountryFlag(result.country)}
                 alt={result.country}
@@ -83,7 +89,7 @@ export function PdpCard({ result, runId, screenshots }: PdpCardProps) {
               {result.country.toUpperCase()}
             </Badge>
             <ChevronDown
-              className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`}
+              className={`w-4 h-4 text-low-emphasis transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`}
             />
           </div>
         </div>
@@ -98,21 +104,21 @@ export function PdpCard({ result, runId, screenshots }: PdpCardProps) {
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="mt-4 pt-4 border-t border-gray-100 space-y-3">
-              <div className="flex items-center gap-2 text-xs text-gray-500">
+            <div className="mt-4 pt-4 border-t border-neutral-75 space-y-3">
+              <div className="flex items-center gap-2 text-xs text-medium-emphasis">
                 <ExternalLink className="w-3 h-3" />
                 <a
                   href={result.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-indigo-600 hover:text-indigo-800 hover:underline break-all transition-colors"
+                  className="text-primary-dark hover:text-primary-dark hover:underline break-all transition-colors"
                 >
                   {result.url}
                 </a>
               </div>
 
               {result.error && (
-                <div className="flex items-start gap-2 bg-red-50 text-red-700 text-sm px-3 py-2.5 rounded-lg border border-red-100">
+                <div className="flex items-start gap-2 bg-alert-lightest/50 text-alert-dark text-sm px-3 py-2.5 rounded-lg border border-alert-lightest">
                   <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
                   <span>{result.error}</span>
                 </div>

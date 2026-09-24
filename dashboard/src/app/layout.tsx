@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { NavHeader } from '@/components/nav-header';
+import { Sidebar } from '@/components/sidebar';
+import { MobileBottomNav } from '@/components/mobile-bottom-nav';
 
 export const metadata: Metadata = {
   title: 'PDP Monitor — Monitoramento de Features',
@@ -14,15 +16,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&family=Roboto+Mono:wght@400;500&display=swap"
           rel="stylesheet"
         />
       </head>
-      <body className="min-h-screen bg-(--color-bg)">
+      <body className="min-h-screen bg-background">
         <NavHeader />
-        <main id="app-main" className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
-          {children}
-        </main>
+        <div className="mx-auto flex max-w-[1440px] items-start">
+          <Sidebar />
+          {/* pb-24 clears the fixed mobile bottom nav (MobileBottomNav); md:pb-10 once it's hidden */}
+          <main id="app-main" className="min-w-0 flex-1 px-4 pt-6 pb-24 sm:px-8 md:pb-10 lg:px-10">
+            {children}
+          </main>
+        </div>
+        <MobileBottomNav />
       </body>
     </html>
   );

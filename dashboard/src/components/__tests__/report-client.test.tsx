@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { ReportClient } from '../../app/report/[runId]/report-client';
+import { ReportClient } from '../../app/web/[runId]/report-client';
 import type { PdpCheckResult } from '@/lib/types';
 
 // Mock framer-motion

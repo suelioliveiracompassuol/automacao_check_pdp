@@ -100,7 +100,7 @@ describe('AuthLogin', () => {
 
       expect(screen.getByText('Credenciais inválidas')).toBeDefined();
     });
-  })
+  });
 
   describe('quando usuário está autenticado', () => {
     beforeEach(() => {

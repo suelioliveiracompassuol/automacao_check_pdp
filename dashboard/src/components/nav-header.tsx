@@ -1,55 +1,32 @@
 import Link from 'next/link';
-import { Activity, Database, Presentation, Zap } from 'lucide-react';
-import { getReportIndex } from '@/lib/data';
-import { HistoryDropdown } from './history-dropdown';
 
 export function NavHeader() {
-  const index = getReportIndex();
-  const runs = index.reports.slice(0, 15);
-
   return (
-    <header
-      id="app-nav-header"
-      className="sticky top-0 z-40 bg-white/80 backdrop-blur-lg border-b border-gray-200/60 shadow-sm"
-    >
-      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-        <Link
-          href="/"
-          className="flex items-center gap-2.5 text-gray-900 hover:text-indigo-600 transition-colors group"
-        >
-          <div className="relative">
-            <div className="absolute -inset-1 bg-linear-to-r from-indigo-500 to-purple-500 rounded-lg opacity-20 group-hover:opacity-40 transition-opacity blur" />
-            <div className="relative bg-linear-to-br from-indigo-600 to-purple-600 rounded-lg p-1.5">
-              <Activity className="w-4 h-4 text-white" />
-            </div>
-          </div>
-          <div className="flex items-baseline gap-1.5">
-            <span className="font-bold text-lg tracking-tight">PDP Monitor</span>
-            <span className="text-[10px] font-medium text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded-full">
-              v2.0
+    <header id="app-nav-header" className="sticky top-0 z-40 bg-surface/90 backdrop-blur-lg">
+      <div className="bg-brand-gradient h-1" aria-hidden="true" />
+      <div className="border-b border-neutral-75">
+        <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between px-4 sm:px-8 lg:px-10">
+          <Link href="/" className="group flex items-center gap-3">
+            <span className="text-2xl leading-none font-bold tracking-tight text-brand lowercase">
+              natura
             </span>
-          </div>
-        </Link>
-        <div className="flex items-center gap-3">
-          <div className="hidden sm:flex items-center gap-1.5 text-xs text-gray-500 bg-gray-50 px-3 py-1.5 rounded-full">
-            <Zap className="w-3 h-3 text-amber-500" />
-            <span>Automação ativa</span>
-          </div>
-          <Link
-            href="/skus"
-            className="hidden sm:flex items-center gap-1.5 text-xs text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-full transition-colors hover:bg-indigo-100"
-          >
-            <Database className="w-3 h-3" />
-            <span>SKUs</span>
+            <span className="h-6 w-px bg-neutral-100" aria-hidden="true" />
+            <span className="flex flex-col leading-tight">
+              <span className="text-sm font-bold text-highlight transition-colors group-hover:text-primary-dark">
+                PDP Monitor
+              </span>
+              <span className="hidden text-[11px] text-medium-emphasis sm:block">
+                Página de Detalhes de Produto
+              </span>
+            </span>
           </Link>
-          <Link
-            href="/visao-geral"
-            className="hidden sm:flex items-center gap-1.5 text-xs text-purple-600 bg-purple-50 px-3 py-1.5 rounded-full transition-colors hover:bg-purple-100"
-          >
-            <Presentation className="w-3 h-3" />
-            <span>Visão Geral</span>
-          </Link>
-          <HistoryDropdown runs={runs} />
+          <div className="flex items-center gap-2 rounded-full border border-success-lightest bg-success-lightest/50 px-3 py-1.5 text-xs font-medium text-success-dark">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-60" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-success" />
+            </span>
+            <span className="hidden sm:inline">Automação ativa</span>
+          </div>
         </div>
       </div>
     </header>

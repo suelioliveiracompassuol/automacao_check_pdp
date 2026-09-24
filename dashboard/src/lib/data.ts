@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import type { MonitoringReport, ReportIndex } from './types';
+import type { MonitoringReport, Platform, ReportIndex, ReportIndexEntry } from './types';
 
 // Next.js guarantees cwd() = package root (dashboard/).
 // In CI the workflow does `cd dashboard && npm run build`, so ../docs resolves correctly.
@@ -25,12 +25,40 @@ export function getReportById(runId: string): MonitoringReport | null {
   return JSON.parse(raw);
 }
 
+/** Index entries for `platform`, most recent first. Entries with no `platform` field
+ * (legacy reports, predating multi-platform support) are treated as 'web'. */
+export function getReportsByPlatform(platform: Platform): ReportIndexEntry[] {
+  const index = getReportIndex();
+  return index.reports.filter((r) => (r.platform ?? 'web') === platform);
+}
+
+/** Most recent run for `platform`, or null if none have been recorded yet. */
+export function getLastReportByPlatform(platform: Platform): MonitoringReport | null {
+  const latest = getReportsByPlatform(platform)[0];
+  return latest ? getReportById(latest.runId) : null;
+}
+
 export function getScreenshotsForRun(runId: string): string[] {
   const dir = path.join(DOCS_DIR, 'reports', runId, 'screenshots');
   if (!fs.existsSync(dir)) {
     return [];
   }
-  return fs
-    .readdirSync(dir)
-    .filter((f) => f.endsWith('.png') && (f.includes('_fullpage_') || f.includes('_error_')));
+
+  return fs.readdirSync(dir).filter((fileName) => {
+    if (!fileName.endsWith('.png')) {
+      return false;
+    }
+
+    const normalized = fileName.toLowerCase();
+
+    // Web monitor screenshots follow the convention used by src/index.ts
+    const isWebScreenshot = normalized.includes('_fullpage_') || normalized.includes('_error_');
+
+    // Android Appium screenshots are saved as timestamped PNGs without those web-only markers,
+    // e.g. `NATBRA-70983_1725971234567.png` and `NATBRA-70983_login_debug_1725971234567.png`.
+    const isAndroidScreenshot =
+      /_\d{13}\.png$/i.test(fileName) || /_debug_\d{13}\.png$/i.test(fileName);
+
+    return isWebScreenshot || isAndroidScreenshot;
+  });
 }

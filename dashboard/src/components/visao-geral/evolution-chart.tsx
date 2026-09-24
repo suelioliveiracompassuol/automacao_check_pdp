@@ -41,8 +41,8 @@ export function EvolutionChart({ data }: EvolutionChartProps) {
       >
         <defs>
           <linearGradient id="evolutionAreaGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#6366f1" stopOpacity={0.25} />
-            <stop offset="100%" stopColor="#6366f1" stopOpacity={0} />
+            <stop offset="0%" stopColor="#f48646" stopOpacity={0.25} />
+            <stop offset="100%" stopColor="#f48646" stopOpacity={0} />
           </linearGradient>
         </defs>
 
@@ -53,17 +53,17 @@ export function EvolutionChart({ data }: EvolutionChartProps) {
               y1={toY(g)}
               x2={WIDTH - PADDING_X}
               y2={toY(g)}
-              stroke="#f1f5f9"
+              stroke="#eeeeee"
               strokeWidth={1}
             />
-            <text x={2} y={toY(g) + 3} fontSize={9} fill="#94a3b8">
+            <text x={2} y={toY(g) + 3} fontSize={9} fill="#8c8c8c">
               {g}%
             </text>
           </g>
         ))}
 
         <path d={areaPath} fill="url(#evolutionAreaGradient)" />
-        <path d={linePath} fill="none" stroke="#6366f1" strokeWidth={2.5} strokeLinejoin="round" />
+        <path d={linePath} fill="none" stroke="#e05a0d" strokeWidth={2.5} strokeLinejoin="round" />
 
         {points.map((p, i) => (
           <circle
@@ -72,12 +72,12 @@ export function EvolutionChart({ data }: EvolutionChartProps) {
             cy={p.y}
             r={4}
             fill="#ffffff"
-            stroke="#6366f1"
+            stroke="#f48646"
             strokeWidth={2}
           />
         ))}
       </svg>
-      <div className="mt-1 flex justify-between text-[10px] text-gray-400">
+      <div className="mt-1 flex justify-between text-[10px] text-low-emphasis">
         {points.map((p, i) => (
           <span key={`${p.label}-${i}`}>{p.label}</span>
         ))}

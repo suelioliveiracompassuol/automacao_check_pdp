@@ -61,9 +61,7 @@ describe('AuthGuard', () => {
       );
 
       expect(screen.getByText('Acesso Restrito')).toBeDefined();
-      expect(
-        screen.getByText(/Você precisa estar logado para gerenciar SKUs/),
-      ).toBeDefined();
+      expect(screen.getByText(/Você precisa estar logado para gerenciar SKUs/)).toBeDefined();
     });
 
     it('deve exibir fallback customizado se fornecido', () => {
@@ -153,7 +151,7 @@ describe('AuthDisabledButton', () => {
     });
 
     it('deve renderizar tooltip com mensagem', () => {
-      const { container } = render(
+      render(
         <AuthDisabledButton>
           <button>Clique aqui</button>
         </AuthDisabledButton>,

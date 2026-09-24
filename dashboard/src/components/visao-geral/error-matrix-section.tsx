@@ -1,4 +1,4 @@
-import { Card } from '@/components/ui/card';
+import { Card, SectionHeader } from '@/components/ui/card';
 import { cn, getCountryFlag } from '@/lib/utils';
 import { COUNTRY_INFO, type Country, type MonitoringReport } from '@/lib/types';
 import { ALL_CHECKLIST_ITEMS } from '@/lib/checks-catalog';
@@ -65,22 +65,24 @@ function MatrixRowItem({ row, totalRuns }: MatrixRowItemProps) {
   const countryInfo = COUNTRY_INFO[row.country as Country];
 
   return (
-    <tr className="transition-colors hover:bg-gray-50/50">
+    <tr className="transition-colors hover:bg-neutral-50/50">
       <td className="px-4 py-3">
-        <span className="font-medium text-gray-800">{row.checkLabel}</span>
+        <span className="font-medium text-high-emphasis">{row.checkLabel}</span>
       </td>
       <td className="px-4 py-3">
         <span
           className={cn(
             'inline-flex items-center rounded px-2 py-0.5 text-xs font-semibold',
-            row.vendor === 'natura' ? 'bg-orange-50 text-orange-700' : 'bg-pink-50 text-pink-700',
+            row.vendor === 'natura'
+              ? 'bg-primary-wash text-primary-dark'
+              : 'bg-pink-50 text-pink-700',
           )}
         >
           {VENDOR_LABELS[row.vendor]?.label ?? row.vendor}
         </span>
       </td>
       <td className="px-4 py-3">
-        <span className="flex items-center gap-1.5 text-gray-700">
+        <span className="flex items-center gap-1.5 text-high-emphasis">
           <img
             src={getCountryFlag(row.country)}
             alt={`Bandeira do ${countryInfo?.label ?? row.country}`}
@@ -95,11 +97,11 @@ function MatrixRowItem({ row, totalRuns }: MatrixRowItemProps) {
         <div className="flex items-center justify-center gap-2">
           {row.failures.map((failed, i) => (
             <div key={`c${i + 1}`} className="flex flex-col items-center gap-0.5">
-              <span className="font-mono text-[9px] text-gray-400">C{i + 1}</span>
+              <span className="font-mono text-[9px] text-low-emphasis">C{i + 1}</span>
               <div
                 className={cn(
                   'h-4 w-4 rounded-full border-2',
-                  failed ? 'border-red-600 bg-red-500' : 'border-gray-200 bg-gray-100',
+                  failed ? 'border-alert bg-alert' : 'border-neutral-100 bg-neutral-75',
                 )}
               />
             </div>
@@ -111,10 +113,10 @@ function MatrixRowItem({ row, totalRuns }: MatrixRowItemProps) {
           className={cn(
             'inline-flex h-6 w-10 items-center justify-center rounded-full text-xs font-bold',
             row.persistenceCount === totalRuns
-              ? 'bg-red-100 text-red-700'
+              ? 'bg-alert-lightest text-alert-dark'
               : row.persistenceCount >= 2
-                ? 'bg-amber-100 text-amber-700'
-                : 'bg-yellow-50 text-yellow-600',
+                ? 'bg-warning-lightest text-warning-darkest'
+                : 'bg-warning-lightest/50 text-warning-darkest',
           )}
         >
           {row.persistenceCount}/{totalRuns}
@@ -126,22 +128,25 @@ function MatrixRowItem({ row, totalRuns }: MatrixRowItemProps) {
 
 interface ErrorMatrixSectionProps {
   reports: MonitoringReport[];
+  /** Overrides the section title — e.g. "Matriz de Erros — Android" on a per-platform breakdown. */
+  title?: string;
 }
 
-export function ErrorMatrixSection({ reports }: ErrorMatrixSectionProps) {
+export function ErrorMatrixSection({
+  reports,
+  title = 'Matriz de Erros',
+}: ErrorMatrixSectionProps) {
   const errorMatrix = computeErrorMatrix(reports);
   const topFailures = errorMatrix.filter((row) => row.persistenceCount >= 2).slice(0, 3);
 
   return (
     <section aria-labelledby="matrix-heading">
-      <div className="mb-6">
-        <h2 id="matrix-heading" className="text-2xl font-bold text-gray-900">
-          Matriz de Erros
-        </h2>
-        <p className="mt-1 text-sm text-gray-500">
-          Checks com falhas nas últimas {reports.length} execuções — ordenados por persistência
-        </p>
-      </div>
+      <SectionHeader
+        id="matrix-heading"
+        eyebrow="Pontos de atenção"
+        title={title}
+        description={`Checks com falhas nas últimas ${reports.length} execuções — ordenados por persistência`}
+      />
 
       {topFailures.length > 0 && (
         <div className="mb-6 grid gap-3 sm:grid-cols-3">
@@ -150,18 +155,18 @@ export function ErrorMatrixSection({ reports }: ErrorMatrixSectionProps) {
             return (
               <div
                 key={`${row.checkKey}-${row.vendor}-${row.country}`}
-                className="rounded-xl border border-red-100 bg-red-50 p-4"
+                className="rounded-xl border border-alert-lightest bg-alert-lightest/50 p-4"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-wide text-red-600">
+                  <span className="text-xs font-bold uppercase tracking-wide text-alert-dark">
                     Falha persistente
                   </span>
-                  <span className="rounded-full bg-red-600 px-2 py-0.5 text-[10px] font-bold text-white">
+                  <span className="rounded-full bg-alert px-2 py-0.5 text-[10px] font-bold text-white">
                     {row.persistenceCount}/{reports.length} runs
                   </span>
                 </div>
-                <p className="mt-2 font-semibold text-gray-900">{row.checkLabel}</p>
-                <p className="mt-0.5 text-xs text-gray-500">
+                <p className="mt-2 font-semibold text-highlight">{row.checkLabel}</p>
+                <p className="mt-0.5 text-xs text-medium-emphasis">
                   {VENDOR_LABELS[row.vendor]?.label ?? row.vendor} ·{' '}
                   {countryInfo?.label ?? row.country}
                 </p>
@@ -175,31 +180,43 @@ export function ErrorMatrixSection({ reports }: ErrorMatrixSectionProps) {
         <div className="overflow-x-auto">
           <table className="w-full text-sm" role="table">
             <thead>
-              <tr className="border-b border-gray-100 bg-gray-50">
-                <th scope="col" className="w-48 px-4 py-3 text-left font-semibold text-gray-700">
+              <tr className="border-b border-neutral-75 bg-neutral-50">
+                <th
+                  scope="col"
+                  className="w-48 px-4 py-3 text-left font-semibold text-high-emphasis"
+                >
                   Verificação
                 </th>
-                <th scope="col" className="w-24 px-4 py-3 text-left font-semibold text-gray-700">
+                <th
+                  scope="col"
+                  className="w-24 px-4 py-3 text-left font-semibold text-high-emphasis"
+                >
                   Marca
                 </th>
-                <th scope="col" className="w-32 px-4 py-3 text-left font-semibold text-gray-700">
+                <th
+                  scope="col"
+                  className="w-32 px-4 py-3 text-left font-semibold text-high-emphasis"
+                >
                   País
                 </th>
-                <th scope="col" className="px-4 py-3 text-center font-semibold text-gray-700">
+                <th scope="col" className="px-4 py-3 text-center font-semibold text-high-emphasis">
                   Persistência
-                  <span className="ml-1 text-xs font-normal text-gray-400">
+                  <span className="ml-1 text-xs font-normal text-low-emphasis">
                     (C1→C{reports.length})
                   </span>
                 </th>
-                <th scope="col" className="w-20 px-4 py-3 text-center font-semibold text-gray-700">
+                <th
+                  scope="col"
+                  className="w-20 px-4 py-3 text-center font-semibold text-high-emphasis"
+                >
                   Runs
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody className="divide-y divide-neutral-50">
               {errorMatrix.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="py-8 text-center text-gray-400">
+                  <td colSpan={5} className="py-8 text-center text-low-emphasis">
                     Nenhum erro encontrado nas últimas execuções
                   </td>
                 </tr>
