@@ -19,6 +19,8 @@ dist/
 .vscode/
 .idea/
 .aicockpit/
+.mcp.json
+CLAUDE.md
 
 # OS
 .DS_Store

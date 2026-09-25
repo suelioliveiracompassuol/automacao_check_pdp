@@ -15,6 +15,9 @@ export interface PlatformStat {
 }
 
 interface HeroSectionProps {
+  /** Platform the KPI row refers to — each stack has its own runs/countries/checks, so the
+   * row is labelled explicitly instead of looking like a cross-platform total. */
+  kpiPlatform: PlatformMeta;
   totalRuns: number;
   countriesCount: number;
   checksCount: number;
@@ -58,29 +61,29 @@ function PlatformCard({ meta, passRate, runsCount, lastRunAt, trend }: PlatformS
       className={cn(
         'group relative flex flex-col rounded-card border bg-surface p-5 transition-all duration-200',
         live
-          ? 'border-neutral-75 shadow-soft hover:-translate-y-0.5 hover:border-primary-lightest hover:shadow-lift'
+          ? 'border-neutral-75 shadow-soft hover:-translate-y-0.5 hover:border-primary-lightest hover:shadow-lift @lg:col-span-2 @4xl:col-span-1'
           : 'border-dashed border-neutral-100 hover:border-primary-lightest',
       )}
     >
-      <div className="flex items-start justify-between">
-        <div className="flex items-center gap-3">
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-3">
           <span
             className={cn(
-              'flex h-10 w-10 items-center justify-center rounded-full',
+              'flex h-10 w-10 shrink-0 items-center justify-center rounded-full',
               live ? 'bg-primary-wash text-brand' : 'bg-neutral-50 text-low-emphasis',
             )}
           >
             <Icon className="h-5 w-5" />
           </span>
-          <div>
+          <div className="min-w-0">
             <p className="font-bold text-highlight">{meta.label}</p>
-            <p className="text-xs text-medium-emphasis">{meta.channel}</p>
+            <p className="truncate text-xs text-medium-emphasis">{meta.channel}</p>
           </div>
         </div>
         {live ? (
-          <ArrowUpRight className="h-4 w-4 text-low-emphasis transition-colors group-hover:text-primary-dark" />
+          <ArrowUpRight className="h-4 w-4 shrink-0 text-low-emphasis transition-colors group-hover:text-primary-dark" />
         ) : (
-          <span className="rounded-full bg-secondary-lightest/60 px-2.5 py-0.5 text-[10px] font-bold tracking-widest text-secondary-darkest uppercase">
+          <span className="shrink-0 rounded-full bg-secondary-lightest/60 px-2.5 py-0.5 text-[10px] font-bold tracking-widest whitespace-nowrap text-secondary-darkest uppercase">
             {meta.upcoming ? 'Em breve' : 'Sem dados'}
           </span>
         )}
@@ -88,9 +91,9 @@ function PlatformCard({ meta, passRate, runsCount, lastRunAt, trend }: PlatformS
 
       {live && tone ? (
         <>
-          <div className="mt-5 flex items-end justify-between gap-3">
+          <div className="mt-5 flex flex-wrap items-end justify-between gap-x-3 gap-y-2">
             <div>
-              <p className="text-[11px] font-medium tracking-wide text-low-emphasis uppercase">
+              <p className="text-[11px] font-medium tracking-wide whitespace-nowrap text-low-emphasis uppercase">
                 Taxa de aprovação
               </p>
               <p className={cn('text-4xl font-bold tracking-tight', tone.text)}>{passRate}%</p>
@@ -103,15 +106,17 @@ function PlatformCard({ meta, passRate, runsCount, lastRunAt, trend }: PlatformS
               style={{ width: `${passRate}%` }}
             />
           </div>
-          <div className="mt-4 flex items-center justify-between border-t border-neutral-75 pt-3 text-xs text-medium-emphasis">
-            <span>
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 border-t border-neutral-75 pt-3 text-xs text-medium-emphasis">
+            <span className="whitespace-nowrap">
               {runsCount} execuç{runsCount === 1 ? 'ão' : 'ões'}
             </span>
-            {lastRunAt && <span>Última: {formatDate(lastRunAt)}</span>}
+            {lastRunAt && (
+              <span className="whitespace-nowrap">Última: {formatDate(lastRunAt)}</span>
+            )}
           </div>
         </>
       ) : (
-        <p className="mt-5 text-sm text-medium-emphasis">
+        <p className="mt-4 text-sm text-medium-emphasis">
           {meta.upcoming
             ? 'Monitoramento planejado no roadmap. Os resultados aparecem aqui após a primeira execução.'
             : 'Nenhuma execução registrada ainda.'}
@@ -128,7 +133,7 @@ function Kpi({ icon, label, value }: { icon: ReactNode; label: string; value: Re
         {icon}
       </span>
       <div className="min-w-0">
-        <p className="text-[11px] font-medium tracking-wide text-medium-emphasis uppercase">
+        <p className="truncate text-[11px] font-medium tracking-wide text-medium-emphasis uppercase">
           {label}
         </p>
         <p className="truncate text-sm font-bold text-highlight">{value}</p>
@@ -138,12 +143,14 @@ function Kpi({ icon, label, value }: { icon: ReactNode; label: string; value: Re
 }
 
 export function HeroSection({
+  kpiPlatform,
   totalRuns,
   countriesCount,
   checksCount,
   lastRunAt,
   platformStats,
 }: HeroSectionProps) {
+  const KpiPlatformIcon = kpiPlatform.icon;
   return (
     <section aria-labelledby="hero-heading" className="space-y-5">
       <div className="relative overflow-hidden rounded-card bg-primary-wash px-6 py-8 sm:px-10 sm:py-10">
@@ -170,7 +177,15 @@ export function HeroSection({
             Avon em múltiplos países da América Latina.
           </p>
 
-          <div className="mt-8 grid grid-cols-2 gap-5 lg:grid-cols-4">
+          <div className="mt-8 flex flex-wrap items-center gap-x-3 gap-y-1">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-surface px-3 py-1 text-xs font-bold text-primary-dark shadow-tiny">
+              <KpiPlatformIcon className="h-3.5 w-3.5" aria-hidden="true" />
+              Dados de {kpiPlatform.label}
+            </span>
+            <span className="text-xs text-medium-emphasis">{kpiPlatform.channel}</span>
+          </div>
+
+          <div className="mt-4 grid grid-cols-2 gap-5 @3xl:grid-cols-4">
             <Kpi icon={<PlayCircle className="h-4 w-4" />} label="Execuções" value={totalRuns} />
             <Kpi
               icon={<Globe2 className="h-4 w-4" />}
@@ -191,7 +206,10 @@ export function HeroSection({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+      {/* Container-driven so it adapts to the space left by the sidebar (and to narrow embeds
+          like the Google Sites iframe): 3 columns when there's room, otherwise live platforms take
+          a full row and the "em breve" ones sit side by side below. */}
+      <div className="grid grid-cols-1 gap-4 @lg:grid-cols-2 @4xl:grid-cols-3">
         {platformStats.map((stat) => (
           <PlatformCard key={stat.meta.platform} {...stat} />
         ))}

@@ -34,7 +34,7 @@ export function HighlightsSection() {
         title="O que a automação faz"
         description="Em produção hoje"
       />
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <div className="grid gap-4 @2xl:grid-cols-2 @5xl:grid-cols-3">
         {HIGHLIGHTS.map((card) => (
           <HighlightCard key={card.title} {...card} />
         ))}

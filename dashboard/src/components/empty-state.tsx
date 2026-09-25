@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 interface EmptyStateProps {
   icon: ReactNode;
   title: string;
-  children: ReactNode;
+  children?: ReactNode;
   badge?: string;
 }
 
@@ -20,9 +20,11 @@ export function EmptyState({ icon, title, children, badge }: EmptyStateProps) {
         </span>
       )}
       <h1 className="text-xl font-bold text-highlight">{title}</h1>
-      <div className="mx-auto mt-2 max-w-lg text-sm leading-relaxed text-medium-emphasis">
-        {children}
-      </div>
+      {children && (
+        <div className="mx-auto mt-2 max-w-lg text-sm leading-relaxed text-medium-emphasis">
+          {children}
+        </div>
+      )}
     </div>
   );
 }

@@ -70,14 +70,14 @@ export const HIGHLIGHTS: HighlightContent[] = [
     color: 'text-primary-dark',
     bg: 'bg-primary-wash',
     title: 'Publicação Automática do Relatório',
-    description: 'Cada execução publica o relatório atualizado no GitHub Pages.',
+    description: 'Cada execução publica o relatório atualizado.',
   },
   {
     icon: Database,
     color: 'text-primary-dark',
     bg: 'bg-primary-wash',
     title: 'Gestão de SKUs via Dashboard',
-    description: 'Novos SKUs podem ser cadastrados pelo SKU Manager, sem alterar código.',
+    description: 'Novos SKUs podem ser cadastrados pelo SKU Manager, sem alterar via código.',
   },
 ];
 
