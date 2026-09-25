@@ -80,7 +80,7 @@ export function EvolutionSection({
         title={title}
         description={`Taxa de aprovação nas últimas ${evolutionData.length} execuções`}
       />
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+      <div className="grid gap-4 @4xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
         <Card className="flex flex-col justify-center">
           <EvolutionChart data={chartData} />
         </Card>

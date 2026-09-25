@@ -22,10 +22,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="min-h-screen bg-background">
         <NavHeader />
-        <div className="mx-auto flex max-w-[1440px] items-start">
+        <div className="mx-auto flex max-w-360 items-start">
           <Sidebar />
-          {/* pb-24 clears the fixed mobile bottom nav (MobileBottomNav); md:pb-10 once it's hidden */}
-          <main id="app-main" className="min-w-0 flex-1 px-4 pt-6 pb-24 sm:px-8 md:pb-10 lg:px-10">
+          <main
+            id="app-main"
+            className="@container min-w-0 flex-1 px-4 pt-6 pb-24 sm:px-6 md:pb-10 xl:px-10"
+          >
             {children}
           </main>
         </div>

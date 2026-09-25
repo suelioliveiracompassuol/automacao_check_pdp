@@ -71,7 +71,7 @@ export function SummaryCards({ total, passed, failed, errors }: SummaryCardsProp
   const passRate = total > 0 ? Math.round((passed / total) * 100) : 0;
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,2fr)]">
+    <div className="grid gap-4 @4xl:grid-cols-[minmax(0,1.1fr)_minmax(0,2fr)]">
       <motion.div
         initial={{ opacity: 0, scale: 0.97 }}
         animate={{ opacity: 1, scale: 1 }}

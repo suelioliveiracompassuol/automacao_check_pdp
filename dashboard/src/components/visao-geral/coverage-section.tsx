@@ -24,7 +24,7 @@ export function CoverageSection({
         description="Países e tipos de verificação monitorados"
       />
 
-      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-6">
+      <div className="mb-6 grid grid-cols-2 gap-3 @md:grid-cols-3 @3xl:grid-cols-6">
         {Object.entries(COUNTRY_INFO).map(([code, { label }]) => (
           <div
             key={code}

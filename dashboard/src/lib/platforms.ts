@@ -21,7 +21,7 @@ export const PLATFORMS: PlatformMeta[] = [
     label: 'Android',
     href: '/android',
     icon: FaAndroid,
-    channel: 'App nativo · próxima fase',
+    channel: 'App nativo',
     upcoming: true,
   },
   {
@@ -29,7 +29,7 @@ export const PLATFORMS: PlatformMeta[] = [
     label: 'iOS',
     href: '/ios',
     icon: FaApple,
-    channel: 'App nativo · próxima fase',
+    channel: 'App nativo',
     upcoming: true,
   },
 ];

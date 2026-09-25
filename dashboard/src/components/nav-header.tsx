@@ -5,12 +5,12 @@ export function NavHeader() {
     <header id="app-nav-header" className="sticky top-0 z-40 bg-surface/90 backdrop-blur-lg">
       <div className="bg-brand-gradient h-1" aria-hidden="true" />
       <div className="border-b border-neutral-75">
-        <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between px-4 sm:px-8 lg:px-10">
+        <div className="mx-auto flex h-16 max-w-360 items-center justify-between px-4 sm:px-8 lg:px-10">
           <Link href="/" className="group flex items-center gap-3">
-            <span className="text-2xl leading-none font-bold tracking-tight text-brand lowercase">
+            {/* <span className="text-2xl leading-none font-bold tracking-tight text-brand lowercase">
               natura
-            </span>
-            <span className="h-6 w-px bg-neutral-100" aria-hidden="true" />
+            </span> */}
+            {/* <span className="h-6 w-px bg-neutral-100" aria-hidden="true" /> */}
             <span className="flex flex-col leading-tight">
               <span className="text-sm font-bold text-highlight transition-colors group-hover:text-primary-dark">
                 PDP Monitor

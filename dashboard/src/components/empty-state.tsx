@@ -3,11 +3,10 @@ import type { ReactNode } from 'react';
 interface EmptyStateProps {
   icon: ReactNode;
   title: string;
-  children: ReactNode;
   badge?: string;
 }
 
-export function EmptyState({ icon, title, children, badge }: EmptyStateProps) {
+export function EmptyState({ icon, title, badge }: EmptyStateProps) {
   return (
     <div className="relative mx-auto mt-6 max-w-2xl overflow-hidden rounded-card border border-neutral-75 bg-surface px-8 py-16 text-center shadow-soft">
       <div className="bg-brand-gradient absolute inset-x-0 top-0 h-1" aria-hidden="true" />
@@ -20,9 +19,6 @@ export function EmptyState({ icon, title, children, badge }: EmptyStateProps) {
         </span>
       )}
       <h1 className="text-xl font-bold text-highlight">{title}</h1>
-      <div className="mx-auto mt-2 max-w-lg text-sm leading-relaxed text-medium-emphasis">
-        {children}
-      </div>
     </div>
   );
 }

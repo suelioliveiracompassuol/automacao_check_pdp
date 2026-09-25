@@ -149,7 +149,7 @@ export function ErrorMatrixSection({
       />
 
       {topFailures.length > 0 && (
-        <div className="mb-6 grid gap-3 sm:grid-cols-3">
+        <div className="mb-6 grid gap-3 @2xl:grid-cols-3">
           {topFailures.map((row) => {
             const countryInfo = COUNTRY_INFO[row.country as Country];
             return (
