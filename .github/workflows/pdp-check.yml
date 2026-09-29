@@ -87,6 +87,19 @@ jobs:
           path: ${{ steps.find_report.outputs.report_dir }}
           retention-days: 30
 
+      - name: 🧹 Remove old screenshots and HTML reports
+        run: |
+          # Run dir names carry the timestamp; file mtimes are reset by checkout.
+          CUTOFF=$(( ($(date +%s) - 10 * 86400) * 1000 ))
+          for dir in docs/reports/run_*/; do
+            ts=$(basename "$dir"); ts=${ts#run_}
+            [[ "$ts" =~ ^[0-9]+$ ]] || continue
+            if (( ts < CUTOFF )); then
+              find "$dir" -type f \( -name '*.png' -o -name '*.html' \) -delete
+              find "$dir" -mindepth 1 -type d -empty -delete
+            fi
+          done
+
       - name: 🌐 Publish report to GitHub Pages
         run: |
           # The check script already writes reports to docs/reports/run_*/ and
