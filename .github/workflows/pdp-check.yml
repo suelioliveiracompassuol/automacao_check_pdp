@@ -73,7 +73,7 @@ jobs:
         id: find_report
         run: |
           # The check script writes directly to docs/reports/run_*/
-          REPORT_DIR=$(ls -td docs/reports/run_* 2>/dev/null | head -1)
+          REPORT_DIR=$(ls -d docs/reports/run_* 2>/dev/null | sort | tail -1)
           echo "report_dir=$REPORT_DIR" >> $GITHUB_OUTPUT
           if [ -f "$REPORT_DIR/report.json" ]; then
             SUMMARY=$(cat "$REPORT_DIR/report.json" | jq -r '"Total: \(.summary.total), Passed: \(.summary.passed), Failed: \(.summary.failed), Errors: \(.summary.errors)"')
@@ -105,7 +105,7 @@ jobs:
           # The check script already writes reports to docs/reports/run_*/ and
           # updates docs/reports/index.json.  We only need to refresh the
           # last-report shortcuts and commit everything in docs/.
-          REPORT_DIR=$(ls -td docs/reports/run_* 2>/dev/null | head -1)
+          REPORT_DIR=$(ls -d docs/reports/run_* 2>/dev/null | sort | tail -1)
           if [ ! -f "$REPORT_DIR/report.html" ]; then
             echo "⚠️  No report found in docs/reports/ — skipping publish"
             exit 0
