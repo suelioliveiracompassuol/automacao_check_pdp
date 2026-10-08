@@ -17,7 +17,12 @@ interface PlatformLink {
 
 const PLATFORM_LINKS: PlatformLink[] = [
   { href: '/web', label: 'Web', icon: <Globe className="h-4 w-4 shrink-0" /> },
-  { href: '/android', label: 'Android', icon: <FaAndroid className="h-4 w-4 shrink-0" /> },
+  {
+    href: '/android',
+    label: 'Android',
+    icon: <FaAndroid className="h-4 w-4 shrink-0" />,
+    badge: 'beta',
+  },
   {
     href: '/ios',
     label: 'iOS',

@@ -1,7 +1,10 @@
 import { test, expect } from "@playwright/test";
 import { resolveAndroidAppPackage } from "../deviceSetup.js";
 import { getAndroidCredentialsFromEnv } from "../checks-android/login.js";
-import { loadFirebaseAppsFromEnv } from "../checks-android/remoteConfig.js";
+import {
+  loadFirebaseAppsFromEnv,
+  resolveNotifyMeFlag,
+} from "../checks-android/remoteConfig.js";
 import { ANDROID_SELECTORS } from "../checks-android/configs/selectors.js";
 import { checkAddToCartAndroid } from "../checks-android/addToCart.js";
 import {
@@ -12,6 +15,7 @@ import {
   distributeIntoChunks,
   parseAndroidConcurrency,
 } from "../androidConcurrency.js";
+import { findCommerceFlagsInNetworkLog } from "../checks-android/commerceFlags.js";
 import type { SkuConfig } from "../types.js";
 
 test.describe("Android Unit Tests", () => {
@@ -147,34 +151,129 @@ test.describe("Android Unit Tests", () => {
   });
 
   test.describe("checkAddToCartAndroid with mock driver", () => {
-    test("returns pass when target button is displayed and enabled", async () => {
-      const mockElement = {
-        waitForDisplayed: async () => true,
-        isEnabled: async () => true,
-        getText: async () => "Comprar",
-      };
-      const mockDriver = {
-        $: () => mockElement,
-      } as unknown as WebdriverIO.Browser;
+    /** Driver whose elements are visible only for selectors containing one of `visibleIds`. */
+    const driverShowing = (visibleIds: string[], text = "") =>
+      ({
+        $: (selector: string) => {
+          const visible = visibleIds.some((id) => selector.includes(id));
+          return {
+            isDisplayed: async () => visible,
+            waitForDisplayed: async () => visible,
+            isEnabled: async () => true,
+            getText: async () => text,
+          };
+        },
+        waitUntil: async (condition: () => Promise<boolean>) => {
+          if (!(await condition())) {
+            throw new Error("timeout");
+          }
+          return true;
+        },
+      }) as unknown as WebdriverIO.Browser;
 
-      const result = await checkAddToCartAndroid(mockDriver);
+    test("returns pass when the buy button is displayed", async () => {
+      const result = await checkAddToCartAndroid(
+        driverShowing(["cv_buy_button"], "adicionar"),
+      );
       expect(result.passed).toBe(true);
       expect(result.status).toBe("pass");
-      expect(result.details?.isEnabled).toBe(true);
-      expect(result.details?.text).toBe("Comprar");
+      expect(result.details?.state).toBe("buy");
+      expect(result.details?.text).toBe("adicionar");
     });
 
-    test("returns fail when target button is not displayed", async () => {
-      const mockElement = {
-        waitForDisplayed: async () => false,
-      };
-      const mockDriver = {
-        $: () => mockElement,
-      } as unknown as WebdriverIO.Browser;
+    test('returns pass when the product is out of stock and "me avise" is displayed', async () => {
+      const result = await checkAddToCartAndroid(
+        driverShowing(["btNotifyMe"], "me avise"),
+      );
+      expect(result.passed).toBe(true);
+      expect(result.status).toBe("pass");
+      expect(result.details?.state).toBe("notifyMe");
+      expect(result.details?.inStock).toBe(false);
+      expect(result.message).toContain("me avise");
+    });
 
-      const result = await checkAddToCartAndroid(mockDriver);
+    test("returns fail when neither buy nor notify-me is displayed", async () => {
+      const result = await checkAddToCartAndroid(driverShowing([]));
       expect(result.passed).toBe(false);
       expect(result.status).toBe("fail");
+    });
+
+    test("records the wl_notify_me flag in the result details", async () => {
+      const result = await checkAddToCartAndroid(
+        driverShowing(["cv_buy_button"]),
+        undefined,
+        Promise.resolve(true),
+      );
+      expect(result.status).toBe("pass");
+      expect(result.details?.notifyMeFlag).toBe(true);
+    });
+
+    test('warns when "me avise" is shown but wl_notify_me is off', async () => {
+      const result = await checkAddToCartAndroid(
+        driverShowing(["btNotifyMe"]),
+        undefined,
+        Promise.resolve(false),
+      );
+      expect(result.passed).toBe(true);
+      expect(result.status).toBe("warning");
+    });
+
+    test("passes when out of stock without button and wl_notify_me is off", async () => {
+      const result = await checkAddToCartAndroid(
+        driverShowing(["tv_warning_unavailable"]),
+        undefined,
+        Promise.resolve(false),
+      );
+      expect(result.passed).toBe(true);
+      expect(result.status).toBe("pass");
+      expect(result.details?.state).toBe("unavailable");
+    });
+
+    test("fails when out of stock without button but wl_notify_me is on", async () => {
+      const result = await checkAddToCartAndroid(
+        driverShowing(["tv_warning_unavailable"]),
+        undefined,
+        Promise.resolve(true),
+      );
+      expect(result.passed).toBe(false);
+      expect(result.status).toBe("fail");
+    });
+
+    test("warns when out of stock without button and the flag wasn't captured", async () => {
+      const result = await checkAddToCartAndroid(
+        driverShowing(["tv_warning_unavailable"]),
+      );
+      expect(result.passed).toBe(true);
+      expect(result.status).toBe("warning");
+    });
+  });
+
+  test.describe("resolveNotifyMeFlag", () => {
+    const entries = {
+      wl_notify_me: JSON.stringify({
+        "pt-BR": true,
+        "pt-BR-ML": false,
+        "es-AR": false,
+      }),
+    };
+
+    test("reads the locale value like the app", () => {
+      expect(resolveNotifyMeFlag(entries, "pt-BR")).toBe(true);
+      expect(resolveNotifyMeFlag(entries, "es-AR")).toBe(false);
+    });
+
+    test("uses pt-BR-ML for BR social commerce", () => {
+      expect(resolveNotifyMeFlag(entries, "pt-BR", "socialcommerce")).toBe(
+        false,
+      );
+    });
+
+    test("has no pt-BR fallback for other locales and defaults to false", () => {
+      expect(resolveNotifyMeFlag(entries, "es-MX")).toBe(false);
+      expect(resolveNotifyMeFlag({}, "pt-BR")).toBe(false);
+      expect(resolveNotifyMeFlag({ wl_notify_me: "true" }, "pt-BR")).toBe(
+        false,
+      );
     });
   });
 
@@ -210,6 +309,7 @@ test.describe("Android Unit Tests", () => {
       const result = await checkRecommendationShowcaseAndroid(mockDriver);
       expect(result.passed).toBe(false);
       expect(result.status).toBe("fail");
+      expect(result.details?.rendered).toBe(false);
     });
   });
 
@@ -257,6 +357,68 @@ test.describe("Android Unit Tests", () => {
     test("never exceeds maxTasks", () => {
       process.env.ANDROID_CONCURRENCY = "5";
       expect(parseAndroidConcurrency(3)).toBe(3);
+    });
+  });
+
+  test.describe("findCommerceFlagsInNetworkLog", () => {
+    const flagsBody = JSON.stringify({
+      productRecommendation: true,
+      businessModel: "B2C",
+    });
+    const har = (entries: unknown[]) => ({ log: { entries } });
+    const entry = (url: string, text?: string, encoding?: string) => ({
+      request: { url },
+      response: { status: 200, content: { text, encoding } },
+    });
+
+    test("parses the /feature-flag response captured from the app (HAR)", () => {
+      const flags = findCommerceFlagsInNetworkLog(
+        har([
+          entry("https://api.example.com/product/1", "{}"),
+          entry(
+            "https://ncf-apigw.prd.naturacloud.com/bff-app-natura-brazil/feature-flag",
+            flagsBody,
+          ),
+        ]),
+      );
+      expect(flags?.productRecommendation).toBe(true);
+      expect(flags?.businessModel).toBe("B2C");
+    });
+
+    test("decodes base64 bodies and accepts payloads wrapped in data", () => {
+      const flags = findCommerceFlagsInNetworkLog({
+        data: [
+          entry(
+            "https://x/feature-flag",
+            Buffer.from(flagsBody).toString("base64"),
+            "base64",
+          ),
+        ],
+      });
+      expect(flags?.productRecommendation).toBe(true);
+    });
+
+    test("returns null when the app never called /feature-flag or the body is missing", () => {
+      expect(
+        findCommerceFlagsInNetworkLog(har([entry("https://x/cart", "{}")])),
+      ).toBeNull();
+      expect(
+        findCommerceFlagsInNetworkLog(har([entry("https://x/feature-flag")])),
+      ).toBeNull();
+      expect(findCommerceFlagsInNetworkLog(null)).toBeNull();
+    });
+
+    test("ignores Firebase Remote Config traffic", () => {
+      expect(
+        findCommerceFlagsInNetworkLog(
+          har([
+            entry(
+              "https://firebaseremoteconfig.googleapis.com/feature-flags",
+              flagsBody,
+            ),
+          ]),
+        ),
+      ).toBeNull();
     });
   });
 });

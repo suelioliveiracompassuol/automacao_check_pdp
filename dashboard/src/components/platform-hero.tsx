@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { CalendarClock, Hash, Timer } from 'lucide-react';
 import { PLATFORM_META } from '@/lib/platforms';
+import { BetaBadge } from '@/components/beta-badge';
 import type { MonitoringReport, Platform } from '@/lib/types';
 import { formatDate, formatDuration } from '@/lib/utils';
 
@@ -49,10 +50,13 @@ export function PlatformHero({ platform, title, description, report, action }: P
       />
       <div className="relative">
         <div className="mb-3 flex items-center justify-between gap-3">
-          <span className="inline-flex items-center gap-2 rounded-full bg-surface px-3 py-1 text-xs font-bold text-primary-darkest shadow-tiny">
-            <Icon className="h-3.5 w-3.5 text-brand" />
-            {meta.channel}
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center gap-2 rounded-full bg-surface px-3 py-1 text-xs font-bold text-primary-darkest shadow-tiny">
+              <Icon className="h-3.5 w-3.5 text-brand" />
+              {meta.channel}
+            </span>
+            {meta.beta && <BetaBadge />}
+          </div>
           {action}
         </div>
         <h1 className="text-2xl font-bold tracking-tight text-highlight md:text-3xl">{title}</h1>

@@ -129,6 +129,32 @@ async function fetchRemoteConfigEntries(
 }
 
 /**
+ * Resolves `wl_notify_me` exactly like the app (FirebaseRemoteConfigImpl.getMultiLangFeatureFlag):
+ * the value is a locale-keyed JSON object; BR social commerce (Minha Loja) reads "pt-BR-ML" then
+ * "pt-BR"; other locales have no fallback; a missing/unparseable value means false.
+ */
+export function resolveNotifyMeFlag(
+  entries: Record<string, string>,
+  locale: string,
+  channel?: string,
+): boolean {
+  try {
+    const parsed = JSON.parse(entries.wl_notify_me ?? "") as unknown;
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+      return false;
+    }
+    const byLocale = parsed as Record<string, unknown>;
+    const value =
+      locale === "pt-BR" && channel === "socialcommerce"
+        ? (byLocale["pt-BR-ML"] ?? byLocale["pt-BR"])
+        : byLocale[locale];
+    return value === true;
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Fetches real Firebase Remote Config values for the Android app via the same public
  * REST endpoints the app's own SDK uses at runtime (Installations API to mint a FID/token,
  * then the Remote Config fetch API) — no device/Appium session needed, this is independent
@@ -156,5 +182,6 @@ export async function fetchRemoteConfigFlagsAndroid(
     locale,
     _raw: entries,
     ...parseRemoteConfigEntries(entries, locale),
+    wl_notify_me: resolveNotifyMeFlag(entries, locale, sku.channel),
   };
 }

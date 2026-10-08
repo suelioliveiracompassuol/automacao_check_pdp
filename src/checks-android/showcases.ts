@@ -53,46 +53,47 @@ async function verifyNativeShowcase(
   };
 }
 
-/** Android native check for "Mais produtos da marca" showcase. */
-export async function checkBrandShowcaseAndroid(
+interface ShowcaseCheckSpec {
+  feature: string;
+  featureKey: "brandShowcase" | "recommendationShowcase";
+  label: string;
+  resourceId: string;
+}
+
+async function checkShowcaseAndroid(
   driver: WebdriverIO.Browser,
+  spec: ShowcaseCheckSpec,
 ): Promise<CheckResult> {
+  const { feature, featureKey, label, resourceId } = spec;
   try {
     const { rendered, itemCount } = await verifyNativeShowcase(
       driver,
-      ANDROID_SELECTORS.showcase.brandRecyclerView,
+      resourceId,
     );
 
     if (rendered) {
       return {
-        feature: 'Vitrine "Mais produtos da marca"',
-        featureKey: "brandShowcase",
+        feature,
+        featureKey,
         passed: true,
         status: "pass",
-        message: `Vitrine "mais produtos da marca" renderizada no app Android (RecyclerView com ${itemCount > 0 ? `${itemCount} itens detectados` : "conteúdo"})`,
-        details: {
-          rendered: true,
-          itemCount,
-          resourceId: ANDROID_SELECTORS.showcase.brandRecyclerView,
-        },
+        message: `${label} renderizada no app Android (RecyclerView com ${itemCount > 0 ? `${itemCount} itens detectados` : "conteúdo"})`,
+        details: { rendered: true, itemCount, resourceId },
       };
     }
 
     return {
-      feature: 'Vitrine "Mais produtos da marca"',
-      featureKey: "brandShowcase",
+      feature,
+      featureKey,
       passed: false,
       status: "fail",
-      message: 'Vitrine "mais produtos da marca" não encontrada ou vazia na tela',
-      details: {
-        rendered: false,
-        resourceId: ANDROID_SELECTORS.showcase.brandRecyclerView,
-      },
+      message: `${label} não encontrada ou vazia na tela`,
+      details: { rendered: false, resourceId },
     };
   } catch (error) {
     return {
-      feature: 'Vitrine "Mais produtos da marca"',
-      featureKey: "brandShowcase",
+      feature,
+      featureKey,
       passed: false,
       status: "error",
       message: `Erro ao verificar vitrine: ${error instanceof Error ? error.message : String(error)}`,
@@ -100,49 +101,26 @@ export async function checkBrandShowcaseAndroid(
   }
 }
 
-/** Android native check for recommendation ("Achamos que você vai gostar") showcase. */
-export async function checkRecommendationShowcaseAndroid(
+/** Android native check for "Mais produtos da marca" showcase. */
+export function checkBrandShowcaseAndroid(
   driver: WebdriverIO.Browser,
 ): Promise<CheckResult> {
-  try {
-    const { rendered, itemCount } = await verifyNativeShowcase(
-      driver,
-      ANDROID_SELECTORS.showcase.recommendationRecyclerView,
-    );
+  return checkShowcaseAndroid(driver, {
+    feature: 'Vitrine "Mais produtos da marca"',
+    featureKey: "brandShowcase",
+    label: 'Vitrine "mais produtos da marca"',
+    resourceId: ANDROID_SELECTORS.showcase.brandRecyclerView,
+  });
+}
 
-    if (rendered) {
-      return {
-        feature: 'Vitrine "Achamos que você vai gostar"',
-        featureKey: "recommendationShowcase",
-        passed: true,
-        status: "pass",
-        message: `Vitrine de recomendações renderizada no app Android (RecyclerView com ${itemCount > 0 ? `${itemCount} itens detectados` : "conteúdo"})`,
-        details: {
-          rendered: true,
-          itemCount,
-          resourceId: ANDROID_SELECTORS.showcase.recommendationRecyclerView,
-        },
-      };
-    }
-
-    return {
-      feature: 'Vitrine "Achamos que você vai gostar"',
-      featureKey: "recommendationShowcase",
-      passed: false,
-      status: "fail",
-      message: 'Vitrine de recomendações não encontrada ou vazia na tela',
-      details: {
-        rendered: false,
-        resourceId: ANDROID_SELECTORS.showcase.recommendationRecyclerView,
-      },
-    };
-  } catch (error) {
-    return {
-      feature: 'Vitrine "Achamos que você vai gostar"',
-      featureKey: "recommendationShowcase",
-      passed: false,
-      status: "error",
-      message: `Erro ao verificar vitrine: ${error instanceof Error ? error.message : String(error)}`,
-    };
-  }
+/** Android native check for the personalization showcase ("achamos que você vai gostar"). */
+export function checkRecommendationShowcaseAndroid(
+  driver: WebdriverIO.Browser,
+): Promise<CheckResult> {
+  return checkShowcaseAndroid(driver, {
+    feature: 'Vitrine "Achamos que você vai gostar"',
+    featureKey: "recommendationShowcase",
+    label: "Vitrine de recomendações",
+    resourceId: ANDROID_SELECTORS.showcase.recommendationRecyclerView,
+  });
 }

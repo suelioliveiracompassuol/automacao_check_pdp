@@ -1,4 +1,34 @@
+import fs from "node:fs";
+import path from "node:path";
 import { ANDROID_SELECTORS } from "./configs/selectors.js";
+
+/** Login screen sets FLAG_SECURE (screenshots fail), so the UI hierarchy is the only way to see what's on screen. */
+async function dumpLoginDiagnostics(
+  driver: WebdriverIO.Browser,
+): Promise<void> {
+  try {
+    const [activity, source] = await Promise.all([
+      driver.getCurrentActivity().catch(() => "?"),
+      driver.getPageSource(),
+    ]);
+    const dir = path.join(process.cwd(), ".tmp", "artifacts", "auth");
+    fs.mkdirSync(dir, { recursive: true });
+    const file = path.join(dir, `login_source_${Date.now()}.xml`);
+    fs.writeFileSync(file, source);
+    const ids = [
+      ...new Set(
+        [...source.matchAll(/resource-id="([^"]+)"/g)].map((m) => m[1]),
+      ),
+    ];
+    console.log(`      🔎 Activity: ${activity}`);
+    console.log(
+      `      🔎 resource-ids na tela (${ids.length}): ${ids.slice(0, 40).join(", ")}`,
+    );
+    console.log(`      🔎 Hierarquia salva em ${file}`);
+  } catch {
+    // diagnostics are best-effort
+  }
+}
 
 /**
  * Native login flow for the Android app, ported from ncf-natura-cf-automation-mobile's
@@ -37,6 +67,39 @@ async function dismissPermissionDialogIfPresent(
   }
 }
 
+/** Waits for either login form; when the Compose Login V2 is shown, taps "entrar usando minha senha" to reach the legacy form. */
+async function switchToLegacyLoginIfV2(
+  driver: WebdriverIO.Browser,
+): Promise<void> {
+  const legacyEmail = driver.$(
+    `android=${ANDROID_SELECTORS.login.emailContainer}`,
+  );
+  const v2Email = driver.$(`android=${ANDROID_SELECTORS.login.v2EmailField}`);
+
+  await driver.waitUntil(
+    async () =>
+      (await legacyEmail.isDisplayed().catch(() => false)) ||
+      (await v2Email.isDisplayed().catch(() => false)),
+    {
+      timeout: 15000,
+      timeoutMsg: "nenhuma tela de login apareceu na aba Conta",
+    },
+  );
+
+  if (await legacyEmail.isDisplayed().catch(() => false)) {
+    return;
+  }
+
+  const buttons = await driver
+    .$$(`android=${ANDROID_SELECTORS.login.v2Buttons}`)
+    .getElements();
+  if (buttons.length === 0) {
+    throw new Error("Login V2 sem botões para alternar ao login com senha");
+  }
+  await buttons[buttons.length - 1].click();
+  console.log("      ✓ Login V2 detectado, alternando para login com senha");
+}
+
 /**
  * Logs into the app via the Account tab. Returns true once the login form (email/password
  * fields) is confirmed GONE after re-opening the Account tab, false otherwise — callers
@@ -55,6 +118,8 @@ export async function loginAndroid(
     await accountTab.waitForDisplayed({ timeout: 8000 });
     await accountTab.click();
     console.log("      ✓ Aba Conta aberta");
+
+    await switchToLegacyLoginIfV2(driver);
 
     const emailClickable = driver.$(
       `android=${ANDROID_SELECTORS.login.emailContainer}`,
@@ -107,6 +172,7 @@ export async function loginAndroid(
     console.log(
       `      ❌ Login falhou em: ${e instanceof Error ? e.message : String(e)}`,
     );
+    await dumpLoginDiagnostics(driver);
     return false;
   }
 }

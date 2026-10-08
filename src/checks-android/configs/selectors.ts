@@ -12,10 +12,20 @@
  * — extend it with the Spanish/Avon equivalents once those operations are configured.
  */
 export const ANDROID_SELECTORS = {
+  /**
+   * Display rule from ncf-whitelabel-cf-android (BuyBottomSheetNe / ProductBaseInformationViewHolder):
+   * in stock → cv_buy_button (sticky bar) / btBuy (body); out of stock → btNotifyMe ("me avise",
+   * item_product_warning_ne / product_body_warning_ne), shown only when isNotifyMeEnabled.
+   */
   addToCart: {
-    anyButton: 'new UiSelector().resourceIdMatches(".*:id/cv_buy_button")',
+    anyButton:
+      'new UiSelector().resourceIdMatches(".*:id/(cv_buy_button|btBuy)")',
+    notifyMeButton: 'new UiSelector().resourceIdMatches(".*:id/btNotifyMe")',
+    /** "acabou, mas volta logo!" warning — shown out of stock with or without the notify-me button. */
+    unavailableWarning:
+      'new UiSelector().resourceIdMatches(".*:id/tv_warning_unavailable")',
     textFallback:
-      'new UiSelector().textMatches("(?i)^(comprar|adicionar|avise-me).*$")',
+      'new UiSelector().textMatches("(?i)^(comprar|adicionar|agregar|me avise|avise-me|av[ií]same).*$")',
   },
   /**
    * Confirmed against ncf-whitelabel-cf-android source:
@@ -46,5 +56,12 @@ export const ANDROID_SELECTORS = {
     loginButton: 'new UiSelector().resourceIdMatches(".*:id/btn_login")',
     permissionAllowButton:
       'new UiSelector().resourceIdMatches(".*:id/permission_allow_button")',
+    /**
+     * Login V2 (feature flag isLoginV2Enabled, RegisterCustomerOtpScreen) is Jetpack Compose with no
+     * resource-ids, so it's matched by widget class. "entrar usando minha senha" is always the last
+     * Button on that screen (social/enter buttons come before it), which keeps this locale-independent.
+     */
+    v2EmailField: 'new UiSelector().className("android.widget.EditText")',
+    v2Buttons: 'new UiSelector().className("android.widget.Button")',
   },
 };

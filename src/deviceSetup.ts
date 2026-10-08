@@ -138,6 +138,8 @@ function createLambdaTestSession(): Promise<WebdriverIO.Browser> {
       name: "Android PDP check",
       isRealMobile: true,
       w3c: true,
+      // Captures the app's own traffic so commerce flags come from what the app received.
+      network: process.env.ANDROID_NETWORK_CAPTURE !== "false",
     },
   };
 

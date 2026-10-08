@@ -1,16 +1,17 @@
 import { BarChart3 } from 'lucide-react';
 
-import { CoverageSection } from '@/components/visao-geral/coverage-section';
-import { HeroSection, type PlatformStat } from '@/components/visao-geral/hero-section';
-import { HighlightsSection } from '@/components/visao-geral/highlights-section';
+import type { PlatformCoverageData } from '@/components/visao-geral/coverage-section';
 import {
-  PlatformBreakdownSection,
-  type PlatformBreakdownData,
-} from '@/components/visao-geral/platform-breakdown-section';
+  HeroSection,
+  type PlatformKpi,
+  type PlatformStat,
+} from '@/components/visao-geral/hero-section';
+import { HighlightsSection } from '@/components/visao-geral/highlights-section';
+import { PlatformTabs, type PlatformSectionData } from '@/components/visao-geral/platform-tabs';
 import { Card } from '@/components/ui/card';
 import { getReportById, getReportIndex } from '@/lib/data';
 import { TOTAL_CHECKS } from '@/lib/checks-catalog';
-import { PLATFORM_META, PLATFORMS } from '@/lib/platforms';
+import { PLATFORMS } from '@/lib/platforms';
 import { type MonitoringReport, type Platform, type ReportIndexEntry } from '@/lib/types';
 
 const PLATFORM_IDS: Platform[] = PLATFORMS.map((p) => p.platform);
@@ -47,34 +48,56 @@ export default function HomePage() {
     PLATFORM_IDS.map((p) => [p, allRuns.filter((r) => (r.platform ?? 'web') === p)]),
   ) as Record<Platform, ReportIndexEntry[]>;
 
-  const latestWebEntry = runsByPlatform.web[0] ?? latestEntry;
-  const latestWebReport = getReportById(latestWebEntry.runId);
+  const platformKpis: PlatformKpi[] = PLATFORMS.filter(
+    (meta) => !meta.upcoming && runsByPlatform[meta.platform].length > 0,
+  ).map((meta) => {
+    const runs = runsByPlatform[meta.platform];
+    const latest = getReportById(runs[0].runId);
+    const results = latest?.results ?? [];
+    const featureKeys = new Set(results.flatMap((r) => r.features.map((f) => f.featureKey)));
+    return {
+      meta,
+      runsCount: runs.length,
+      countries: [...new Set(results.map((r) => r.country.toUpperCase()))].sort(),
+      pdpsCount: results.length,
+      checksCount: meta.platform === 'web' ? TOTAL_CHECKS : featureKeys.size,
+      lastRunAt: runs[0].startTime,
+    };
+  });
 
-  const webRuns = runsByPlatform.web;
-
-  const countries = latestWebReport
-    ? [...new Set(latestWebReport.results.map((r) => r.country.toUpperCase()))].sort()
-    : [];
-
-  const channelsByCountry = latestWebReport
-    ? latestWebReport.results.reduce<Map<string, Set<string>>>((channels, result) => {
-        const country = result.country.toUpperCase();
-        const countryChannels = channels.get(country) ?? new Set<string>();
-        countryChannels.add(result.channel ?? 'ecommerce');
-        channels.set(country, countryChannels);
-        return channels;
-      }, new Map())
-    : new Map<string, Set<string>>();
-
-  const vendorsByCountry = latestWebReport
-    ? latestWebReport.results.reduce<Map<string, Set<string>>>((vendors, result) => {
-        const country = result.country.toUpperCase();
-        const countryVendors = vendors.get(country) ?? new Set<string>();
-        countryVendors.add(result.vendor.toLowerCase());
-        vendors.set(country, countryVendors);
-        return vendors;
-      }, new Map())
-    : new Map<string, Set<string>>();
+  const platformSections: PlatformSectionData[] = PLATFORMS.map(({ platform, upcoming }) => {
+    const runs = upcoming ? [] : runsByPlatform[platform];
+    const latest = runs[0] ? getReportById(runs[0].runId) : null;
+    const results = latest?.results ?? [];
+    const vendorsByCountry: Record<string, Set<string>> = {};
+    const channelsByCountry: Record<string, Set<string>> = {};
+    for (const r of results) {
+      const country = r.country.toUpperCase();
+      (vendorsByCountry[country] ??= new Set()).add(r.vendor.toLowerCase());
+      (channelsByCountry[country] ??= new Set()).add(r.channel ?? 'ecommerce');
+    }
+    const toArrays = (m: Record<string, Set<string>>) =>
+      Object.fromEntries(Object.entries(m).map(([k, v]) => [k, [...v]]));
+    const coverage: PlatformCoverageData = {
+      platform,
+      hasRuns: results.length > 0,
+      countries: Object.keys(vendorsByCountry).sort(),
+      vendorsByCountry: toArrays(vendorsByCountry),
+      channelsByCountry: toArrays(channelsByCountry),
+      featureKeys:
+        platform === 'web'
+          ? undefined
+          : [...new Set(results.flatMap((r) => r.features.map((f) => f.featureKey)))],
+    };
+    return {
+      platform,
+      coverage,
+      breakdown: {
+        evolutionData: runs.slice(0, 10).reverse(),
+        reports: loadReports(runs.slice(0, 4)).reverse(),
+      },
+    };
+  });
 
   const platformStats: PlatformStat[] = PLATFORMS.map((meta) => {
     const runs = meta.upcoming ? [] : runsByPlatform[meta.platform];
@@ -93,42 +116,13 @@ export default function HomePage() {
     };
   });
 
-  // All platforms get a tab; upcoming ones (and any without runs) render an empty state.
-  const platformBreakdown: PlatformBreakdownData[] = PLATFORMS.map(
-    ({ platform, label, upcoming }) => {
-      const runs = upcoming ? [] : runsByPlatform[platform];
-      return {
-        platform,
-        label,
-        evolutionData: runs.slice(0, 10).reverse(),
-        reports: loadReports(runs.slice(0, 4)).reverse(),
-      };
-    },
-  );
-
   return (
     <div className="space-y-16 animate-fade-in-up">
       <div id="hero" className="scroll-mt-24">
-        <HeroSection
-          kpiPlatform={PLATFORM_META.web}
-          totalRuns={webRuns.length}
-          countriesCount={countries.length}
-          checksCount={TOTAL_CHECKS}
-          lastRunAt={webRuns[0]?.startTime ?? null}
-          platformStats={platformStats}
-        />
-      </div>
-      <div id="coverage" className="scroll-mt-24">
-        <CoverageSection
-          countries={countries}
-          channelsByCountry={channelsByCountry}
-          vendorsByCountry={vendorsByCountry}
-        />
+        <HeroSection platformKpis={platformKpis} platformStats={platformStats} />
       </div>
 
-      <div id="platform-breakdown" className="scroll-mt-24">
-        <PlatformBreakdownSection data={platformBreakdown} />
-      </div>
+      <PlatformTabs data={platformSections} />
 
       <div id="highlights" className="scroll-mt-24">
         <HighlightsSection />

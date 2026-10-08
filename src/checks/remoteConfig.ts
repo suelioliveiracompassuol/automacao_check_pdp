@@ -332,6 +332,12 @@ export interface RemoteConfigFlags {
   // =========================================================================
   enable_product_card_rating?: boolean;
   wl_show_rating_on_product_card?: boolean;
+
+  // =========================================================================
+  // APP-ONLY FLAGS (Android)
+  // =========================================================================
+  /** "me avise" button for out-of-stock products (GlobalFlags.isNotifyMeEnabled). */
+  wl_notify_me?: boolean;
 }
 
 // =============================================================================
@@ -550,8 +556,50 @@ export function setupRemoteConfigCapture(
   };
 }
 
+/** Maps a raw /feature-flag JSON body to {@link CommerceFeatureFlags}. */
+export function parseCommerceFeatureFlags(
+  body: Record<string, unknown>,
+): CommerceFeatureFlags {
+  return {
+    capturedAt: new Date().toISOString(),
+    _raw: body,
+    // Business Model
+    businessModel: body.businessModel as string | undefined,
+    businessModelB2B2C: body.businessModelB2B2C as boolean | undefined,
+    businessModelB2C: body.businessModelB2C as boolean | undefined,
+    businessModelB2C_B2B2C: body.businessModelB2C_B2B2C as boolean | undefined,
+    // PDP Features
+    displayStockOnProductDetailPage: body.displayStockOnProductDetailPage as
+      | boolean
+      | undefined,
+    newExperiencePdpEnable: body.newExperiencePdpEnable as boolean | undefined,
+    enablePdpFreightCalculation: body.enablePdpFreightCalculation as
+      | boolean
+      | undefined,
+    enableDisplayFreeShippingPdp: body.enableDisplayFreeShippingPdp as
+      | boolean
+      | undefined,
+    freeShippingValue: body.freeShippingValue as number | undefined,
+    nePagesPdV2: body.nePagesPdV2 as boolean | undefined,
+    newExperienceEnableGiftPdp: body.newExperienceEnableGiftPdp as
+      | boolean
+      | undefined,
+    // Gift & Packaging
+    giftPackaging: body.giftPackaging as boolean | undefined,
+    enableGiftOnSite: body.enableGiftOnSite as boolean | undefined,
+    giftSku: body.giftSku as string | undefined,
+    productRecommendation: body.productRecommendation as boolean | undefined,
+    location: body.location as boolean | undefined,
+    newExperienceEnable: body.newExperienceEnable as boolean | undefined,
+    socialCommerce: body.socialCommerce as boolean | undefined,
+    socialCommerceMinhaLoja: body.socialCommerceMinhaLoja as
+      | boolean
+      | undefined,
+  };
+}
+
 /** True if URL is likely the commerce BFF feature-flag JSON (not Firebase). */
-function matchesCommerceFeatureFlagUrl(url: string): boolean {
+export function matchesCommerceFeatureFlagUrl(url: string): boolean {
   const u = url.toLowerCase();
   if (u.includes("firebase")) {
     return false;
@@ -581,49 +629,7 @@ export function setupCommerceFeatureFlagCapture(
   }) => {
     try {
       const body = (await response.json()) as Record<string, unknown>;
-
-      capturedFlags = {
-        capturedAt: new Date().toISOString(),
-        _raw: body,
-        // Business Model
-        businessModel: body.businessModel as string | undefined,
-        businessModelB2B2C: body.businessModelB2B2C as boolean | undefined,
-        businessModelB2C: body.businessModelB2C as boolean | undefined,
-        businessModelB2C_B2B2C: body.businessModelB2C_B2B2C as
-          | boolean
-          | undefined,
-        // PDP Features
-        displayStockOnProductDetailPage:
-          body.displayStockOnProductDetailPage as boolean | undefined,
-        newExperiencePdpEnable: body.newExperiencePdpEnable as
-          | boolean
-          | undefined,
-        enablePdpFreightCalculation: body.enablePdpFreightCalculation as
-          | boolean
-          | undefined,
-        enableDisplayFreeShippingPdp: body.enableDisplayFreeShippingPdp as
-          | boolean
-          | undefined,
-        freeShippingValue: body.freeShippingValue as number | undefined,
-        nePagesPdV2: body.nePagesPdV2 as boolean | undefined,
-        newExperienceEnableGiftPdp: body.newExperienceEnableGiftPdp as
-          | boolean
-          | undefined,
-        // Gift & Packaging
-        giftPackaging: body.giftPackaging as boolean | undefined,
-        enableGiftOnSite: body.enableGiftOnSite as boolean | undefined,
-        giftSku: body.giftSku as string | undefined,
-
-        productRecommendation: body.productRecommendation as
-          | boolean
-          | undefined,
-        location: body.location as boolean | undefined,
-        newExperienceEnable: body.newExperienceEnable as boolean | undefined,
-        socialCommerce: body.socialCommerce as boolean | undefined,
-        socialCommerceMinhaLoja: body.socialCommerceMinhaLoja as
-          | boolean
-          | undefined,
-      };
+      capturedFlags = parseCommerceFeatureFlags(body);
     } catch {
       // Response not JSON or parsing failed - continue
     }
@@ -1272,6 +1278,9 @@ export function getFlagsByCategory(
   }
   if (flags.free_freight_tag !== undefined) {
     pdpFlags.free_freight_tag = flags.free_freight_tag;
+  }
+  if (flags.wl_notify_me !== undefined) {
+    pdpFlags.wl_notify_me = flags.wl_notify_me;
   }
   if (Object.keys(pdpFlags).length > 0) {
     categories["🛍️ PDP Features"] = pdpFlags;

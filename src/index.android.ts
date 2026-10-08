@@ -21,7 +21,10 @@ import {
 } from "./types.js";
 import { generateHtmlReport, generateJsonReport } from "./reporter.js";
 import { upsertReportIndexEntry } from "./reportIndex.js";
-import { distributeIntoChunks, parseAndroidConcurrency } from "./androidConcurrency.js";
+import {
+  distributeIntoChunks,
+  parseAndroidConcurrency,
+} from "./androidConcurrency.js";
 import {
   createAndroidSession,
   openPdpDeepLink,
@@ -34,6 +37,7 @@ import {
   checkRecommendationShowcaseAndroid,
 } from "./checks-android/showcases.js";
 import { fetchRemoteConfigFlagsAndroid } from "./checks-android/remoteConfig.js";
+import { fetchCommerceFlagsFromAppSession } from "./checks-android/commerceFlags.js";
 import {
   getAndroidCredentialsFromEnv,
   loginAndroid,
@@ -68,7 +72,9 @@ async function loginOnceOnDriver(
   // persists on device, so it survives the terminateApp() inside openPdpDeepLink below.
   await driver
     .activateApp(resolveAndroidAppPackage(sessionSku))
-    .catch((e) => console.debug("   (debug) activateApp falhou (best-effort):", e));
+    .catch((e) =>
+      console.debug("   (debug) activateApp falhou (best-effort):", e),
+    );
   const loggedIn = await loginAndroid(driver, credentials);
   console.log(
     loggedIn
@@ -78,14 +84,21 @@ async function loginOnceOnDriver(
   if (!loggedIn) {
     try {
       // Isolate sensitive auth debug artifacts outside public docs/ directory to avoid credential/PII leaks
-      const authDebugDir = path.join(process.cwd(), ".tmp", "artifacts", "auth");
+      const authDebugDir = path.join(
+        process.cwd(),
+        ".tmp",
+        "artifacts",
+        "auth",
+      );
       fs.mkdirSync(authDebugDir, { recursive: true });
       const screenshotPath = path.join(
         authDebugDir,
         `${sessionSku.sku}_login_debug_${Date.now()}.png`,
       );
       await driver.saveScreenshot(screenshotPath);
-      console.log(`   🔒 Screenshot de debug de autenticação salvo em local seguro: ${screenshotPath}`);
+      console.log(
+        `   🔒 Screenshot de debug de autenticação salvo em local seguro: ${screenshotPath}`,
+      );
     } catch {
       // best-effort debug artifact only
     }
@@ -120,13 +133,16 @@ async function checkPdpOnDriver(
     );
     return null;
   });
-
   try {
     const navStartTime = Date.now();
     await openPdpDeepLink(driver, deepLinkUrl, sku);
 
     // Verify Add to Cart button and capture load time without duplicate waits
-    const addToCartResult = await checkAddToCartAndroid(driver, navStartTime);
+    const addToCartResult = await checkAddToCartAndroid(
+      driver,
+      navStartTime,
+      remoteConfigPromise.then((f) => f?.wl_notify_me),
+    );
     loadTime = addToCartResult.loadTime ?? Date.now() - navStartTime;
     features.push(addToCartResult);
 
@@ -146,7 +162,11 @@ async function checkPdpOnDriver(
 
     // Capture device logcat for native crash / error diagnostics
     try {
-      type LogcatEntry = { timestamp?: number | string; level?: string; message?: string };
+      type LogcatEntry = {
+        timestamp?: number | string;
+        level?: string;
+        message?: string;
+      };
       const rawLogs = await driver.getLogs("logcat").catch((e) => {
         console.debug("   (debug) getLogs(logcat) falhou (best-effort):", e);
         return [];
@@ -165,7 +185,10 @@ async function checkPdpOnDriver(
                   l.message.includes("AndroidRuntime") ||
                   l.message.includes("ANR in"))),
           )
-          .map((l) => `[${l.timestamp ?? ""}] [${l.level ?? ""}] ${l.message ?? ""}`)
+          .map(
+            (l) =>
+              `[${l.timestamp ?? ""}] [${l.level ?? ""}] ${l.message ?? ""}`,
+          )
           .join("\n");
 
         if (crashLogs.trim().length > 0) {
@@ -239,6 +262,30 @@ function buildErrorResult(sku: SkuConfig, error: string): PdpCheckResult {
   };
 }
 
+/** Commerce flags are read from the closed session's network capture (what the app itself
+ * received), so they're attached to every SKU checked in that session. */
+async function attachAppCommerceFlags(
+  sessionId: string,
+  results: PdpCheckResult[],
+): Promise<void> {
+  try {
+    const flags = await fetchCommerceFlagsFromAppSession(sessionId);
+    if (!flags) {
+      return;
+    }
+    for (const r of results) {
+      r.commerceFeatureFlags = flags;
+    }
+    console.log(
+      `   ✓ Commerce flags capturadas do tráfego do app (sessão ${sessionId})`,
+    );
+  } catch (e) {
+    console.log(
+      `   ⚠️  Commerce flags do app indisponíveis: ${e instanceof Error ? e.message : String(e)}`,
+    );
+  }
+}
+
 /** Opens one device session, logs in once, then checks every SKU in `skus` sequentially before closing it.
  * Each SKU check is isolated: if checkPdpOnDriver throws (outside its own internal error handling,
  * e.g. buildPdpUrl failing), the SKU is recorded as a failure instead of aborting the rest of the
@@ -265,6 +312,7 @@ async function runSessionForSkus(
   } finally {
     await closeAndroidSession(driver);
   }
+  await attachAppCommerceFlags(driver.sessionId, results);
   return results;
 }
 
@@ -343,7 +391,10 @@ async function main() {
       results.push(...outcome.value);
     } else {
       const chunk = sessionChunks[i];
-      const error = outcome.reason instanceof Error ? outcome.reason.message : String(outcome.reason);
+      const error =
+        outcome.reason instanceof Error
+          ? outcome.reason.message
+          : String(outcome.reason);
       console.error(
         `❌ Sessão ${i + 1} falhou por completo (SKUs perdidos: ${chunk.map((s) => s.sku).join(", ")}):`,
         outcome.reason,

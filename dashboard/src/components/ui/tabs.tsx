@@ -31,11 +31,19 @@ interface TabsTriggerProps {
   isActive: boolean;
   children: ReactNode;
   className?: string;
+  /** Distinct per Tabs group so indicators of different groups on one page don't animate into each other. */
+  indicatorId?: string;
 }
 
 /** Radix trigger with a shared-layout indicator (`layoutId`) that slides between tabs instead of
  * popping, since active state must be known by the parent to drive the `motion.span`. */
-export function TabsTrigger({ value, isActive, children, className }: TabsTriggerProps) {
+export function TabsTrigger({
+  value,
+  isActive,
+  children,
+  className,
+  indicatorId = 'tabs-active-indicator',
+}: TabsTriggerProps) {
   return (
     <RadixTabs.Trigger
       value={value}
@@ -47,7 +55,7 @@ export function TabsTrigger({ value, isActive, children, className }: TabsTrigge
     >
       {isActive && (
         <motion.span
-          layoutId="tabs-active-indicator"
+          layoutId={indicatorId}
           className="absolute inset-0 -z-10 rounded-full bg-highlight"
           transition={{ type: 'spring', stiffness: 500, damping: 35 }}
         />
