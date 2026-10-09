@@ -128,9 +128,9 @@ export function SkuForm({ open, initialData, onSubmit, onClose }: SkuFormProps) 
       }}
     >
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+        <Dialog.Overlay className="dialog-overlay fixed inset-0 z-40 bg-black/40 backdrop-blur-sm" />
         <Dialog.Content
-          className="fixed left-1/2 top-1/2 z-50 flex max-h-[90vh] w-full max-w-lg -translate-x-1/2 -translate-y-1/2 flex-col rounded-2xl bg-white shadow-xl data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95"
+          className="dialog-content fixed left-1/2 top-1/2 z-50 flex max-h-[90dvh] w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 flex-col rounded-2xl bg-white shadow-xl"
           aria-describedby="sku-form-description"
         >
           <div className="flex items-center justify-between border-b border-neutral-75 px-6 py-4">
@@ -138,7 +138,7 @@ export function SkuForm({ open, initialData, onSubmit, onClose }: SkuFormProps) 
               {isEditing === true ? 'Editar SKU' : 'Novo SKU'}
             </Dialog.Title>
             <Dialog.Close
-              className="rounded-lg p-1 text-low-emphasis transition-colors hover:bg-neutral-75 hover:text-medium-emphasis"
+              className="rounded-lg p-2 text-low-emphasis transition-colors hover:bg-neutral-75 hover:text-medium-emphasis"
               aria-label="Fechar"
             >
               <X className="h-4 w-4" />
@@ -157,11 +157,11 @@ export function SkuForm({ open, initialData, onSubmit, onClose }: SkuFormProps) 
                 </div>
               )}
               <div className="flex flex-col gap-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div className="flex flex-col gap-1">
                     <label htmlFor="sku-field" className="text-xs font-medium text-high-emphasis">
                       SKU{' '}
-                      <span className="text-alert" aria-hidden="true">
+                      <span className="text-alert-dark" aria-hidden="true">
                         *
                       </span>
                     </label>
@@ -176,7 +176,7 @@ export function SkuForm({ open, initialData, onSubmit, onClose }: SkuFormProps) 
                       aria-describedby={errors.sku !== undefined ? 'sku-error' : undefined}
                     />
                     {errors.sku !== undefined && (
-                      <p id="sku-error" className="text-[11px] text-alert" role="alert">
+                      <p id="sku-error" className="text-xs text-alert-dark" role="alert">
                         {errors.sku}
                       </p>
                     )}
@@ -184,7 +184,7 @@ export function SkuForm({ open, initialData, onSubmit, onClose }: SkuFormProps) 
                   <div className="flex flex-col gap-1">
                     <label htmlFor="name-field" className="text-xs font-medium text-high-emphasis">
                       Nome{' '}
-                      <span className="text-alert" aria-hidden="true">
+                      <span className="text-alert-dark" aria-hidden="true">
                         *
                       </span>
                     </label>
@@ -199,7 +199,7 @@ export function SkuForm({ open, initialData, onSubmit, onClose }: SkuFormProps) 
                       aria-describedby={errors.name !== undefined ? 'name-error' : undefined}
                     />
                     {errors.name !== undefined && (
-                      <p id="name-error" className="text-[11px] text-alert" role="alert">
+                      <p id="name-error" className="text-xs text-alert-dark" role="alert">
                         {errors.name}
                       </p>
                     )}
@@ -218,7 +218,7 @@ export function SkuForm({ open, initialData, onSubmit, onClose }: SkuFormProps) 
                     className="rounded-lg border border-neutral-100 px-3 py-2 text-sm text-highlight placeholder-low-emphasis outline-none transition-colors focus:border-primary-light focus:ring-2 focus:ring-primary-lightest"
                   />
                 </div>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                   <div className="flex flex-col gap-1">
                     <label
                       htmlFor="vendor-field"
@@ -289,7 +289,7 @@ export function SkuForm({ open, initialData, onSubmit, onClose }: SkuFormProps) 
                       <button
                         type="button"
                         onClick={selectAllFeatures}
-                        className="text-[11px] font-medium text-primary-dark transition-colors hover:text-primary-dark"
+                        className="text-xs font-medium text-primary-darkest transition-colors hover:text-primary-darkest"
                       >
                         Marcar todas
                       </button>
@@ -299,13 +299,13 @@ export function SkuForm({ open, initialData, onSubmit, onClose }: SkuFormProps) 
                       <button
                         type="button"
                         onClick={clearAllFeatures}
-                        className="text-[11px] font-medium text-medium-emphasis transition-colors hover:text-high-emphasis"
+                        className="text-xs font-medium text-medium-emphasis transition-colors hover:text-high-emphasis"
                       >
                         Limpar todas
                       </button>
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-1.5 rounded-xl border border-neutral-75 bg-neutral-50 p-3">
+                  <div className="grid grid-cols-1 gap-1.5 rounded-xl sm:grid-cols-2 border border-neutral-75 bg-neutral-50 p-3">
                     {ALL_FEATURES.map((feature) => (
                       <label
                         key={feature}
@@ -315,9 +315,9 @@ export function SkuForm({ open, initialData, onSubmit, onClose }: SkuFormProps) 
                           type="checkbox"
                           checked={form.expectedFeatures.includes(feature)}
                           onChange={() => toggleFeature(feature)}
-                          className="h-3.5 w-3.5 rounded border-neutral-200 text-primary-dark focus:ring-primary"
+                          className="h-4 w-4 shrink-0 rounded border-neutral-200 text-primary-darkest focus:ring-primary"
                         />
-                        <span className="text-[11px] text-high-emphasis">{feature}</span>
+                        <span className="text-xs text-high-emphasis">{feature}</span>
                       </label>
                     ))}
                   </div>
@@ -336,7 +336,7 @@ export function SkuForm({ open, initialData, onSubmit, onClose }: SkuFormProps) 
               <button
                 type="submit"
                 disabled={loading === true}
-                className="rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-dark disabled:opacity-50"
+                className="rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-highlight transition-colors hover:bg-primary-dark disabled:opacity-50"
               >
                 {loading === true
                   ? 'Salvando…'

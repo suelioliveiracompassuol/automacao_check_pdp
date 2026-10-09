@@ -41,13 +41,13 @@ describe('RemoteConfigPanel', () => {
   it('renders boolean true as checkmark', () => {
     const flags = { enabled: true };
     render(<RemoteConfigPanel flags={flags} />);
-    expect(screen.getByText('✓')).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'Ativo' })).toBeInTheDocument();
   });
 
   it('renders boolean false as X', () => {
     const flags = { disabled: false };
     render(<RemoteConfigPanel flags={flags} />);
-    expect(screen.getByText('✗')).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'Inativo' })).toBeInTheDocument();
   });
 
   it('renders nested categories', () => {

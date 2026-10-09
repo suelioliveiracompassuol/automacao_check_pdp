@@ -33,7 +33,7 @@ function NoDataPanel({ platform, label }: PlatformBreakdownData) {
         <BarChart3 className="h-5 w-5" aria-hidden="true" />
       </span>
       {upcoming && (
-        <span className="mb-3 inline-block rounded-full bg-secondary-lightest/60 px-2.5 py-0.5 text-[10px] font-bold tracking-widest text-secondary-darkest uppercase">
+        <span className="mb-3 inline-block rounded-full bg-secondary-lightest/60 px-2.5 py-0.5 text-[11px] font-bold tracking-widest text-secondary-darkest uppercase">
           Em breve
         </span>
       )}

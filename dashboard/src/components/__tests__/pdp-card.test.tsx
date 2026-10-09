@@ -81,21 +81,23 @@ describe('PdpCard', () => {
     expect(screen.getByText('1200ms')).toBeInTheDocument();
   });
 
-  it('shows success emoji for passing results', () => {
+  it('shows success icon for passing results', () => {
     render(<PdpCard result={mockResult} runId="run_123" screenshots={[]} />);
-    expect(screen.getByText('✅')).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'Aprovado' })).toBeInTheDocument();
   });
 
-  it('shows failure emoji for failing results', () => {
+  it('shows failure icon for failing results', () => {
     render(<PdpCard result={failedResult} runId="run_123" screenshots={[]} />);
-    expect(screen.getByText('❌')).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'Reprovado' })).toBeInTheDocument();
   });
 
   it('toggles expanded state on click', () => {
     render(<PdpCard result={mockResult} runId="run_123" screenshots={[]} />);
     // Successful cards start collapsed
     const button = screen.getByRole('button');
+    expect(button).toHaveAttribute('aria-expanded', 'false');
     fireEvent.click(button);
+    expect(button).toHaveAttribute('aria-expanded', 'true');
     // After click, feature table should be visible (expanded)
     expect(screen.getByTestId('feature-table')).toBeInTheDocument();
   });

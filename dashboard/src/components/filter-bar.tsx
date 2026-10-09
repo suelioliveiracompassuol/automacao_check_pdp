@@ -2,7 +2,7 @@
 
 import type { PdpCheckResult } from '@/lib/types';
 import { useMemo } from 'react';
-import { Search, X, Globe } from 'lucide-react';
+import { Search, X, Globe, ListChecks, CheckCircle2, XCircle, type LucideIcon } from 'lucide-react';
 import { VendorLogo } from './vendor-logo';
 import { getCountryFlag } from '@/lib/utils';
 
@@ -51,10 +51,10 @@ export function FilterBar({
   }, [results, selectedVendor]);
 
   const vendorTabs = ['Todos', ...vendors];
-  const statusTabs: { key: FilterStatus; label: string; icon: string }[] = [
-    { key: 'all', label: 'Todos', icon: '📋' },
-    { key: 'pass', label: 'Aprovados', icon: '✅' },
-    { key: 'fail', label: 'Reprovados', icon: '❌' },
+  const statusTabs: { key: FilterStatus; label: string; icon: LucideIcon; tone: string }[] = [
+    { key: 'all', label: 'Todos', icon: ListChecks, tone: 'text-medium-emphasis' },
+    { key: 'pass', label: 'Aprovados', icon: CheckCircle2, tone: 'text-success' },
+    { key: 'fail', label: 'Reprovados', icon: XCircle, tone: 'text-alert' },
   ];
 
   const hasActiveFilters =
@@ -68,9 +68,13 @@ export function FilterBar({
       {/* Row 1: Search + Status + Clear */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
         <div className="relative flex-1 min-w-0">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-low-emphasis" />
+          <Search
+            className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-low-emphasis"
+            aria-hidden="true"
+          />
           <input
-            type="text"
+            type="search"
+            aria-label="Buscar por SKU, nome ou URL"
             placeholder="Buscar por SKU, nome ou URL..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
@@ -79,10 +83,16 @@ export function FilterBar({
         </div>
 
         {/* Status */}
-        <div className="flex items-center gap-1 bg-neutral-50 p-1 rounded-lg">
+        <div
+          role="group"
+          aria-label="Filtrar por status"
+          className="flex items-center gap-1 bg-neutral-50 p-1 rounded-lg"
+        >
           {statusTabs.map((tab) => (
             <button
               key={tab.key}
+              type="button"
+              aria-pressed={selectedStatus === tab.key}
               onClick={() => onStatusChange(tab.key)}
               className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all cursor-pointer ${
                 selectedStatus === tab.key
@@ -90,8 +100,8 @@ export function FilterBar({
                   : 'text-medium-emphasis hover:text-high-emphasis'
               }`}
             >
-              <span className="flex items-center gap-1">
-                <span className="text-xs">{tab.icon}</span>
+              <span className="flex items-center gap-1.5">
+                <tab.icon className={`h-4 w-4 ${tab.tone}`} aria-hidden="true" />
                 {tab.label}
               </span>
             </button>
@@ -101,6 +111,7 @@ export function FilterBar({
         {/* Clear filters */}
         {hasActiveFilters && (
           <button
+            type="button"
             onClick={() => {
               onSearchChange('');
               onVendorChange('all');
@@ -109,7 +120,7 @@ export function FilterBar({
             }}
             className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-alert-dark hover:text-alert-dark hover:bg-alert-lightest/50 rounded-lg transition-all cursor-pointer"
           >
-            <X className="w-3.5 h-3.5" />
+            <X className="w-3.5 h-3.5" aria-hidden="true" />
             Limpar
           </button>
         )}
@@ -122,7 +133,11 @@ export function FilterBar({
           <span className="text-xs font-medium text-medium-emphasis uppercase tracking-wide whitespace-nowrap">
             Marca
           </span>
-          <div className="flex items-center gap-1 bg-neutral-50 p-1 rounded-lg">
+          <div
+            role="group"
+            aria-label="Filtrar por marca"
+            className="flex items-center gap-1 bg-neutral-50 p-1 rounded-lg"
+          >
             {vendorTabs.map((vendor) => {
               const isActive =
                 (vendor === 'Todos' && selectedVendor === 'all') ||
@@ -130,6 +145,9 @@ export function FilterBar({
               return (
                 <button
                   key={vendor}
+                  type="button"
+                  aria-pressed={isActive}
+                  aria-label={vendor}
                   onClick={() => {
                     onVendorChange(vendor === 'Todos' ? 'all' : vendor.toLowerCase());
                     onOperationChange('all');
@@ -156,13 +174,19 @@ export function FilterBar({
         {/* Operations */}
         <div className="flex items-center gap-2">
           <span className="text-xs font-medium text-medium-emphasis uppercase tracking-wide whitespace-nowrap">
-            <Globe className="w-3.5 h-3.5 inline -mt-0.5 mr-0.5" />
+            <Globe className="w-3.5 h-3.5 inline -mt-0.5 mr-0.5" aria-hidden="true" />
             País
           </span>
-          <div className="flex items-center gap-1 bg-neutral-50 p-1 rounded-lg flex-wrap">
+          <div
+            role="group"
+            aria-label="Filtrar por país"
+            className="flex items-center gap-1 bg-neutral-50 p-1 rounded-lg flex-wrap"
+          >
             <button
+              type="button"
+              aria-pressed={selectedOperation === 'all'}
               onClick={() => onOperationChange('all')}
-              className={`px-2.5 py-1 text-xs font-medium rounded-md transition-all cursor-pointer ${
+              className={`px-2.5 py-1.5 text-xs font-medium rounded-md transition-all cursor-pointer ${
                 selectedOperation === 'all'
                   ? 'bg-white text-highlight shadow-sm'
                   : 'text-medium-emphasis hover:text-high-emphasis'
@@ -173,8 +197,10 @@ export function FilterBar({
             {countries.map((country) => (
               <button
                 key={country}
+                type="button"
+                aria-pressed={selectedOperation === country}
                 onClick={() => onOperationChange(country)}
-                className={`px-2.5 py-1 text-xs font-medium rounded-md transition-all cursor-pointer ${
+                className={`px-2.5 py-1.5 text-xs font-medium rounded-md transition-all cursor-pointer ${
                   selectedOperation === country
                     ? 'bg-white text-highlight shadow-sm'
                     : 'text-medium-emphasis hover:text-high-emphasis'
@@ -183,7 +209,7 @@ export function FilterBar({
                 <span className="flex items-center gap-1">
                   <img
                     src={getCountryFlag(country)}
-                    alt={country}
+                    alt=""
                     className="w-5 h-3.5 object-cover rounded-sm"
                   />
                   {country}

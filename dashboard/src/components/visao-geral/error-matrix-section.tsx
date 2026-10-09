@@ -74,7 +74,7 @@ function MatrixRowItem({ row, totalRuns }: MatrixRowItemProps) {
           className={cn(
             'inline-flex items-center rounded px-2 py-0.5 text-xs font-semibold',
             row.vendor === 'natura'
-              ? 'bg-primary-wash text-primary-dark'
+              ? 'bg-primary-wash text-primary-darkest'
               : 'bg-pink-50 text-pink-700',
           )}
         >
@@ -97,7 +97,7 @@ function MatrixRowItem({ row, totalRuns }: MatrixRowItemProps) {
         <div className="flex items-center justify-center gap-2">
           {row.failures.map((failed, i) => (
             <div key={`c${i + 1}`} className="flex flex-col items-center gap-0.5">
-              <span className="font-mono text-[9px] text-low-emphasis">C{i + 1}</span>
+              <span className="font-mono text-[11px] text-low-emphasis">C{i + 1}</span>
               <div
                 className={cn(
                   'h-4 w-4 rounded-full border-2',
@@ -161,7 +161,7 @@ export function ErrorMatrixSection({
                   <span className="text-xs font-bold uppercase tracking-wide text-alert-dark">
                     Falha persistente
                   </span>
-                  <span className="rounded-full bg-alert px-2 py-0.5 text-[10px] font-bold text-white">
+                  <span className="rounded-full bg-alert px-2 py-0.5 text-[11px] font-bold text-white">
                     {row.persistenceCount}/{reports.length} runs
                   </span>
                 </div>

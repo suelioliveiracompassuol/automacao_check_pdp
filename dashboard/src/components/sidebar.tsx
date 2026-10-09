@@ -16,17 +16,17 @@ interface PlatformLink {
 }
 
 const PLATFORM_LINKS: PlatformLink[] = [
-  { href: '/web', label: 'Web', icon: <Globe className="h-4 w-4 shrink-0" /> },
+  { href: '/web', label: 'Web', icon: <Globe className="h-4 w-4 shrink-0" aria-hidden="true" /> },
   {
     href: '/android',
     label: 'Android',
-    icon: <FaAndroid className="h-4 w-4 shrink-0" />,
+    icon: <FaAndroid className="h-4 w-4 shrink-0" aria-hidden="true" />,
     badge: 'em breve',
   },
   {
     href: '/ios',
     label: 'iOS',
-    icon: <FaApple className="h-4 w-4 shrink-0" />,
+    icon: <FaApple className="h-4 w-4 shrink-0" aria-hidden="true" />,
     badge: 'em breve',
   },
 ];
@@ -49,6 +49,7 @@ function NavLink({
       href={href}
       title={badge ? `${label} (${badge})` : label}
       aria-label={badge ? `${label} (${badge})` : label}
+      aria-current={active ? 'page' : undefined}
       className={cn(
         'relative mx-auto flex h-10 w-10 items-center justify-center gap-3 rounded-full text-sm font-medium transition-colors',
         'lg:mx-0 lg:h-auto lg:w-auto lg:justify-start lg:px-4 lg:py-2.5',
@@ -67,7 +68,7 @@ function NavLink({
       <span className="hidden flex-1 whitespace-nowrap lg:inline">{label}</span>
       {badge && (
         <>
-          <span className="hidden rounded-full bg-secondary-lightest/60 px-2 py-0.5 text-[9px] font-bold tracking-wide whitespace-nowrap text-secondary-darkest uppercase lg:inline">
+          <span className="hidden rounded-full bg-secondary-lightest/60 px-2 py-0.5 text-[11px] font-bold tracking-wide whitespace-nowrap text-secondary-darkest uppercase lg:inline">
             {badge}
           </span>
           {/* Rail mode (< lg): a dot stands in for the badge */}
@@ -95,7 +96,7 @@ export function Sidebar() {
           <NavLink
             href="/"
             label="Visão Geral"
-            icon={<BarChart3 className="h-4 w-4 shrink-0" />}
+            icon={<BarChart3 className="h-4 w-4 shrink-0" aria-hidden="true" />}
             active={pathname === '/'}
           />
 
@@ -107,6 +108,7 @@ export function Sidebar() {
             <Collapsible.Trigger className="hidden w-full cursor-pointer items-center justify-between rounded-full px-4 py-2 text-[11px] font-bold tracking-widest text-low-emphasis uppercase hover:text-high-emphasis lg:flex">
               <span>Plataformas</span>
               <ChevronDown
+                aria-hidden="true"
                 className={cn('h-3.5 w-3.5 transition-transform', platformsOpen && 'rotate-180')}
               />
             </Collapsible.Trigger>
@@ -133,7 +135,7 @@ export function Sidebar() {
             <NavLink
               href="/skus"
               label="SKUs"
-              icon={<Database className="h-4 w-4 shrink-0" />}
+              icon={<Database className="h-4 w-4 shrink-0" aria-hidden="true" />}
               active={pathname === '/skus'}
             />
           </div>

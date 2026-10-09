@@ -17,7 +17,7 @@ function ProgressRing({ value, max, color }: { value: number; max: number; color
   const offset = circumference - (percentage / 100) * circumference;
 
   return (
-    <svg width="88" height="88" className="transform -rotate-90">
+    <svg width="88" height="88" className="transform -rotate-90" aria-hidden="true">
       <circle
         cx="44"
         cy="44"
@@ -32,13 +32,12 @@ function ProgressRing({ value, max, color }: { value: number; max: number; color
         cy="44"
         r="38"
         fill="none"
-        stroke={color}
         strokeWidth="6"
         strokeLinecap="round"
         strokeDasharray={circumference}
         strokeDashoffset={offset}
         className="transition-all duration-1000 ease-out"
-        style={{ animation: 'progressRing 1s ease-out forwards' }}
+        style={{ stroke: color, animation: 'progressRing 1s ease-out forwards' }}
       />
     </svg>
   );
@@ -49,7 +48,7 @@ const items = [
     key: 'total',
     label: 'Total de PDPs',
     icon: BarChart3,
-    tone: 'text-primary-dark bg-primary-wash',
+    tone: 'text-primary-darkest bg-primary-wash',
   },
   {
     key: 'passed',
@@ -57,7 +56,7 @@ const items = [
     icon: CheckCircle2,
     tone: 'text-success bg-success-lightest/50',
   },
-  { key: 'failed', label: 'Falhou', icon: XCircle, tone: 'text-alert bg-alert-lightest/60' },
+  { key: 'failed', label: 'Falhou', icon: XCircle, tone: 'text-alert-dark bg-alert-lightest/60' },
   {
     key: 'errors',
     label: 'Erros',
@@ -81,7 +80,7 @@ export function SummaryCards({ total, passed, failed, errors }: SummaryCardsProp
           <div className="bg-brand-gradient absolute inset-x-0 top-0 h-1" aria-hidden="true" />
           <div className="flex h-full items-center justify-between gap-4">
             <div>
-              <p className="text-[11px] font-bold tracking-widest text-primary-dark uppercase">
+              <p className="text-[11px] font-bold tracking-widest text-primary-darkest uppercase">
                 Taxa de aprovação
               </p>
               <p className="mt-1 text-5xl font-bold tracking-tight text-highlight">{passRate}%</p>
@@ -90,7 +89,7 @@ export function SummaryCards({ total, passed, failed, errors }: SummaryCardsProp
               </p>
             </div>
             <div className="relative shrink-0">
-              <ProgressRing value={passed} max={total} color="#f48646" />
+              <ProgressRing value={passed} max={total} color="var(--color-primary)" />
               <div className="absolute inset-0 flex items-center justify-center">
                 <span className="text-sm font-bold text-high-emphasis">
                   {passed}/{total}

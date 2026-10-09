@@ -189,7 +189,7 @@ export function SkuList({ skus, onEdit, onDelete, disabled }: SkuListProps) {
                 >
                   {group.label}
                 </h2>
-                <span className="rounded-full bg-neutral-75 px-2 py-0.5 text-[10px] font-medium text-medium-emphasis">
+                <span className="rounded-full bg-neutral-75 px-2 py-0.5 text-[11px] font-medium text-medium-emphasis">
                   {entries.length}
                 </span>
                 <div className="h-px flex-1 bg-neutral-75" aria-hidden="true" />

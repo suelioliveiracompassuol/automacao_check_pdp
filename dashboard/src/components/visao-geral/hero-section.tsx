@@ -28,9 +28,11 @@ interface HeroSectionProps {
 }
 
 function rateTone(rate: number) {
-  if (rate >= 90) return { text: 'text-success-dark', bar: 'bg-success', stroke: '#2f833e' };
-  if (rate >= 70) return { text: 'text-secondary-darkest', bar: 'bg-warning', stroke: '#e5b815' };
-  return { text: 'text-alert-dark', bar: 'bg-alert', stroke: '#de3529' };
+  if (rate >= 90)
+    return { text: 'text-success-dark', bar: 'bg-success', stroke: 'var(--color-success)' };
+  if (rate >= 70)
+    return { text: 'text-secondary-darkest', bar: 'bg-warning', stroke: 'var(--color-warning)' };
+  return { text: 'text-alert-dark', bar: 'bg-alert', stroke: 'var(--color-alert)' };
 }
 
 function Sparkline({ values, stroke }: { values: number[]; stroke: string }) {
@@ -44,8 +46,8 @@ function Sparkline({ values, stroke }: { values: number[]; stroke: string }) {
   const [lx, ly] = pts[pts.length - 1];
   return (
     <svg viewBox={`-2 -4 ${w + 4} ${h + 8}`} className="h-9 w-28" aria-hidden="true">
-      <path d={d} fill="none" stroke={stroke} strokeWidth={2} strokeLinejoin="round" />
-      <circle cx={lx} cy={ly} r={3} fill={stroke} />
+      <path d={d} fill="none" style={{ stroke }} strokeWidth={2} strokeLinejoin="round" />
+      <circle cx={lx} cy={ly} r={3} style={{ fill: stroke }} />
     </svg>
   );
 }
@@ -81,9 +83,9 @@ function PlatformCard({ meta, passRate, runsCount, lastRunAt, trend }: PlatformS
           </div>
         </div>
         {live ? (
-          <ArrowUpRight className="h-4 w-4 shrink-0 text-low-emphasis transition-colors group-hover:text-primary-dark" />
+          <ArrowUpRight className="h-4 w-4 shrink-0 text-low-emphasis transition-colors group-hover:text-primary-darkest" />
         ) : (
-          <span className="shrink-0 rounded-full bg-secondary-lightest/60 px-2.5 py-0.5 text-[10px] font-bold tracking-widest whitespace-nowrap text-secondary-darkest uppercase">
+          <span className="shrink-0 rounded-full bg-secondary-lightest/60 px-2.5 py-0.5 text-[11px] font-bold tracking-widest whitespace-nowrap text-secondary-darkest uppercase">
             {meta.upcoming ? 'Em breve' : 'Sem dados'}
           </span>
         )}
@@ -129,7 +131,7 @@ function PlatformCard({ meta, passRate, runsCount, lastRunAt, trend }: PlatformS
 function Kpi({ icon, label, value }: { icon: ReactNode; label: string; value: ReactNode }) {
   return (
     <div className="flex items-center gap-3">
-      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface text-primary-dark shadow-tiny">
+      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface text-primary-darkest shadow-tiny">
         {icon}
       </span>
       <div className="min-w-0">
@@ -163,7 +165,7 @@ export function HeroSection({
           className="pointer-events-none absolute right-1/3 -bottom-40 h-72 w-72 rounded-full bg-primary-lightest/50 blur-3xl"
         />
         <div className="relative">
-          <p className="mb-2 text-[11px] font-bold tracking-widest text-primary-dark uppercase">
+          <p className="mb-2 text-[11px] font-bold tracking-widest text-primary-darkest uppercase">
             Automação de Qualidade PDP
           </p>
           <h1
@@ -178,7 +180,7 @@ export function HeroSection({
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-x-3 gap-y-1">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-surface px-3 py-1 text-xs font-bold text-primary-dark shadow-tiny">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-surface px-3 py-1 text-xs font-bold text-primary-darkest shadow-tiny">
               <KpiPlatformIcon className="h-3.5 w-3.5" aria-hidden="true" />
               Dados de {kpiPlatform.label}
             </span>

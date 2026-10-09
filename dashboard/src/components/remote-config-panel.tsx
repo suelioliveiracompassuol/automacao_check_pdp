@@ -2,6 +2,7 @@
 
 import * as Collapsible from '@radix-ui/react-collapsible';
 import { useState } from 'react';
+import { Check, X } from 'lucide-react';
 
 interface RemoteConfigPanelProps {
   flags: Record<string, unknown> | undefined;
@@ -10,10 +11,19 @@ interface RemoteConfigPanelProps {
 
 function renderValue(value: unknown): React.ReactNode {
   if (value === true) {
-    return <span className="text-success-dark font-bold">✓</span>;
+    return (
+      <Check
+        className="h-3.5 w-3.5 text-success-dark"
+        strokeWidth={3}
+        role="img"
+        aria-label="Ativo"
+      />
+    );
   }
   if (value === false) {
-    return <span className="text-alert font-bold">✗</span>;
+    return (
+      <X className="h-3.5 w-3.5 text-alert-dark" strokeWidth={3} role="img" aria-label="Inativo" />
+    );
   }
   if (value === null || value === undefined) {
     return <span className="text-low-emphasis">-</span>;

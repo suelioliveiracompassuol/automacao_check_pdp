@@ -39,8 +39,8 @@ export function MobileBottomNav() {
             href={href}
             aria-current={active ? 'page' : undefined}
             className={cn(
-              'relative flex flex-1 flex-col items-center gap-1 py-2.5 text-[10px] font-medium transition-colors',
-              active ? 'font-bold text-primary-dark' : 'text-medium-emphasis',
+              'relative flex flex-1 flex-col items-center gap-1 min-h-14 justify-center py-2 text-xs font-medium transition-colors',
+              active ? 'font-bold text-primary-darkest' : 'text-medium-emphasis',
             )}
           >
             {active && (
@@ -49,7 +49,7 @@ export function MobileBottomNav() {
                 className="absolute inset-x-5 top-0 h-0.5 rounded-b-full bg-brand"
               />
             )}
-            <Icon className="w-5 h-5" />
+            <Icon className="w-5 h-5" aria-hidden="true" />
             {label}
           </Link>
         );

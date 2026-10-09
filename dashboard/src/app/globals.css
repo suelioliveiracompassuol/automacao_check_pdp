@@ -67,8 +67,10 @@
   --color-surface: #ffffff;
   --color-highlight: #111111;
   --color-high-emphasis: #363636;
-  --color-medium-emphasis: #737373;
-  --color-low-emphasis: #8c8c8c;
+  /* Darker than natds (#737373 / #8c8c8c) so secondary text clears WCAG AA 4.5:1 on
+     background, surface and neutral-75. */
+  --color-medium-emphasis: #5e5e5e;
+  --color-low-emphasis: #6b6b6b;
 
   /* natds elevation scale */
   --shadow-tiny: 0 2px 2px 0 rgba(0, 0, 0, 0.14);
@@ -95,6 +97,57 @@ body {
 
 .bg-brand-gradient {
   background-image: var(--gradient-brand);
+}
+
+/* Keyboard focus ring. Unlayered, so it wins over `outline-none` utilities; text fields keep
+   their own focus ring instead. */
+:where(
+  a,
+  button,
+  summary,
+  [role='tab'],
+  [role='tabpanel'],
+  [role='menuitem'],
+  [tabindex]:not([tabindex='-1'])
+):focus-visible {
+  outline: 2px solid var(--color-primary-darkest);
+  outline-offset: 2px;
+}
+
+/* Radix Dialog enter/exit (Radix waits for animationend before unmounting on close) */
+@keyframes overlayIn {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes overlayOut {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes dialogIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+@keyframes dialogOut {
+  to {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+.dialog-overlay[data-state='open'] {
+  animation: overlayIn 180ms ease-out;
+}
+.dialog-overlay[data-state='closed'] {
+  animation: overlayOut 120ms ease-in;
+}
+.dialog-content[data-state='open'] {
+  animation: dialogIn 200ms ease-out;
+}
+.dialog-content[data-state='closed'] {
+  animation: dialogOut 130ms ease-in;
 }
 
 /* Smooth page transitions */
@@ -145,6 +198,17 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-neutral-400);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* /visao-geral "presentation mode" (toggled via PresentationControls fullscreen button) */

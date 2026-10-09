@@ -72,11 +72,11 @@ export function PresentationControls({ sections }: PresentationControlsProps) {
           onClick={() => goToSection(activeIndex - 1)}
           disabled={activeIndex === 0}
           aria-label="Seção anterior"
-          className="rounded-full p-1.5 text-medium-emphasis hover:bg-neutral-75 disabled:opacity-30"
+          className="rounded-full p-2 text-medium-emphasis hover:bg-neutral-75 disabled:opacity-30"
         >
           <ChevronUp className="h-4 w-4" />
         </button>
-        <span className="w-14 text-center text-[10px] font-medium text-medium-emphasis">
+        <span className="w-14 text-center text-[11px] font-medium text-medium-emphasis">
           {activeIndex + 1}/{sections.length}
         </span>
         <button
@@ -84,7 +84,7 @@ export function PresentationControls({ sections }: PresentationControlsProps) {
           onClick={() => goToSection(activeIndex + 1)}
           disabled={activeIndex === sections.length - 1}
           aria-label="Próxima seção"
-          className="rounded-full p-1.5 text-medium-emphasis hover:bg-neutral-75 disabled:opacity-30"
+          className="rounded-full p-2 text-medium-emphasis hover:bg-neutral-75 disabled:opacity-30"
         >
           <ChevronDown className="h-4 w-4" />
         </button>
@@ -93,7 +93,7 @@ export function PresentationControls({ sections }: PresentationControlsProps) {
           type="button"
           onClick={() => window.print()}
           aria-label="Imprimir / exportar PDF"
-          className="rounded-full p-1.5 text-medium-emphasis hover:bg-neutral-75"
+          className="rounded-full p-2 text-medium-emphasis hover:bg-neutral-75"
         >
           <Printer className="h-4 w-4" />
         </button>
@@ -101,7 +101,7 @@ export function PresentationControls({ sections }: PresentationControlsProps) {
           type="button"
           onClick={toggleFullscreen}
           aria-label={isPresenting ? 'Sair do modo apresentação' : 'Modo apresentação'}
-          className="rounded-full p-1.5 text-primary-dark hover:bg-primary-wash"
+          className="rounded-full p-2 text-primary-darkest hover:bg-primary-wash"
         >
           {isPresenting ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
         </button>

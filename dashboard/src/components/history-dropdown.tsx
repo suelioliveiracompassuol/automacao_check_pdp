@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useId } from 'react';
 import Link from 'next/link';
-import { History, ChevronDown, Check } from 'lucide-react';
+import { History, ChevronDown, Check, CheckCircle2, XCircle } from 'lucide-react';
 import { FaAndroid } from 'react-icons/fa';
 import { usePathname } from 'next/navigation';
 import type { ReportIndexEntry } from '@/lib/types';
@@ -28,6 +28,8 @@ export function HistoryDropdown({
 }: HistoryDropdownProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const listId = useId();
   const pathname = usePathname();
   const resolvedHomeRunId = homeRunId ?? runs[0]?.runId;
 
@@ -47,19 +49,43 @@ export function HistoryDropdown({
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
+  // Close on Escape and hand focus back to the trigger
+  useEffect(() => {
+    if (!open) return;
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
+    }
+    document.addEventListener('keydown', handleKey);
+    return () => document.removeEventListener('keydown', handleKey);
+  }, [open]);
+
   return (
     <div ref={ref} className="relative">
       <button
+        ref={triggerRef}
+        type="button"
         onClick={() => setOpen(!open)}
+        aria-expanded={open}
+        aria-controls={listId}
+        aria-label="Histórico de execuções"
         className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-high-emphasis hover:bg-neutral-75 transition-colors cursor-pointer"
       >
-        <History className="w-4 h-4" />
+        <History className="w-4 h-4" aria-hidden="true" />
         <span className="hidden sm:inline">Histórico</span>
-        <ChevronDown className={`w-3.5 h-3.5 transition-transform ${open ? 'rotate-180' : ''}`} />
+        <ChevronDown
+          aria-hidden="true"
+          className={`w-3.5 h-3.5 transition-transform ${open ? 'rotate-180' : ''}`}
+        />
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-72 bg-white rounded-xl shadow-xl border border-neutral-100 overflow-hidden z-50">
+        <div
+          id={listId}
+          className="absolute right-0 top-full mt-2 w-72 bg-white rounded-xl shadow-xl border border-neutral-100 overflow-hidden z-50"
+        >
           <div className="px-3 py-2 border-b border-neutral-75 bg-neutral-50">
             <span className="text-xs font-semibold text-medium-emphasis uppercase tracking-wide">
               Execuções recentes
@@ -75,9 +101,10 @@ export function HistoryDropdown({
                   <Link
                     href={href}
                     onClick={() => setOpen(false)}
+                    aria-current={isCurrent ? 'page' : undefined}
                     className={`flex items-center justify-between px-3 py-2.5 text-sm transition-colors ${
                       isCurrent
-                        ? 'bg-primary-wash text-primary-dark'
+                        ? 'bg-primary-wash text-primary-darkest'
                         : 'text-high-emphasis hover:bg-neutral-50'
                     }`}
                   >
@@ -91,13 +118,19 @@ export function HistoryDropdown({
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs text-success-dark font-semibold">
-                        ✅{run.summary.passed}
+                      <span className="flex items-center gap-0.5 text-xs text-success-dark font-semibold tabular-nums">
+                        <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" />
+                        {run.summary.passed}
+                        <span className="sr-only"> aprovados</span>
                       </span>
-                      <span className="text-xs text-alert-dark font-semibold">
-                        ❌{run.summary.failed}
+                      <span className="flex items-center gap-0.5 text-xs text-alert-dark font-semibold tabular-nums">
+                        <XCircle className="h-3.5 w-3.5" aria-hidden="true" />
+                        {run.summary.failed}
+                        <span className="sr-only"> reprovados</span>
                       </span>
-                      {isCurrent && <Check className="w-4 h-4 text-primary-dark" />}
+                      {isCurrent && (
+                        <Check className="w-4 h-4 text-primary-darkest" aria-hidden="true" />
+                      )}
                     </div>
                   </Link>
                 </li>

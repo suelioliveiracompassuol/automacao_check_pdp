@@ -1,6 +1,41 @@
 import Link from 'next/link';
+import { cn, formatDate } from '@/lib/utils';
 
-export function NavHeader() {
+export interface LastRunSummary {
+  startTime: string;
+  failed: number;
+  errors: number;
+}
+
+/** Health of the most recent daily (web) run — derived from the report index at build time,
+ * so the badge never claims "all good" when the last run had failures. */
+function LastRunStatus({ startTime, failed, errors }: LastRunSummary) {
+  const problems = failed + errors;
+  const ok = problems === 0;
+  const label = ok
+    ? 'Última execução sem falhas'
+    : `${problems} ${problems === 1 ? 'falha' : 'falhas'} na última execução`;
+
+  return (
+    <div
+      title={`${label} — ${formatDate(startTime)}`}
+      className={cn(
+        'flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium',
+        ok
+          ? 'border-success-lightest bg-success-lightest/50 text-success-dark'
+          : 'border-alert-lightest bg-alert-lightest/60 text-alert-dark',
+      )}
+    >
+      <span
+        aria-hidden="true"
+        className={cn('h-2 w-2 shrink-0 rounded-full', ok ? 'bg-success' : 'bg-alert')}
+      />
+      <span className="sr-only sm:not-sr-only">{label}</span>
+    </div>
+  );
+}
+
+export function NavHeader({ lastRun }: { lastRun?: LastRunSummary | null }) {
   return (
     <header id="app-nav-header" className="sticky top-0 z-40 bg-surface/90 backdrop-blur-lg">
       <div className="bg-brand-gradient h-1" aria-hidden="true" />
@@ -12,7 +47,7 @@ export function NavHeader() {
             </span> */}
             {/* <span className="h-6 w-px bg-neutral-100" aria-hidden="true" /> */}
             <span className="flex flex-col leading-tight">
-              <span className="text-sm font-bold text-highlight transition-colors group-hover:text-primary-dark">
+              <span className="text-sm font-bold text-highlight transition-colors group-hover:text-primary-darkest">
                 PDP Monitor
               </span>
               <span className="hidden text-[11px] text-medium-emphasis sm:block">
@@ -20,13 +55,7 @@ export function NavHeader() {
               </span>
             </span>
           </Link>
-          <div className="flex items-center gap-2 rounded-full border border-success-lightest bg-success-lightest/50 px-3 py-1.5 text-xs font-medium text-success-dark">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-60" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-success" />
-            </span>
-            <span className="hidden sm:inline">Automação ativa</span>
-          </div>
+          {lastRun && <LastRunStatus {...lastRun} />}
         </div>
       </div>
     </header>

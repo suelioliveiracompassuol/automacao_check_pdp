@@ -35,19 +35,27 @@ function EvolutionRow({ run, isLatest }: EvolutionRowProps) {
             ? 'text-success-dark'
             : passRate >= 40
               ? 'text-warning-darkest'
-              : 'text-alert',
+              : 'text-alert-dark',
         )}
       >
         {passRate}%
       </span>
       <span className="text-right text-xs text-medium-emphasis">
-        <span className="font-medium text-success-dark">{run.summary.passed}✓</span>
+        <span className="font-medium text-success-dark">
+          {run.summary.passed}
+          <span aria-hidden="true">✓</span>
+          <span className="sr-only"> aprovados</span>
+        </span>
         {' / '}
-        <span className="font-medium text-alert">{run.summary.failed}✗</span>
+        <span className="font-medium text-alert-dark">
+          {run.summary.failed}
+          <span aria-hidden="true">✗</span>
+          <span className="sr-only"> reprovados</span>
+        </span>
       </span>
       <span>
         {isLatest && (
-          <span className="rounded bg-primary-lightest px-1.5 py-0.5 text-[9px] font-bold text-primary-dark">
+          <span className="rounded bg-primary-lightest px-1.5 py-0.5 text-[11px] font-bold text-primary-darkest">
             atual
           </span>
         )}
@@ -85,7 +93,7 @@ export function EvolutionSection({
           <EvolutionChart data={chartData} />
         </Card>
         <Card className="p-3">
-          <div className="grid grid-cols-[3.5rem_1fr_5.5rem_3rem] gap-2 px-3 pt-1 pb-2 text-[10px] font-bold tracking-widest text-low-emphasis uppercase">
+          <div className="grid grid-cols-[3.5rem_1fr_5.5rem_3rem] gap-2 px-3 pt-1 pb-2 text-[11px] font-bold tracking-widest text-low-emphasis uppercase">
             <span>Data</span>
             <span>Taxa</span>
             <span className="text-right">✓ / ✗</span>

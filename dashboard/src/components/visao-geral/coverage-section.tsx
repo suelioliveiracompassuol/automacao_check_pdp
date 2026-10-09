@@ -50,14 +50,14 @@ export function CoverageSection({
                 return (
                   <span
                     key={vendor}
-                    className={cn('rounded-full px-2 py-0.5 text-[10px] font-bold', info.className)}
+                    className={cn('rounded-full px-2 py-0.5 text-[11px] font-bold', info.className)}
                   >
                     {info.label}
                   </span>
                 );
               })}
               {channelsByCountry.get(code)?.has('socialcommerce') && (
-                <span className="rounded-full bg-info-lightest px-2 py-0.5 text-[10px] font-bold text-info-dark">
+                <span className="rounded-full bg-info-lightest px-2 py-0.5 text-[11px] font-bold text-info-dark">
                   Minha Loja
                 </span>
               )}

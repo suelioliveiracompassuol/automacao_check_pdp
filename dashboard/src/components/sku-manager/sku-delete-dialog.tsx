@@ -30,13 +30,13 @@ export function SkuDeleteDialog({ skuName, onConfirm, onCancel }: SkuDeleteDialo
       }}
     >
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+        <Dialog.Overlay className="dialog-overlay fixed inset-0 z-40 bg-black/40 backdrop-blur-sm" />
         <Dialog.Content
-          className="fixed left-1/2 top-1/2 z-50 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white p-6 shadow-xl data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95"
+          className="dialog-content fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white p-6 shadow-xl"
           aria-describedby="delete-dialog-description"
         >
           <Dialog.Close
-            className="absolute right-4 top-4 rounded-lg p-1 text-low-emphasis transition-colors hover:bg-neutral-75 hover:text-medium-emphasis"
+            className="absolute right-3 top-3 rounded-lg p-2 text-low-emphasis transition-colors hover:bg-neutral-75 hover:text-medium-emphasis"
             aria-label="Fechar"
           >
             <X className="h-4 w-4" />

@@ -60,13 +60,13 @@ export function PlatformHero({ platform, title, description, report, action }: P
           <p className="mt-2 max-w-2xl text-sm text-medium-emphasis">{description}</p>
         )}
         <div className="mt-5 flex flex-wrap items-center gap-2">
-          <MetaPill icon={<CalendarClock className="h-3.5 w-3.5 text-primary-dark" />}>
+          <MetaPill icon={<CalendarClock className="h-3.5 w-3.5 text-primary-darkest" />}>
             {formatDate(report.startTime)}
           </MetaPill>
-          <MetaPill icon={<Timer className="h-3.5 w-3.5 text-primary-dark" />}>
+          <MetaPill icon={<Timer className="h-3.5 w-3.5 text-primary-darkest" />}>
             {formatDuration(report.durationMs)}
           </MetaPill>
-          <MetaPill icon={<Hash className="h-3.5 w-3.5 text-primary-dark" />} mono>
+          <MetaPill icon={<Hash className="h-3.5 w-3.5 text-primary-darkest" />} mono>
             {report.runId}
           </MetaPill>
         </div>

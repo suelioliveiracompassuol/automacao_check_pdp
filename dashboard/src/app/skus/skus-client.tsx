@@ -105,7 +105,7 @@ export function SkusClient() {
             type="button"
             onClick={openCreate}
             disabled={!user || authLoading}
-            className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-highlight transition-colors hover:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Plus className="h-4 w-4" aria-hidden="true" />
             Novo SKU
