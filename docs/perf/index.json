@@ -1,0 +1,84 @@
+{
+  "runs": [
+    {
+      "runId": "run_1791903094529",
+      "timestamp": "2026-10-13T14:51:34.527Z",
+      "skus": [
+        {
+          "sku": "NATBRA-108403",
+          "name": "Desodorante Colônia Kaiak Pulso Masculino 100 ml",
+          "pageType": "PDPFull",
+          "success": true,
+          "metrics": {
+            "performanceScore": 52,
+            "lcp": 1720,
+            "cls": 0.077,
+            "tbt": 2889,
+            "fcp": 769,
+            "speedIndex": 6655,
+            "ttfb": 6021,
+            "totalByteWeight": 5609635,
+            "requestCount": 628
+          }
+        },
+        {
+          "sku": "NATBRA-56948",
+          "name": "Refil Desodorante Corporal Kaiak Masculino 100 ml",
+          "pageType": "PDPLow",
+          "success": true,
+          "metrics": {
+            "performanceScore": 50,
+            "lcp": 1895,
+            "cls": 0.097,
+            "tbt": 3018,
+            "fcp": 757,
+            "speedIndex": 3796,
+            "ttfb": 75,
+            "totalByteWeight": 4730304,
+            "requestCount": 356
+          }
+        }
+      ]
+    },
+    {
+      "runId": "run_1791572058400",
+      "timestamp": "2026-10-09T18:54:18.398Z",
+      "skus": [
+        {
+          "sku": "NATBRA-108403",
+          "name": "Desodorante Colônia Kaiak Pulso Masculino 100 ml",
+          "pageType": "PDPFull",
+          "success": true,
+          "metrics": {
+            "performanceScore": 52,
+            "lcp": 1960,
+            "cls": 0.077,
+            "tbt": 2550,
+            "fcp": 743,
+            "speedIndex": 3014,
+            "ttfb": 55,
+            "totalByteWeight": 5656001,
+            "requestCount": 612
+          }
+        },
+        {
+          "sku": "NATBRA-56948",
+          "name": "Refil Desodorante Corporal Kaiak Masculino 100 ml",
+          "pageType": "PDPLow",
+          "success": true,
+          "metrics": {
+            "performanceScore": 49,
+            "lcp": 1998,
+            "cls": 0.097,
+            "tbt": 4564,
+            "fcp": 715,
+            "speedIndex": 4275,
+            "ttfb": 171,
+            "totalByteWeight": 4807999,
+            "requestCount": 412
+          }
+        }
+      ]
+    }
+  ]
+}

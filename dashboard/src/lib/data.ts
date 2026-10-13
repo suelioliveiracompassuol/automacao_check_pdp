@@ -1,6 +1,13 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import type { MonitoringReport, Platform, ReportIndex, ReportIndexEntry } from './types';
+import type {
+  MonitoringReport,
+  Platform,
+  ReportIndex,
+  ReportIndexEntry,
+  PerfIndex,
+  PerfRun,
+} from './types';
 
 // Next.js guarantees cwd() = package root (dashboard/).
 // In CI the workflow does `cd dashboard && npm run build`, so ../docs resolves correctly.
@@ -61,4 +68,30 @@ export function getScreenshotsForRun(runId: string): string[] {
 
     return isWebScreenshot || isAndroidScreenshot;
   });
+}
+
+export function getPerfIndex(): PerfIndex {
+  const filePath = path.join(DOCS_DIR, 'perf', 'index.json');
+  if (!fs.existsSync(filePath)) {
+    return { runs: [] };
+  }
+  try {
+    const raw = fs.readFileSync(filePath, 'utf-8');
+    return JSON.parse(raw);
+  } catch {
+    return { runs: [] };
+  }
+}
+
+export function getPerfRun(runId: string): PerfRun | null {
+  const filePath = path.join(DOCS_DIR, 'perf', `${runId}.json`);
+  if (!fs.existsSync(filePath)) {
+    return null;
+  }
+  try {
+    const raw = fs.readFileSync(filePath, 'utf-8');
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
 }

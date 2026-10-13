@@ -17,6 +17,10 @@ describe('MobileBottomNav', () => {
   it('renders a link to every primary route', () => {
     render(<MobileBottomNav />);
     expect(screen.getByRole('link', { name: /visão geral/i })).toHaveAttribute('href', '/');
+    expect(screen.getByRole('link', { name: /performance/i })).toHaveAttribute(
+      'href',
+      '/performance',
+    );
     expect(screen.getByRole('link', { name: /^web$/i })).toHaveAttribute('href', '/web');
     expect(screen.getByRole('link', { name: /android/i })).toHaveAttribute('href', '/android');
     expect(screen.getByRole('link', { name: /ios/i })).toHaveAttribute('href', '/ios');

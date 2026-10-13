@@ -70,6 +70,7 @@ jobs:
           cp -r docs/reports pages_output/reports
           cp docs/last-report.html pages_output/last-report.html 2>/dev/null || true
           cp docs/last-report.json pages_output/last-report.json 2>/dev/null || true
+          cp -r docs/perf pages_output/perf 2>/dev/null || true
 
       - name: 📤 Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

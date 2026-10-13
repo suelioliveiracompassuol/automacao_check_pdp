@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import * as Collapsible from '@radix-ui/react-collapsible';
-import { BarChart3, ChevronDown, Database, Globe } from 'lucide-react';
+import { BarChart3, ChevronDown, Database, Globe, Gauge } from 'lucide-react';
 import { FaAndroid, FaApple } from 'react-icons/fa';
 import { cn } from '@/lib/utils';
 
@@ -98,6 +98,13 @@ export function Sidebar() {
             label="Visão Geral"
             icon={<BarChart3 className="h-4 w-4 shrink-0" aria-hidden="true" />}
             active={pathname === '/'}
+          />
+
+          <NavLink
+            href="/performance"
+            label="Performance"
+            icon={<Gauge className="h-4 w-4 shrink-0" aria-hidden="true" />}
+            active={pathname === '/performance'}
           />
 
           <Collapsible.Root

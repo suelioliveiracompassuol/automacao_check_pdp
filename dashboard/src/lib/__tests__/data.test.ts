@@ -20,6 +20,8 @@ import {
   getScreenshotsForRun,
   getReportsByPlatform,
   getLastReportByPlatform,
+  getPerfIndex,
+  getPerfRun,
 } from '../data';
 
 const mockReport = {
@@ -184,6 +186,37 @@ describe('data.ts', () => {
 
     it('returns null when the platform has no runs yet', () => {
       expect(getLastReportByPlatform('ios')).toBeNull();
+    });
+  });
+
+  describe('getPerfIndex / getPerfRun', () => {
+    it('retorna { runs: [] } quando docs/perf/index.json não existe', () => {
+      vi.mocked(fs.existsSync).mockReturnValue(false);
+      expect(getPerfIndex()).toEqual({ runs: [] });
+    });
+
+    it('lê e faz parse de docs/perf/index.json quando existir', () => {
+      vi.mocked(fs.existsSync).mockReturnValue(true);
+      vi.mocked(fs.readFileSync).mockReturnValue(JSON.stringify({ runs: [{ runId: 'run_1' }] }));
+      expect(getPerfIndex()).toEqual({ runs: [{ runId: 'run_1' }] });
+    });
+
+    it('retorna null quando docs/perf/<runId>.json não existe', () => {
+      vi.mocked(fs.existsSync).mockReturnValue(false);
+      expect(getPerfRun('run_999')).toBeNull();
+    });
+
+    it('lê e faz parse de docs/perf/<runId>.json quando existir', () => {
+      const mockPerfRun = {
+        runId: 'run_1',
+        timestamp: '2024-01-01T00:00:00Z',
+        formFactor: 'desktop',
+        runsPerSku: 3,
+        results: [],
+      };
+      vi.mocked(fs.existsSync).mockReturnValue(true);
+      vi.mocked(fs.readFileSync).mockReturnValue(JSON.stringify(mockPerfRun));
+      expect(getPerfRun('run_1')).toEqual(mockPerfRun);
     });
   });
 });

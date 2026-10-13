@@ -1,5 +1,41 @@
 import { Browser, BrowserContext } from "@playwright/test";
 
+export const DEFAULT_USER_AGENT =
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36";
+
+/**
+ * Builds standard OneTrust consent cookies for the given target URL domain.
+ */
+export function buildConsentCookies(
+  targetUrl: string,
+): { name: string; value: string; domain: string; path: string }[] {
+  const parsedUrl = new URL(targetUrl);
+  const baseDomain = parsedUrl.hostname.replace(/^www\./, "");
+  const now = new Date().toISOString();
+  return [
+    {
+      name: "OptanonAlertBoxClosed",
+      value: now,
+      domain: `.${baseDomain}`,
+      path: "/",
+    },
+    {
+      name: "OptanonConsent",
+      value: `isGpcEnabled=0&datestamp=${encodeURIComponent(now)}&version=202306.1.0&browserGpcFlag=0&isIABGlobal=false&hosts=&landingPath=NotLandingPage&groups=C0001%3A1%2CC0003%3A1%2CC0002%3A1%2CC0004%3A1%2CC0005%3A1&AwaitingReconsent=false&geolocation=%3B`,
+      domain: `.${baseDomain}`,
+      path: "/",
+    },
+  ];
+}
+
+/**
+ * Builds a Cookie header string with OneTrust consent cookies ("name=value; name=value").
+ */
+export function buildConsentCookieHeader(targetUrl: string): string {
+  const cookies = buildConsentCookies(targetUrl);
+  return cookies.map((c) => `${c.name}=${c.value}`).join("; ");
+}
+
 /**
  * Creates a standardized browser context with anti-bot measures and pre-injected cookies.
  * This ensures consistency across different types of journeys (direct PDP vs Exploratory).
@@ -14,8 +50,7 @@ export async function createStandardContext(
 ): Promise<BrowserContext> {
   const context = await browser.newContext({
     viewport: { width: 1280, height: 720 },
-    userAgent:
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    userAgent: DEFAULT_USER_AGENT,
     ignoreHTTPSErrors: true,
     extraHTTPHeaders: {
       "Accept-Language": "pt-BR,pt;q=0.9,es;q=0.8,en;q=0.7",
@@ -36,22 +71,7 @@ export async function createStandardContext(
   // Pre-inject OneTrust consent cookies to ensure Einstein API returns campaigns
   // for headless/bot sessions without previous browsing history.
   try {
-    const parsedUrl = new URL(targetUrl);
-    const baseDomain = parsedUrl.hostname.replace(/^www\./, "");
-    await context.addCookies([
-      {
-        name: "OptanonAlertBoxClosed",
-        value: new Date().toISOString(),
-        domain: `.${baseDomain}`,
-        path: "/",
-      },
-      {
-        name: "OptanonConsent",
-        value: `isGpcEnabled=0&datestamp=${encodeURIComponent(new Date().toISOString())}&version=202306.1.0&browserGpcFlag=0&isIABGlobal=false&hosts=&landingPath=NotLandingPage&groups=C0001%3A1%2CC0003%3A1%2CC0002%3A1%2CC0004%3A1%2CC0005%3A1&AwaitingReconsent=false&geolocation=%3B`,
-        domain: `.${baseDomain}`,
-        path: "/",
-      },
-    ]);
+    await context.addCookies(buildConsentCookies(targetUrl));
   } catch (e) {
     console.log(`   ⚠️ Failed to set consent cookies: ${e}`);
   }

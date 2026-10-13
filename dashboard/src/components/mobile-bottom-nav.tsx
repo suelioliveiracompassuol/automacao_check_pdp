@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BarChart3, Database, Globe, type LucideIcon } from 'lucide-react';
+import { BarChart3, Database, Globe, Gauge, type LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { FaAndroid, FaApple } from 'react-icons/fa';
 
@@ -14,6 +14,7 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { href: '/', label: 'Visão Geral', icon: BarChart3 },
+  { href: '/performance', label: 'Performance', icon: Gauge },
   { href: '/web', label: 'Web', icon: Globe },
   { href: '/android', label: 'Android', icon: FaAndroid },
   { href: '/ios', label: 'iOS', icon: FaApple },

@@ -8,6 +8,7 @@
     "check": "tsc && node dist/index.js",
     "check:headed": "tsc && cross-env HEADLESS=false node dist/index.js",
     "check:smoke": "tsc && cross-env MODE=smoke node dist/index.js",
+    "perf": "tsc && node dist/perf/index.js",
     "test": "npx playwright test",
     "test:unit": "npx playwright test src/tests/",
     "lint": "eslint src/",
@@ -33,6 +34,8 @@
     "typescript-eslint": "^8.59.2"
   },
   "dependencies": {
-    "firebase-admin": "^14.3.0"
+    "chrome-launcher": "^1.2.2",
+    "firebase-admin": "^14.3.0",
+    "lighthouse": "^12.8.2"
   }
 }
