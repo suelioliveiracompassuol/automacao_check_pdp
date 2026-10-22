@@ -125,9 +125,13 @@ export function findCommerceFlagsInNetworkLog(
   return null;
 }
 
-/** The Firebase SDK's Remote Config fetch: .../v1/projects/<number>/namespaces/firebase:fetch */
+/**
+ * The app's Remote Config fetch: .../v1/projects/<number>/namespaces/firebase:fetch. Other
+ * namespaces hit the same host with their own config (e.g. fireperf:fetch, Performance
+ * Monitoring's fpr_* keys) and must not be read as the app's flags.
+ */
 export function matchesRemoteConfigFetchUrl(url: string): boolean {
-  return /firebaseremoteconfig\.googleapis\.com\/.*\/namespaces\/[^/]+:fetch/.test(
+  return /firebaseremoteconfig\.googleapis\.com\/.*\/namespaces\/firebase:fetch/.test(
     url,
   );
 }

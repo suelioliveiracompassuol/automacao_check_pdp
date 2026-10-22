@@ -601,6 +601,19 @@ test.describe("Android Unit Tests", () => {
       expect(entries).toEqual({ wl_notify_me: "{}" });
     });
 
+    test("ignores other Remote Config namespaces such as Performance Monitoring (fireperf)", () => {
+      expect(
+        findRemoteConfigEntriesInNetworkLog(
+          har([
+            entry(
+              "https://firebaseremoteconfig.googleapis.com/v1/projects/865562389217/namespaces/fireperf:fetch",
+              JSON.stringify({ entries: { fpr_enabled: "true" } }),
+            ),
+          ]),
+        ),
+      ).toBeNull();
+    });
+
     test("returns null Remote Config when the app didn't fetch it in the session", () => {
       expect(
         findRemoteConfigEntriesInNetworkLog(
