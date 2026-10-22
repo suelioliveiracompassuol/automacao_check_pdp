@@ -70,17 +70,48 @@ function evaluate(
   }
 }
 
+/** Verdict plus the button text, as shown in the report. */
+function verdictWithText(
+  state: CartActionState,
+  notifyMeEnabled: boolean | undefined,
+  text: string | undefined,
+): Pick<CheckResult, "passed" | "status" | "message"> {
+  const verdict = evaluate(state, notifyMeEnabled);
+  return {
+    ...verdict,
+    message: text ? `${verdict.message} — texto: "${text}"` : verdict.message,
+  };
+}
+
+/**
+ * Re-evaluates an add-to-cart result with `wl_notify_me`. The flag comes from the app's own
+ * Remote Config fetch, which is only readable from the session's network log after the
+ * session closes — so the check first runs without it and is completed here.
+ */
+export function applyNotifyMeFlag(
+  result: CheckResult,
+  notifyMeEnabled: boolean | undefined,
+): CheckResult {
+  const details = { ...result.details, notifyMeFlag: notifyMeEnabled ?? null };
+  const state = result.details?.state as CartActionState | undefined;
+  if (!state) {
+    return { ...result, details };
+  }
+  const text = result.details?.text as string | undefined;
+  return { ...result, ...verdictWithText(state, notifyMeEnabled, text), details };
+}
+
 /**
  * Android equivalent of checks/addToCart.ts. Mirrors the app's display rule
  * (ProductBaseInformationViewHolder / BuyBottomSheetNe in ncf-whitelabel-cf-android):
  * in stock → buy button; out of stock → "acabou, mas volta logo!" warning, plus the
  * "me avise" button only when the Remote Config flag `wl_notify_me` is on.
  * The quantity counter only appears after adding to the bag, so it isn't checked here.
+ * `wl_notify_me` isn't known yet at this point: see applyNotifyMeFlag.
  */
 export async function checkAddToCartAndroid(
   driver: WebdriverIO.Browser,
   navStartTime?: number,
-  notifyMeFlag: Promise<boolean | undefined> = Promise.resolve(undefined),
 ): Promise<AddToCartCheckResult> {
   try {
     const buyButton = driver.$(
@@ -141,7 +172,6 @@ export async function checkAddToCartAndroid(
 
     const loadTime =
       state && navStartTime ? Date.now() - navStartTime : undefined;
-    const notifyMeEnabled = await notifyMeFlag.catch(() => undefined);
 
     if (!state) {
       return {
@@ -152,7 +182,7 @@ export async function checkAddToCartAndroid(
         message:
           'Nenhum botão de compra, "me avise" ou aviso de indisponível encontrado na tela',
         loadTime,
-        details: { notifyMeFlag: notifyMeEnabled ?? null },
+        details: { notifyMeFlag: null },
       };
     }
 
@@ -163,13 +193,11 @@ export async function checkAddToCartAndroid(
     const text = hasButton
       ? (await targetButton.getText().catch(() => "")) || undefined
       : undefined;
-    const verdict = evaluate(state, notifyMeEnabled);
 
     return {
       feature: FEATURE,
       featureKey: FEATURE_KEY,
-      ...verdict,
-      message: text ? `${verdict.message} — texto: "${text}"` : verdict.message,
+      ...verdictWithText(state, undefined, text),
       loadTime,
       details: {
         isDisplayed: hasButton,
@@ -177,7 +205,7 @@ export async function checkAddToCartAndroid(
         text,
         state,
         inStock: state === "buy",
-        notifyMeFlag: notifyMeEnabled ?? null,
+        notifyMeFlag: null,
         loadTime,
       },
     };

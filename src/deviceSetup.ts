@@ -3,18 +3,24 @@ import type { Capabilities } from "@wdio/types";
 import type { SkuConfig } from "./types.js";
 
 /**
+ * DEVICE_FARM_PROVIDER: "lambdatest" (default, the provider in use) | "browserstack" | "local".
+ * Only LambdaTest exposes the session network log the app flags are read from.
+ */
+export function getDeviceFarmProvider(): string {
+  return (process.env.DEVICE_FARM_PROVIDER || "lambdatest").toLowerCase();
+}
+
+/**
  * Creates an Appium session against a device farm or a local Android emulator/device.
  * Mirrors browserSetup.ts's role for the web checks, but for a native Android app via Appium.
  *
- * Provider is selected via DEVICE_FARM_PROVIDER ("browserstack" | "lambdatest" | "local"), default "browserstack".
+ * Provider is selected via DEVICE_FARM_PROVIDER (see getDeviceFarmProvider).
  * Note: LambdaTest's automated Appium product is "App Automate" (not the manual "App Live" UI) —
  * both share the same uploaded app storage, so an app uploaded via https://applive.lambdatest.com/app
  * can be reused here through its `lt://` id.
  */
 export async function createAndroidSession(): Promise<WebdriverIO.Browser> {
-  const provider = (
-    process.env.DEVICE_FARM_PROVIDER || "browserstack"
-  ).toLowerCase();
+  const provider = getDeviceFarmProvider();
 
   if (provider === "local") {
     return createLocalSession();

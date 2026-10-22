@@ -3,6 +3,7 @@ import {
   matchesCommerceFeatureFlagUrl,
   parseCommerceFeatureFlags,
 } from "../checks/remoteConfig.js";
+import { getDeviceFarmProvider } from "../deviceSetup.js";
 
 const LT_SESSION_API =
   "https://mobile-api.lambdatest.com/mobile-automation/api/v1/sessions";
@@ -73,15 +74,17 @@ export function extractNetworkEntries(payload: unknown): CapturedEntry[] {
 }
 
 /**
- * Picks the last /feature-flag response the app itself received and parses it. Returns null
- * when the app never called it or the capture has no JSON body.
+ * Latest successful JSON body, among the requests matching `matchesUrl`, that `accept` takes.
+ * `found` tells "never called" apart from "called but no usable body" for the logs.
  */
-export function findCommerceFlagsInNetworkLog(
-  payload: unknown,
-): CommerceFeatureFlags | null {
-  const candidates = extractNetworkEntries(payload).filter(
+function findLastJsonBody(
+  entries: CapturedEntry[],
+  matchesUrl: (url: string) => boolean,
+  accept: (body: Record<string, unknown>) => boolean = () => true,
+): { found: boolean; body: Record<string, unknown> | null } {
+  const candidates = entries.filter(
     (e) =>
-      matchesCommerceFeatureFlagUrl(e.url) &&
+      matchesUrl(e.url) &&
       (e.status === undefined || (e.status >= 200 && e.status < 300)),
   );
   for (const entry of [...candidates].reverse()) {
@@ -90,18 +93,66 @@ export function findCommerceFlagsInNetworkLog(
     }
     try {
       const body = asRecord(JSON.parse(entry.body));
-      if (body) {
-        return parseCommerceFeatureFlags(body);
+      if (body && accept(body)) {
+        return { found: true, body };
       }
     } catch {
       // not JSON — try an older capture
     }
   }
-  if (candidates.length > 0) {
+  return { found: candidates.length > 0, body: null };
+}
+
+/**
+ * Picks the last /feature-flag response the app itself received and parses it. Returns null
+ * when the app never called it or the capture has no JSON body.
+ */
+export function findCommerceFlagsInNetworkLog(
+  payload: unknown,
+): CommerceFeatureFlags | null {
+  const { found, body } = findLastJsonBody(
+    extractNetworkEntries(payload),
+    matchesCommerceFeatureFlagUrl,
+  );
+  if (body) {
+    return parseCommerceFeatureFlags(body);
+  }
+  if (found) {
     console.log(
       "   ⚠️  Commerce flags: o app chamou /feature-flag, mas o log de rede veio sem corpo JSON (SSL pinning ou captura sem body).",
     );
   }
+  return null;
+}
+
+/** The Firebase SDK's Remote Config fetch: .../v1/projects/<number>/namespaces/firebase:fetch */
+export function matchesRemoteConfigFetchUrl(url: string): boolean {
+  return /firebaseremoteconfig\.googleapis\.com\/.*\/namespaces\/[^/]+:fetch/.test(
+    url,
+  );
+}
+
+/**
+ * Remote Config entries as the app itself received them (last fetch with `entries`). A fetch
+ * answered with state NO_CHANGE carries no entries and is skipped. Returns null when the app
+ * didn't fetch during the session (e.g. it used its cached values) or the body wasn't captured.
+ */
+export function findRemoteConfigEntriesInNetworkLog(
+  payload: unknown,
+): Record<string, string> | null {
+  const { found, body } = findLastJsonBody(
+    extractNetworkEntries(payload),
+    matchesRemoteConfigFetchUrl,
+    (b) => asRecord(b.entries) !== undefined,
+  );
+  if (body) {
+    return body.entries as Record<string, string>;
+  }
+  console.log(
+    found
+      ? "   ⚠️  Remote Config: o app buscou as configs, mas o log de rede veio sem entries (resposta sem mudança, SSL pinning ou captura sem body)."
+      : "   ⚠️  Remote Config: o app não buscou as configs nesta sessão (usou cache?).",
+  );
   return null;
 }
 
@@ -139,26 +190,32 @@ async function fetchLambdaTestNetworkLog(sessionId: string): Promise<unknown> {
   }
 }
 
+export interface AppSessionFlags {
+  commerce: CommerceFeatureFlags | null;
+  remoteConfigEntries: Record<string, string> | null;
+}
+
 /**
- * Commerce feature flags as the Android app received them: read from the device farm's network
- * capture of the (already closed) session — the script never calls the BFF itself.
+ * Commerce feature flags and Remote Config as the Android app received them, read from the
+ * device farm's network capture of the (already closed) session. The script never calls the
+ * BFF or Firebase itself. Returns null when there's no capture for this provider/config.
  */
-export async function fetchCommerceFlagsFromAppSession(
+export async function readAppSessionFlags(
   sessionId: string,
-): Promise<CommerceFeatureFlags | null> {
-  const provider = (
-    process.env.DEVICE_FARM_PROVIDER || "browserstack"
-  ).toLowerCase();
+): Promise<AppSessionFlags | null> {
+  const provider = getDeviceFarmProvider();
   if (provider !== "lambdatest") {
     console.log(
-      `   ℹ️  Commerce flags do app: captura de rede só implementada para LambdaTest (provider atual: ${provider}).`,
+      `   ℹ️  Flags do app: captura de rede só implementada para LambdaTest (provider atual: ${provider}).`,
     );
     return null;
   }
   if (!isAndroidNetworkCaptureEnabled()) {
     return null;
   }
-  return findCommerceFlagsInNetworkLog(
-    await fetchLambdaTestNetworkLog(sessionId),
-  );
+  const log = await fetchLambdaTestNetworkLog(sessionId);
+  return {
+    commerce: findCommerceFlagsInNetworkLog(log),
+    remoteConfigEntries: findRemoteConfigEntriesInNetworkLog(log),
+  };
 }

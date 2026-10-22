@@ -68,13 +68,8 @@ jobs:
           LAMBDATEST_USERNAME: ${{ secrets.LAMBDATEST_USERNAME }}
           LAMBDATEST_ACCESS_KEY: ${{ secrets.LAMBDATEST_ACCESS_KEY }}
           LAMBDATEST_APP_ID: ${{ secrets.LAMBDATEST_APP_ID }}
-          # Firebase Remote Config do app mobile (projeto distinto do Firestore usado pelo Web)
-          ANDROID_FIREBASE_PROJECT_ID: ${{ secrets.ANDROID_FIREBASE_PROJECT_ID }}
-          ANDROID_FIREBASE_PROJECT_NUMBER: ${{ secrets.ANDROID_FIREBASE_PROJECT_NUMBER }}
-          ANDROID_FIREBASE_API_KEY: ${{ secrets.ANDROID_FIREBASE_API_KEY }}
-          ANDROID_FIREBASE_APP_ID: ${{ secrets.ANDROID_FIREBASE_APP_ID }}
-          ANDROID_FIREBASE_PACKAGE_NAME: ${{ secrets.ANDROID_FIREBASE_PACKAGE_NAME }}
-          ANDROID_FIREBASE_APPS_JSON: ${{ secrets.ANDROID_FIREBASE_APPS_JSON }}
+          # Remote Config e commerce flags são lidos do log de rede da sessão no LambdaTest
+          # (o que o próprio app recebeu); nenhum secret do Firebase é necessário aqui.
           # Login opcional (roda anônimo se não definido) e seleção de SKUs/concorrência
           ANDROID_LOGIN_EMAIL: ${{ secrets.ANDROID_LOGIN_EMAIL }}
           ANDROID_LOGIN_PASSWORD: ${{ secrets.ANDROID_LOGIN_PASSWORD }}

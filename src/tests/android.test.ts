@@ -2,11 +2,14 @@ import { test, expect } from "@playwright/test";
 import { resolveAndroidAppPackage } from "../deviceSetup.js";
 import { getAndroidCredentialsFromEnv } from "../checks-android/login.js";
 import {
-  loadFirebaseAppsFromEnv,
+  buildRemoteConfigFlags,
   resolveNotifyMeFlag,
 } from "../checks-android/remoteConfig.js";
 import { ANDROID_SELECTORS } from "../checks-android/configs/selectors.js";
-import { checkAddToCartAndroid } from "../checks-android/addToCart.js";
+import {
+  applyNotifyMeFlag,
+  checkAddToCartAndroid,
+} from "../checks-android/addToCart.js";
 import {
   checkBrandShowcaseAndroid,
   checkRecommendationShowcaseAndroid,
@@ -15,11 +18,15 @@ import {
   distributeIntoChunks,
   parseAndroidConcurrency,
 } from "../androidConcurrency.js";
-import { findCommerceFlagsInNetworkLog } from "../checks-android/commerceFlags.js";
+import {
+  findCommerceFlagsInNetworkLog,
+  findRemoteConfigEntriesInNetworkLog,
+} from "../checks-android/appNetworkFlags.js";
 import { StepScreenshotRecorder } from "../checks-android/stepScreenshots.js";
 import * as fs from "node:fs";
 import * as os from "node:os";
-import * as path from "node:path";import type { SkuConfig } from "../types.js";
+import * as path from "node:path";
+import type { SkuConfig } from "../types.js";
 
 test.describe("Android Unit Tests", () => {
   const originalEnv = { ...process.env };
@@ -95,69 +102,6 @@ test.describe("Android Unit Tests", () => {
         email: "user@natura.net",
         password: "secretPassword",
       });
-    });
-  });
-
-  test.describe("loadFirebaseAppsFromEnv", () => {
-    test("loads single app from direct environment variables", () => {
-      delete process.env.ANDROID_FIREBASE_APPS_JSON;
-      process.env.PROJECT_ID = "app-natura-test";
-      process.env.PROJECT_NUMBER = "123456789";
-      process.env.API_KEY = "test-api-key";
-      process.env.APP_ID = "1:123456789:android:test";
-      process.env.PACKAGE_NAME = "net.natura.test";
-
-      const apps = loadFirebaseAppsFromEnv();
-      expect(apps["net.natura.test"]).toEqual({
-        projectId: "app-natura-test",
-        projectNumber: "123456789",
-        apiKey: "test-api-key",
-        appId: "1:123456789:android:test",
-        packageName: "net.natura.test",
-      });
-    });
-
-    test("reads the ANDROID_FIREBASE_* names the CI workflow passes", () => {
-      delete process.env.ANDROID_FIREBASE_APPS_JSON;
-      for (const name of [
-        "PROJECT_ID",
-        "PROJECT_NUMBER",
-        "API_KEY",
-        "APP_ID",
-        "PACKAGE_NAME",
-      ]) {
-        delete process.env[name];
-      }
-      process.env.ANDROID_FIREBASE_PROJECT_ID = "app-natura-ci";
-      process.env.ANDROID_FIREBASE_PROJECT_NUMBER = "111";
-      process.env.ANDROID_FIREBASE_API_KEY = "ci-api-key";
-      process.env.ANDROID_FIREBASE_APP_ID = "1:111:android:ci";
-      process.env.ANDROID_FIREBASE_PACKAGE_NAME = "net.natura.ci";
-
-      expect(loadFirebaseAppsFromEnv()["net.natura.ci"]?.projectId).toBe(
-        "app-natura-ci",
-      );
-    });
-
-    test("loads multi-app config from ANDROID_FIREBASE_APPS_JSON", () => {
-      process.env.ANDROID_FIREBASE_APPS_JSON = JSON.stringify({
-        "com.naturaeco.app.avon": {
-          projectId: "app-avon-prod",
-          projectNumber: "987654321",
-          apiKey: "avon-api-key",
-          appId: "1:987654321:android:avon",
-          packageName: "com.naturaeco.app.avon",
-        },
-      });
-
-      const apps = loadFirebaseAppsFromEnv();
-      expect(apps["com.naturaeco.app.avon"]?.projectId).toBe("app-avon-prod");
-    });
-
-    test("handles malformed JSON gracefully", () => {
-      process.env.ANDROID_FIREBASE_APPS_JSON = "{ invalid json ";
-      const apps = loadFirebaseAppsFromEnv();
-      expect(typeof apps).toBe("object");
     });
   });
 
@@ -263,30 +207,27 @@ test.describe("Android Unit Tests", () => {
     });
 
     test("records the wl_notify_me flag in the result details", async () => {
-      const result = await checkAddToCartAndroid(
-        driverShowing(["cv_buy_button"]),
-        undefined,
-        Promise.resolve(true),
+      const result = applyNotifyMeFlag(
+        await checkAddToCartAndroid(driverShowing(["cv_buy_button"])),
+        true,
       );
       expect(result.status).toBe("pass");
       expect(result.details?.notifyMeFlag).toBe(true);
     });
 
     test('warns when "me avise" is shown but wl_notify_me is off', async () => {
-      const result = await checkAddToCartAndroid(
-        driverShowing(["btNotifyMe"]),
-        undefined,
-        Promise.resolve(false),
+      const result = applyNotifyMeFlag(
+        await checkAddToCartAndroid(driverShowing(["btNotifyMe"])),
+        false,
       );
       expect(result.passed).toBe(true);
       expect(result.status).toBe("warning");
     });
 
     test("passes when out of stock without button and wl_notify_me is off", async () => {
-      const result = await checkAddToCartAndroid(
-        driverShowing(["tv_warning_unavailable"]),
-        undefined,
-        Promise.resolve(false),
+      const result = applyNotifyMeFlag(
+        await checkAddToCartAndroid(driverShowing(["tv_warning_unavailable"])),
+        false,
       );
       expect(result.passed).toBe(true);
       expect(result.status).toBe("pass");
@@ -294,13 +235,33 @@ test.describe("Android Unit Tests", () => {
     });
 
     test("fails when out of stock without button but wl_notify_me is on", async () => {
-      const result = await checkAddToCartAndroid(
-        driverShowing(["tv_warning_unavailable"]),
-        undefined,
-        Promise.resolve(true),
+      const result = applyNotifyMeFlag(
+        await checkAddToCartAndroid(driverShowing(["tv_warning_unavailable"])),
+        true,
       );
       expect(result.passed).toBe(false);
       expect(result.status).toBe("fail");
+    });
+
+    test("keeps the button text in the message when the flag is applied later", async () => {
+      const result = applyNotifyMeFlag(
+        await checkAddToCartAndroid(
+          driverShowing(["cv_buy_button"], "adicionar"),
+        ),
+        true,
+      );
+      expect(result.message).toBe(
+        'Botão de compra encontrado na tela — texto: "adicionar"',
+      );
+    });
+
+    test("leaves a failed check (no button state) as failed when the flag arrives", async () => {
+      const result = applyNotifyMeFlag(
+        await checkAddToCartAndroid(driverShowing([])),
+        true,
+      );
+      expect(result.status).toBe("fail");
+      expect(result.details?.notifyMeFlag).toBe(true);
     });
 
     test("warns when out of stock without button and the flag wasn't captured", async () => {
@@ -338,6 +299,16 @@ test.describe("Android Unit Tests", () => {
       expect(resolveNotifyMeFlag({ wl_notify_me: "true" }, "pt-BR")).toBe(
         false,
       );
+    });
+
+    test("buildRemoteConfigFlags resolves wl_notify_me for the SKU's locale and channel", () => {
+      const flags = buildRemoteConfigFlags(entries, {
+        country: "BR",
+        channel: "socialcommerce",
+      });
+      expect(flags.locale).toBe("pt-BR");
+      expect(flags.wl_notify_me).toBe(false);
+      expect(flags._raw).toBe(entries);
     });
   });
 
@@ -590,6 +561,27 @@ test.describe("Android Unit Tests", () => {
         findCommerceFlagsInNetworkLog(har([entry("https://x/feature-flag")])),
       ).toBeNull();
       expect(findCommerceFlagsInNetworkLog(null)).toBeNull();
+    });
+
+    test("reads the Remote Config entries from the app's own firebase:fetch response", () => {
+      const rcUrl =
+        "https://firebaseremoteconfig.googleapis.com/v1/projects/865562389217/namespaces/firebase:fetch";
+      const entries = findRemoteConfigEntriesInNetworkLog(
+        har([
+          entry(rcUrl, JSON.stringify({ entries: { wl_notify_me: "{}" } })),
+          // a later fetch answered with NO_CHANGE carries no entries and is skipped
+          entry(rcUrl, JSON.stringify({ state: "NO_CHANGE" })),
+        ]),
+      );
+      expect(entries).toEqual({ wl_notify_me: "{}" });
+    });
+
+    test("returns null Remote Config when the app didn't fetch it in the session", () => {
+      expect(
+        findRemoteConfigEntriesInNetworkLog(
+          har([entry("https://x/feature-flag", flagsBody)]),
+        ),
+      ).toBeNull();
     });
 
     test("ignores Firebase Remote Config traffic", () => {

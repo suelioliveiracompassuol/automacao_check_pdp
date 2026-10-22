@@ -34,13 +34,16 @@ import {
   closeAndroidSession,
   resolveAndroidAppPackage,
 } from "./deviceSetup.js";
-import { checkAddToCartAndroid } from "./checks-android/addToCart.js";
+import {
+  applyNotifyMeFlag,
+  checkAddToCartAndroid,
+} from "./checks-android/addToCart.js";
 import {
   checkBrandShowcaseAndroid,
   checkRecommendationShowcaseAndroid,
 } from "./checks-android/showcases.js";
-import { fetchRemoteConfigFlagsAndroid } from "./checks-android/remoteConfig.js";
-import { fetchCommerceFlagsFromAppSession } from "./checks-android/commerceFlags.js";
+import { buildRemoteConfigFlags } from "./checks-android/remoteConfig.js";
+import { readAppSessionFlags } from "./checks-android/appNetworkFlags.js";
 import {
   getAndroidCredentialsFromEnv,
   loginAndroid,
@@ -125,28 +128,13 @@ async function checkPdpOnDriver(
   console.log(`\n📱 Checking (Android): ${sku.name} (${sku.sku})`);
   console.log(`   Deep link: ${deepLinkUrl}`);
 
-  // Pure REST call (Firebase Installations + Remote Config fetch) — independent of the
-  // device/app session, so it runs concurrently with the Appium-based checks below.
-  const remoteConfigPromise = fetchRemoteConfigFlagsAndroid(
-    sku,
-    resolveAndroidAppPackage(sku),
-  ).catch((e) => {
-    console.log(
-      `   ⚠️  Remote Config fetch falhou: ${e instanceof Error ? e.message : String(e)}`,
-    );
-    return null;
-  });
   const steps = new StepScreenshotRecorder(driver);
   try {
     const navStartTime = Date.now();
     await openPdpDeepLink(driver, deepLinkUrl, sku);
 
     // Verify Add to Cart button and capture load time without duplicate waits
-    const addToCartResult = await checkAddToCartAndroid(
-      driver,
-      navStartTime,
-      remoteConfigPromise.then((f) => f?.wl_notify_me),
-    );
+    const addToCartResult = await checkAddToCartAndroid(driver, navStartTime);
     loadTime = addToCartResult.loadTime ?? Date.now() - navStartTime;
     features.push(addToCartResult);
     await steps.capture("PDP aberta");
@@ -213,9 +201,7 @@ async function checkPdpOnDriver(
     }
   }
 
-  const success =
-    !error &&
-    features.every((f) => f.status !== "fail" && f.status !== "error");
+  const success = isSuccessful(features, error);
   // Final screen only on failure, like the Web monitor (docs/reports is committed by CI)
   if (!success) {
     try {
@@ -243,7 +229,6 @@ async function checkPdpOnDriver(
       );
     }
   }
-  const remoteConfigFlags = (await remoteConfigPromise) ?? undefined;
 
   return {
     sku: sku.sku,
@@ -260,7 +245,6 @@ async function checkPdpOnDriver(
     error,
     pageScreenshot,
     stepScreenshots,
-    remoteConfigFlags,
   };
 }
 
@@ -283,26 +267,52 @@ function buildErrorResult(sku: SkuConfig, error: string): PdpCheckResult {
   };
 }
 
-/** Commerce flags are read from the closed session's network capture (what the app itself
- * received), so they're attached to every SKU checked in that session. */
-async function attachAppCommerceFlags(
+function isSuccessful(features: CheckResult[], error?: string): boolean {
+  return (
+    !error &&
+    features.every((f) => f.status !== "fail" && f.status !== "error")
+  );
+}
+
+/**
+ * Commerce flags and Remote Config are read from the closed session's network capture (what
+ * the app itself received), so they're attached to every SKU checked in that session. The
+ * add-to-cart verdict depends on `wl_notify_me`, so it's completed here and `success` recomputed.
+ */
+async function attachAppSessionFlags(
   sessionId: string,
   results: PdpCheckResult[],
 ): Promise<void> {
   try {
-    const flags = await fetchCommerceFlagsFromAppSession(sessionId);
+    const flags = await readAppSessionFlags(sessionId);
     if (!flags) {
       return;
     }
     for (const r of results) {
-      r.commerceFeatureFlags = flags;
+      if (flags.commerce) {
+        r.commerceFeatureFlags = flags.commerce;
+      }
+      if (flags.remoteConfigEntries) {
+        r.remoteConfigFlags = buildRemoteConfigFlags(
+          flags.remoteConfigEntries,
+          r,
+        );
+        r.features = r.features.map((f) =>
+          f.featureKey === "addToCart"
+            ? applyNotifyMeFlag(f, r.remoteConfigFlags?.wl_notify_me)
+            : f,
+        );
+        r.success = isSuccessful(r.features, r.error);
+      }
     }
     console.log(
-      `   ✓ Commerce flags capturadas do tráfego do app (sessão ${sessionId})`,
+      `   ✓ Flags do app capturadas do tráfego da sessão ${sessionId}: ` +
+        `commerce ${flags.commerce ? "ok" : "não encontradas"}, ` +
+        `Remote Config ${flags.remoteConfigEntries ? "ok" : "não encontrado"}`,
     );
   } catch (e) {
     console.log(
-      `   ⚠️  Commerce flags do app indisponíveis: ${e instanceof Error ? e.message : String(e)}`,
+      `   ⚠️  Flags do app indisponíveis: ${e instanceof Error ? e.message : String(e)}`,
     );
   }
 }
@@ -333,7 +343,7 @@ async function runSessionForSkus(
   } finally {
     await closeAndroidSession(driver);
   }
-  await attachAppCommerceFlags(driver.sessionId, results);
+  await attachAppSessionFlags(driver.sessionId, results);
   return results;
 }
 
