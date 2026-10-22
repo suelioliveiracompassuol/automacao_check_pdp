@@ -22,6 +22,7 @@ test.describe("Métricas de Performance - extractMetrics", () => {
     const metrics = extractMetrics(sampleLhr);
 
     expect(metrics.performanceScore).toBe(85);
+    expect(metrics.startRender).toBe(2105);
     expect(metrics.lcp).toBe(2450);
     expect(metrics.cls).toBe(0.046);
     expect(metrics.tbt).toBe(180);
@@ -39,6 +40,7 @@ test.describe("Métricas de Performance - extractMetrics", () => {
     const metrics = extractMetrics(emptyLhr);
 
     expect(metrics.performanceScore).toBeNull();
+    expect(metrics.startRender).toBeNull();
     expect(metrics.lcp).toBeNull();
     expect(metrics.cls).toBeNull();
     expect(metrics.tbt).toBeNull();

@@ -12,7 +12,9 @@
     "test": "npx playwright test",
     "test:unit": "npx playwright test src/tests/",
     "lint": "eslint src/",
-    "lint:fix": "eslint src/ --fix"
+    "lint:fix": "eslint src/ --fix",
+    "perf:local": "tsc && cross-env PERF_OUTPUT_DIR=reports/perf node dist/perf/index.js",
+    "perf:ci": "tsc && cross-env PERF_OUTPUT_DIR=docs/perf node dist/perf/index.js"
   },
   "keywords": [
     "playwright",

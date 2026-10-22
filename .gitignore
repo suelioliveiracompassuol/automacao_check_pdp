@@ -49,3 +49,4 @@ dashboard/out
 
 # Dev symlink for screenshots
 dashboard/public/reports
+dashboard/tsconfig.tsbuildinfo

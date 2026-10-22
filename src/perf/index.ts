@@ -1,6 +1,8 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import {
+  getPerfConditions,
+  getPerfOutputDir,
   getPerfSkus,
   PERF_RUNS_PER_SKU,
 } from "./config.js";
@@ -15,7 +17,7 @@ import type {
 async function main(): Promise<void> {
   const timestamp = new Date().toISOString();
   const runId = `run_${Date.now()}`;
-  const perfDir = path.join(process.cwd(), "docs", "perf");
+  const perfDir = getPerfOutputDir();
 
   fs.mkdirSync(perfDir, { recursive: true });
 
@@ -28,19 +30,18 @@ async function main(): Promise<void> {
   for (const s of skus) {
     console.log(` - ${s.pageType ?? "PDP"} ${s.sku}: ${s.name} (slug: ${s.slug})`);
   }
+  const conditions = getPerfConditions();
+  const { connectivity, viewport } = conditions;
   console.log(`Execuções por SKU: ${PERF_RUNS_PER_SKU}`);
+  console.log(
+    `Condições (padrão WebPageTest): ${connectivity.name} ${connectivity.downKbps}/${connectivity.upKbps} kbps, ${connectivity.rttMs} ms · tela ${viewport.width}x${viewport.height} · cookie de consentimento: ${conditions.consentCookie ? "sim" : "não"}`,
+  );
   console.log("=".repeat(80));
 
   const results: PerfSkuResult[] = [];
 
   for (const skuTarget of skus) {
-    const result = await measureSku(
-      skuTarget,
-      PERF_RUNS_PER_SKU,
-      perfDir,
-      runId,
-    );
-    results.push(result);
+    results.push(await measureSku(skuTarget, PERF_RUNS_PER_SKU, perfDir, runId, conditions));
   }
 
   const perfRun: PerfRun = {
@@ -48,6 +49,14 @@ async function main(): Promise<void> {
     timestamp,
     formFactor: "desktop",
     runsPerSku: PERF_RUNS_PER_SKU,
+    conditions: {
+      connectivity: connectivity.name,
+      downKbps: connectivity.downKbps,
+      upKbps: connectivity.upKbps,
+      rttMs: connectivity.rttMs,
+      viewport: `${viewport.width}x${viewport.height}`,
+      consentCookie: conditions.consentCookie,
+    },
     results,
   };
 
@@ -55,7 +64,7 @@ async function main(): Promise<void> {
   fs.writeFileSync(runJsonPath, JSON.stringify(perfRun, null, 2), "utf-8");
   console.log(`\n💾 Relatório salvo em: ${runJsonPath}`);
 
-  // Atualiza docs/perf/index.json
+  // Atualiza o index.json da pasta de saída
   const indexJsonPath = path.join(perfDir, "index.json");
   let perfIndex: PerfIndex = { runs: [] };
 
@@ -101,10 +110,11 @@ async function main(): Promise<void> {
       SKU: r.sku,
       Status: r.success ? "✅ OK" : "❌ Falha",
       Score: r.median?.performanceScore ?? "—",
+      "Start Render (ms)": r.median?.startRender ?? "—",
       "LCP (ms)": r.median?.lcp ?? "—",
       CLS: r.median?.cls ?? "—",
       "TBT (ms)": r.median?.tbt ?? "—",
-      "FCP (ms)": r.median?.fcp ?? "—",
+      "SI (ms)": r.median?.speedIndex ?? "—",
       "TTFB (ms)": r.median?.ttfb ?? "—",
     })),
   );

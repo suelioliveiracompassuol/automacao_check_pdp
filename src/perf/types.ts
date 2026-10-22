@@ -1,5 +1,6 @@
 export interface PerfMetrics {
   performanceScore: number | null; // 0-100
+  startRender?: number | null;     // ms, equivalente ao StartRender do WebPageTest
   lcp: number | null;              // ms
   cls: number | null;
   tbt: number | null;              // ms
@@ -33,7 +34,7 @@ export interface PerfSkuResult {
   runs: PerfMetrics[];             // todas as execuções válidas
   lcpElement: PerfLcpElement | null;
   opportunities: PerfOpportunity[];
-  reportHtmlPath: string | null;   // relativo a docs/perf, ex.: "run_123/NATBRA-108403.html"
+  reportJsonPath: string | null;   // relatório completo do Lighthouse (LHR), relativo a docs/perf, ex.: "run_123/NATBRA-108403.json"
   lighthouseVersion: string | null;
 }
 
@@ -42,6 +43,14 @@ export interface PerfRun {
   timestamp: string;               // ISO
   formFactor: "desktop";
   runsPerSku: number;
+  conditions?: {
+    connectivity: string;          // ex.: "Cable"
+    downKbps: number;
+    upKbps: number;
+    rttMs: number;
+    viewport: string;              // ex.: "1920x1200"
+    consentCookie: boolean;
+  };
   results: PerfSkuResult[];
 }
 

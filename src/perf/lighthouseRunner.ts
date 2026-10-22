@@ -5,6 +5,7 @@ import { buildConsentCookieHeader } from "../browserSetup.js";
 import {
   PERF_USER_AGENT,
   buildPerfUrl,
+  type PerfConditions,
   type PerfSkuTarget,
 } from "./config.js";
 import {
@@ -23,9 +24,8 @@ function sleep(ms: number): Promise<void> {
 
 export async function runLighthouseOnce(
   url: string,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  sku: string,
-): Promise<{ lhr: Lhr | null; html: string | null; error?: string }> {
+  conditions: PerfConditions,
+): Promise<{ lhr: Lhr | null; error?: string }> {
   // Imports dinâmicos necessários pois lighthouse e chrome-launcher são ESM-only
   // e o projeto compila para CommonJS.
   const { default: lighthouse } = await import("lighthouse");
@@ -49,19 +49,21 @@ export async function runLighthouseOnce(
       ],
     });
 
+    const { connectivity, viewport, consentCookie } = conditions;
+    const extraHeaders: Record<string, string> = { "Accept-Language": "pt-BR,pt;q=0.9" };
+    if (consentCookie) {
+      extraHeaders.Cookie = buildConsentCookieHeader(url);
+    }
+
     const runLighthousePromise = async () => {
       const runnerResult = await lighthouse(
         url,
         {
           port: chrome.port,
-          output: "html",
           logLevel: "error",
           onlyCategories: ["performance"],
           locale: "pt-BR" as "pt",
-          extraHeaders: {
-            Cookie: buildConsentCookieHeader(url),
-            "Accept-Language": "pt-BR,pt;q=0.9",
-          },
+          extraHeaders,
         },
         {
           ...desktopConfig,
@@ -69,6 +71,26 @@ export async function runLighthouseOnce(
             ...desktopConfig.settings,
             emulatedUserAgent: PERF_USER_AGENT,
             onlyCategories: ["performance"],
+            // Limitação real da rede (como o WebPageTest) em vez da simulação do Lighthouse:
+            // as métricas passam a ser medidas, não estimadas.
+            throttlingMethod: "devtools",
+            throttling: {
+              rttMs: connectivity.rttMs,
+              throughputKbps: connectivity.downKbps,
+              cpuSlowdownMultiplier: 1,
+              // O DevTools limita por requisição e o WPT por pacote; os fatores 3,75 e 0,9
+              // são os que o próprio Lighthouse usa para converter um no outro.
+              requestLatencyMs: connectivity.rttMs * 3.75,
+              downloadThroughputKbps: connectivity.downKbps * 0.9,
+              uploadThroughputKbps: connectivity.upKbps * 0.9,
+            },
+            screenEmulation: {
+              mobile: false,
+              width: viewport.width,
+              height: viewport.height,
+              deviceScaleFactor: 1,
+              disabled: false,
+            },
           },
         },
       );
@@ -77,21 +99,15 @@ export async function runLighthouseOnce(
         throw new Error("Lighthouse não retornou nenhum resultado");
       }
 
-      const reportHtml = Array.isArray(runnerResult.report)
-        ? runnerResult.report[0]
-        : (runnerResult.report as string);
-
-      return {
-        lhr: runnerResult.lhr as Lhr,
-        html: reportHtml || null,
-      };
+      // O LHR (JSON) é o relatório completo; o HTML do Lighthouse não é gerado.
+      return { lhr: runnerResult.lhr as Lhr };
     };
 
     let timer: NodeJS.Timeout | undefined;
     const timeoutPromise = new Promise<never>((_, reject) => {
       timer = setTimeout(() => {
-        reject(new Error("Timeout de 120s atingido na execução do Lighthouse"));
-      }, 120000);
+        reject(new Error("Timeout de 180s atingido na execução do Lighthouse"));
+      }, 180000);
       if (timer.unref) {
         timer.unref();
       }
@@ -112,7 +128,6 @@ export async function runLighthouseOnce(
     const message = err instanceof Error ? err.message : String(err);
     return {
       lhr: null,
-      html: null,
       error: message,
     };
   } finally {
@@ -131,12 +146,13 @@ export async function measureSku(
   runs: number,
   outDir: string,
   runId: string,
+  conditions: PerfConditions,
 ): Promise<PerfSkuResult> {
   const url = buildPerfUrl(target);
   console.log(`\n🔍 Medindo SKU ${target.sku}: ${target.name}`);
   console.log(`   URL: ${url}`);
 
-  const validRuns: { lhr: Lhr; html: string | null; metrics: PerfMetrics }[] = [];
+  const validRuns: { lhr: Lhr; metrics: PerfMetrics }[] = [];
   const errors: string[] = [];
 
   for (let i = 1; i <= runs; i++) {
@@ -145,7 +161,7 @@ export async function measureSku(
       await sleep(pauseMs);
     }
 
-    const runResult = await runLighthouseOnce(url, target.sku);
+    const runResult = await runLighthouseOnce(url, conditions);
 
     if (runResult.error || !runResult.lhr) {
       const errorMsg = runResult.error || "LHR não gerado";
@@ -163,16 +179,12 @@ export async function measureSku(
     }
 
     const metrics = extractMetrics(runResult.lhr);
-    validRuns.push({
-      lhr: runResult.lhr,
-      html: runResult.html,
-      metrics,
-    });
+    validRuns.push({ lhr: runResult.lhr, metrics });
 
     const lcpDisplay =
       metrics.lcp !== null ? `${(metrics.lcp / 1000).toFixed(2)}s` : "N/A";
     console.log(
-      `   ⚡ ${target.sku} execução ${i}/${runs}: score ${metrics.performanceScore ?? "N/A"}, LCP ${lcpDisplay}`,
+      `   ⚡ ${target.sku} execução ${i}/${runs}: score ${metrics.performanceScore ?? "N/A"}, Start Render ${metrics.startRender ?? "N/A"} ms, LCP ${lcpDisplay}`,
     );
   }
 
@@ -188,7 +200,7 @@ export async function measureSku(
       runs: [],
       lcpElement: null,
       opportunities: [],
-      reportHtmlPath: null,
+      reportJsonPath: null,
       lighthouseVersion: null,
     };
   }
@@ -197,15 +209,12 @@ export async function measureSku(
   const medianIndex = pickMedianIndex(scores);
   const medianRun = validRuns[medianIndex];
 
+  // Relatório completo da execução mediana, para download no dashboard (abre no Lighthouse
+  // Viewer). Compacto: ~30% menor que indentado, e o workflow o apaga após 10 dias.
   const runFolder = path.join(outDir, runId);
   fs.mkdirSync(runFolder, { recursive: true });
-
-  let reportHtmlPath: string | null = null;
-  if (medianRun.html) {
-    const htmlFileName = `${target.sku}.html`;
-    fs.writeFileSync(path.join(runFolder, htmlFileName), medianRun.html, "utf-8");
-    reportHtmlPath = `${runId}/${htmlFileName}`;
-  }
+  const reportFileName = `${target.sku}.json`;
+  fs.writeFileSync(path.join(runFolder, reportFileName), JSON.stringify(medianRun.lhr), "utf-8");
 
   return {
     sku: target.sku,
@@ -217,7 +226,7 @@ export async function measureSku(
     runs: validRuns.map((r) => r.metrics),
     lcpElement: extractLcpElement(medianRun.lhr),
     opportunities: extractOpportunities(medianRun.lhr),
-    reportHtmlPath,
+    reportJsonPath: `${runId}/${reportFileName}`,
     lighthouseVersion: medianRun.lhr.lighthouseVersion ?? null,
   };
 }

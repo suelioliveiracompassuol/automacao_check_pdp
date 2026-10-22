@@ -54,6 +54,16 @@ export function extractMetrics(lhr: Lhr): PerfMetrics {
       ? Math.round(totalByteWeightValue)
       : null;
 
+  // Start Render (WebPageTest) = primeira mudança visual na tela; o Lighthouse expõe
+  // isso como observedFirstVisualChange no audit "metrics".
+  const metricsItems = audits["metrics"]?.details?.items;
+  const firstVisualChange = Array.isArray(metricsItems)
+    ? (metricsItems[0] as { observedFirstVisualChange?: number } | undefined)
+        ?.observedFirstVisualChange
+    : undefined;
+  const startRender =
+    typeof firstVisualChange === "number" ? Math.round(firstVisualChange) : null;
+
   const networkRequestsItems = audits["network-requests"]?.details?.items;
   const requestCount = Array.isArray(networkRequestsItems)
     ? networkRequestsItems.length
@@ -61,6 +71,7 @@ export function extractMetrics(lhr: Lhr): PerfMetrics {
 
   return {
     performanceScore,
+    startRender,
     lcp,
     cls,
     tbt,

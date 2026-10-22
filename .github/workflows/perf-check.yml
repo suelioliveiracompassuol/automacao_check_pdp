@@ -1,0 +1,101 @@
+name: PDP Performance
+
+on:
+  # Diário às 9:00 UTC (6:00 BRT), uma hora depois do PDP Feature Monitor, para os dois não
+  # disputarem o push em docs/ no mesmo minuto.
+  schedule:
+    - cron: "0 9 * * *"
+
+  # Disparo manual. Campos vazios = mesmos SKUs e conexão da execução diária.
+  # Atenção: a medição entra no mesmo histórico do dashboard; SKUs ou conexão diferentes
+  # aparecem misturados na série diária.
+  workflow_dispatch:
+    inputs:
+      perf_skus:
+        description: "SKUs no formato SKU|slug|pageType, separados por vírgula (vazio = PDP Full e PDP Low padrão)"
+        required: false
+        default: ""
+        type: string
+      connectivity:
+        description: "Perfil de conexão do WebPageTest"
+        required: false
+        default: "4G"
+        type: choice
+        options:
+          - "4G"
+          - "Cable"
+          - "DSL"
+          - "3GFast"
+          - "FIOS"
+
+permissions:
+  contents: write
+
+# Uma medição por vez: execuções simultâneas disputariam CPU e o push do docs/perf.
+concurrency:
+  group: pdp-performance-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  perf:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref_name }}
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🎭 Install Playwright browser
+        run: npx playwright install chromium --with-deps
+
+      - name: 📈 Run PDP Web Vitals
+        id: perf
+        # perf:ci grava em docs/perf (o que o dashboard publica); localmente use perf:local.
+        run: npm run perf:ci
+        env:
+          PERF_SKUS: ${{ inputs.perf_skus }}
+          PERF_CONNECTIVITY: ${{ inputs.connectivity }}
+        continue-on-error: true
+
+      - name: 🧹 Remove Lighthouse reports older than 10 days
+        run: |
+          # Só os relatórios completos (run_*/<SKU>.json, e o .html de rodadas antigas) expiram;
+          # o resumo docs/perf/run_*.json e o index.json ficam para o histórico do dashboard.
+          # Run dir names carry the timestamp; file mtimes are reset by checkout.
+          CUTOFF=$(( ($(date +%s) - 10 * 86400) * 1000 ))
+          for dir in docs/perf/run_*/; do
+            [ -d "$dir" ] || continue
+            ts=$(basename "$dir"); ts=${ts#run_}
+            [[ "$ts" =~ ^[0-9]+$ ]] || continue
+            if (( ts < CUTOFF )); then
+              find "$dir" -type f \( -name '*.json' -o -name '*.html' \) -delete
+              find "$dir" -mindepth 1 -type d -empty -delete
+            fi
+          done
+
+      - name: 💾 Commit perf report
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -f docs/perf/
+          git diff --staged --quiet || git commit -m "chore: update perf report [run #${{ github.run_number }}]"
+          git pull --rebase origin ${{ github.ref_name }}
+          git push origin HEAD:${{ github.ref_name }}
+
+      - name: ✅ Check perf status
+        if: steps.perf.outcome == 'failure'
+        run: exit 1

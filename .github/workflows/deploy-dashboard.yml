@@ -4,9 +4,10 @@ on:
   # Run manually when you want to update the dashboard
   workflow_dispatch:
 
-  # Run after PDP checks complete (optional - remove if you only want manual)
+  # Republica depois de cada monitoramento: features (PDP Feature Monitor) e Web Vitals
+  # (PDP Performance), que rodam em workflows separados.
   workflow_run:
-    workflows: ["PDP Feature Monitor"]
+    workflows: ["PDP Feature Monitor", "PDP Performance"]
     types: [completed]
     branches: [master]
 

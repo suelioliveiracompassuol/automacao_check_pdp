@@ -39,9 +39,15 @@
       "title": "Network Requests",
       "details": {
         "items": [
-          { "url": "https://www.natura.com.br/main.js" },
-          { "url": "https://www.natura.com.br/style.css" },
-          { "url": "https://www.natura.com.br/img.jpg" }
+          {
+            "url": "https://www.natura.com.br/main.js"
+          },
+          {
+            "url": "https://www.natura.com.br/style.css"
+          },
+          {
+            "url": "https://www.natura.com.br/img.jpg"
+          }
         ]
       }
     },
@@ -82,6 +88,18 @@
       "details": {
         "type": "opportunity",
         "overallSavingsMs": 0
+      }
+    },
+    "metrics": {
+      "title": "Metrics",
+      "details": {
+        "type": "debugdata",
+        "items": [
+          {
+            "observedFirstVisualChange": 2104.6,
+            "observedLargestContentfulPaint": 2450
+          }
+        ]
       }
     }
   }
