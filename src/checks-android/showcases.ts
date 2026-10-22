@@ -1,5 +1,6 @@
 import { CheckResult } from "../types.js";
 import { ANDROID_SELECTORS } from "./configs/selectors.js";
+import { dismissZeeDog, scrollPdpUntilVisible } from "./pdpScreen.js";
 
 /**
  * Native Android showcase / carousel verification.
@@ -12,37 +13,12 @@ async function verifyNativeShowcase(
   driver: WebdriverIO.Browser,
   resourceId: string,
 ): Promise<{ rendered: boolean; itemCount: number }> {
-  const idPattern = `.*:id/${resourceId}`;
-
   await dismissZeeDog(driver);
 
-  try {
-    // Scroll the PDP NestedScrollView itself (see ANDROID_SELECTORS.pdp.scrollContainer)
-    const scrollSelector = `android=new UiScrollable(${ANDROID_SELECTORS.pdp.scrollContainer}).setAsVerticalList().scrollIntoView(new UiSelector().resourceIdMatches("${idPattern}"))`;
-    await driver.$(scrollSelector).waitForDisplayed({ timeout: 8000 });
-  } catch {
-    // If scroll failed, check if it's already visible in current viewport
-  }
-
   const el = driver.$(
-    `android=new UiSelector().resourceIdMatches("${idPattern}")`,
+    `android=new UiSelector().resourceIdMatches(".*:id/${resourceId}")`,
   );
-
-  // scrollIntoView stops as soon as any sliver of the element is on screen, which can leave the
-  // carousel at the bottom edge behind the sticky buy bar (or still loading) with only a few px
-  // visible. UiAutomator reports the visible bounds, so nudge the PDP down until it shows up.
-  let visibleHeight = await getVisibleHeight(el);
-  for (
-    let nudge = 0;
-    nudge < MAX_SCROLL_NUDGES && visibleHeight < MIN_VISIBLE_HEIGHT;
-    nudge++
-  ) {
-    if (!(await nudgePdpDown(driver))) {
-      break;
-    }
-    visibleHeight = await getVisibleHeight(el);
-  }
-  if (visibleHeight < MIN_VISIBLE_HEIGHT) {
+  if ((await scrollPdpUntilVisible(driver, el)) === 0) {
     return { rendered: false, itemCount: 0 };
   }
 
@@ -61,50 +37,6 @@ async function verifyNativeShowcase(
     rendered: true,
     itemCount,
   };
-}
-
-/** Below this visible height the carousel is treated as not rendered (empty or off screen). */
-const MIN_VISIBLE_HEIGHT = 40;
-/** Extra short scrolls after scrollIntoView; 30% each, so ~1.2 screens at most. */
-const MAX_SCROLL_NUDGES = 4;
-
-async function getVisibleHeight(
-  el: ReturnType<WebdriverIO.Browser["$"]>,
-): Promise<number> {
-  if (!(await el.isDisplayed().catch(() => false))) {
-    return 0;
-  }
-  const size = await el.getSize().catch(() => null);
-  return size?.height ?? 0;
-}
-
-/** Scrolls the PDP NestedScrollView down by 30% of its height; false if it can't scroll. */
-async function nudgePdpDown(driver: WebdriverIO.Browser): Promise<boolean> {
-  try {
-    const container = await driver.$(
-      `android=${ANDROID_SELECTORS.pdp.scrollContainer}`,
-    );
-    await driver.execute("mobile: scrollGesture", {
-      elementId: container.elementId,
-      direction: "down",
-      percent: 0.3,
-    });
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-/** Closes the ZeeDog floating messages card if present: it covers the bottom of the PDP. */
-async function dismissZeeDog(driver: WebdriverIO.Browser): Promise<void> {
-  try {
-    const close = driver.$(`android=${ANDROID_SELECTORS.pdp.zeeDogClose}`);
-    if (await close.isDisplayed()) {
-      await close.click();
-    }
-  } catch {
-    // Best effort: the card is not always shown
-  }
 }
 
 interface ShowcaseCheckSpec {

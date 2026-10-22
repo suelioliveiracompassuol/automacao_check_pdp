@@ -1,5 +1,6 @@
 import { CheckResult } from "../types.js";
 import { ANDROID_SELECTORS } from "./configs/selectors.js";
+import { dismissZeeDog } from "./pdpScreen.js";
 
 export interface AddToCartCheckResult extends CheckResult {
   loadTime?: number;
@@ -93,10 +94,12 @@ export async function checkAddToCartAndroid(
     );
 
     // PDP renders shimmer/skeleton placeholders first — wait for whichever state the app shows.
+    // The ZeeDog card can pop up over the sticky buy bar meanwhile, so close it on every poll.
     let state: CartActionState | undefined;
     await driver
       .waitUntil(
         async () => {
+          await dismissZeeDog(driver);
           if (await isShown(buyButton)) {
             state = "buy";
           } else if (await isShown(notifyMeButton)) {

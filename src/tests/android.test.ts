@@ -196,6 +196,45 @@ test.describe("Android Unit Tests", () => {
         },
       }) as unknown as WebdriverIO.Browser;
 
+    /** ZeeDog card open over the sticky buy bar: the buy button shows only after it's closed. */
+    const driverWithZeeDogOverBuyBar = () => {
+      const state = { zeeDogOpen: true };
+      const isShown = (selector: string) =>
+        selector.includes("fechar recados")
+          ? state.zeeDogOpen
+          : selector.includes("cv_buy_button") && !state.zeeDogOpen;
+      const driver = {
+        $: (selector: string) => ({
+          isDisplayed: async () => isShown(selector),
+          click: async () => {
+            state.zeeDogOpen = false;
+          },
+          waitForDisplayed: async () => false,
+          isEnabled: async () => true,
+          getText: async () => "adicionar",
+        }),
+        // Polls up to 3 times, like the real waitUntil while the PDP loads
+        waitUntil: async (condition: () => Promise<boolean>) => {
+          const polls = [condition, condition, condition];
+          for (const poll of polls) {
+            if (await poll()) {
+              return true;
+            }
+          }
+          throw new Error("timeout");
+        },
+      } as unknown as WebdriverIO.Browser;
+      return { driver, state };
+    };
+
+    test("closes the ZeeDog card covering the sticky buy bar while waiting for the button", async () => {
+      const { driver, state } = driverWithZeeDogOverBuyBar();
+      const result = await checkAddToCartAndroid(driver);
+      expect(state.zeeDogOpen).toBe(false);
+      expect(result.status).toBe("pass");
+      expect(result.details?.state).toBe("buy");
+    });
+
     test("returns pass when the buy button is displayed", async () => {
       const result = await checkAddToCartAndroid(
         driverShowing(["cv_buy_button"], "adicionar"),
@@ -337,75 +376,58 @@ test.describe("Android Unit Tests", () => {
       expect(result.details?.rendered).toBe(false);
     });
 
-    test("scrolls the PDP NestedScrollView (main_view), not the first scrollable", async () => {
-      const selectors: string[] = [];
-      const mockDriver = {
-        $: (selector: string) => {
-          selectors.push(selector);
-          return {
-            waitForDisplayed: async () => true,
-            isDisplayed: async () => true,
-            getSize: async () => ({ width: 1080, height: 400 }),
-            $$: async () => [],
-            click: async () => undefined,
-          };
-        },
-      } as unknown as WebdriverIO.Browser;
-
-      await checkBrandShowcaseAndroid(mockDriver);
-      const scroll = selectors.find((s) => s.includes("UiScrollable"));
-      expect(scroll).toContain(".*:id/main_view");
-      expect(scroll).not.toContain("scrollable(true)");
-    });
-
-    test("nudges the PDP down when scrollIntoView leaves only a sliver of the carousel visible", async () => {
-      let visibleHeight = 10; // at the bottom edge, behind the sticky buy bar
-      const gestures: unknown[] = [];
-      const mockDriver = {
+    /** Driver whose carousel becomes visible after `visibleAfter` gestures; `canScroll(dir)` = gesture result. */
+    const scrollingDriver = (
+      visibleAfter: number,
+      canScroll: (direction: string) => boolean = () => true,
+    ) => {
+      const directions: string[] = [];
+      const gestureArgs: unknown[] = [];
+      const driver = {
         $: () => ({
           elementId: "main-view-id",
-          waitForDisplayed: async () => true,
           isDisplayed: async () => true,
-          getSize: async () => ({ width: 1080, height: visibleHeight }),
+          getSize: async () => ({
+            width: 1080,
+            height: directions.length >= visibleAfter ? 700 : 10,
+          }),
           $$: async () => [{}, {}],
           click: async () => undefined,
         }),
-        execute: async (script: string, args: unknown) => {
-          gestures.push({ script, args });
-          visibleHeight = 700;
-          return true;
+        execute: async (script: string, args: { direction: string }) => {
+          gestureArgs.push({ script, args });
+          directions.push(args.direction);
+          return canScroll(args.direction);
         },
       } as unknown as WebdriverIO.Browser;
+      return { driver, directions, gestureArgs };
+    };
 
-      const result = await checkBrandShowcaseAndroid(mockDriver);
+    test("scrolls the PDP NestedScrollView (main_view) half a screen at a time until the carousel is visible", async () => {
+      // 3 gestures: covers a long description (the old scrollIntoView + 30% nudges stopped short)
+      const { driver, gestureArgs } = scrollingDriver(3);
+      const result = await checkBrandShowcaseAndroid(driver);
       expect(result.status).toBe("pass");
-      expect(gestures).toEqual([
-        {
+      expect(gestureArgs).toEqual(
+        Array(3).fill({
           script: "mobile: scrollGesture",
-          args: { elementId: "main-view-id", direction: "down", percent: 0.3 },
-        },
-      ]);
+          args: { elementId: "main-view-id", direction: "down", percent: 0.5 },
+        }),
+      );
     });
 
-    test("fails after the nudges when the carousel never shows up", async () => {
-      let gestures = 0;
-      const mockDriver = {
-        $: () => ({
-          elementId: "main-view-id",
-          waitForDisplayed: async () => true,
-          isDisplayed: async () => true,
-          getSize: async () => ({ width: 1080, height: 10 }),
-          click: async () => undefined,
-        }),
-        execute: async () => {
-          gestures++;
-          return true;
-        },
-      } as unknown as WebdriverIO.Browser;
+    test("at the bottom of the page waits for lazy sections and searches back up", async () => {
+      const { driver, directions } = scrollingDriver(3, (d) => d !== "down");
+      const result = await checkBrandShowcaseAndroid(driver);
+      expect(result.status).toBe("pass");
+      expect(directions).toEqual(["down", "up", "up"]);
+    });
 
-      const result = await checkBrandShowcaseAndroid(mockDriver);
+    test("fails when the carousel never shows up after reaching both ends", async () => {
+      const { driver, directions } = scrollingDriver(Infinity, () => false);
+      const result = await checkBrandShowcaseAndroid(driver);
       expect(result.status).toBe("fail");
-      expect(gestures).toBe(4);
+      expect(directions).toEqual(["down", "up"]);
     });
 
     test("closes the ZeeDog card before scrolling when it is displayed", async () => {
