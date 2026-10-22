@@ -5,8 +5,13 @@ type ChainablePromiseElement = ReturnType<WebdriverIO.Browser["$"]>;
 
 /** Below this visible height an element is treated as not on screen (or empty). */
 const MIN_VISIBLE_HEIGHT = 40;
-/** Half a screen per scroll: never skips past a carousel, which is shorter than that. */
-const SCROLL_PERCENT = 0.5;
+/**
+ * Gesture area: the middle half of the screen. Swipes near the top edge open Android's
+ * notification shade (it stayed open over the app for the next SKUs), and the bottom has the
+ * sticky buy bar. Scrolling 100% of this area moves the page half a screen, which never skips
+ * past a carousel.
+ */
+const GESTURE_AREA = { top: 0.25, height: 0.5, left: 0.1, width: 0.8 };
 /** Long PDPs (open description, many accordions) take ~10 half-screen scrolls to the bottom. */
 const MAX_SCROLLS = 30;
 /** Lazy sections (Einstein, brand products) are appended after the PDP loads. */
@@ -41,23 +46,26 @@ export async function getVisibleHeight(
 }
 
 /**
- * Scrolls the PDP NestedScrollView. Returns whether it can keep scrolling that way
- * (false at the end of the page, or when the gesture isn't available).
+ * Scrolls the PDP half a screen. Returns whether the screen changed: the gesture's own
+ * "can scroll more" result is unreliable on the PDP's NestedScrollView (false after the first
+ * swipe), so the end of the page is detected by an unchanged page source instead.
  */
 async function scrollPdp(
   driver: WebdriverIO.Browser,
   direction: "down" | "up",
 ): Promise<boolean> {
   try {
-    const container = await driver.$(
-      `android=${ANDROID_SELECTORS.pdp.scrollContainer}`,
-    );
-    const canScrollMore = await driver.execute("mobile: scrollGesture", {
-      elementId: container.elementId,
+    const before = await driver.getPageSource();
+    const { width, height } = await driver.getWindowSize();
+    await driver.execute("mobile: scrollGesture", {
+      left: Math.round(width * GESTURE_AREA.left),
+      top: Math.round(height * GESTURE_AREA.top),
+      width: Math.round(width * GESTURE_AREA.width),
+      height: Math.round(height * GESTURE_AREA.height),
       direction,
-      percent: SCROLL_PERCENT,
+      percent: 1,
     });
-    return canScrollMore !== false;
+    return (await driver.getPageSource()) !== before;
   } catch {
     return false;
   }

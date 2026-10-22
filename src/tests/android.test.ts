@@ -347,58 +347,83 @@ test.describe("Android Unit Tests", () => {
       expect(result.details?.rendered).toBe(false);
     });
 
-    /** Driver whose carousel becomes visible after `visibleAfter` gestures; `canScroll(dir)` = gesture result. */
-    const scrollingDriver = (
-      visibleAfter: number,
-      canScroll: (direction: string) => boolean = () => true,
-    ) => {
-      const directions: string[] = [];
-      const gestureArgs: unknown[] = [];
+    /**
+     * 1080x2400 device whose carousel becomes visible after `visibleAfter` gestures. The page
+     * source changes on each gesture until `endAfter` gestures in the same direction (end of page).
+     */
+    const scrollingDriver = (visibleAfter: number, endAfter = Infinity) => {
+      const gestures: { direction: string; [k: string]: unknown }[] = [];
+      const movedIn = (direction: string) =>
+        gestures.filter((g) => g.direction === direction).length;
       const driver = {
         $: () => ({
-          elementId: "main-view-id",
           isDisplayed: async () => true,
           getSize: async () => ({
             width: 1080,
-            height: directions.length >= visibleAfter ? 700 : 10,
+            height: gestures.length >= visibleAfter ? 700 : 10,
           }),
           $$: async () => [{}, {}],
           click: async () => undefined,
         }),
-        execute: async (script: string, args: { direction: string }) => {
-          gestureArgs.push({ script, args });
-          directions.push(args.direction);
-          return canScroll(args.direction);
+        getWindowSize: async () => ({ width: 1080, height: 2400 }),
+        getPageSource: async () =>
+          `down:${Math.min(movedIn("down"), endAfter)} up:${Math.min(movedIn("up"), endAfter)}`,
+        execute: async (_script: string, args: { direction: string }) => {
+          gestures.push(args);
+          return false; // the real gesture result is unreliable, so it's ignored
         },
       } as unknown as WebdriverIO.Browser;
-      return { driver, directions, gestureArgs };
+      return { driver, gestures };
     };
 
-    test("scrolls the PDP NestedScrollView (main_view) half a screen at a time until the carousel is visible", async () => {
-      // 3 gestures: covers a long description (the old scrollIntoView + 30% nudges stopped short)
-      const { driver, gestureArgs } = scrollingDriver(3);
+    test("scrolls half a screen at a time in the middle of the screen until the carousel is visible", async () => {
+      // 3 gestures: covers a long description (the old scrollIntoView stopped short)
+      const { driver, gestures } = scrollingDriver(3);
       const result = await checkBrandShowcaseAndroid(driver);
       expect(result.status).toBe("pass");
-      expect(gestureArgs).toEqual(
+      // Away from the top edge (notification shade) and the bottom sticky buy bar
+      expect(gestures).toEqual(
         Array(3).fill({
-          script: "mobile: scrollGesture",
-          args: { elementId: "main-view-id", direction: "down", percent: 0.5 },
+          left: 108,
+          top: 600,
+          width: 864,
+          height: 1200,
+          direction: "down",
+          percent: 1,
         }),
       );
     });
 
-    test("at the bottom of the page waits for lazy sections and searches back up", async () => {
-      const { driver, directions } = scrollingDriver(3, (d) => d !== "down");
+    test("keeps scrolling even when the gesture reports it can't scroll more", async () => {
+      const { driver, gestures } = scrollingDriver(5);
       const result = await checkBrandShowcaseAndroid(driver);
       expect(result.status).toBe("pass");
-      expect(directions).toEqual(["down", "up", "up"]);
+      expect(gestures.map((g) => g.direction)).toEqual(Array(5).fill("down"));
+    });
+
+    test("at the bottom of the page (screen unchanged) searches back up", async () => {
+      // Page ends after 2 downs; the 3rd down changes nothing, then it goes up
+      const { driver, gestures } = scrollingDriver(4, 2);
+      const result = await checkBrandShowcaseAndroid(driver);
+      expect(result.status).toBe("pass");
+      expect(gestures.map((g) => g.direction)).toEqual([
+        "down",
+        "down",
+        "down",
+        "up",
+      ]);
     });
 
     test("fails when the carousel never shows up after reaching both ends", async () => {
-      const { driver, directions } = scrollingDriver(Infinity, () => false);
+      const { driver, gestures } = scrollingDriver(Infinity, 1);
       const result = await checkBrandShowcaseAndroid(driver);
       expect(result.status).toBe("fail");
-      expect(directions).toEqual(["down", "up"]);
+      expect(gestures.map((g) => g.direction)).toEqual([
+        "down",
+        "down",
+        "up",
+        "up",
+      ]);
     });
 
     test("closes the ZeeDog card before scrolling when it is displayed", async () => {
