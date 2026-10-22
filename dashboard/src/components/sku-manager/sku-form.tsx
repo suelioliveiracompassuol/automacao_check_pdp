@@ -1,19 +1,14 @@
 'use client';
 
-import * as Dialog from '@radix-ui/react-dialog';
-import { X } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { ALL_FEATURE_KEYS } from '@/lib/types';
+import { useState } from 'react';
+import { SelectField, TextField } from '@/components/ui/form-field';
+import { Modal, ModalCloseButton, ModalTitle, modalButtonClass } from '@/components/ui/modal';
+import { ALL_FEATURE_KEYS, CHANNELS, COUNTRIES, VENDORS } from '@/lib/constants';
 import type { Channel, Country, FeatureKey, SkuEntry, Vendor } from '@/lib/types';
-
-const ALL_FEATURES: FeatureKey[] = ALL_FEATURE_KEYS;
-
-const VENDORS: Vendor[] = ['natura', 'avon'];
-const COUNTRIES: Country[] = ['BR', 'AR', 'CL', 'CO', 'MX', 'PE'];
-const CHANNELS: Channel[] = ['ecommerce', 'socialcommerce'];
 
 interface SkuFormProps {
   open: boolean;
+  /** Estado inicial do formulário; o pai troca a `key` ao abrir para reiniciá-lo. */
   initialData: SkuEntry | null;
   onSubmit: (data: Omit<SkuEntry, 'id'>) => Promise<void>;
   onClose: () => void;
@@ -29,6 +24,8 @@ interface FormState {
   expectedFeatures: FeatureKey[];
 }
 
+type FormErrors = Partial<Record<'sku' | 'name', string>>;
+
 const DEFAULT_STATE: FormState = {
   sku: '',
   name: '',
@@ -41,28 +38,23 @@ const DEFAULT_STATE: FormState = {
 
 function toFormState(entry: SkuEntry | null): FormState {
   if (entry === null) return DEFAULT_STATE;
-  return {
-    sku: entry.sku,
-    name: entry.name,
-    slug: entry.slug ?? '',
-    vendor: entry.vendor,
-    country: entry.country,
-    channel: entry.channel,
-    expectedFeatures: entry.expectedFeatures,
-  };
+  return { ...entry, slug: entry.slug ?? '' };
+}
+
+function validate(form: FormState): FormErrors {
+  const errors: FormErrors = {};
+  if (form.sku.trim() === '') errors.sku = 'SKU é obrigatório';
+  if (form.name.trim() === '') errors.name = 'Nome é obrigatório';
+  return errors;
 }
 
 export function SkuForm({ open, initialData, onSubmit, onClose }: SkuFormProps) {
-  const [form, setForm] = useState<FormState>(DEFAULT_STATE);
+  const [form, setForm] = useState<FormState>(() => toFormState(initialData));
   const [loading, setLoading] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
+  const [errors, setErrors] = useState<FormErrors>({});
 
-  useEffect(() => {
-    setForm(toFormState(initialData));
-    setErrors({});
-    setSubmitError(null);
-  }, [open, initialData]);
+  const isEditing = initialData !== null;
 
   const setField = <K extends keyof FormState>(key: K, value: FormState[K]) => {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -70,284 +62,173 @@ export function SkuForm({ open, initialData, onSubmit, onClose }: SkuFormProps) 
   };
 
   const toggleFeature = (feature: FeatureKey) => {
-    setForm((prev) => ({
-      ...prev,
-      expectedFeatures: prev.expectedFeatures.includes(feature)
-        ? prev.expectedFeatures.filter((f) => f !== feature)
-        : [...prev.expectedFeatures, feature],
-    }));
-  };
-
-  const selectAllFeatures = () => {
-    setForm((prev) => ({ ...prev, expectedFeatures: [...ALL_FEATURES] }));
-  };
-
-  const clearAllFeatures = () => {
-    setForm((prev) => ({ ...prev, expectedFeatures: [] }));
-  };
-
-  const validate = (): boolean => {
-    const next: Partial<Record<keyof FormState, string>> = {};
-    if (form.sku.trim() === '') next.sku = 'SKU é obrigatório';
-    if (form.name.trim() === '') next.name = 'Nome é obrigatório';
-    setErrors(next);
-    return Object.keys(next).length === 0;
+    setField(
+      'expectedFeatures',
+      form.expectedFeatures.includes(feature)
+        ? form.expectedFeatures.filter((f) => f !== feature)
+        : [...form.expectedFeatures, feature],
+    );
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validate()) return;
+    const nextErrors = validate(form);
+    setErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) return;
+
     setLoading(true);
     setSubmitError(null);
-
     try {
       await onSubmit({
         sku: form.sku.trim(),
         name: form.name.trim(),
-        slug: form.slug.trim() !== '' ? form.slug.trim() : undefined,
+        slug: form.slug.trim() || undefined,
         vendor: form.vendor,
         country: form.country,
         channel: form.channel,
         expectedFeatures: form.expectedFeatures,
       });
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Não foi possível salvar o SKU.';
-      setSubmitError(message);
+      setSubmitError(error instanceof Error ? error.message : 'Não foi possível salvar o SKU.');
     } finally {
       setLoading(false);
     }
   };
 
-  const isEditing = initialData !== null;
-
   return (
-    <Dialog.Root
+    <Modal
       open={open}
-      onOpenChange={(o) => {
-        if (!o) onClose();
-      }}
+      onClose={onClose}
+      describedBy="sku-form-description"
+      className="flex max-h-[90dvh] max-w-lg flex-col"
     >
-      <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
-        <Dialog.Content
-          className="fixed left-1/2 top-1/2 z-50 flex max-h-[90vh] w-full max-w-lg -translate-x-1/2 -translate-y-1/2 flex-col rounded-2xl bg-white shadow-xl data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95"
-          aria-describedby="sku-form-description"
-        >
-          <div className="flex items-center justify-between border-b border-neutral-75 px-6 py-4">
-            <Dialog.Title className="text-base font-semibold text-highlight">
-              {isEditing === true ? 'Editar SKU' : 'Novo SKU'}
-            </Dialog.Title>
-            <Dialog.Close
-              className="rounded-lg p-1 text-low-emphasis transition-colors hover:bg-neutral-75 hover:text-medium-emphasis"
-              aria-label="Fechar"
+      <div className="flex items-center justify-between border-b border-neutral-75 px-6 py-4">
+        <ModalTitle className="text-base font-semibold text-highlight">
+          {isEditing ? 'Editar SKU' : 'Novo SKU'}
+        </ModalTitle>
+        <ModalCloseButton />
+      </div>
+      <p id="sku-form-description" className="sr-only">
+        {isEditing ? 'Formulário para editar SKU existente' : 'Formulário para criar novo SKU'}
+      </p>
+      <form onSubmit={handleSubmit} className="flex flex-1 flex-col overflow-hidden">
+        <div className="flex flex-1 flex-col gap-4 overflow-y-auto px-6 py-4">
+          {submitError !== null && (
+            <div
+              role="alert"
+              className="rounded-xl border border-alert-light/60 bg-alert-lightest/50 px-3 py-2 text-sm text-alert-dark"
             >
-              <X className="h-4 w-4" />
-            </Dialog.Close>
+              {submitError}
+            </div>
+          )}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <TextField
+              id="sku-field"
+              label="SKU"
+              required
+              value={form.sku}
+              onChange={(v) => setField('sku', v)}
+              placeholder="ex: 12345"
+              error={errors.sku}
+            />
+            <TextField
+              id="name-field"
+              label="Nome"
+              required
+              value={form.name}
+              onChange={(v) => setField('name', v)}
+              placeholder="ex: Hidratante Corporal"
+              error={errors.name}
+            />
           </div>
-          <p id="sku-form-description" className="sr-only">
-            {isEditing === true
-              ? 'Formulário para editar SKU existente'
-              : 'Formulário para criar novo SKU'}
-          </p>
-          <form onSubmit={handleSubmit} className="flex flex-1 flex-col overflow-hidden">
-            <div className="flex-1 overflow-y-auto px-6 py-4">
-              {submitError !== null && (
-                <div className="mb-4 rounded-xl border border-alert-light/60 bg-alert-lightest/50 px-3 py-2 text-sm text-alert-dark">
-                  {submitError}
-                </div>
-              )}
-              <div className="flex flex-col gap-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="flex flex-col gap-1">
-                    <label htmlFor="sku-field" className="text-xs font-medium text-high-emphasis">
-                      SKU{' '}
-                      <span className="text-alert" aria-hidden="true">
-                        *
-                      </span>
-                    </label>
-                    <input
-                      id="sku-field"
-                      type="text"
-                      value={form.sku}
-                      onChange={(e) => setField('sku', e.target.value)}
-                      placeholder="ex: 12345"
-                      className="rounded-lg border border-neutral-100 px-3 py-2 text-sm text-highlight placeholder-low-emphasis outline-none transition-colors focus:border-primary-light focus:ring-2 focus:ring-primary-lightest"
-                      aria-invalid={errors.sku !== undefined ? true : undefined}
-                      aria-describedby={errors.sku !== undefined ? 'sku-error' : undefined}
-                    />
-                    {errors.sku !== undefined && (
-                      <p id="sku-error" className="text-[11px] text-alert" role="alert">
-                        {errors.sku}
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <label htmlFor="name-field" className="text-xs font-medium text-high-emphasis">
-                      Nome{' '}
-                      <span className="text-alert" aria-hidden="true">
-                        *
-                      </span>
-                    </label>
-                    <input
-                      id="name-field"
-                      type="text"
-                      value={form.name}
-                      onChange={(e) => setField('name', e.target.value)}
-                      placeholder="ex: Hidratante Corporal"
-                      className="rounded-lg border border-neutral-100 px-3 py-2 text-sm text-highlight placeholder-low-emphasis outline-none transition-colors focus:border-primary-light focus:ring-2 focus:ring-primary-lightest"
-                      aria-invalid={errors.name !== undefined ? true : undefined}
-                      aria-describedby={errors.name !== undefined ? 'name-error' : undefined}
-                    />
-                    {errors.name !== undefined && (
-                      <p id="name-error" className="text-[11px] text-alert" role="alert">
-                        {errors.name}
-                      </p>
-                    )}
-                  </div>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label htmlFor="slug-field" className="text-xs font-medium text-high-emphasis">
-                    Slug <span className="text-low-emphasis">(opcional)</span>
-                  </label>
-                  <input
-                    id="slug-field"
-                    type="text"
-                    value={form.slug}
-                    onChange={(e) => setField('slug', e.target.value)}
-                    placeholder="ex: hidratante-corporal-p"
-                    className="rounded-lg border border-neutral-100 px-3 py-2 text-sm text-highlight placeholder-low-emphasis outline-none transition-colors focus:border-primary-light focus:ring-2 focus:ring-primary-lightest"
-                  />
-                </div>
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="flex flex-col gap-1">
-                    <label
-                      htmlFor="vendor-field"
-                      className="text-xs font-medium text-high-emphasis"
-                    >
-                      Vendor
-                    </label>
-                    <select
-                      id="vendor-field"
-                      value={form.vendor}
-                      onChange={(e) => setField('vendor', e.target.value as Vendor)}
-                      className="rounded-lg border border-neutral-100 px-3 py-2 text-sm text-highlight outline-none transition-colors focus:border-primary-light focus:ring-2 focus:ring-primary-lightest"
-                    >
-                      {VENDORS.map((v) => (
-                        <option key={v} value={v}>
-                          {v}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <label
-                      htmlFor="country-field"
-                      className="text-xs font-medium text-high-emphasis"
-                    >
-                      País
-                    </label>
-                    <select
-                      id="country-field"
-                      value={form.country}
-                      onChange={(e) => setField('country', e.target.value as Country)}
-                      className="rounded-lg border border-neutral-100 px-3 py-2 text-sm text-highlight outline-none transition-colors focus:border-primary-light focus:ring-2 focus:ring-primary-lightest"
-                    >
-                      {COUNTRIES.map((c) => (
-                        <option key={c} value={c}>
-                          {c}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <label
-                      htmlFor="channel-field"
-                      className="text-xs font-medium text-high-emphasis"
-                    >
-                      Canal
-                    </label>
-                    <select
-                      id="channel-field"
-                      value={form.channel}
-                      onChange={(e) => setField('channel', e.target.value as Channel)}
-                      className="rounded-lg border border-neutral-100 px-3 py-2 text-sm text-highlight outline-none transition-colors focus:border-primary-light focus:ring-2 focus:ring-primary-lightest"
-                    >
-                      {CHANNELS.map((ch) => (
-                        <option key={ch} value={ch}>
-                          {ch}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center justify-between">
-                    <p className="text-xs font-medium text-high-emphasis">
-                      Features esperadas <span className="text-low-emphasis">(opcional)</span>
-                    </p>
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={selectAllFeatures}
-                        className="text-[11px] font-medium text-primary-dark transition-colors hover:text-primary-dark"
-                      >
-                        Marcar todas
-                      </button>
-                      <span className="text-neutral-300" aria-hidden="true">
-                        |
-                      </span>
-                      <button
-                        type="button"
-                        onClick={clearAllFeatures}
-                        className="text-[11px] font-medium text-medium-emphasis transition-colors hover:text-high-emphasis"
-                      >
-                        Limpar todas
-                      </button>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-1.5 rounded-xl border border-neutral-75 bg-neutral-50 p-3">
-                    {ALL_FEATURES.map((feature) => (
-                      <label
-                        key={feature}
-                        className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 transition-colors hover:bg-white"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={form.expectedFeatures.includes(feature)}
-                          onChange={() => toggleFeature(feature)}
-                          className="h-3.5 w-3.5 rounded border-neutral-200 text-primary-dark focus:ring-primary"
-                        />
-                        <span className="text-[11px] text-high-emphasis">{feature}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
+          <TextField
+            id="slug-field"
+            label="Slug"
+            optional
+            value={form.slug}
+            onChange={(v) => setField('slug', v)}
+            placeholder="ex: hidratante-corporal-p"
+          />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <SelectField
+              id="vendor-field"
+              label="Vendor"
+              value={form.vendor}
+              options={VENDORS}
+              onChange={(v) => setField('vendor', v)}
+            />
+            <SelectField
+              id="country-field"
+              label="País"
+              value={form.country}
+              options={COUNTRIES}
+              onChange={(v) => setField('country', v)}
+            />
+            <SelectField
+              id="channel-field"
+              label="Canal"
+              value={form.channel}
+              options={CHANNELS}
+              onChange={(v) => setField('channel', v)}
+            />
+          </div>
+          <div role="group" aria-labelledby="features-label" className="flex flex-col gap-2">
+            <div className="flex items-center justify-between">
+              <p id="features-label" className="text-xs font-medium text-high-emphasis">
+                Features esperadas <span className="text-low-emphasis">(opcional)</span>
+              </p>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setField('expectedFeatures', [...ALL_FEATURE_KEYS])}
+                  className="text-xs font-medium text-primary-darkest transition-colors hover:underline"
+                >
+                  Marcar todas
+                </button>
+                <span className="text-neutral-300" aria-hidden="true">
+                  |
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setField('expectedFeatures', [])}
+                  className="text-xs font-medium text-medium-emphasis transition-colors hover:text-high-emphasis"
+                >
+                  Limpar todas
+                </button>
               </div>
             </div>
-            <div className="flex items-center justify-end gap-3 border-t border-neutral-75 px-6 py-4">
-              <button
-                type="button"
-                onClick={onClose}
-                disabled={loading === true}
-                className="rounded-xl border border-neutral-100 bg-white px-4 py-2.5 text-sm font-medium text-high-emphasis transition-colors hover:bg-neutral-50 disabled:opacity-50"
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                disabled={loading === true}
-                className="rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-dark disabled:opacity-50"
-              >
-                {loading === true
-                  ? 'Salvando…'
-                  : isEditing === true
-                    ? 'Salvar alterações'
-                    : 'Criar SKU'}
-              </button>
+            <div className="grid grid-cols-1 gap-1.5 rounded-xl border border-neutral-75 bg-neutral-50 p-3 sm:grid-cols-2">
+              {ALL_FEATURE_KEYS.map((feature) => (
+                <label
+                  key={feature}
+                  className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 transition-colors hover:bg-white"
+                >
+                  <input
+                    type="checkbox"
+                    checked={form.expectedFeatures.includes(feature)}
+                    onChange={() => toggleFeature(feature)}
+                    className="h-4 w-4 shrink-0 rounded border-neutral-200 text-primary-darkest focus:ring-primary"
+                  />
+                  <span className="text-xs text-high-emphasis">{feature}</span>
+                </label>
+              ))}
             </div>
-          </form>
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>
+          </div>
+        </div>
+        <div className="flex items-center justify-end gap-3 border-t border-neutral-75 px-6 py-4">
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={loading}
+            className={modalButtonClass.secondary}
+          >
+            Cancelar
+          </button>
+          <button type="submit" disabled={loading} className={modalButtonClass.primary}>
+            {loading ? 'Salvando…' : isEditing ? 'Salvar alterações' : 'Criar SKU'}
+          </button>
+        </div>
+      </form>
+    </Modal>
   );
 }

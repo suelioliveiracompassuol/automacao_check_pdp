@@ -4,51 +4,17 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import * as Collapsible from '@radix-ui/react-collapsible';
-import { BarChart3, ChevronDown, Database, Globe } from 'lucide-react';
-import { FaAndroid, FaApple } from 'react-icons/fa';
+import { ChevronDown } from 'lucide-react';
+import { ADMIN_NAV, MAIN_NAV, PLATFORM_NAV, isNavActive, type NavItem } from '@/lib/navigation';
 import { cn } from '@/lib/utils';
 
-interface PlatformLink {
-  href: string;
-  label: string;
-  icon: React.ReactNode;
-  badge?: string;
-}
-
-const PLATFORM_LINKS: PlatformLink[] = [
-  { href: '/web', label: 'Web', icon: <Globe className="h-4 w-4 shrink-0" /> },
-  {
-    href: '/android',
-    label: 'Android',
-    icon: <FaAndroid className="h-4 w-4 shrink-0" />,
-    badge: 'beta',
-  },
-  {
-    href: '/ios',
-    label: 'iOS',
-    icon: <FaApple className="h-4 w-4 shrink-0" />,
-    badge: 'em breve',
-  },
-];
-
-function NavLink({
-  href,
-  label,
-  icon,
-  badge,
-  active,
-}: {
-  href: string;
-  label: string;
-  icon: React.ReactNode;
-  badge?: string;
-  active: boolean;
-}) {
+function NavLink({ href, label, icon: Icon, badge, active }: NavItem & { active: boolean }) {
   return (
     <Link
       href={href}
       title={badge ? `${label} (${badge})` : label}
       aria-label={badge ? `${label} (${badge})` : label}
+      aria-current={active ? 'page' : undefined}
       className={cn(
         'relative mx-auto flex h-10 w-10 items-center justify-center gap-3 rounded-full text-sm font-medium transition-colors',
         'lg:mx-0 lg:h-auto lg:w-auto lg:justify-start lg:px-4 lg:py-2.5',
@@ -63,11 +29,11 @@ function NavLink({
           className="absolute top-1/2 -left-3 h-6 w-1 -translate-y-1/2 rounded-r-full bg-brand"
         />
       )}
-      {icon}
+      <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
       <span className="hidden flex-1 whitespace-nowrap lg:inline">{label}</span>
       {badge && (
         <>
-          <span className="hidden rounded-full bg-secondary-lightest/60 px-2 py-0.5 text-[9px] font-bold tracking-wide whitespace-nowrap text-secondary-darkest uppercase lg:inline">
+          <span className="hidden rounded-full bg-secondary-lightest/60 px-2 py-0.5 text-[11px] font-bold tracking-wide whitespace-nowrap text-secondary-darkest uppercase lg:inline">
             {badge}
           </span>
           {/* Rail mode (< lg): a dot stands in for the badge */}
@@ -92,12 +58,9 @@ export function Sidebar() {
     <aside className="hidden w-16 shrink-0 self-stretch border-r border-neutral-75 bg-surface md:block lg:w-60">
       <div className="sticky top-17">
         <nav aria-label="Navegação principal" className="flex flex-col gap-1 px-3 py-6">
-          <NavLink
-            href="/"
-            label="Visão Geral"
-            icon={<BarChart3 className="h-4 w-4 shrink-0" />}
-            active={pathname === '/'}
-          />
+          {MAIN_NAV.map((item) => (
+            <NavLink key={item.href} {...item} active={isNavActive(pathname, item.href)} />
+          ))}
 
           <Collapsible.Root
             open={platformsOpen}
@@ -107,6 +70,7 @@ export function Sidebar() {
             <Collapsible.Trigger className="hidden w-full cursor-pointer items-center justify-between rounded-full px-4 py-2 text-[11px] font-bold tracking-widest text-low-emphasis uppercase hover:text-high-emphasis lg:flex">
               <span>Plataformas</span>
               <ChevronDown
+                aria-hidden="true"
                 className={cn('h-3.5 w-3.5 transition-transform', platformsOpen && 'rotate-180')}
               />
             </Collapsible.Trigger>
@@ -116,26 +80,16 @@ export function Sidebar() {
               forceMount
               className="mt-1 flex flex-col gap-1 lg:data-[state=closed]:hidden"
             >
-              {PLATFORM_LINKS.map(({ href, label, icon, badge }) => (
-                <NavLink
-                  key={href}
-                  href={href}
-                  label={label}
-                  icon={icon}
-                  badge={badge}
-                  active={pathname === href || pathname.startsWith(`${href}/`)}
-                />
+              {PLATFORM_NAV.map((item) => (
+                <NavLink key={item.href} {...item} active={isNavActive(pathname, item.href)} />
               ))}
             </Collapsible.Content>
           </Collapsible.Root>
 
           <div className="mt-4 border-t border-neutral-75 pt-4">
-            <NavLink
-              href="/skus"
-              label="SKUs"
-              icon={<Database className="h-4 w-4 shrink-0" />}
-              active={pathname === '/skus'}
-            />
+            {ADMIN_NAV.map((item) => (
+              <NavLink key={item.href} {...item} active={isNavActive(pathname, item.href)} />
+            ))}
           </div>
         </nav>
       </div>

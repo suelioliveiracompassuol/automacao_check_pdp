@@ -1,7 +1,8 @@
 import { SectionHeader } from '@/components/ui/card';
-import { cn, getCountryFlag } from '@/lib/utils';
-import { COUNTRY_INFO, type Platform } from '@/lib/types';
-import { VENDOR_LABELS } from './content';
+import { CountryFlag } from '@/components/ui/country-flag';
+import { cn } from '@/lib/utils';
+import { COUNTRY_INFO, VENDOR_INFO } from '@/lib/constants';
+import type { Platform, Vendor } from '@/lib/types';
 import { ChecksOverview } from '@/components/checks-overview';
 
 export interface PlatformCoverageData {
@@ -31,29 +32,29 @@ function CountryGrid({
               : 'border-neutral-75 bg-surface opacity-60',
           )}
         >
-          <img
-            src={getCountryFlag(code)}
+          <CountryFlag
+            code={code}
             alt={`Bandeira do ${label}`}
             width={28}
             height={20}
-            className="mb-1 h-5 w-7 rounded-sm object-cover"
+            className="mb-1 h-5 w-7"
           />
           <span className="text-sm font-bold text-high-emphasis">{label}</span>
           <div className="mt-2 flex flex-wrap justify-center gap-1">
             {(vendorsByCountry[code] ?? []).map((vendor) => {
-              const info = VENDOR_LABELS[vendor];
+              const info = VENDOR_INFO[vendor as Vendor];
               if (!info) return null;
               return (
                 <span
                   key={vendor}
-                  className={cn('rounded-full px-2 py-0.5 text-[10px] font-bold', info.className)}
+                  className={cn('rounded-full px-2 py-0.5 text-[11px] font-bold', info.className)}
                 >
                   {info.label}
                 </span>
               );
             })}
             {channelsByCountry[code]?.includes('socialcommerce') && (
-              <span className="rounded-full bg-info-lightest px-2 py-0.5 text-[10px] font-bold text-info-dark">
+              <span className="rounded-full bg-info-lightest px-2 py-0.5 text-[11px] font-bold text-info-dark">
                 Minha Loja
               </span>
             )}

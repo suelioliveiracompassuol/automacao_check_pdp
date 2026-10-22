@@ -1,16 +1,5 @@
-/* eslint-disable no-constant-binary-expression */
 import { describe, it, expect } from 'vitest';
-import {
-  cn,
-  formatDuration,
-  formatDate,
-  getStatusColor,
-  getStatusIcon,
-  getOperationKey,
-  groupByOperation,
-  getCountryFlag,
-  getScreenshotUrl,
-} from '../utils';
+import { cn, getOperationKey, getCountryFlag, getScreenshotUrl } from '../utils';
 import type { PdpCheckResult } from '../types';
 
 describe('cn (classnames utility)', () => {
@@ -24,65 +13,6 @@ describe('cn (classnames utility)', () => {
 
   it('merges tailwind classes correctly', () => {
     expect(cn('px-2 py-1', 'px-4')).toBe('py-1 px-4');
-  });
-});
-
-describe('formatDuration', () => {
-  it('formats milliseconds', () => {
-    expect(formatDuration(500)).toBe('500ms');
-  });
-
-  it('formats seconds', () => {
-    expect(formatDuration(3500)).toBe('3.5s');
-  });
-
-  it('formats minutes and seconds', () => {
-    expect(formatDuration(125000)).toBe('2m 5s');
-  });
-});
-
-describe('formatDate', () => {
-  it('formats ISO date to pt-BR', () => {
-    const result = formatDate('2024-01-15T10:30:00Z');
-    expect(result).toBeTruthy();
-    expect(typeof result).toBe('string');
-  });
-});
-
-describe('getStatusColor', () => {
-  it('returns success for pass', () => {
-    expect(getStatusColor('pass')).toContain('success');
-  });
-
-  it('returns alert for fail', () => {
-    expect(getStatusColor('fail')).toContain('alert');
-  });
-
-  it('returns warning for error', () => {
-    expect(getStatusColor('error')).toContain('warning');
-  });
-
-  it('returns warning for warning', () => {
-    expect(getStatusColor('warning')).toContain('warning');
-  });
-
-  it('returns neutral for disabled', () => {
-    expect(getStatusColor('disabled')).toContain('neutral');
-  });
-
-  it('returns neutral for na', () => {
-    expect(getStatusColor('na')).toContain('neutral');
-  });
-});
-
-describe('getStatusIcon', () => {
-  it('returns correct icons for each status', () => {
-    expect(getStatusIcon('pass')).toBe('✅');
-    expect(getStatusIcon('fail')).toBe('❌');
-    expect(getStatusIcon('error')).toBe('⚠️');
-    expect(getStatusIcon('warning')).toBe('⚠️');
-    expect(getStatusIcon('disabled')).toBe('🚫');
-    expect(getStatusIcon('na')).toBe('➖');
   });
 });
 
@@ -110,20 +40,6 @@ describe('getOperationKey', () => {
       country: 'co',
     } as PdpCheckResult;
     expect(getOperationKey(result)).toBe('natura-co');
-  });
-});
-
-describe('groupByOperation', () => {
-  it('groups results by operation key', () => {
-    const results = [
-      { vendor: 'natura', country: 'br' },
-      { vendor: 'natura', country: 'br' },
-      { vendor: 'avon', country: 'ar' },
-    ] as PdpCheckResult[];
-    const map = groupByOperation(results);
-    expect(map.size).toBe(2);
-    expect(map.get('natura-br')!.length).toBe(2);
-    expect(map.get('avon-ar')!.length).toBe(1);
   });
 });
 

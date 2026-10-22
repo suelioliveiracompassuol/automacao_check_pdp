@@ -1,5 +1,6 @@
 import { BarChart3 } from 'lucide-react';
 
+import { EmptyState } from '@/components/empty-state';
 import type { PlatformCoverageData } from '@/components/visao-geral/coverage-section';
 import {
   HeroSection,
@@ -8,18 +9,15 @@ import {
 } from '@/components/visao-geral/hero-section';
 import { HighlightsSection } from '@/components/visao-geral/highlights-section';
 import { PlatformTabs, type PlatformSectionData } from '@/components/visao-geral/platform-tabs';
-import { Card } from '@/components/ui/card';
-import { getReportById, getReportIndex } from '@/lib/data';
 import { TOTAL_CHECKS } from '@/lib/checks-catalog';
-import { PLATFORMS } from '@/lib/platforms';
-import { type MonitoringReport, type Platform, type ReportIndexEntry } from '@/lib/types';
+import { getReportById, getReportIndex, getReportsByPlatform } from '@/lib/data';
+import { PLATFORMS, type PlatformMeta } from '@/lib/platforms';
+import { groupByCountry, passRate } from '@/lib/report';
+import type { MonitoringReport, PdpCheckResult, ReportIndexEntry } from '@/lib/types';
 
-const PLATFORM_IDS: Platform[] = PLATFORMS.map((p) => p.platform);
-
-function passRateOf(report: MonitoringReport | null): number | null {
-  if (!report || report.summary.total === 0) return null;
-  return Math.round((report.summary.passed / report.summary.total) * 100);
-}
+/** Execuções exibidas no gráfico de evolução e na matriz de erros. */
+const EVOLUTION_RUNS = 10;
+const MATRIX_RUNS = 4;
 
 function loadReports(entries: ReportIndexEntry[]): MonitoringReport[] {
   return entries
@@ -27,94 +25,78 @@ function loadReports(entries: ReportIndexEntry[]): MonitoringReport[] {
     .filter((r): r is MonitoringReport => r !== null);
 }
 
-export default function HomePage() {
-  const index = getReportIndex();
-  const allRuns = index.reports;
+const entryPassRate = (r: { summary: { passed: number; total: number } }) =>
+  passRate(r.summary.passed, r.summary.total);
 
-  const latestEntry = allRuns[0];
-  if (!latestEntry) {
+/** Map<país, Set> → objeto de arrays: os dados cruzam para um componente cliente (PlatformTabs),
+ * e Map/Set não são serializáveis nessa fronteira. */
+function toRecord(groups: Map<string, Set<string>>): Record<string, string[]> {
+  return Object.fromEntries([...groups].map(([country, values]) => [country, [...values]]));
+}
+
+const featureKeysOf = (results: PdpCheckResult[]) => [
+  ...new Set(results.flatMap((r) => r.features.map((f) => f.featureKey))),
+];
+
+/** Execuções da plataforma, mais recentes primeiro; "em breve" não exibe nada, mesmo com dados. */
+const runsOf = (meta: PlatformMeta) => (meta.upcoming ? [] : getReportsByPlatform(meta.platform));
+
+export default function HomePage() {
+  if (getReportIndex().reports.length === 0) {
     return (
-      <Card className="py-16 text-center">
-        <BarChart3 className="mx-auto mb-3 h-8 w-8 text-primary-light" />
-        <h1 className="text-lg font-bold text-highlight">Nenhuma execução disponível</h1>
-        <p className="mt-1 text-sm text-medium-emphasis">
-          As métricas aparecerão aqui após a primeira execução.
-        </p>
-      </Card>
+      <EmptyState
+        icon={<BarChart3 />}
+        title="Nenhuma execução disponível"
+        description="As métricas aparecerão aqui após a primeira execução."
+      />
     );
   }
 
-  const runsByPlatform = Object.fromEntries(
-    PLATFORM_IDS.map((p) => [p, allRuns.filter((r) => (r.platform ?? 'web') === p)]),
-  ) as Record<Platform, ReportIndexEntry[]>;
+  const platforms = PLATFORMS.map((meta) => {
+    const runs = runsOf(meta);
+    const latest = runs[0] ? getReportById(runs[0].runId) : null;
+    return { meta, runs, latest, results: latest?.results ?? [] };
+  });
 
-  const platformKpis: PlatformKpi[] = PLATFORMS.filter(
-    (meta) => !meta.upcoming && runsByPlatform[meta.platform].length > 0,
-  ).map((meta) => {
-    const runs = runsByPlatform[meta.platform];
-    const latest = getReportById(runs[0].runId);
-    const results = latest?.results ?? [];
-    const featureKeys = new Set(results.flatMap((r) => r.features.map((f) => f.featureKey)));
-    return {
+  const platformKpis: PlatformKpi[] = platforms
+    .filter(({ runs }) => runs.length > 0)
+    .map(({ meta, runs, results }) => ({
       meta,
       runsCount: runs.length,
       countries: [...new Set(results.map((r) => r.country.toUpperCase()))].sort(),
       pdpsCount: results.length,
-      checksCount: meta.platform === 'web' ? TOTAL_CHECKS : featureKeys.size,
+      // Web roda o catálogo inteiro; Android só as features que o app suporta.
+      checksCount: meta.platform === 'web' ? TOTAL_CHECKS : featureKeysOf(results).length,
       lastRunAt: runs[0].startTime,
-    };
-  });
+    }));
 
-  const platformSections: PlatformSectionData[] = PLATFORMS.map(({ platform, upcoming }) => {
-    const runs = upcoming ? [] : runsByPlatform[platform];
-    const latest = runs[0] ? getReportById(runs[0].runId) : null;
-    const results = latest?.results ?? [];
-    const vendorsByCountry: Record<string, Set<string>> = {};
-    const channelsByCountry: Record<string, Set<string>> = {};
-    for (const r of results) {
-      const country = r.country.toUpperCase();
-      (vendorsByCountry[country] ??= new Set()).add(r.vendor.toLowerCase());
-      (channelsByCountry[country] ??= new Set()).add(r.channel ?? 'ecommerce');
-    }
-    const toArrays = (m: Record<string, Set<string>>) =>
-      Object.fromEntries(Object.entries(m).map(([k, v]) => [k, [...v]]));
+  const platformSections: PlatformSectionData[] = platforms.map(({ meta, runs, results }) => {
+    const vendorsByCountry = groupByCountry(results, (r) => r.vendor.toLowerCase());
     const coverage: PlatformCoverageData = {
-      platform,
+      platform: meta.platform,
       hasRuns: results.length > 0,
-      countries: Object.keys(vendorsByCountry).sort(),
-      vendorsByCountry: toArrays(vendorsByCountry),
-      channelsByCountry: toArrays(channelsByCountry),
-      featureKeys:
-        platform === 'web'
-          ? undefined
-          : [...new Set(results.flatMap((r) => r.features.map((f) => f.featureKey)))],
+      countries: [...vendorsByCountry.keys()].sort(),
+      vendorsByCountry: toRecord(vendorsByCountry),
+      channelsByCountry: toRecord(groupByCountry(results, (r) => r.channel ?? 'ecommerce')),
+      featureKeys: meta.platform === 'web' ? undefined : featureKeysOf(results),
     };
     return {
-      platform,
+      platform: meta.platform,
       coverage,
       breakdown: {
-        evolutionData: runs.slice(0, 10).reverse(),
-        reports: loadReports(runs.slice(0, 4)).reverse(),
+        evolutionData: runs.slice(0, EVOLUTION_RUNS).reverse(),
+        reports: loadReports(runs.slice(0, MATRIX_RUNS)).reverse(),
       },
     };
   });
 
-  const platformStats: PlatformStat[] = PLATFORMS.map((meta) => {
-    const runs = meta.upcoming ? [] : runsByPlatform[meta.platform];
-    const latest = runs[0] ? getReportById(runs[0].runId) : null;
-    return {
-      meta,
-      passRate: passRateOf(latest),
-      runsCount: runs.length,
-      lastRunAt: runs[0]?.startTime ?? null,
-      trend: runs
-        .slice(0, 10)
-        .reverse()
-        .map((r) =>
-          r.summary.total > 0 ? Math.round((r.summary.passed / r.summary.total) * 100) : 0,
-        ),
-    };
-  });
+  const platformStats: PlatformStat[] = platforms.map(({ meta, runs, latest }) => ({
+    meta,
+    passRate: latest && latest.summary.total > 0 ? entryPassRate(latest) : null,
+    runsCount: runs.length,
+    lastRunAt: runs[0]?.startTime ?? null,
+    trend: runs.slice(0, EVOLUTION_RUNS).reverse().map(entryPassRate),
+  }));
 
   return (
     <div className="space-y-16 animate-fade-in-up">

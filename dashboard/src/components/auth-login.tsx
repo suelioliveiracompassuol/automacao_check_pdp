@@ -48,8 +48,9 @@ export function AuthLogin() {
         <button
           onClick={handleLogout}
           disabled={loading}
-          className="rounded-lg p-1.5 text-medium-emphasis transition-colors hover:bg-neutral-100 disabled:opacity-50"
+          className="rounded-lg p-2 text-medium-emphasis transition-colors hover:bg-neutral-100 disabled:opacity-50"
           title="Fazer logout"
+          aria-label="Fazer logout"
         >
           <LogOut className="h-4 w-4" aria-hidden="true" />
         </button>
@@ -62,7 +63,9 @@ export function AuthLogin() {
       <button
         type="button"
         onClick={() => setShowForm(!showForm)}
-        className="flex items-center gap-2 rounded-lg border border-primary-light bg-primary-wash px-3 py-2 text-sm font-medium text-primary-dark transition-colors hover:bg-primary-lightest"
+        aria-expanded={showForm}
+        aria-controls="auth-login-form"
+        className="flex items-center gap-2 rounded-lg border border-primary-light bg-primary-wash px-3 py-2 text-sm font-medium text-primary-darkest transition-colors hover:bg-primary-lightest"
       >
         <LogIn className="h-4 w-4" aria-hidden="true" />
         Fazer Login
@@ -70,13 +73,18 @@ export function AuthLogin() {
 
       {showForm && (
         <form
+          id="auth-login-form"
           onSubmit={handleLogin}
           className="space-y-3 rounded-lg border border-neutral-100 bg-neutral-50 p-3"
         >
           <div>
-            <label className="block text-xs font-medium text-high-emphasis">Email</label>
+            <label htmlFor="auth-email" className="block text-xs font-medium text-high-emphasis">
+              Email
+            </label>
             <input
+              id="auth-email"
               type="email"
+              autoComplete="username"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="usuario@exemplo.com"
@@ -87,9 +95,13 @@ export function AuthLogin() {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-high-emphasis">Senha</label>
+            <label htmlFor="auth-password" className="block text-xs font-medium text-high-emphasis">
+              Senha
+            </label>
             <input
+              id="auth-password"
               type="password"
+              autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Sua senha"
@@ -99,12 +111,16 @@ export function AuthLogin() {
             />
           </div>
 
-          {error && <p className="text-xs text-alert-dark">{error}</p>}
+          {error && (
+            <p className="text-xs text-alert-dark" role="alert">
+              {error}
+            </p>
+          )}
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg bg-primary px-3 py-2 text-xs font-medium text-white transition-colors hover:bg-primary-dark disabled:opacity-50"
+            className="w-full rounded-lg bg-primary px-3 py-2 text-xs font-semibold text-highlight transition-colors hover:bg-primary-dark disabled:opacity-50"
           >
             {loading ? 'Entrando...' : 'Entrar'}
           </button>

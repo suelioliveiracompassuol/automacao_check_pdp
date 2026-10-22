@@ -1,8 +1,9 @@
 import { Card, SectionHeader } from '@/components/ui/card';
-import { cn, getCountryFlag } from '@/lib/utils';
-import { COUNTRY_INFO, type Country, type MonitoringReport } from '@/lib/types';
+import { CountryFlag } from '@/components/ui/country-flag';
+import { cn } from '@/lib/utils';
+import { countryLabel, vendorInfo } from '@/lib/constants';
+import type { MonitoringReport } from '@/lib/types';
 import { ALL_CHECKLIST_ITEMS } from '@/lib/checks-catalog';
-import { VENDOR_LABELS } from './content';
 
 const EXCLUDED_CHECKS = new Set(['pricing', 'shipping']);
 
@@ -62,7 +63,8 @@ interface MatrixRowItemProps {
 }
 
 function MatrixRowItem({ row, totalRuns }: MatrixRowItemProps) {
-  const countryInfo = COUNTRY_INFO[row.country as Country];
+  const country = countryLabel(row.country);
+  const vendor = vendorInfo(row.vendor);
 
   return (
     <tr className="transition-colors hover:bg-neutral-50/50">
@@ -73,31 +75,29 @@ function MatrixRowItem({ row, totalRuns }: MatrixRowItemProps) {
         <span
           className={cn(
             'inline-flex items-center rounded px-2 py-0.5 text-xs font-semibold',
-            row.vendor === 'natura'
-              ? 'bg-primary-wash text-primary-dark'
-              : 'bg-pink-50 text-pink-700',
+            vendor.className,
           )}
         >
-          {VENDOR_LABELS[row.vendor]?.label ?? row.vendor}
+          {vendor.label}
         </span>
       </td>
       <td className="px-4 py-3">
         <span className="flex items-center gap-1.5 text-high-emphasis">
-          <img
-            src={getCountryFlag(row.country)}
-            alt={`Bandeira do ${countryInfo?.label ?? row.country}`}
+          <CountryFlag
+            code={row.country}
+            alt={`Bandeira do ${country}`}
             width={20}
             height={15}
-            className="h-4 w-5 rounded-sm object-cover"
+            className="h-4 w-5"
           />
-          <span>{countryInfo?.label ?? row.country}</span>
+          <span>{country}</span>
         </span>
       </td>
       <td className="px-4 py-3">
         <div className="flex items-center justify-center gap-2">
           {row.failures.map((failed, i) => (
             <div key={`c${i + 1}`} className="flex flex-col items-center gap-0.5">
-              <span className="font-mono text-[9px] text-low-emphasis">C{i + 1}</span>
+              <span className="font-mono text-[11px] text-low-emphasis">C{i + 1}</span>
               <div
                 className={cn(
                   'h-4 w-4 rounded-full border-2',
@@ -150,35 +150,31 @@ export function ErrorMatrixSection({
 
       {topFailures.length > 0 && (
         <div className="mb-6 grid gap-3 @2xl:grid-cols-3">
-          {topFailures.map((row) => {
-            const countryInfo = COUNTRY_INFO[row.country as Country];
-            return (
-              <div
-                key={`${row.checkKey}-${row.vendor}-${row.country}`}
-                className="rounded-xl border border-alert-lightest bg-alert-lightest/50 p-4"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-wide text-alert-dark">
-                    Falha persistente
-                  </span>
-                  <span className="rounded-full bg-alert px-2 py-0.5 text-[10px] font-bold text-white">
-                    {row.persistenceCount}/{reports.length} runs
-                  </span>
-                </div>
-                <p className="mt-2 font-semibold text-highlight">{row.checkLabel}</p>
-                <p className="mt-0.5 text-xs text-medium-emphasis">
-                  {VENDOR_LABELS[row.vendor]?.label ?? row.vendor} ·{' '}
-                  {countryInfo?.label ?? row.country}
-                </p>
+          {topFailures.map((row) => (
+            <div
+              key={`${row.checkKey}-${row.vendor}-${row.country}`}
+              className="rounded-xl border border-alert-lightest bg-alert-lightest/50 p-4"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-wide text-alert-dark">
+                  Falha persistente
+                </span>
+                <span className="rounded-full bg-alert px-2 py-0.5 text-[11px] font-bold text-white">
+                  {row.persistenceCount}/{reports.length} runs
+                </span>
               </div>
-            );
-          })}
+              <p className="mt-2 font-semibold text-highlight">{row.checkLabel}</p>
+              <p className="mt-0.5 text-xs text-medium-emphasis">
+                {vendorInfo(row.vendor).label} · {countryLabel(row.country)}
+              </p>
+            </div>
+          ))}
         </div>
       )}
 
       <Card className="overflow-hidden p-0">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm" role="table">
+          <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-neutral-75 bg-neutral-50">
                 <th

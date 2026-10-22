@@ -3,8 +3,9 @@ import { ArrowUpRight, CalendarClock, Globe2, ListChecks, Package, PlayCircle } 
 import type { ReactNode } from 'react';
 import { BetaBadge } from '@/components/beta-badge';
 import type { PlatformMeta } from '@/lib/platforms';
-import { COUNTRY_INFO, type Country } from '@/lib/types';
-import { cn, formatDate } from '@/lib/utils';
+import { countryLabel } from '@/lib/constants';
+import { formatDate } from '@/lib/format';
+import { cn } from '@/lib/utils';
 
 export interface PlatformStat {
   meta: PlatformMeta;
@@ -36,9 +37,11 @@ interface HeroSectionProps {
 }
 
 function rateTone(rate: number) {
-  if (rate >= 90) return { text: 'text-success-dark', bar: 'bg-success', stroke: '#2f833e' };
-  if (rate >= 70) return { text: 'text-secondary-darkest', bar: 'bg-warning', stroke: '#e5b815' };
-  return { text: 'text-alert-dark', bar: 'bg-alert', stroke: '#de3529' };
+  if (rate >= 90)
+    return { text: 'text-success-dark', bar: 'bg-success', stroke: 'var(--color-success)' };
+  if (rate >= 70)
+    return { text: 'text-secondary-darkest', bar: 'bg-warning', stroke: 'var(--color-warning)' };
+  return { text: 'text-alert-dark', bar: 'bg-alert', stroke: 'var(--color-alert)' };
 }
 
 function Sparkline({ values, stroke }: { values: number[]; stroke: string }) {
@@ -52,8 +55,8 @@ function Sparkline({ values, stroke }: { values: number[]; stroke: string }) {
   const [lx, ly] = pts[pts.length - 1];
   return (
     <svg viewBox={`-2 -4 ${w + 4} ${h + 8}`} className="h-9 w-28" aria-hidden="true">
-      <path d={d} fill="none" stroke={stroke} strokeWidth={2} strokeLinejoin="round" />
-      <circle cx={lx} cy={ly} r={3} fill={stroke} />
+      <path d={d} fill="none" style={{ stroke }} strokeWidth={2} strokeLinejoin="round" />
+      <circle cx={lx} cy={ly} r={3} style={{ fill: stroke }} />
     </svg>
   );
 }
@@ -92,9 +95,9 @@ function PlatformCard({ meta, passRate, runsCount, lastRunAt, trend }: PlatformS
           </div>
         </div>
         {live ? (
-          <ArrowUpRight className="h-4 w-4 shrink-0 text-low-emphasis transition-colors group-hover:text-primary-dark" />
+          <ArrowUpRight className="h-4 w-4 shrink-0 text-low-emphasis transition-colors group-hover:text-primary-darkest" />
         ) : (
-          <span className="shrink-0 rounded-full bg-secondary-lightest/60 px-2.5 py-0.5 text-[10px] font-bold tracking-widest whitespace-nowrap text-secondary-darkest uppercase">
+          <span className="shrink-0 rounded-full bg-secondary-lightest/60 px-2.5 py-0.5 text-[11px] font-bold tracking-widest whitespace-nowrap text-secondary-darkest uppercase">
             {meta.upcoming ? 'Em breve' : 'Sem dados'}
           </span>
         )}
@@ -140,7 +143,7 @@ function PlatformCard({ meta, passRate, runsCount, lastRunAt, trend }: PlatformS
 function Kpi({ icon, label, value }: { icon: ReactNode; label: string; value: ReactNode }) {
   return (
     <div className="flex items-center gap-3">
-      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface text-primary-dark shadow-tiny">
+      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface text-primary-darkest shadow-tiny">
         {icon}
       </span>
       <div className="min-w-0">
@@ -156,7 +159,7 @@ function Kpi({ icon, label, value }: { icon: ReactNode; label: string; value: Re
 function countriesLabel(countries: string[]) {
   if (countries.length === 0) return '—';
   if (countries.length <= 2) {
-    return countries.map((c) => COUNTRY_INFO[c as Country]?.label ?? c).join(' e ');
+    return countries.map(countryLabel).join(' e ');
   }
   return `${countries.length} monitorados`;
 }
@@ -216,7 +219,7 @@ export function HeroSection({ platformKpis, platformStats }: HeroSectionProps) {
           className="pointer-events-none absolute right-1/3 -bottom-40 h-72 w-72 rounded-full bg-primary-lightest/50 blur-3xl"
         />
         <div className="relative">
-          <p className="mb-2 text-[11px] font-bold tracking-widest text-primary-dark uppercase">
+          <p className="mb-2 text-[11px] font-bold tracking-widest text-primary-darkest uppercase">
             Automação de Qualidade PDP
           </p>
           <h1

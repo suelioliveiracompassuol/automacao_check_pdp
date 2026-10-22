@@ -104,7 +104,7 @@ describe('OperationFlagsGrid', () => {
       { ...resultsWithFlags[0], sku: 'SKU-003' }, // same vendor+country
     ];
     render(<OperationFlagsGrid results={duplicateResults} />);
-    expect(screen.getByText('1 operações')).toBeInTheDocument();
+    expect(screen.getByText('1 operação')).toBeInTheDocument();
   });
 
   it('renders one column header per operation plus the Flag column', () => {
@@ -120,13 +120,13 @@ describe('OperationFlagsGrid', () => {
 
   it('renders boolean true as checkmark', () => {
     render(<OperationFlagsGrid results={resultsWithFlags} />);
-    const checkmarks = screen.getAllByText('✓');
+    const checkmarks = screen.getAllByRole('img', { name: 'Ativo' });
     expect(checkmarks.length).toBeGreaterThanOrEqual(1);
   });
 
   it('renders boolean false as X mark', () => {
     render(<OperationFlagsGrid results={resultsWithFlags} />);
-    const crosses = screen.getAllByText('✗');
+    const crosses = screen.getAllByRole('img', { name: 'Inativo' });
     expect(crosses.length).toBeGreaterThanOrEqual(1);
   });
 

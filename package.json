@@ -9,6 +9,9 @@
     "check:headed": "tsc && cross-env HEADLESS=false node dist/index.js",
     "check:smoke": "tsc && cross-env MODE=smoke node dist/index.js",
     "check:android": "tsc && node dist/index.android.js",
+    "perf": "tsc && node dist/perf/index.js",
+    "perf:local": "tsc && cross-env PERF_OUTPUT_DIR=reports/perf node dist/perf/index.js",
+    "perf:ci": "tsc && cross-env PERF_OUTPUT_DIR=docs/perf node dist/perf/index.js",
     "test": "npx playwright test",
     "test:unit": "npx playwright test src/tests/",
     "lint": "eslint src/",
@@ -35,8 +38,10 @@
   },
   "dependencies": {
     "@radix-ui/react-tabs": "^1.1.21",
+    "chrome-launcher": "^1.2.2",
     "dotenv": "^17.4.2",
     "firebase-admin": "^14.3.0",
+    "lighthouse": "^12.8.2",
     "webdriverio": "^9.31.5"
   }
 }

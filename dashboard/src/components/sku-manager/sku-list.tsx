@@ -2,7 +2,17 @@
 
 import { Search } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import { fieldControlClass } from '@/components/ui/form-field';
+import {
+  CHANNEL_INFO,
+  CHANNELS,
+  COUNTRIES,
+  COUNTRY_INFO,
+  VENDOR_INFO,
+  VENDORS,
+} from '@/lib/constants';
 import type { Channel, Country, SkuEntry, Vendor } from '@/lib/types';
+import { cn } from '@/lib/utils';
 import { SkuCard } from './sku-card';
 
 interface SkuListProps {
@@ -18,57 +28,23 @@ interface SkuGroup {
   match: (s: SkuEntry) => boolean;
 }
 
+function operationGroup(vendor: Vendor, country: Country): SkuGroup {
+  return {
+    key: `${vendor}-${country.toLowerCase()}`,
+    label: `${VENDOR_INFO[vendor].label} ${COUNTRY_INFO[country].label}`,
+    match: (s) => s.vendor === vendor && s.country === country && s.channel === 'ecommerce',
+  };
+}
+
+/** Ordem de exibição dos grupos; o que não casar com nenhum vai para "Outros". */
 const SKU_GROUPS: SkuGroup[] = [
-  {
-    key: 'natura-br',
-    label: 'Natura Brasil',
-    match: (s) => s.vendor === 'natura' && s.country === 'BR' && s.channel === 'ecommerce',
-  },
-  {
-    key: 'natura-ar',
-    label: 'Natura Argentina',
-    match: (s) => s.vendor === 'natura' && s.country === 'AR' && s.channel === 'ecommerce',
-  },
-  {
-    key: 'natura-cl',
-    label: 'Natura Chile',
-    match: (s) => s.vendor === 'natura' && s.country === 'CL' && s.channel === 'ecommerce',
-  },
-  {
-    key: 'natura-co',
-    label: 'Natura Colômbia',
-    match: (s) => s.vendor === 'natura' && s.country === 'CO' && s.channel === 'ecommerce',
-  },
-  {
-    key: 'natura-mx',
-    label: 'Natura México',
-    match: (s) => s.vendor === 'natura' && s.country === 'MX' && s.channel === 'ecommerce',
-  },
-  {
-    key: 'natura-pe',
-    label: 'Natura Peru',
-    match: (s) => s.vendor === 'natura' && s.country === 'PE' && s.channel === 'ecommerce',
-  },
+  ...(['BR', 'AR', 'CL', 'CO', 'MX', 'PE'] as const).map((c) => operationGroup('natura', c)),
   {
     key: 'social-br',
     label: 'Social Commerce — Minha Loja (BR) Avon/Natura',
     match: (s) => s.channel === 'socialcommerce' && s.country === 'BR',
   },
-  {
-    key: 'avon-br',
-    label: 'Avon Brasil',
-    match: (s) => s.vendor === 'avon' && s.country === 'BR' && s.channel === 'ecommerce',
-  },
-  {
-    key: 'avon-ar',
-    label: 'Avon Argentina',
-    match: (s) => s.vendor === 'avon' && s.country === 'AR' && s.channel === 'ecommerce',
-  },
-  {
-    key: 'avon-mx',
-    label: 'Avon México',
-    match: (s) => s.vendor === 'avon' && s.country === 'MX' && s.channel === 'ecommerce',
-  },
+  ...(['BR', 'AR', 'MX'] as const).map((c) => operationGroup('avon', c)),
 ];
 
 const ALL_OPTION = 'all';
@@ -116,9 +92,6 @@ export function SkuList({ skus, onEdit, onDelete, disabled }: SkuListProps) {
     return { groups: result, totalFiltered: filtered.length };
   }, [skus, search, vendor, country, channel]);
 
-  const selectClass =
-    'rounded-lg border border-neutral-100 bg-white px-3 py-2 text-sm text-high-emphasis outline-none transition-colors focus:border-primary-light focus:ring-2 focus:ring-primary-lightest';
-
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center gap-3">
@@ -133,27 +106,30 @@ export function SkuList({ skus, onEdit, onDelete, disabled }: SkuListProps) {
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Buscar por nome ou SKU…"
             aria-label="Buscar SKUs"
-            className="w-full rounded-lg border border-neutral-100 py-2 pl-9 pr-3 text-sm text-highlight placeholder-low-emphasis outline-none transition-colors focus:border-primary-light focus:ring-2 focus:ring-primary-lightest"
+            className={cn(fieldControlClass, 'w-full pl-9')}
           />
         </div>
         <select
           value={vendor}
           onChange={(e) => setVendor(e.target.value as Vendor | typeof ALL_OPTION)}
           aria-label="Filtrar por vendor"
-          className={selectClass}
+          className={fieldControlClass}
         >
           <option value={ALL_OPTION}>Todos os vendors</option>
-          <option value="natura">Natura</option>
-          <option value="avon">Avon</option>
+          {VENDORS.map((v) => (
+            <option key={v} value={v}>
+              {VENDOR_INFO[v].label}
+            </option>
+          ))}
         </select>
         <select
           value={country}
           onChange={(e) => setCountry(e.target.value as Country | typeof ALL_OPTION)}
           aria-label="Filtrar por país"
-          className={selectClass}
+          className={fieldControlClass}
         >
           <option value={ALL_OPTION}>Todos os países</option>
-          {(['BR', 'AR', 'CL', 'CO', 'MX', 'PE'] as Country[]).map((c) => (
+          {COUNTRIES.map((c) => (
             <option key={c} value={c}>
               {c}
             </option>
@@ -163,11 +139,14 @@ export function SkuList({ skus, onEdit, onDelete, disabled }: SkuListProps) {
           value={channel}
           onChange={(e) => setChannel(e.target.value as Channel | typeof ALL_OPTION)}
           aria-label="Filtrar por canal"
-          className={selectClass}
+          className={fieldControlClass}
         >
           <option value={ALL_OPTION}>Todos os canais</option>
-          <option value="ecommerce">E-commerce</option>
-          <option value="socialcommerce">Social Commerce</option>
+          {CHANNELS.map((ch) => (
+            <option key={ch} value={ch}>
+              {CHANNEL_INFO[ch].label}
+            </option>
+          ))}
         </select>
       </div>
       <p className="text-xs text-medium-emphasis" aria-live="polite">
@@ -189,7 +168,7 @@ export function SkuList({ skus, onEdit, onDelete, disabled }: SkuListProps) {
                 >
                   {group.label}
                 </h2>
-                <span className="rounded-full bg-neutral-75 px-2 py-0.5 text-[10px] font-medium text-medium-emphasis">
+                <span className="rounded-full bg-neutral-75 px-2 py-0.5 text-[11px] font-medium text-medium-emphasis">
                   {entries.length}
                 </span>
                 <div className="h-px flex-1 bg-neutral-75" aria-hidden="true" />

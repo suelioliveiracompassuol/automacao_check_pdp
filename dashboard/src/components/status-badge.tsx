@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 import type { Status } from '@/lib/types';
-import { Check, X, AlertTriangle, Minus, Ban } from 'lucide-react';
+import { Check, X, AlertTriangle, OctagonAlert, Minus, Ban } from 'lucide-react';
 
 const statusConfig: Record<Status, { label: string; icon: typeof Check; colors: string }> = {
   pass: {
@@ -13,10 +13,11 @@ const statusConfig: Record<Status, { label: string; icon: typeof Check; colors: 
     icon: X,
     colors: 'bg-alert-lightest text-alert-dark border-alert-light/60',
   },
+  // Execution error (checker could not run) — distinct from a functional "warning"
   error: {
     label: 'Erro',
-    icon: AlertTriangle,
-    colors: 'bg-warning-lightest text-warning-darkest border-warning-light/60',
+    icon: OctagonAlert,
+    colors: 'bg-primary-wash text-primary-darkest border-primary-lightest',
   },
   warning: {
     label: 'Alerta',
@@ -52,7 +53,7 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
         className,
       )}
     >
-      <Icon className="w-3 h-3" />
+      <Icon className="w-3 h-3" aria-hidden="true" />
       {config.label}
     </span>
   );

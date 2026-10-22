@@ -1,15 +1,12 @@
 import { Card, SectionHeader } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
+import { formatShortDate } from '@/lib/format';
+import { passRate as computePassRate } from '@/lib/report';
 import type { ReportIndexEntry } from '@/lib/types';
+import { cn } from '@/lib/utils';
 import { EvolutionChart } from './evolution-chart';
 
-function formatShortDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    timeZone: 'America/Sao_Paulo',
-  });
-}
+const runPassRate = (run: ReportIndexEntry) =>
+  computePassRate(run.summary.passed, run.summary.total);
 
 interface EvolutionRowProps {
   run: ReportIndexEntry;
@@ -17,8 +14,7 @@ interface EvolutionRowProps {
 }
 
 function EvolutionRow({ run, isLatest }: EvolutionRowProps) {
-  const passRate =
-    run.summary.total > 0 ? Math.round((run.summary.passed / run.summary.total) * 100) : 0;
+  const passRate = runPassRate(run);
 
   return (
     <div
@@ -27,7 +23,7 @@ function EvolutionRow({ run, isLatest }: EvolutionRowProps) {
         isLatest && 'bg-primary-wash',
       )}
     >
-      <span className="font-mono text-xs text-low-emphasis">{formatShortDate(run?.startTime)}</span>
+      <span className="font-mono text-xs text-low-emphasis">{formatShortDate(run.startTime)}</span>
       <span
         className={cn(
           'font-semibold',
@@ -35,19 +31,27 @@ function EvolutionRow({ run, isLatest }: EvolutionRowProps) {
             ? 'text-success-dark'
             : passRate >= 40
               ? 'text-warning-darkest'
-              : 'text-alert',
+              : 'text-alert-dark',
         )}
       >
         {passRate}%
       </span>
       <span className="text-right text-xs text-medium-emphasis">
-        <span className="font-medium text-success-dark">{run.summary.passed}✓</span>
+        <span className="font-medium text-success-dark">
+          {run.summary.passed}
+          <span aria-hidden="true">✓</span>
+          <span className="sr-only"> aprovados</span>
+        </span>
         {' / '}
-        <span className="font-medium text-alert">{run.summary.failed}✗</span>
+        <span className="font-medium text-alert-dark">
+          {run.summary.failed}
+          <span aria-hidden="true">✗</span>
+          <span className="sr-only"> reprovados</span>
+        </span>
       </span>
       <span>
         {isLatest && (
-          <span className="rounded bg-primary-lightest px-1.5 py-0.5 text-[9px] font-bold text-primary-dark">
+          <span className="rounded bg-primary-lightest px-1.5 py-0.5 text-[11px] font-bold text-primary-darkest">
             atual
           </span>
         )}
@@ -67,9 +71,8 @@ export function EvolutionSection({
   title = 'Evolução Histórica',
 }: EvolutionSectionProps) {
   const chartData = evolutionData.map((run) => ({
-    label: formatShortDate(run?.startTime),
-    passRate:
-      run.summary.total > 0 ? Math.round((run.summary.passed / run.summary.total) * 100) : 0,
+    label: formatShortDate(run.startTime),
+    passRate: runPassRate(run),
   }));
 
   return (
@@ -85,7 +88,7 @@ export function EvolutionSection({
           <EvolutionChart data={chartData} />
         </Card>
         <Card className="p-3">
-          <div className="grid grid-cols-[3.5rem_1fr_5.5rem_3rem] gap-2 px-3 pt-1 pb-2 text-[10px] font-bold tracking-widest text-low-emphasis uppercase">
+          <div className="grid grid-cols-[3.5rem_1fr_5.5rem_3rem] gap-2 px-3 pt-1 pb-2 text-[11px] font-bold tracking-widest text-low-emphasis uppercase">
             <span>Data</span>
             <span>Taxa</span>
             <span className="text-right">✓ / ✗</span>

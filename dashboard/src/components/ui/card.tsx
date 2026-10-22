@@ -42,7 +42,7 @@ export function SectionHeader({ id, title, description, eyebrow, action }: Secti
     <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
       <div>
         {eyebrow && (
-          <p className="mb-1 text-[11px] font-bold tracking-widest text-primary-dark uppercase">
+          <p className="mb-1 text-[11px] font-bold tracking-widest text-primary-darkest uppercase">
             {eyebrow}
           </p>
         )}

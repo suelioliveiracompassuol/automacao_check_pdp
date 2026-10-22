@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
   // O repo tem lockfile na raiz e no dashboard; sem isso o Next infere a raiz errada.
   outputFileTracingRoot: path.resolve(__dirname),
   eslint: {
-    // Lint roda via script próprio; no build o Next resolveria o eslint.config.mjs da raiz.
+    // Lint roda via `npm run lint` (eslint.config.mjs do dashboard); não repetimos no build.
     ignoreDuringBuilds: true,
   },
   images: {

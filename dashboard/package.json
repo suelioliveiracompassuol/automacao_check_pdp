@@ -7,7 +7,7 @@
     "build": "next build",
     "build:static": "cross-env STATIC_EXPORT=true next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest",
@@ -30,6 +30,7 @@
     "tailwind-merge": "^3.3.0"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.7",
     "@tailwindcss/postcss": "^4.1.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
@@ -41,6 +42,7 @@
     "@vitest/coverage-v8": "^4.1.9",
     "cross-env": "^7.0.3",
     "dotenv": "^17.4.2",
+    "eslint": "^9.39.5",
     "eslint-config-next": "^15.5.26",
     "eslint-config-prettier": "^10.1.8",
     "firebase-admin": "^14.3.0",

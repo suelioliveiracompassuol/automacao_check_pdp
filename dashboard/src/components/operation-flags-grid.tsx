@@ -2,9 +2,10 @@
 
 import { useMemo, useState } from 'react';
 import * as Collapsible from '@radix-ui/react-collapsible';
-import { ChevronDown } from 'lucide-react';
+import { Check, ChevronDown, ShoppingCart, Wrench, X, type LucideIcon } from 'lucide-react';
 import { VendorLogo } from './vendor-logo';
-import { getCountryFlag, getOperationKey } from '@/lib/utils';
+import { getOperationKey } from '@/lib/utils';
+import { CountryFlag } from './ui/country-flag';
 import type { PdpCheckResult } from '@/lib/types';
 
 interface OperationFlagsGridProps {
@@ -13,10 +14,19 @@ interface OperationFlagsGridProps {
 
 function renderValue(value: unknown): React.ReactNode {
   if (value === true) {
-    return <span className="text-success-dark font-bold">✓</span>;
+    return (
+      <Check
+        className="h-3.5 w-3.5 text-success-dark"
+        strokeWidth={3}
+        role="img"
+        aria-label="Ativo"
+      />
+    );
   }
   if (value === false) {
-    return <span className="text-alert font-bold">✗</span>;
+    return (
+      <X className="h-3.5 w-3.5 text-alert-dark" strokeWidth={3} role="img" aria-label="Inativo" />
+    );
   }
   if (value === null || value === undefined) {
     return <span className="text-neutral-300">—</span>;
@@ -67,12 +77,12 @@ interface OperationData {
 
 function FlagsTable({
   title,
-  icon,
+  icon: Icon,
   operations,
   flagsKey,
 }: {
   title: string;
-  icon: string;
+  icon: LucideIcon;
   operations: OperationData[];
   flagsKey: 'remoteConfigFlags' | 'commerceFeatureFlags';
 }) {
@@ -94,10 +104,11 @@ function FlagsTable({
   return (
     <div className="mb-6">
       <div className="mb-2">
-        <h3 className="text-sm font-semibold text-high-emphasis">
-          {icon} {title}
+        <h3 className="flex items-center gap-1.5 text-sm font-semibold text-high-emphasis">
+          <Icon className="h-4 w-4 text-medium-emphasis" aria-hidden="true" />
+          {title}
         </h3>
-        <span className="text-[10px] text-low-emphasis sm:hidden">→ arraste para o lado</span>
+        <span className="text-[11px] text-low-emphasis sm:hidden">→ arraste para o lado</span>
       </div>
       {/* Single scroll container (both axes) so the sticky header row and sticky flag column
           stay pinned together — needed for embeds with a short viewport (e.g. Google Sites
@@ -120,20 +131,14 @@ function FlagsTable({
                   >
                     <div className="flex flex-col items-center gap-0.5">
                       <VendorLogo vendor={op.vendor} size="sm" />
-                      <img
-                        src={getCountryFlag(op.country)}
-                        alt={op.country}
-                        width={14}
-                        height={10}
-                        className="rounded-sm"
-                      />
+                      <CountryFlag code={op.country} alt={op.country} width={14} height={10} />
                       {isSocial && (
-                        <span className="text-[8px] font-bold px-1 py-0.5 bg-success-lightest text-success-dark rounded uppercase">
+                        <span className="text-[11px] font-bold px-1 py-0.5 bg-success-lightest text-success-dark rounded uppercase">
                           ML
                         </span>
                       )}
                       {flagsKey === 'remoteConfigFlags' && locale && (
-                        <span className="text-[8px] text-low-emphasis font-mono font-normal">
+                        <span className="text-[11px] text-low-emphasis font-mono font-normal">
                           {locale}
                         </span>
                       )}
@@ -217,19 +222,19 @@ export function OperationFlagsGrid({ results }: OperationFlagsGridProps) {
         />
         <h2 className="text-lg font-semibold text-highlight">Feature Flags por Operação</h2>
         <span className="text-xs text-medium-emphasis bg-neutral-75 px-2 py-0.5 rounded-full">
-          {operations.length} operações
+          {operations.length} {operations.length === 1 ? 'operação' : 'operações'}
         </span>
       </Collapsible.Trigger>
       <Collapsible.Content className="mt-4 space-y-2">
         <FlagsTable
           title="Remote Config Flags"
-          icon="🔧"
+          icon={Wrench}
           operations={rcOps}
           flagsKey="remoteConfigFlags"
         />
         <FlagsTable
           title="Commerce Feature Flags"
-          icon="🛒"
+          icon={ShoppingCart}
           operations={commerceOps}
           flagsKey="commerceFeatureFlags"
         />

@@ -99,10 +99,18 @@ describe('FilterBar', () => {
     expect(props.onStatusChange).toHaveBeenCalledWith('all');
   });
 
-  it('renders country flags', () => {
+  it('renders country flags as decorative images next to the country code', () => {
+    const { container } = render(<FilterBar {...defaultProps} />);
+    const flags = container.querySelectorAll('img[alt=""]');
+    expect(flags.length).toBeGreaterThan(0);
+  });
+
+  it('exposes the selected status via aria-pressed', () => {
     render(<FilterBar {...defaultProps} />);
-    const imgs = screen.getAllByRole('img');
-    expect(imgs.length).toBeGreaterThan(0);
+    expect(screen.getByRole('button', { name: 'Aprovados' })).toHaveAttribute(
+      'aria-pressed',
+      'false',
+    );
   });
 
   it('calls onVendorChange when clicking a vendor', () => {

@@ -3,16 +3,6 @@ import { describe, it, expect, vi } from 'vitest';
 import { ReportClient } from '../../app/web/[runId]/report-client';
 import type { PdpCheckResult } from '@/lib/types';
 
-// Mock framer-motion
-vi.mock('framer-motion', () => ({
-  motion: {
-    div: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => (
-      <div {...props}>{children}</div>
-    ),
-  },
-  AnimatePresence: ({ children }: React.PropsWithChildren) => <>{children}</>,
-}));
-
 // Mock PdpCard
 vi.mock('@/components/pdp-card', () => ({
   PdpCard: ({ result }: { result: PdpCheckResult }) => (

@@ -1,0 +1,106 @@
+{
+  "lighthouseVersion": "12.8.2",
+  "finalDisplayedUrl": "https://www.natura.com.br/p/desodorante-colonia-kaiak-pulso-masculino-100-ml/NATBRA-108403",
+  "categories": {
+    "performance": {
+      "score": 0.85
+    }
+  },
+  "audits": {
+    "largest-contentful-paint": {
+      "title": "Largest Contentful Paint",
+      "numericValue": 2450.4
+    },
+    "cumulative-layout-shift": {
+      "title": "Cumulative Layout Shift",
+      "numericValue": 0.0456
+    },
+    "total-blocking-time": {
+      "title": "Total Blocking Time",
+      "numericValue": 180.2
+    },
+    "first-contentful-paint": {
+      "title": "First Contentful Paint",
+      "numericValue": 1250.7
+    },
+    "speed-index": {
+      "title": "Speed Index",
+      "numericValue": 2200.3
+    },
+    "server-response-time": {
+      "title": "Initial Server Response Time",
+      "numericValue": 450.1
+    },
+    "total-byte-weight": {
+      "title": "Total Byte Weight",
+      "numericValue": 1845600.4
+    },
+    "network-requests": {
+      "title": "Network Requests",
+      "details": {
+        "items": [
+          {
+            "url": "https://www.natura.com.br/main.js"
+          },
+          {
+            "url": "https://www.natura.com.br/style.css"
+          },
+          {
+            "url": "https://www.natura.com.br/img.jpg"
+          }
+        ]
+      }
+    },
+    "largest-contentful-paint-element": {
+      "title": "Largest Contentful Paint Element",
+      "details": {
+        "items": [
+          {
+            "items": [
+              {
+                "node": {
+                  "nodeLabel": "img.product-image",
+                  "selector": "div.gallery > img",
+                  "snippet": "<img class=\"product-image\" src=\"kaiak.jpg\">"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "render-blocking-resources": {
+      "title": "Eliminar recursos que bloqueiam a renderização",
+      "details": {
+        "type": "opportunity",
+        "overallSavingsMs": 450
+      }
+    },
+    "unused-javascript": {
+      "title": "Reduzir JavaScript não utilizado",
+      "details": {
+        "type": "opportunity",
+        "overallSavingsMs": 1200
+      }
+    },
+    "unminified-css": {
+      "title": "Minificar CSS",
+      "details": {
+        "type": "opportunity",
+        "overallSavingsMs": 0
+      }
+    },
+    "metrics": {
+      "title": "Metrics",
+      "details": {
+        "type": "debugdata",
+        "items": [
+          {
+            "observedFirstVisualChange": 2104.6,
+            "observedLargestContentfulPaint": 2450
+          }
+        ]
+      }
+    }
+  }
+}

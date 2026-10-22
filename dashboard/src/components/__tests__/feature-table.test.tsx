@@ -140,9 +140,9 @@ describe('FeatureTable', () => {
     // Open page screenshot to trigger selectedScreenshot state
     fireEvent.click(screen.getByText('Ver screenshot da página completa'));
     // Zoom controls should be visible
-    expect(screen.getByTitle('Zoom in')).toBeInTheDocument();
-    expect(screen.getByTitle('Zoom out')).toBeInTheDocument();
-    expect(screen.getByTitle('Reset zoom')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Aumentar zoom' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Diminuir zoom' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Redefinir zoom' })).toBeInTheDocument();
   });
 
   it('zoom in increases zoom percentage', () => {
@@ -155,7 +155,7 @@ describe('FeatureTable', () => {
     );
     fireEvent.click(screen.getByText('Ver screenshot da página completa'));
     expect(screen.getByText('100%')).toBeInTheDocument();
-    fireEvent.click(screen.getByTitle('Zoom in'));
+    fireEvent.click(screen.getByRole('button', { name: 'Aumentar zoom' }));
     expect(screen.getByText('150%')).toBeInTheDocument();
   });
 
@@ -168,8 +168,8 @@ describe('FeatureTable', () => {
       />,
     );
     fireEvent.click(screen.getByText('Ver screenshot da página completa'));
-    fireEvent.click(screen.getByTitle('Zoom in')); // 150%
-    fireEvent.click(screen.getByTitle('Zoom out')); // 100%
+    fireEvent.click(screen.getByRole('button', { name: 'Aumentar zoom' })); // 150%
+    fireEvent.click(screen.getByRole('button', { name: 'Diminuir zoom' })); // 100%
     expect(screen.getByText('100%')).toBeInTheDocument();
   });
 
@@ -182,9 +182,9 @@ describe('FeatureTable', () => {
       />,
     );
     fireEvent.click(screen.getByText('Ver screenshot da página completa'));
-    fireEvent.click(screen.getByTitle('Zoom in')); // 150%
-    fireEvent.click(screen.getByTitle('Zoom in')); // 200%
-    fireEvent.click(screen.getByTitle('Reset zoom'));
+    fireEvent.click(screen.getByRole('button', { name: 'Aumentar zoom' })); // 150%
+    fireEvent.click(screen.getByRole('button', { name: 'Aumentar zoom' })); // 200%
+    fireEvent.click(screen.getByRole('button', { name: 'Redefinir zoom' }));
     expect(screen.getByText('100%')).toBeInTheDocument();
   });
 });
