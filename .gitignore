@@ -25,6 +25,7 @@ dist/
 .aicockpit/
 .mcp.json
 CLAUDE.md
+CI_ANDROID_SETUP.md
 
 # OS
 .DS_Store
