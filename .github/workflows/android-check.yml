@@ -62,12 +62,13 @@ jobs:
         env:
           # Device farm (obrigatório — runners do GitHub não têm virtualização Android)
           DEVICE_FARM_PROVIDER: ${{ vars.DEVICE_FARM_PROVIDER || 'lambdatest' }}
-          BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
-          BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
-          BROWSERSTACK_APP_ID: ${{ secrets.BROWSERSTACK_APP_ID }}
           LAMBDATEST_USERNAME: ${{ secrets.LAMBDATEST_USERNAME }}
           LAMBDATEST_ACCESS_KEY: ${{ secrets.LAMBDATEST_ACCESS_KEY }}
           LAMBDATEST_APP_ID: ${{ secrets.LAMBDATEST_APP_ID }}
+          # SKUs do Firestore (mesma coleção `skus` e mesmos secrets do monitor Web)
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+          FIREBASE_CLIENT_EMAIL: ${{ secrets.FIREBASE_CLIENT_EMAIL }}
+          FIREBASE_PRIVATE_KEY: ${{ secrets.FIREBASE_PRIVATE_KEY }}
           # Remote Config e commerce flags são lidos do log de rede da sessão no LambdaTest
           # (o que o próprio app recebeu); nenhum secret do Firebase é necessário aqui.
           # Login opcional (roda anônimo se não definido) e seleção de SKUs/concorrência
