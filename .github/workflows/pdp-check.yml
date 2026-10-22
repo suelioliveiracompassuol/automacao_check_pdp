@@ -31,7 +31,9 @@ permissions:
 
 jobs:
   monitor:
-    runs-on: ubuntu-latest
+    # Fixado: o ubuntu-latest passou a ser o 26.04 (out/2026), que o Playwright 1.59 não suporta
+    # ("Playwright does not support chromium on ubuntu26.04-x64"). Rever ao atualizar o Playwright.
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     environment:
       name: github-pages
