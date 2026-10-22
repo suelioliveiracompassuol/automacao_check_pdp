@@ -1,6 +1,6 @@
 /**
- * Unit tests for reportIndex.ts's upsertReportIndexEntry — the shared, lock-protected
- * docs/reports/index.json writer used by both the Web and Android orchestrators.
+ * Unit tests for reportIndex.ts's upsertReportIndexEntry — the lock-protected writer of the
+ * per-platform run indexes (docs/reports/index.json, index.android.json).
  *
  * Runs via `npm run test:unit` (npx playwright test src/tests/).
  */
@@ -9,7 +9,11 @@ import { test, expect } from "@playwright/test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { upsertReportIndexEntry, ReportIndexEntry } from "../reportIndex.js";
+import {
+  upsertReportIndexEntry,
+  reportIndexFileName,
+  ReportIndexEntry,
+} from "../reportIndex.js";
 
 function makeEntry(overrides: Partial<ReportIndexEntry> = {}): ReportIndexEntry {
   return {
@@ -74,6 +78,29 @@ test.describe("upsertReportIndexEntry", () => {
     const index = readIndex();
     expect(index.reports).toHaveLength(100);
     expect(index.reports[0].runId).toBe("run_104");
+  });
+
+  test("writes Android runs to index.android.json, leaving the Web index.json untouched", async () => {
+    await upsertReportIndexEntry(makeEntry({ runId: "run_web" }));
+    await upsertReportIndexEntry(
+      makeEntry({ runId: "run_android_1", platform: "android" }),
+    );
+    expect(readIndex().reports.map((r) => r.runId)).toEqual(["run_web"]);
+    const androidIndex = JSON.parse(
+      fs.readFileSync(
+        path.join(tmpDir, "docs", "reports", "index.android.json"),
+        "utf-8",
+      ),
+    );
+    expect(androidIndex.reports.map((r: ReportIndexEntry) => r.runId)).toEqual([
+      "run_android_1",
+    ]);
+  });
+
+  test("reportIndexFileName: web (or legacy, no platform) → index.json, android → index.android.json", () => {
+    expect(reportIndexFileName()).toBe("index.json");
+    expect(reportIndexFileName("web")).toBe("index.json");
+    expect(reportIndexFileName("android")).toBe("index.android.json");
   });
 
   test("recreates the index if the existing file is malformed", async () => {

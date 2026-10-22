@@ -6,6 +6,10 @@ dist/
 
 # Reports (generated at runtime)
 /reports/
+# Android runs: only the CI workflow (android-check.yml) commits them, with `git add -f`;
+# local `npm run check:android` runs stay out of the repo
+/docs/reports/run_android_*/
+/docs/reports/index.android.json
 
 # Local scratch/debug artifacts (may contain auth debug screenshots — never commit)
 .tmp/

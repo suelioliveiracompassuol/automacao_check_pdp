@@ -34,8 +34,16 @@ export interface PdpCheckResult {
   features: CheckResult[];
   error?: string;
   pageScreenshot?: string;
+  /** Android: one screenshot per step of the check, in order */
+  stepScreenshots?: StepScreenshot[];
   remoteConfigFlags?: Record<string, unknown>;
   commerceFeatureFlags?: Record<string, unknown>;
+}
+
+export interface StepScreenshot {
+  label: string;
+  /** Relative to the run folder, e.g. "screenshots/NATBRA-1/01-pdp-aberta.png" */
+  path: string;
 }
 
 export interface MonitoringReport {

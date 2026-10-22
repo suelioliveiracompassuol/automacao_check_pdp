@@ -18,7 +18,10 @@ import {
   MonitoringReport,
   PdpCheckResult,
   SkuConfig,
+  StepScreenshot,
 } from "./types.js";
+import { StepScreenshotRecorder } from "./checks-android/stepScreenshots.js";
+import { toSafeFileName } from "./utils.js";
 import { generateHtmlReport, generateJsonReport } from "./reporter.js";
 import { upsertReportIndexEntry } from "./reportIndex.js";
 import {
@@ -133,6 +136,7 @@ async function checkPdpOnDriver(
     );
     return null;
   });
+  const steps = new StepScreenshotRecorder(driver);
   try {
     const navStartTime = Date.now();
     await openPdpDeepLink(driver, deepLinkUrl, sku);
@@ -145,13 +149,17 @@ async function checkPdpOnDriver(
     );
     loadTime = addToCartResult.loadTime ?? Date.now() - navStartTime;
     features.push(addToCartResult);
+    await steps.capture("PDP aberta");
 
     // Native showcase checks verify native RecyclerView rendering with populated items
     features.push(await checkBrandShowcaseAndroid(driver));
+    await steps.capture("Vitrine mais produtos da marca");
     features.push(await checkRecommendationShowcaseAndroid(driver));
+    await steps.capture("Vitrine achamos que você vai gostar");
   } catch (e) {
     error = e instanceof Error ? e.message : String(e);
     console.log(`   ❌ Erro: ${error}`);
+    await steps.capture("Erro");
     if (error.includes("unable to resolve Intent")) {
       console.log(
         "   💡 O app instalado não tem intent-filter para esse host. Confirme com o time mobile " +
@@ -194,7 +202,7 @@ async function checkPdpOnDriver(
         if (crashLogs.trim().length > 0) {
           const logPath = path.join(
             logsDir,
-            `${sku.sku.replace(/[^a-zA-Z0-9._-]+/g, "_")}_error.log`,
+            `${toSafeFileName(sku.sku)}_error.log`,
           );
           fs.writeFileSync(logPath, crashLogs);
           console.log(`   📋 Logcat de erros salvo em: ${logPath}`);
@@ -203,13 +211,19 @@ async function checkPdpOnDriver(
     } catch {
       // best-effort logcat capture
     }
-  } finally {
+  }
+
+  const success =
+    !error &&
+    features.every((f) => f.status !== "fail" && f.status !== "error");
+  // Final screen only on failure, like the Web monitor (docs/reports is committed by CI)
+  if (!success) {
     try {
       const screenshotsDir = path.join(outputDir, "screenshots");
       fs.mkdirSync(screenshotsDir, { recursive: true });
       const screenshotPath = path.join(
         screenshotsDir,
-        `${sku.sku.replace(/[^a-zA-Z0-9._-]+/g, "_")}_${Date.now()}.png`,
+        `${toSafeFileName(sku.sku)}_${Date.now()}.png`,
       );
       await driver.saveScreenshot(screenshotPath);
       pageScreenshot = path.relative(outputDir, screenshotPath);
@@ -219,10 +233,16 @@ async function checkPdpOnDriver(
       );
     }
   }
-
-  const success =
-    !error &&
-    features.every((f) => f.status !== "fail" && f.status !== "error");
+  let stepScreenshots: StepScreenshot[] | undefined;
+  if (!success) {
+    try {
+      stepScreenshots = steps.save(outputDir, sku.sku);
+    } catch (e) {
+      console.log(
+        `   ⚠️  Falha ao salvar screenshots das etapas: ${e instanceof Error ? e.message : String(e)}`,
+      );
+    }
+  }
   const remoteConfigFlags = (await remoteConfigPromise) ?? undefined;
 
   return {
@@ -239,6 +259,7 @@ async function checkPdpOnDriver(
     features,
     error,
     pageScreenshot,
+    stepScreenshots,
     remoteConfigFlags,
   };
 }
@@ -424,7 +445,7 @@ async function main() {
   fs.writeFileSync(jsonPath, generateJsonReport(report));
   console.log(`\n✅ Relatórios salvos em ${outputDir} (HTML + JSON)`);
 
-  // Register in docs/reports/index.json so dashboard and CI publish steps can find this run
+  // Register in docs/reports/index.android.json (platform: "android") so the dashboard finds this run
   try {
     await upsertReportIndexEntry({
       runId: report.runId,

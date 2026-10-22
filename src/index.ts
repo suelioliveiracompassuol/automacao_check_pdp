@@ -62,7 +62,7 @@ import {
 } from "./playwrightTrace.js";
 
 import { createStandardContext } from "./browserSetup.js";
-import { formatFlagLogValue } from "./utils.js";
+import { formatFlagLogValue, toSafeFileName } from "./utils.js";
 
 interface CheckPdpParams {
   browser: Browser;
@@ -150,7 +150,7 @@ async function checkPdp(params: CheckPdpParams): Promise<PdpCheckResult> {
   const traceZipPath = path.join(
     outputDir,
     "traces",
-    `${sku.sku.replace(/[^a-zA-Z0-9._-]+/g, "_")}_${Date.now()}.zip`,
+    `${toSafeFileName(sku.sku)}_${Date.now()}.zip`,
   );
   let traceActive = await startBrowserTraceIfEnabled(context, traceMode);
 

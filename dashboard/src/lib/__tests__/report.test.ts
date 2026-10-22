@@ -5,6 +5,7 @@ import {
   NO_FILTERS,
   passRate,
   platformOf,
+  screenshotsForSku,
   summarizeFeatures,
 } from '../report';
 import type { CheckResult, PdpCheckResult } from '../types';
@@ -122,5 +123,37 @@ describe('filterResults', () => {
     expect(skus(filterResults(results, { ...NO_FILTERS, search: 'avn' }))).toEqual(['AVN-1']);
     expect(skus(filterResults(results, { ...NO_FILTERS, search: ' PERFUME ' }))).toEqual(['NAT-2']);
     expect(skus(filterResults(results, { ...NO_FILTERS, search: 'x/creme' }))).toEqual(['NAT-1']);
+  });
+});
+
+describe('screenshotsForSku', () => {
+  const files = [
+    'NATBRA-1_fullpage_1792502585485.png',
+    'NATBRA-1_error_1792502585999.png',
+    'NATBRA-10_1792696357556.png',
+    'NATCHL-111172_fullpage_1792502585485.png',
+  ];
+
+  it('casa pelo prefixo <SKU>_, mantendo o hífen do SKU', () => {
+    expect(screenshotsForSku(files, 'NATBRA-1')).toEqual([
+      'NATBRA-1_fullpage_1792502585485.png',
+      'NATBRA-1_error_1792502585999.png',
+    ]);
+    expect(screenshotsForSku(files, 'NATBRA-10')).toEqual(['NATBRA-10_1792696357556.png']);
+  });
+
+  it('ignora maiúsculas/minúsculas', () => {
+    expect(screenshotsForSku(files, 'natchl-111172')).toEqual([
+      'NATCHL-111172_fullpage_1792502585485.png',
+    ]);
+  });
+
+  it('exclui o pageScreenshot, que já tem botão próprio (separador / ou \\)', () => {
+    expect(
+      screenshotsForSku(files, 'NATBRA-1', 'screenshots/NATBRA-1_fullpage_1792502585485.png'),
+    ).toEqual(['NATBRA-1_error_1792502585999.png']);
+    expect(
+      screenshotsForSku(files, 'NATBRA-10', 'screenshots\\NATBRA-10_1792696357556.png'),
+    ).toEqual([]);
   });
 });

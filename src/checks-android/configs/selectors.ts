@@ -40,6 +40,21 @@ export const ANDROID_SELECTORS = {
     brandRecyclerView: "rvMoreBrandProducts",
     recommendationRecyclerView: "rvEinsteinShowcase",
   },
+  pdp: {
+    /**
+     * Vertical scroll container of the PDP: product_details_nested_scroll.xml (NestedScrollView)
+     * included as @id/main_view in product_details_activity_ne.xml (the include id replaces the
+     * root id). Must be targeted explicitly: a generic `scrollable(true)` picks the first scrollable
+     * node, which can be a horizontal pager (image gallery, ZeeDog), so no vertical scroll happens.
+     */
+    scrollContainer: 'new UiSelector().resourceIdMatches(".*:id/main_view")',
+    /**
+     * Close icon of the ZeeDog floating messages ("cupom para você", ncf-ui-cf-android
+     * ZeeDogComponent.kt): Compose, no resource-id, contentDescription = zee_dog_close_accessibility.
+     * PT-BR only — extend with the Spanish/Avon strings once those operations are configured.
+     */
+    zeeDogClose: 'new UiSelector().descriptionMatches("(?i)^fechar recados.*")',
+  },
   /**
    * Auth flow locators confirmed against ncf-natura-cf-automation-mobile
    */

@@ -28,7 +28,7 @@ export default function AndroidPage() {
     <PlatformReportView
       platform="android"
       report={report}
-      description="Verificação automatizada de features nas PDPs do app nativo Android (Appium + device farm), separada do monitoramento do site."
+      description="Verificação automatizada de features nas PDPs do app nativo Android (Appium + device farm)"
     />
   );
 }

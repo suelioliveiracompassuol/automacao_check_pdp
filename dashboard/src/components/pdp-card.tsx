@@ -3,9 +3,10 @@
 import { Card, Badge } from './ui/card';
 import { FeatureTable } from './feature-table';
 import { ScreenshotViewer } from './screenshot-viewer';
+import { StepScreenshots } from './step-screenshots';
 import { CountryFlag } from './ui/country-flag';
 import { VendorLogo } from './vendor-logo';
-import { summarizeFeatures } from '@/lib/report';
+import { screenshotsForSku, summarizeFeatures } from '@/lib/report';
 import type { PdpCheckResult } from '@/lib/types';
 import { ChevronDown, ExternalLink, Clock, AlertCircle, CheckCircle2, XCircle } from 'lucide-react';
 import { useId, useState } from 'react';
@@ -22,10 +23,7 @@ export function PdpCard({ result, runId, screenshots }: PdpCardProps) {
   const [expanded, setExpanded] = useState(!result.success);
   const panelId = useId();
 
-  // Filter screenshots for this SKU
-  const skuScreenshots = screenshots.filter((s) =>
-    s.toLowerCase().includes(result.sku.toLowerCase().replace(/-/g, '')),
-  );
+  const skuScreenshots = screenshotsForSku(screenshots, result.sku, result.pageScreenshot);
 
   const { percentage: passPercentage } = summarizeFeatures(result.features);
 
@@ -138,6 +136,10 @@ export function PdpCard({ result, runId, screenshots }: PdpCardProps) {
                 runId={runId}
                 pageScreenshot={result.pageScreenshot}
               />
+
+              {result.stepScreenshots && (
+                <StepScreenshots steps={result.stepScreenshots} runId={runId} />
+              )}
 
               <ScreenshotViewer screenshots={skuScreenshots} runId={runId} />
             </div>

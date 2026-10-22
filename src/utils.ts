@@ -14,6 +14,15 @@ export function formatFlagLogValue(value: unknown): string {
 }
 
 /**
+ * File-system-safe name for report artifacts (screenshots, traces, logs) derived from a SKU.
+ * The dashboard matches screenshots back to their SKU with the same rule
+ * (dashboard/src/lib/report.ts → screenshotsForSku), so change both together.
+ */
+export function toSafeFileName(value: string): string {
+  return value.replace(/[^a-zA-Z0-9._-]+/g, "_");
+}
+
+/**
  * Safely parses a JSON string, or returns the original object if it's already parsed.
  * Returns null if parsing fails.
  */

@@ -16,7 +16,10 @@ import {
   parseAndroidConcurrency,
 } from "../androidConcurrency.js";
 import { findCommerceFlagsInNetworkLog } from "../checks-android/commerceFlags.js";
-import type { SkuConfig } from "../types.js";
+import { StepScreenshotRecorder } from "../checks-android/stepScreenshots.js";
+import * as fs from "node:fs";
+import * as os from "node:os";
+import * as path from "node:path";import type { SkuConfig } from "../types.js";
 
 test.describe("Android Unit Tests", () => {
   const originalEnv = { ...process.env };
@@ -310,6 +313,143 @@ test.describe("Android Unit Tests", () => {
       expect(result.passed).toBe(false);
       expect(result.status).toBe("fail");
       expect(result.details?.rendered).toBe(false);
+    });
+
+    test("scrolls the PDP NestedScrollView (main_view), not the first scrollable", async () => {
+      const selectors: string[] = [];
+      const mockDriver = {
+        $: (selector: string) => {
+          selectors.push(selector);
+          return {
+            waitForDisplayed: async () => true,
+            isDisplayed: async () => true,
+            getSize: async () => ({ width: 1080, height: 400 }),
+            $$: async () => [],
+            click: async () => undefined,
+          };
+        },
+      } as unknown as WebdriverIO.Browser;
+
+      await checkBrandShowcaseAndroid(mockDriver);
+      const scroll = selectors.find((s) => s.includes("UiScrollable"));
+      expect(scroll).toContain(".*:id/main_view");
+      expect(scroll).not.toContain("scrollable(true)");
+    });
+
+    test("nudges the PDP down when scrollIntoView leaves only a sliver of the carousel visible", async () => {
+      let visibleHeight = 10; // at the bottom edge, behind the sticky buy bar
+      const gestures: unknown[] = [];
+      const mockDriver = {
+        $: () => ({
+          elementId: "main-view-id",
+          waitForDisplayed: async () => true,
+          isDisplayed: async () => true,
+          getSize: async () => ({ width: 1080, height: visibleHeight }),
+          $$: async () => [{}, {}],
+          click: async () => undefined,
+        }),
+        execute: async (script: string, args: unknown) => {
+          gestures.push({ script, args });
+          visibleHeight = 700;
+          return true;
+        },
+      } as unknown as WebdriverIO.Browser;
+
+      const result = await checkBrandShowcaseAndroid(mockDriver);
+      expect(result.status).toBe("pass");
+      expect(gestures).toEqual([
+        {
+          script: "mobile: scrollGesture",
+          args: { elementId: "main-view-id", direction: "down", percent: 0.3 },
+        },
+      ]);
+    });
+
+    test("fails after the nudges when the carousel never shows up", async () => {
+      let gestures = 0;
+      const mockDriver = {
+        $: () => ({
+          elementId: "main-view-id",
+          waitForDisplayed: async () => true,
+          isDisplayed: async () => true,
+          getSize: async () => ({ width: 1080, height: 10 }),
+          click: async () => undefined,
+        }),
+        execute: async () => {
+          gestures++;
+          return true;
+        },
+      } as unknown as WebdriverIO.Browser;
+
+      const result = await checkBrandShowcaseAndroid(mockDriver);
+      expect(result.status).toBe("fail");
+      expect(gestures).toBe(4);
+    });
+
+    test("closes the ZeeDog card before scrolling when it is displayed", async () => {
+      const calls: string[] = [];
+      const mockDriver = {
+        $: (selector: string) => ({
+          waitForDisplayed: async () => true,
+          isDisplayed: async () => true,
+          getSize: async () => ({ width: 1080, height: 400 }),
+          $$: async () => [],
+          click: async () => {
+            calls.push(selector);
+          },
+        }),
+      } as unknown as WebdriverIO.Browser;
+
+      await checkBrandShowcaseAndroid(mockDriver);
+      expect(calls).toEqual([`android=${ANDROID_SELECTORS.pdp.zeeDogClose}`]);
+    });
+  });
+
+  test.describe("StepScreenshotRecorder", () => {
+    test("saves captures in order as screenshots/<SKU>/NN-<slug>.png", async () => {
+      const outputDir = fs.mkdtempSync(path.join(os.tmpdir(), "steps-"));
+      const png = Buffer.from("fake-png").toString("base64");
+      const recorder = new StepScreenshotRecorder({
+        takeScreenshot: async () => png,
+      } as unknown as WebdriverIO.Browser);
+
+      await recorder.capture("PDP aberta");
+      await recorder.capture("Vitrine achamos que você vai gostar");
+      const steps = recorder.save(outputDir, "NATBRA-1");
+
+      expect(steps).toEqual([
+        { label: "PDP aberta", path: "screenshots/NATBRA-1/01-pdp-aberta.png" },
+        {
+          label: "Vitrine achamos que você vai gostar",
+          path: "screenshots/NATBRA-1/02-vitrine-achamos-que-voce-vai-gostar.png",
+        },
+      ]);
+      expect(
+        fs.readFileSync(path.join(outputDir, steps[0].path), "utf8"),
+      ).toBe("fake-png");
+      fs.rmSync(outputDir, { recursive: true, force: true });
+    });
+
+    test("sanitizes the SKU folder name with toSafeFileName", async () => {
+      const outputDir = fs.mkdtempSync(path.join(os.tmpdir(), "steps-"));
+      const recorder = new StepScreenshotRecorder({
+        takeScreenshot: async () => "",
+      } as unknown as WebdriverIO.Browser);
+      await recorder.capture("PDP aberta");
+      expect(recorder.save(outputDir, "NAT BRA/1")[0].path).toBe(
+        "screenshots/NAT_BRA_1/01-pdp-aberta.png",
+      );
+      fs.rmSync(outputDir, { recursive: true, force: true });
+    });
+
+    test("a failed capture is skipped without throwing", async () => {
+      const recorder = new StepScreenshotRecorder({
+        takeScreenshot: async () => {
+          throw new Error("session gone");
+        },
+      } as unknown as WebdriverIO.Browser);
+      await recorder.capture("Erro");
+      expect(recorder.save(os.tmpdir(), "NATBRA-1")).toEqual([]);
     });
   });
 

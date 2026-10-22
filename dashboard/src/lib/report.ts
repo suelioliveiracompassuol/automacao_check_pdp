@@ -87,3 +87,20 @@ export function runIdStaticParams(entries: { runId: string }[]): { runId: string
   const runIds = entries.slice(0, PRERENDERED_RUNS).map((e) => e.runId);
   return (runIds.length > 0 ? runIds : [NO_RUNS_PLACEHOLDER]).map((runId) => ({ runId }));
 }
+
+/**
+ * Screenshots de `screenshots/` que pertencem a um SKU. O monitor nomeia os arquivos como
+ * `<SKU>_...png` (web: `NATBRA-1_fullpage_<ts>.png`; Android: `NATBRA-1_<ts>.png`, com o SKU
+ * saneado), então o casamento é pelo prefixo `<SKU>_` — assim NATBRA-1 não pega NATBRA-10.
+ * O `pageScreenshot` fica de fora porque já tem botão próprio na tabela de features.
+ */
+export function screenshotsForSku(
+  screenshots: string[],
+  sku: string,
+  pageScreenshot?: string,
+): string[] {
+  // Mesma regra de toSafeFileName (src/utils.ts do monitor, outro projeto npm): mudar as duas juntas.
+  const prefix = `${sku.replace(/[^a-zA-Z0-9._-]+/g, '_')}_`.toLowerCase();
+  const pageFile = pageScreenshot?.split(/[\\/]/).pop();
+  return screenshots.filter((s) => s.toLowerCase().startsWith(prefix) && s !== pageFile);
+}
