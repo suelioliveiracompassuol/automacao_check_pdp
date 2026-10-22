@@ -26,12 +26,15 @@ export interface FirebaseAppCreds {
 export function loadFirebaseAppsFromEnv(): Record<string, FirebaseAppCreds> {
   const apps: Record<string, FirebaseAppCreds> = {};
 
-  // Single-app configuration via direct env vars
-  const projectId = process.env.PROJECT_ID;
-  const projectNumber = process.env.PROJECT_NUMBER;
-  const apiKey = process.env.API_KEY;
-  const appId = process.env.APP_ID;
-  const packageName = process.env.PACKAGE_NAME;
+  // Single-app configuration via direct env vars. ANDROID_FIREBASE_* is what the CI workflow
+  // passes; the unprefixed names are kept for existing local .env files.
+  const env = (name: string) =>
+    process.env[`ANDROID_FIREBASE_${name}`] || process.env[name];
+  const projectId = env("PROJECT_ID");
+  const projectNumber = env("PROJECT_NUMBER");
+  const apiKey = env("API_KEY");
+  const appId = env("APP_ID");
+  const packageName = env("PACKAGE_NAME");
 
   if (projectId && projectNumber && apiKey && appId && packageName) {
     apps[packageName] = {

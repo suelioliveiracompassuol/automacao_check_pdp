@@ -117,6 +117,28 @@ test.describe("Android Unit Tests", () => {
       });
     });
 
+    test("reads the ANDROID_FIREBASE_* names the CI workflow passes", () => {
+      delete process.env.ANDROID_FIREBASE_APPS_JSON;
+      for (const name of [
+        "PROJECT_ID",
+        "PROJECT_NUMBER",
+        "API_KEY",
+        "APP_ID",
+        "PACKAGE_NAME",
+      ]) {
+        delete process.env[name];
+      }
+      process.env.ANDROID_FIREBASE_PROJECT_ID = "app-natura-ci";
+      process.env.ANDROID_FIREBASE_PROJECT_NUMBER = "111";
+      process.env.ANDROID_FIREBASE_API_KEY = "ci-api-key";
+      process.env.ANDROID_FIREBASE_APP_ID = "1:111:android:ci";
+      process.env.ANDROID_FIREBASE_PACKAGE_NAME = "net.natura.ci";
+
+      expect(loadFirebaseAppsFromEnv()["net.natura.ci"]?.projectId).toBe(
+        "app-natura-ci",
+      );
+    });
+
     test("loads multi-app config from ANDROID_FIREBASE_APPS_JSON", () => {
       process.env.ANDROID_FIREBASE_APPS_JSON = JSON.stringify({
         "com.naturaeco.app.avon": {
