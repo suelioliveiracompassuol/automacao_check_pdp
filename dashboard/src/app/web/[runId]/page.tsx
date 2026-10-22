@@ -1,18 +1,14 @@
 import { notFound } from 'next/navigation';
-import { WebReportView } from '@/components/web-report-view';
+import { PlatformReportView } from '@/components/platform-report-view';
 import { getReportById, getReportsByPlatform } from '@/lib/data';
+import { runIdStaticParams } from '@/lib/report';
 
 interface Props {
   params: Promise<{ runId: string }>;
 }
 
-/** Quantas execuções recentes são pré-renderizadas no export estático. */
-const PRERENDERED_RUNS = 5;
-
 export async function generateStaticParams() {
-  return getReportsByPlatform('web')
-    .slice(0, PRERENDERED_RUNS)
-    .map((r) => ({ runId: r.runId }));
+  return runIdStaticParams(getReportsByPlatform('web'));
 }
 
 export default async function WebReportPage({ params }: Props) {
@@ -22,5 +18,5 @@ export default async function WebReportPage({ params }: Props) {
     notFound();
   }
 
-  return <WebReportView report={report} />;
+  return <PlatformReportView platform="web" report={report} />;
 }

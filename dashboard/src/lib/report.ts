@@ -74,3 +74,16 @@ export function filterResults(results: PdpCheckResult[], filters: ResultFilters)
     return true;
   });
 }
+
+/** Quantas execuções recentes de cada plataforma são pré-renderizadas no export estático. */
+export const PRERENDERED_RUNS = 5;
+
+/** Execução fictícia usada quando não há nenhuma: com `output: 'export'`, o Next recusa um
+ * generateStaticParams vazio ("missing generateStaticParams"). A página responde 404 para ela. */
+export const NO_RUNS_PLACEHOLDER = '_sem-execucoes';
+
+/** Parâmetros de rotas /[runId] para o export estático, das execuções mais recentes. */
+export function runIdStaticParams(entries: { runId: string }[]): { runId: string }[] {
+  const runIds = entries.slice(0, PRERENDERED_RUNS).map((e) => e.runId);
+  return (runIds.length > 0 ? runIds : [NO_RUNS_PLACEHOLDER]).map((runId) => ({ runId }));
+}
