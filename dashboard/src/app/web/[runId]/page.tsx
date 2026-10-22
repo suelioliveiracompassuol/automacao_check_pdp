@@ -1,19 +1,17 @@
 import { notFound } from 'next/navigation';
-import { getReportById, getReportIndex, getScreenshotsForRun } from '@/lib/data';
-import { PlatformHero } from '@/components/platform-hero';
-import { SummaryCards } from '@/components/summary-cards';
-import { WebHistoryDropdown } from '@/components/web-history-dropdown';
-import { ReportClient } from './report-client';
+import { WebReportView } from '@/components/web-report-view';
+import { getReportById, getReportsByPlatform } from '@/lib/data';
 
 interface Props {
   params: Promise<{ runId: string }>;
 }
 
+/** Quantas execuções recentes são pré-renderizadas no export estático. */
+const PRERENDERED_RUNS = 5;
+
 export async function generateStaticParams() {
-  const index = getReportIndex();
-  return index.reports
-    .filter((r) => (r.platform ?? 'web') === 'web')
-    .slice(0, 5)
+  return getReportsByPlatform('web')
+    .slice(0, PRERENDERED_RUNS)
     .map((r) => ({ runId: r.runId }));
 }
 
@@ -24,24 +22,5 @@ export default async function WebReportPage({ params }: Props) {
     notFound();
   }
 
-  const screenshots = getScreenshotsForRun(runId);
-
-  return (
-    <div className="space-y-6 animate-fade-in-up">
-      <PlatformHero
-        platform="web"
-        title="PDP Feature Monitor — Web"
-        report={report}
-        action={<WebHistoryDropdown />}
-      />
-
-      <SummaryCards
-        total={report.summary.total}
-        passed={report.summary.passed}
-        failed={report.summary.failed}
-        errors={report.summary.errors}
-      />
-      <ReportClient results={report.results} runId={runId} screenshots={screenshots} />
-    </div>
-  );
+  return <WebReportView report={report} />;
 }

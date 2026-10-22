@@ -1,12 +1,12 @@
-import { getReportIndex } from '@/lib/data';
+import { getReportsByPlatform } from '@/lib/data';
 import { HistoryDropdown } from '@/components/history-dropdown';
+
+const MAX_RUNS = 15;
 
 /** Scoped history dropdown for /web pages — only lists Web runs, links under /web.
  * Entries with no `platform` field are legacy Web runs, so they count too. */
 export function WebHistoryDropdown() {
-  const index = getReportIndex();
-  const runs = index.reports.filter((r) => (r.platform ?? 'web') === 'web').slice(0, 15);
-  const homeRunId = runs[0]?.runId;
+  const runs = getReportsByPlatform('web').slice(0, MAX_RUNS);
 
-  return <HistoryDropdown runs={runs} homeRunId={homeRunId} basePath="/web" homeHref="/web" />;
+  return <HistoryDropdown runs={runs} basePath="/web" homeHref="/web" />;
 }

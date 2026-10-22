@@ -1,11 +1,28 @@
 import type { Metadata } from 'next';
+import { Roboto, Roboto_Mono } from 'next/font/google';
 import './globals.css';
 import { NavHeader } from '@/components/nav-header';
 import { Sidebar } from '@/components/sidebar';
 import { MobileBottomNav } from '@/components/mobile-bottom-nav';
 import { MotionProvider } from '@/components/motion-provider';
-import { getReportIndex } from '@/lib/data';
+import { getReportsByPlatform } from '@/lib/data';
 import type { LastRunSummary } from '@/components/nav-header';
+
+// next/font auto-hospeda as fontes no build: sem requisição bloqueante ao Google Fonts e sem
+// layout shift na troca de fonte.
+const roboto = Roboto({
+  subsets: ['latin'],
+  weight: ['400', '500', '700', '900'],
+  display: 'swap',
+  variable: '--font-roboto',
+});
+
+const robotoMono = Roboto_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500'],
+  display: 'swap',
+  variable: '--font-roboto-mono',
+});
 
 export const metadata: Metadata = {
   title: 'PDP Monitor — Monitoramento de Features',
@@ -14,13 +31,10 @@ export const metadata: Metadata = {
 
 function getLastWebRun(): LastRunSummary | null {
   try {
-    const entry = getReportIndex().reports.find((r) => (r.platform ?? 'web') === 'web');
+    const entry = getReportsByPlatform('web')[0];
     if (!entry) return null;
-    return {
-      startTime: entry.startTime,
-      failed: entry.summary.failed,
-      errors: entry.summary.errors,
-    };
+    const { failed, errors } = entry.summary;
+    return { startTime: entry.startTime, failed, errors };
   } catch {
     return null;
   }
@@ -28,15 +42,7 @@ function getLastWebRun(): LastRunSummary | null {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&family=Roboto+Mono:wght@400;500&display=swap"
-          rel="stylesheet"
-        />
-      </head>
+    <html lang="pt-BR" className={`${roboto.variable} ${robotoMono.variable}`}>
       <body className="min-h-dvh bg-background">
         <a
           href="#app-main"
@@ -46,7 +52,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </a>
         <MotionProvider>
           <NavHeader lastRun={getLastWebRun()} />
-          <div className="mx-auto flex max-w-360 items-start">
+          {/* Altura mínima = tela menos o header (69px), para a sidebar ir até o fim em páginas curtas. */}
+          <div className="mx-auto flex min-h-[calc(100dvh-69px)] max-w-360 items-start">
             <Sidebar />
             <main
               id="app-main"

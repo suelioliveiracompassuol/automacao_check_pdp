@@ -4,9 +4,10 @@ on:
   # Run manually when you want to update the dashboard
   workflow_dispatch:
 
-  # Run after PDP checks complete (optional - remove if you only want manual)
+  # Republica depois de cada monitoramento: features (PDP Feature Monitor) e Web Vitals
+  # (PDP Performance), que rodam em workflows separados.
   workflow_run:
-    workflows: ["PDP Feature Monitor"]
+    workflows: ["PDP Feature Monitor", "PDP Performance"]
     types: [completed]
     branches: [master]
 
@@ -70,6 +71,7 @@ jobs:
           cp -r docs/reports pages_output/reports
           cp docs/last-report.html pages_output/last-report.html 2>/dev/null || true
           cp docs/last-report.json pages_output/last-report.json 2>/dev/null || true
+          cp -r docs/perf pages_output/perf 2>/dev/null || true
 
       - name: 📤 Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

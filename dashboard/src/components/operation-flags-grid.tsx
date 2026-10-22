@@ -4,7 +4,8 @@ import { useMemo, useState } from 'react';
 import * as Collapsible from '@radix-ui/react-collapsible';
 import { Check, ChevronDown, ShoppingCart, Wrench, X, type LucideIcon } from 'lucide-react';
 import { VendorLogo } from './vendor-logo';
-import { getCountryFlag, getOperationKey } from '@/lib/utils';
+import { getOperationKey } from '@/lib/utils';
+import { CountryFlag } from './ui/country-flag';
 import type { PdpCheckResult } from '@/lib/types';
 
 interface OperationFlagsGridProps {
@@ -130,13 +131,7 @@ function FlagsTable({
                   >
                     <div className="flex flex-col items-center gap-0.5">
                       <VendorLogo vendor={op.vendor} size="sm" />
-                      <img
-                        src={getCountryFlag(op.country)}
-                        alt={op.country}
-                        width={14}
-                        height={10}
-                        className="rounded-sm"
-                      />
+                      <CountryFlag code={op.country} alt={op.country} width={14} height={10} />
                       {isSocial && (
                         <span className="text-[11px] font-bold px-1 py-0.5 bg-success-lightest text-success-dark rounded uppercase">
                           ML
@@ -227,7 +222,7 @@ export function OperationFlagsGrid({ results }: OperationFlagsGridProps) {
         />
         <h2 className="text-lg font-semibold text-highlight">Feature Flags por Operação</h2>
         <span className="text-xs text-medium-emphasis bg-neutral-75 px-2 py-0.5 rounded-full">
-          {operations.length} operações
+          {operations.length} {operations.length === 1 ? 'operação' : 'operações'}
         </span>
       </Collapsible.Trigger>
       <Collapsible.Content className="mt-4 space-y-2">

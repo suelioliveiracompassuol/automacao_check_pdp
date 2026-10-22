@@ -2,14 +2,6 @@ import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { MobileBottomNav } from '../mobile-bottom-nav';
 
-vi.mock('next/link', () => ({
-  default: ({ children, href, ...rest }: React.PropsWithChildren<{ href: string }>) => (
-    <a href={href} {...rest}>
-      {children}
-    </a>
-  ),
-}));
-
 const { usePathname } = vi.hoisted(() => ({ usePathname: vi.fn(() => '/') }));
 vi.mock('next/navigation', () => ({ usePathname }));
 
@@ -17,6 +9,10 @@ describe('MobileBottomNav', () => {
   it('renders a link to every primary route', () => {
     render(<MobileBottomNav />);
     expect(screen.getByRole('link', { name: /visão geral/i })).toHaveAttribute('href', '/');
+    expect(screen.getByRole('link', { name: /performance/i })).toHaveAttribute(
+      'href',
+      '/performance',
+    );
     expect(screen.getByRole('link', { name: /^web$/i })).toHaveAttribute('href', '/web');
     expect(screen.getByRole('link', { name: /android/i })).toHaveAttribute('href', '/android');
     expect(screen.getByRole('link', { name: /ios/i })).toHaveAttribute('href', '/ios');

@@ -8,6 +8,24 @@ interface AuthGuardProps {
   fallback?: React.ReactNode;
 }
 
+/** Aviso exibido a quem não está logado. */
+export function AuthRequiredNotice() {
+  return (
+    <div className="rounded-lg border border-warning-light/60 bg-warning-lightest/50 p-4">
+      <div className="flex items-start gap-3">
+        <AlertCircle className="h-5 w-5 shrink-0 text-warning-darkest" aria-hidden="true" />
+        <div className="text-sm text-warning-darkest">
+          <p className="font-medium">Acesso Restrito</p>
+          <p className="mt-1">
+            Você precisa estar logado para gerenciar SKUs. Entre em contato com o administrador para
+            obter as credenciais de acesso.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function AuthGuard({ children, fallback }: AuthGuardProps) {
   const { user, loading } = useAuth();
 
@@ -16,22 +34,7 @@ export function AuthGuard({ children, fallback }: AuthGuardProps) {
   }
 
   if (!user) {
-    return (
-      fallback || (
-        <div className="rounded-lg border border-warning-light/60 bg-warning-lightest/50 p-4">
-          <div className="flex items-start gap-3">
-            <AlertCircle className="h-5 w-5 shrink-0 text-warning-darkest" aria-hidden="true" />
-            <div className="text-sm text-warning-darkest">
-              <p className="font-medium">Acesso Restrito</p>
-              <p className="mt-1">
-                Você precisa estar logado para gerenciar SKUs. Entre em contato com o administrador
-                para obter as credenciais de acesso.
-              </p>
-            </div>
-          </div>
-        </div>
-      )
-    );
+    return fallback ?? <AuthRequiredNotice />;
   }
 
   return <>{children}</>;

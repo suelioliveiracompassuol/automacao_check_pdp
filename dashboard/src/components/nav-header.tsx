@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { cn, formatDate } from '@/lib/utils';
+import { formatDate } from '@/lib/format';
+import { cn } from '@/lib/utils';
 
 export interface LastRunSummary {
   startTime: string;

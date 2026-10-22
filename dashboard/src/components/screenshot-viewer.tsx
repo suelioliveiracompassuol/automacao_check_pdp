@@ -2,7 +2,7 @@
 
 import { Camera } from 'lucide-react';
 import { useState } from 'react';
-import { basePath } from '@/lib/config';
+import { getScreenshotUrl } from '@/lib/utils';
 import { ImageZoomDialog } from './image-zoom-dialog';
 
 interface ScreenshotViewerProps {
@@ -36,7 +36,7 @@ export function ScreenshotViewer({ screenshots, runId }: ScreenshotViewerProps) 
       </div>
 
       <ImageZoomDialog
-        src={selected !== null ? `${basePath}/reports/${runId}/screenshots/${selected}` : null}
+        src={selected !== null ? getScreenshotUrl(runId, `screenshots/${selected}`) : null}
         title={selected ?? ''}
         onClose={() => setSelected(null)}
       />

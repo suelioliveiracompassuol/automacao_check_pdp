@@ -9,14 +9,13 @@ export const metadata = {
 export default function SkusPage() {
   return (
     <AuthProvider>
-      <main className="min-h-screen bg-neutral-50 px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-6 flex items-center justify-end gap-4">
-            <AuthLogin />
-          </div>
-          <SkusClient />
+      {/* O <main> já vem do layout raiz; aqui é só o conteúdo da página. */}
+      <div className="mx-auto max-w-7xl">
+        <div className="mb-6 flex items-center justify-end gap-4">
+          <AuthLogin />
         </div>
-      </main>
+        <SkusClient />
+      </div>
     </AuthProvider>
   );
 }

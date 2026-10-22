@@ -2,7 +2,8 @@ import Link from 'next/link';
 import { ArrowUpRight, CalendarClock, Globe2, ListChecks, PlayCircle } from 'lucide-react';
 import type { ReactNode } from 'react';
 import type { PlatformMeta } from '@/lib/platforms';
-import { cn, formatDate } from '@/lib/utils';
+import { formatDate } from '@/lib/format';
+import { cn } from '@/lib/utils';
 
 export interface PlatformStat {
   meta: PlatformMeta;

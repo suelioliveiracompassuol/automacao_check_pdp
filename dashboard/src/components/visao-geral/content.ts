@@ -11,12 +11,6 @@ import {
 
 /** Static presentation content — separate from render logic so it can be updated without touching JSX. */
 
-/** Vendor display labels — shared by CoverageSection and ErrorMatrixSection. */
-export const VENDOR_LABELS: Record<string, { label: string; className: string }> = {
-  natura: { label: 'Natura', className: 'bg-primary-wash text-primary-darkest' },
-  avon: { label: 'Avon', className: 'bg-pink-100 text-pink-800' },
-};
-
 export interface HighlightContent {
   icon: LucideIcon;
   color: string;
@@ -41,7 +35,7 @@ export const HIGHLIGHTS: HighlightContent[] = [
     bg: 'bg-primary-wash',
     title: 'Visibilidade',
     description:
-      'Relatórios centralizados permitem o acompanhamento do status das features de suasrespectivas operações.',
+      'Relatórios centralizados permitem o acompanhamento do status das features de suas respectivas operações.',
   },
   {
     icon: TrendingUp,
@@ -78,35 +72,5 @@ export const HIGHLIGHTS: HighlightContent[] = [
     bg: 'bg-primary-wash',
     title: 'Gestão de SKUs via Dashboard',
     description: 'Novos SKUs podem ser cadastrados pelo SKU Manager, sem alterar via código.',
-  },
-];
-
-export interface NextStepContent {
-  number: string;
-  title: string;
-  description: string;
-  accent: string;
-}
-
-export const NEXT_STEPS: NextStepContent[] = [
-  {
-    number: '01',
-    title: 'Expandir Cobertura',
-    description: 'Adicionar novos tipos de verificação e cobrir mais operações/países.',
-    accent: 'border-t-primary',
-  },
-  {
-    number: '02',
-    title: 'Alertas em Tempo Real',
-    description:
-      'Permitir cadastrar destinatários pelo próprio dashboard, sem depender de secret do GitHub.',
-    accent: 'border-t-success',
-  },
-  {
-    number: '03',
-    title: 'Integração com CI/CD',
-    description:
-      'Disparar a execução a cada deploy do site das operações, não apenas por agenda diária.',
-    accent: 'border-t-info',
   },
 ];

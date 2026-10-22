@@ -78,16 +78,6 @@ export type Vendor = 'natura' | 'avon';
 export type Country = 'BR' | 'AR' | 'CL' | 'CO' | 'MX' | 'PE';
 export type Channel = 'ecommerce' | 'socialcommerce';
 
-/** Single source of truth for country display labels — used across the /visao-geral page. */
-export const COUNTRY_INFO: Record<Country, { label: string }> = {
-  AR: { label: 'Argentina' },
-  BR: { label: 'Brasil' },
-  CL: { label: 'Chile' },
-  CO: { label: 'Colômbia' },
-  MX: { label: 'México' },
-  PE: { label: 'Peru' },
-};
-
 export type FeatureKey =
   | 'reviews'
   | 'aiReviewSummary'
@@ -108,28 +98,6 @@ export type FeatureKey =
   | 'productVariations'
   | 'contentBanners';
 
-/** Runtime list of every FeatureKey — single source of truth for "how many checks we run". */
-export const ALL_FEATURE_KEYS: FeatureKey[] = [
-  'reviews',
-  'aiReviewSummary',
-  'reviewFilter',
-  'reviewSort',
-  'reviewPhotos',
-  'reviewRecommendation',
-  'brandShowcase',
-  'recommendationShowcase',
-  'shopTheSet',
-  'images',
-  'pricing',
-  'shipping',
-  'ratingConsistency',
-  'rating',
-  'addToCart',
-  'favoriteButton',
-  'productVariations',
-  'contentBanners',
-];
-
 export interface SkuEntry {
   id: string;
   sku: string;
@@ -139,4 +107,82 @@ export interface SkuEntry {
   country: Country;
   channel: Channel;
   expectedFeatures: FeatureKey[];
+}
+
+export interface PerfMetrics {
+  performanceScore: number | null; // 0-100
+  startRender?: number | null; // ms, equivalente ao StartRender do WebPageTest (ausente em rodadas antigas)
+  lcp: number | null; // ms
+  cls: number | null;
+  tbt: number | null; // ms
+  fcp: number | null; // ms
+  speedIndex: number | null; // ms
+  ttfb: number | null; // ms
+  totalByteWeight: number | null; // bytes
+  requestCount: number | null;
+}
+
+export interface PerfLcpElement {
+  nodeLabel: string | null;
+  selector: string | null;
+  snippet: string | null;
+}
+
+export interface PerfOpportunity {
+  id: string;
+  title: string;
+  savingsMs: number;
+}
+
+/** Tipo de PDP, igual ao da automação de Web Vitals do site geral (WebPageTest). */
+export type PerfPageType = 'PDPFull' | 'PDPLow';
+
+export interface PerfSkuResult {
+  sku: string;
+  name: string;
+  pageType?: PerfPageType;
+  url: string;
+  success: boolean;
+  error?: string;
+  median: PerfMetrics | null; // métricas da execução mediana
+  runs: PerfMetrics[]; // todas as execuções válidas
+  lcpElement: PerfLcpElement | null;
+  opportunities: PerfOpportunity[];
+  /** Relatório completo do Lighthouse (LHR), relativo a docs/perf, ex.: "run_123/NATBRA-108403.json".
+   * Ausente em rodadas antigas (que geravam HTML) e removido pelo workflow após 10 dias. */
+  reportJsonPath?: string | null;
+  lighthouseVersion: string | null;
+}
+
+export interface PerfRun {
+  runId: string; // "run_<Date.now()>"
+  timestamp: string; // ISO
+  formFactor: 'desktop';
+  runsPerSku: number;
+  /** Condições do teste, equivalentes ao WebPageTest (ausente em rodadas antigas). */
+  conditions?: {
+    connectivity: string;
+    downKbps: number;
+    upKbps: number;
+    rttMs: number;
+    viewport: string;
+    consentCookie: boolean;
+  };
+  results: PerfSkuResult[];
+}
+
+export interface PerfIndexEntry {
+  runId: string;
+  timestamp: string;
+  skus: {
+    sku: string;
+    name: string;
+    pageType?: PerfPageType;
+    success: boolean;
+    metrics: PerfMetrics | null;
+  }[];
+}
+
+export interface PerfIndex {
+  runs: PerfIndexEntry[]; // mais recente primeiro, máx. 365
 }

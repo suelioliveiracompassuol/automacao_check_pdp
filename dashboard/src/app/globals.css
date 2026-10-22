@@ -6,8 +6,9 @@
  * a utility class (bg-primary, text-alert-dark, border-neutral-100, ...).
  */
 @theme {
-  --font-sans: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-  --font-mono: 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* --font-roboto / --font-roboto-mono vêm do next/font (app/layout.tsx), auto-hospedadas. */
+  --font-sans: var(--font-roboto), -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  --font-mono: var(--font-roboto-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
 
   /* Logo orange (ncf-ssr logo.tsx) */
   --color-brand: #ff6b0b;
@@ -166,19 +167,16 @@ body {
   animation: fadeInUp 0.4s ease-out forwards;
 }
 
-/* Progress ring animation */
-@keyframes progressRing {
+/* Progress ring animation (RingGauge): o arco cresce a partir de vazio */
+@keyframes ringFill {
   from {
-    stroke-dashoffset: 283;
+    stroke-dashoffset: var(--ring-circumference);
   }
 }
 
-/* Glassmorphism utility */
-.glass {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+.ring-gauge-arc {
+  animation: ringFill 1s ease-out;
+  transition: stroke-dashoffset 0.5s ease-out;
 }
 
 /* Custom scrollbar */
@@ -211,20 +209,9 @@ body {
   }
 }
 
-/* /visao-geral "presentation mode" (toggled via PresentationControls fullscreen button) */
-body.presentation-mode #app-nav-header {
-  display: none;
-}
-
-body.presentation-mode #app-main {
-  max-width: none;
-  padding: 0;
-}
-
-/* Print / export-to-PDF for /visao-geral */
+/* Print / export-to-PDF */
 @media print {
-  #app-nav-header,
-  .no-print {
+  #app-nav-header {
     display: none !important;
   }
 

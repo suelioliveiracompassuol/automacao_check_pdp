@@ -2,8 +2,8 @@
 
 import type { CheckResult } from '@/lib/types';
 import { StatusBadge } from './status-badge';
-import { cn } from '@/lib/utils';
-import { basePath } from '@/lib/config';
+import { summarizeFeatures } from '@/lib/report';
+import { cn, getScreenshotUrl } from '@/lib/utils';
 import { Image as ImageIcon } from 'lucide-react';
 import { useState } from 'react';
 import { ImageZoomDialog } from './image-zoom-dialog';
@@ -24,14 +24,7 @@ export function FeatureTable({ features, runId, pageScreenshot }: FeatureTablePr
     return null;
   }
 
-  // Only count features that are actually testable (exclude na)
-  const testable = features.filter((f) => f.status !== 'na');
-  const passed = testable.filter((f) => f.passed || f.status === 'disabled').length;
-  const failed = testable.filter((f) => !f.passed && f.status !== 'disabled').length;
-  const total = testable.length;
-  const percentage = total > 0 ? Math.round((passed / total) * 100) : 0;
-
-  const getScreenshotUrl = (path: string) => `${basePath}/reports/${runId}/${path}`;
+  const { passed, failed, total, percentage } = summarizeFeatures(features);
 
   return (
     <div className="space-y-2">
@@ -114,7 +107,7 @@ export function FeatureTable({ features, runId, pageScreenshot }: FeatureTablePr
           type="button"
           onClick={() =>
             setSelectedScreenshot({
-              src: getScreenshotUrl(pageScreenshot),
+              src: getScreenshotUrl(runId, pageScreenshot),
               title: 'Screenshot da página completa',
             })
           }

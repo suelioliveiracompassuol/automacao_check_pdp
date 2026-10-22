@@ -1,15 +1,12 @@
 import { Card, SectionHeader } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
+import { formatShortDate } from '@/lib/format';
+import { passRate as computePassRate } from '@/lib/report';
 import type { ReportIndexEntry } from '@/lib/types';
+import { cn } from '@/lib/utils';
 import { EvolutionChart } from './evolution-chart';
 
-function formatShortDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    timeZone: 'America/Sao_Paulo',
-  });
-}
+const runPassRate = (run: ReportIndexEntry) =>
+  computePassRate(run.summary.passed, run.summary.total);
 
 interface EvolutionRowProps {
   run: ReportIndexEntry;
@@ -17,8 +14,7 @@ interface EvolutionRowProps {
 }
 
 function EvolutionRow({ run, isLatest }: EvolutionRowProps) {
-  const passRate =
-    run.summary.total > 0 ? Math.round((run.summary.passed / run.summary.total) * 100) : 0;
+  const passRate = runPassRate(run);
 
   return (
     <div
@@ -27,7 +23,7 @@ function EvolutionRow({ run, isLatest }: EvolutionRowProps) {
         isLatest && 'bg-primary-wash',
       )}
     >
-      <span className="font-mono text-xs text-low-emphasis">{formatShortDate(run?.startTime)}</span>
+      <span className="font-mono text-xs text-low-emphasis">{formatShortDate(run.startTime)}</span>
       <span
         className={cn(
           'font-semibold',
@@ -75,9 +71,8 @@ export function EvolutionSection({
   title = 'Evolução Histórica',
 }: EvolutionSectionProps) {
   const chartData = evolutionData.map((run) => ({
-    label: formatShortDate(run?.startTime),
-    passRate:
-      run.summary.total > 0 ? Math.round((run.summary.passed / run.summary.total) * 100) : 0,
+    label: formatShortDate(run.startTime),
+    passRate: runPassRate(run),
   }));
 
   return (

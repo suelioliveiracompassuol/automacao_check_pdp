@@ -1,23 +1,30 @@
 'use client';
 
-import type { PdpCheckResult } from '@/lib/types';
 import { useMemo } from 'react';
 import { Search, X, Globe, ListChecks, CheckCircle2, XCircle, type LucideIcon } from 'lucide-react';
+import { CountryFlag } from './ui/country-flag';
+import { ToggleButton, ToggleGroup } from './ui/toggle-group';
 import { VendorLogo } from './vendor-logo';
-import { getCountryFlag } from '@/lib/utils';
+import type { StatusFilter } from '@/lib/report';
+import type { PdpCheckResult } from '@/lib/types';
+import { cn } from '@/lib/utils';
 
-type FilterStatus = 'all' | 'pass' | 'fail';
+const STATUS_TABS: { key: StatusFilter; label: string; icon: LucideIcon; tone: string }[] = [
+  { key: 'all', label: 'Todos', icon: ListChecks, tone: 'text-medium-emphasis' },
+  { key: 'pass', label: 'Aprovados', icon: CheckCircle2, tone: 'text-success' },
+  { key: 'fail', label: 'Reprovados', icon: XCircle, tone: 'text-alert' },
+];
 
 interface FilterBarProps {
   results: PdpCheckResult[];
   searchQuery: string;
   selectedVendor: string;
   selectedOperation: string;
-  selectedStatus: FilterStatus;
+  selectedStatus: StatusFilter;
   onSearchChange: (query: string) => void;
   onVendorChange: (vendor: string) => void;
   onOperationChange: (operation: string) => void;
-  onStatusChange: (status: FilterStatus) => void;
+  onStatusChange: (status: StatusFilter) => void;
 }
 
 export function FilterBar({
@@ -50,12 +57,11 @@ export function FilterBar({
     return [...set].sort();
   }, [results, selectedVendor]);
 
-  const vendorTabs = ['Todos', ...vendors];
-  const statusTabs: { key: FilterStatus; label: string; icon: LucideIcon; tone: string }[] = [
-    { key: 'all', label: 'Todos', icon: ListChecks, tone: 'text-medium-emphasis' },
-    { key: 'pass', label: 'Aprovados', icon: CheckCircle2, tone: 'text-success' },
-    { key: 'fail', label: 'Reprovados', icon: XCircle, tone: 'text-alert' },
-  ];
+  // Trocar a marca zera o país, pois a lista de países depende da marca.
+  const selectVendor = (vendor: string) => {
+    onVendorChange(vendor);
+    onOperationChange('all');
+  };
 
   const hasActiveFilters =
     searchQuery !== '' ||
@@ -82,31 +88,20 @@ export function FilterBar({
           />
         </div>
 
-        {/* Status */}
-        <div
-          role="group"
-          aria-label="Filtrar por status"
-          className="flex items-center gap-1 bg-neutral-50 p-1 rounded-lg"
-        >
-          {statusTabs.map((tab) => (
-            <button
+        <ToggleGroup label="Filtrar por status">
+          {STATUS_TABS.map((tab) => (
+            <ToggleButton
               key={tab.key}
-              type="button"
-              aria-pressed={selectedStatus === tab.key}
+              pressed={selectedStatus === tab.key}
               onClick={() => onStatusChange(tab.key)}
-              className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all cursor-pointer ${
-                selectedStatus === tab.key
-                  ? 'bg-white text-highlight shadow-sm'
-                  : 'text-medium-emphasis hover:text-high-emphasis'
-              }`}
             >
               <span className="flex items-center gap-1.5">
-                <tab.icon className={`h-4 w-4 ${tab.tone}`} aria-hidden="true" />
+                <tab.icon className={cn('h-4 w-4', tab.tone)} aria-hidden="true" />
                 {tab.label}
               </span>
-            </button>
+            </ToggleButton>
           ))}
-        </div>
+        </ToggleGroup>
 
         {/* Clear filters */}
         {hasActiveFilters && (
@@ -133,42 +128,23 @@ export function FilterBar({
           <span className="text-xs font-medium text-medium-emphasis uppercase tracking-wide whitespace-nowrap">
             Marca
           </span>
-          <div
-            role="group"
-            aria-label="Filtrar por marca"
-            className="flex items-center gap-1 bg-neutral-50 p-1 rounded-lg"
-          >
-            {vendorTabs.map((vendor) => {
-              const isActive =
-                (vendor === 'Todos' && selectedVendor === 'all') ||
-                vendor.toLowerCase() === selectedVendor;
-              return (
-                <button
-                  key={vendor}
-                  type="button"
-                  aria-pressed={isActive}
-                  aria-label={vendor}
-                  onClick={() => {
-                    onVendorChange(vendor === 'Todos' ? 'all' : vendor.toLowerCase());
-                    onOperationChange('all');
-                  }}
-                  className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all cursor-pointer ${
-                    isActive
-                      ? 'bg-white text-highlight shadow-sm'
-                      : 'text-medium-emphasis hover:text-high-emphasis'
-                  }`}
-                >
-                  {vendor !== 'Todos' ? (
-                    <span className="flex items-center gap-1.5">
-                      <VendorLogo vendor={vendor} size="sm" />
-                    </span>
-                  ) : (
-                    'Todos'
-                  )}
-                </button>
-              );
-            })}
-          </div>
+          <ToggleGroup label="Filtrar por marca">
+            <ToggleButton pressed={selectedVendor === 'all'} onClick={() => selectVendor('all')}>
+              Todos
+            </ToggleButton>
+            {vendors.map((vendor) => (
+              <ToggleButton
+                key={vendor}
+                ariaLabel={vendor}
+                pressed={vendor.toLowerCase() === selectedVendor}
+                onClick={() => selectVendor(vendor.toLowerCase())}
+              >
+                <span className="flex items-center gap-1.5">
+                  <VendorLogo vendor={vendor} size="sm" />
+                </span>
+              </ToggleButton>
+            ))}
+          </ToggleGroup>
         </div>
 
         {/* Operations */}
@@ -177,46 +153,28 @@ export function FilterBar({
             <Globe className="w-3.5 h-3.5 inline -mt-0.5 mr-0.5" aria-hidden="true" />
             País
           </span>
-          <div
-            role="group"
-            aria-label="Filtrar por país"
-            className="flex items-center gap-1 bg-neutral-50 p-1 rounded-lg flex-wrap"
-          >
-            <button
-              type="button"
-              aria-pressed={selectedOperation === 'all'}
+          <ToggleGroup label="Filtrar por país" className="flex-wrap">
+            <ToggleButton
+              size="sm"
+              pressed={selectedOperation === 'all'}
               onClick={() => onOperationChange('all')}
-              className={`px-2.5 py-1.5 text-xs font-medium rounded-md transition-all cursor-pointer ${
-                selectedOperation === 'all'
-                  ? 'bg-white text-highlight shadow-sm'
-                  : 'text-medium-emphasis hover:text-high-emphasis'
-              }`}
             >
               Todas
-            </button>
+            </ToggleButton>
             {countries.map((country) => (
-              <button
+              <ToggleButton
                 key={country}
-                type="button"
-                aria-pressed={selectedOperation === country}
+                size="sm"
+                pressed={selectedOperation === country}
                 onClick={() => onOperationChange(country)}
-                className={`px-2.5 py-1.5 text-xs font-medium rounded-md transition-all cursor-pointer ${
-                  selectedOperation === country
-                    ? 'bg-white text-highlight shadow-sm'
-                    : 'text-medium-emphasis hover:text-high-emphasis'
-                }`}
               >
                 <span className="flex items-center gap-1">
-                  <img
-                    src={getCountryFlag(country)}
-                    alt=""
-                    className="w-5 h-3.5 object-cover rounded-sm"
-                  />
+                  <CountryFlag code={country} width={20} height={14} className="h-3.5 w-5" />
                   {country}
                 </span>
-              </button>
+              </ToggleButton>
             ))}
-          </div>
+          </ToggleGroup>
         </div>
       </div>
     </div>
