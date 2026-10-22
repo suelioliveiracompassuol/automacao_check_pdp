@@ -3,22 +3,9 @@ import { describe, it, expect, vi } from 'vitest';
 import { PdpCard } from '../pdp-card';
 import type { PdpCheckResult } from '@/lib/types';
 
-// Mock framer-motion
-vi.mock('framer-motion', () => ({
-  motion: {
-    div: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => (
-      <div {...props}>{children}</div>
-    ),
-  },
-  AnimatePresence: ({ children }: React.PropsWithChildren) => <>{children}</>,
-}));
-
 // Mock sub-components to simplify
 vi.mock('../feature-table', () => ({
   FeatureTable: () => <div data-testid="feature-table">FeatureTable</div>,
-}));
-vi.mock('../remote-config-panel', () => ({
-  RemoteConfigPanel: () => <div data-testid="remote-config-panel">RemoteConfigPanel</div>,
 }));
 vi.mock('../screenshot-viewer', () => ({
   ScreenshotViewer: () => <div data-testid="screenshot-viewer">ScreenshotViewer</div>,

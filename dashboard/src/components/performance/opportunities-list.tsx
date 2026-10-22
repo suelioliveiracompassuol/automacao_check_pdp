@@ -1,16 +1,10 @@
+import { formatMs } from '@/lib/format';
 import type { PerfOpportunity } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
 interface OpportunitiesListProps {
   items: PerfOpportunity[];
   className?: string;
-}
-
-function formatSavings(savingsMs: number): string {
-  if (savingsMs < 1000) {
-    return `${Math.round(savingsMs)} ms`;
-  }
-  return `${(savingsMs / 1000).toFixed(2).replace('.', ',')} s`;
 }
 
 export function OpportunitiesList({ items, className }: OpportunitiesListProps) {
@@ -34,7 +28,7 @@ export function OpportunitiesList({ items, className }: OpportunitiesListProps) 
           >
             <span className="font-medium text-high-emphasis">{item.title}</span>
             <span className="font-semibold text-primary-darkest tabular-nums">
-              economia estimada: {formatSavings(item.savingsMs)}
+              economia estimada: {formatMs(item.savingsMs)}
             </span>
           </li>
         ))}

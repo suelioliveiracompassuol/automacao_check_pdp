@@ -78,16 +78,6 @@ export type Vendor = 'natura' | 'avon';
 export type Country = 'BR' | 'AR' | 'CL' | 'CO' | 'MX' | 'PE';
 export type Channel = 'ecommerce' | 'socialcommerce';
 
-/** Single source of truth for country display labels — used across the /visao-geral page. */
-export const COUNTRY_INFO: Record<Country, { label: string }> = {
-  AR: { label: 'Argentina' },
-  BR: { label: 'Brasil' },
-  CL: { label: 'Chile' },
-  CO: { label: 'Colômbia' },
-  MX: { label: 'México' },
-  PE: { label: 'Peru' },
-};
-
 export type FeatureKey =
   | 'reviews'
   | 'aiReviewSummary'
@@ -108,28 +98,6 @@ export type FeatureKey =
   | 'productVariations'
   | 'contentBanners';
 
-/** Runtime list of every FeatureKey — single source of truth for "how many checks we run". */
-export const ALL_FEATURE_KEYS: FeatureKey[] = [
-  'reviews',
-  'aiReviewSummary',
-  'reviewFilter',
-  'reviewSort',
-  'reviewPhotos',
-  'reviewRecommendation',
-  'brandShowcase',
-  'recommendationShowcase',
-  'shopTheSet',
-  'images',
-  'pricing',
-  'shipping',
-  'ratingConsistency',
-  'rating',
-  'addToCart',
-  'favoriteButton',
-  'productVariations',
-  'contentBanners',
-];
-
 export interface SkuEntry {
   id: string;
   sku: string;
@@ -143,6 +111,7 @@ export interface SkuEntry {
 
 export interface PerfMetrics {
   performanceScore: number | null; // 0-100
+  startRender?: number | null; // ms, equivalente ao StartRender do WebPageTest (ausente em rodadas antigas)
   lcp: number | null; // ms
   cls: number | null;
   tbt: number | null; // ms
@@ -179,7 +148,9 @@ export interface PerfSkuResult {
   runs: PerfMetrics[]; // todas as execuções válidas
   lcpElement: PerfLcpElement | null;
   opportunities: PerfOpportunity[];
-  reportHtmlPath: string | null; // relativo a docs/perf, ex.: "run_123/NATBRA-108403.html"
+  /** Relatório completo do Lighthouse (LHR), relativo a docs/perf, ex.: "run_123/NATBRA-108403.json".
+   * Ausente em rodadas antigas (que geravam HTML) e removido pelo workflow após 10 dias. */
+  reportJsonPath?: string | null;
   lighthouseVersion: string | null;
 }
 
@@ -188,6 +159,15 @@ export interface PerfRun {
   timestamp: string; // ISO
   formFactor: 'desktop';
   runsPerSku: number;
+  /** Condições do teste, equivalentes ao WebPageTest (ausente em rodadas antigas). */
+  conditions?: {
+    connectivity: string;
+    downKbps: number;
+    upKbps: number;
+    rttMs: number;
+    viewport: string;
+    consentCookie: boolean;
+  };
   results: PerfSkuResult[];
 }
 

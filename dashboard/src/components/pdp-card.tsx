@@ -2,15 +2,15 @@
 
 import { Card, Badge } from './ui/card';
 import { FeatureTable } from './feature-table';
-import { RemoteConfigPanel } from './remote-config-panel';
 import { ScreenshotViewer } from './screenshot-viewer';
+import { CountryFlag } from './ui/country-flag';
 import { VendorLogo } from './vendor-logo';
-import { getCountryFlag } from '@/lib/utils';
+import { summarizeFeatures } from '@/lib/report';
 import type { PdpCheckResult } from '@/lib/types';
 import { ChevronDown, ExternalLink, Clock, AlertCircle, CheckCircle2, XCircle } from 'lucide-react';
 import { useId, useState } from 'react';
 import { FaAndroid } from 'react-icons/fa';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from 'framer-motion';
 
 interface PdpCardProps {
   result: PdpCheckResult;
@@ -27,10 +27,7 @@ export function PdpCard({ result, runId, screenshots }: PdpCardProps) {
     s.toLowerCase().includes(result.sku.toLowerCase().replace(/-/g, '')),
   );
 
-  const testableFeatures = result.features.filter((f) => f.status !== 'na');
-  const passedCount = testableFeatures.filter((f) => f.passed || f.status === 'disabled').length;
-  const totalFeatures = testableFeatures.length;
-  const passPercentage = totalFeatures > 0 ? Math.round((passedCount / totalFeatures) * 100) : 0;
+  const { percentage: passPercentage } = summarizeFeatures(result.features);
 
   return (
     <Card
@@ -94,13 +91,7 @@ export function PdpCard({ result, runId, screenshots }: PdpCardProps) {
               )}
               <VendorLogo vendor={result.vendor} />
               <Badge className="bg-neutral-50 text-high-emphasis border border-neutral-100">
-                <img
-                  src={getCountryFlag(result.country)}
-                  alt=""
-                  width={16}
-                  height={12}
-                  className="rounded-sm mr-1"
-                />
+                <CountryFlag code={result.country} width={16} height={12} className="mr-1" />
                 {result.country.toUpperCase()}
               </Badge>
               <ChevronDown
@@ -114,7 +105,7 @@ export function PdpCard({ result, runId, screenshots }: PdpCardProps) {
 
       <AnimatePresence>
         {expanded && (
-          <motion.div
+          <m.div
             id={panelId}
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
@@ -148,17 +139,9 @@ export function PdpCard({ result, runId, screenshots }: PdpCardProps) {
                 pageScreenshot={result.pageScreenshot}
               />
 
-              <RemoteConfigPanel
-                flags={result.remoteConfigFlags}
-                locale={
-                  (result.remoteConfigFlags as Record<string, unknown>)?.locale as
-                    string | undefined
-                }
-              />
-
               <ScreenshotViewer screenshots={skuScreenshots} runId={runId} />
             </div>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </Card>

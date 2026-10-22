@@ -1,7 +1,8 @@
+import { formatDecimal, formatMs } from './format';
 import type { PerfPageType } from './types';
 
 export type PerfMetricKey =
-  'performanceScore' | 'lcp' | 'cls' | 'tbt' | 'fcp' | 'speedIndex' | 'ttfb';
+  'performanceScore' | 'startRender' | 'lcp' | 'cls' | 'tbt' | 'fcp' | 'speedIndex' | 'ttfb';
 
 export type MetricRating = 'good' | 'needs-improvement' | 'poor';
 
@@ -28,6 +29,17 @@ export const PERF_METRICS: Record<PerfMetricKey, PerfMetricDefinition> = {
     poor: 50,
     higherIsBetter: true,
     unit: 'score',
+  },
+  // Sem limite oficial do Google; usa os mesmos do FCP, que mede algo muito próximo.
+  startRender: {
+    label: 'Start Render',
+    shortLabel: 'Start Render',
+    description:
+      'Tempo até a primeira mudança visual na tela (mesma métrica da planilha do WebPageTest)',
+    good: 1800,
+    poor: 3000,
+    higherIsBetter: false,
+    unit: 'ms',
   },
   // Meta 2 da empresa para LCP: Supera < 3 s, Atende 3 a 4 s, Abaixo > 4 s
   // (substitui o limite de 2,5 s do Google).
@@ -143,41 +155,49 @@ export function formatMetric(key: PerfMetricKey, value: number | null): string {
     return '—';
   }
 
-  const def = PERF_METRICS[key];
-  if (!def) {
-    return String(value);
+  switch (PERF_METRICS[key]?.unit) {
+    case 'ms':
+      return formatMs(value);
+    case 'unitless':
+      return formatDecimal(value, 3);
+    case 'score':
+      return String(Math.round(value));
+    default:
+      return String(value);
   }
-
-  if (def.unit === 'ms') {
-    if (Math.abs(value) < 1000) {
-      return `${Math.round(value)} ms`;
-    }
-    return `${(value / 1000).toFixed(2).replace('.', ',')} s`;
-  }
-
-  if (def.unit === 'unitless') {
-    return value.toFixed(3).replace('.', ',');
-  }
-
-  if (def.unit === 'score') {
-    return String(Math.round(value));
-  }
-
-  return String(value);
 }
 
-export function formatBytes(bytes: number | null): string {
-  if (bytes === null || bytes === undefined) {
-    return '—';
-  }
+/** Classes/cores por rating, compartilhadas por tiles, anel de score e badges. */
+export const RATING_TONE: Record<
+  MetricRating | 'none',
+  { dot: string; text: string; badge: string; stroke: string }
+> = {
+  good: {
+    dot: 'bg-success',
+    text: 'text-success-dark',
+    badge: 'bg-success-lightest text-success-dark',
+    stroke: 'var(--color-success)',
+  },
+  'needs-improvement': {
+    dot: 'bg-warning',
+    text: 'text-warning-darkest',
+    badge: 'bg-warning-lightest text-warning-darkest',
+    stroke: 'var(--color-warning)',
+  },
+  poor: {
+    dot: 'bg-alert',
+    text: 'text-alert-dark',
+    badge: 'bg-alert-lightest text-alert-dark',
+    stroke: 'var(--color-alert)',
+  },
+  none: {
+    dot: 'bg-neutral-300',
+    text: 'text-low-emphasis',
+    badge: 'bg-neutral-75 text-medium-emphasis',
+    stroke: 'var(--color-neutral-200)',
+  },
+};
 
-  if (bytes < 1024) {
-    return `${bytes} B`;
-  }
-
-  if (bytes < 1024 * 1024) {
-    return `${Math.round(bytes / 1024)} KB`;
-  }
-
-  return `${(bytes / (1024 * 1024)).toFixed(1).replace('.', ',')} MB`;
+export function ratingTone(rating: MetricRating | null) {
+  return RATING_TONE[rating ?? 'none'];
 }

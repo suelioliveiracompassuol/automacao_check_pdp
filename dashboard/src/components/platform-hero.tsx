@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { CalendarClock, Hash, Timer } from 'lucide-react';
 import { PLATFORM_META } from '@/lib/platforms';
 import type { MonitoringReport, Platform } from '@/lib/types';
-import { formatDate, formatDuration } from '@/lib/utils';
+import { formatDate, formatDuration } from '@/lib/format';
 
 interface PlatformHeroProps {
   platform: Platform;

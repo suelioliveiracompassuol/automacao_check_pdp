@@ -1,53 +1,46 @@
 import { Gauge, Info } from 'lucide-react';
-import { Card } from '@/components/ui/card';
+import { EmptyState } from '@/components/empty-state';
 import { SkuPerfCard } from '@/components/performance/sku-perf-card';
-import { PerformanceTrends } from '@/components/performance/performance-trends';
-import { getPerfIndex, getPerfRun } from '@/lib/data';
+import { PerformanceHistory } from '@/components/performance/performance-history';
+import { PerfReportDownloads } from '@/components/performance/perf-report-downloads';
+import { getPerfIndex, getPerfReportDownloads, getPerfRun } from '@/lib/data';
+import { formatDateTime, formatKbps } from '@/lib/format';
+import type { PerfRun } from '@/lib/types';
 
 export const metadata = {
   title: 'Performance da PDP',
 };
 
-function formatTimestamp(iso: string): string {
-  const d = new Date(iso);
-  if (isNaN(d.getTime())) {
-    return iso;
-  }
-  return d.toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    timeZone: 'America/Sao_Paulo',
-  });
+/** Mesma janela em que o workflow mantém os relatórios completos do Lighthouse. */
+const REPORT_RETENTION_DAYS = 10;
+
+/** Descrição das condições de teste (equivalentes ao WebPageTest), quando a rodada as registra. */
+function describeConditions(conditions: PerfRun['conditions']): string | null {
+  if (!conditions) return null;
+  const { connectivity, downKbps, upKbps, rttMs, viewport } = conditions;
+  return `${connectivity} (${formatKbps(downKbps)}/${formatKbps(upKbps)}, ${rttMs} ms) · tela ${viewport}`;
 }
 
 export default function PerformancePage() {
   const index = getPerfIndex();
 
-  if (!index.runs || index.runs.length === 0) {
+  if (index.runs.length === 0) {
     return (
-      <div className="space-y-6 animate-fade-in-up">
-        <Card className="py-16 text-center">
-          <Gauge className="mx-auto mb-3 h-10 w-10 text-primary-light" />
-          <h1 className="text-xl font-bold text-highlight">Performance da PDP</h1>
-          <p className="mt-2 text-sm text-medium-emphasis max-w-lg mx-auto">
-            Ainda não há medições de performance. Elas são geradas diariamente pelo job perf do
-            workflow PDP Feature Monitor.
-          </p>
-        </Card>
-      </div>
+      <EmptyState
+        icon={<Gauge />}
+        title="Performance da PDP"
+        description="Ainda não há medições de performance. Elas são geradas diariamente pelo job perf do workflow PDP Feature Monitor."
+      />
     );
   }
 
-  const latestRunId = index.runs[0].runId;
-  const latest = getPerfRun(latestRunId);
-  const previousRunId = index.runs[1]?.runId;
-  const previous = previousRunId ? getPerfRun(previousRunId) : null;
+  const [latestEntry, previousEntry] = index.runs;
+  const latest = getPerfRun(latestEntry.runId);
+  const previous = previousEntry ? getPerfRun(previousEntry.runId) : null;
 
   const runsPerSku = latest?.runsPerSku ?? 3;
-  const formattedDate = formatTimestamp(latest?.timestamp || index.runs[0].timestamp);
+  const formattedDate = formatDateTime(latest?.timestamp || latestEntry.timestamp);
+  const conditionsText = describeConditions(latest?.conditions);
 
   return (
     <div className="space-y-8 animate-fade-in-up pb-12">
@@ -62,8 +55,8 @@ export default function PerformancePage() {
               Performance da PDP
             </h1>
             <p className="text-xs sm:text-sm text-medium-emphasis">
-              Lighthouse desktop · mediana de {runsPerSku} execuções · última medição em{' '}
-              {formattedDate}
+              Lighthouse desktop · {conditionsText ? `${conditionsText} · ` : ''}mediana de{' '}
+              {runsPerSku} execuções · última medição em {formattedDate}
             </p>
           </div>
         </div>
@@ -72,16 +65,15 @@ export default function PerformancePage() {
         <div className="mt-4 flex items-start gap-2.5 rounded-lg border border-neutral-75 bg-surface p-3 text-xs text-medium-emphasis shadow-tiny">
           <Info className="h-4 w-4 shrink-0 text-primary-dark mt-0.5" aria-hidden="true" />
           <p>
-            Métricas de laboratório simuladas no Chromium desktop (condições controladas). O{' '}
-            <strong>Total Blocking Time (TBT)</strong> é utilizado como substituto laboratorial do
-            Interaction to Next Paint (INP) para diagnosticar períodos de travamento da thread
-            principal.
+            Métricas de laboratório medidas no Chromium desktop com a mesma conexão e tela da
+            automação do WebPageTest. O <strong>Total Blocking Time (TBT)</strong> é utilizado como
+            substituto laboratorial do Interaction to Next Paint (INP).
           </p>
         </div>
       </div>
 
       {/* Cards por SKU */}
-      {latest && latest.results && latest.results.length > 0 && (
+      {latest && latest.results.length > 0 && (
         <section aria-labelledby="skus-perf-title" className="space-y-4">
           <h2 id="skus-perf-title" className="text-lg font-bold text-highlight">
             SKUs Monitorados
@@ -102,12 +94,14 @@ export default function PerformancePage() {
       )}
 
       {/* Seção Evolução */}
-      <section aria-labelledby="evolution-perf-title" className="space-y-4">
-        <h2 id="evolution-perf-title" className="sr-only">
-          Evolução Histórica
-        </h2>
-        <PerformanceTrends runs={index.runs} />
+      <section aria-label="Histórico de performance por tipo de PDP">
+        <PerformanceHistory runs={index.runs} />
       </section>
+
+      <PerfReportDownloads
+        runs={getPerfReportDownloads(REPORT_RETENTION_DAYS)}
+        days={REPORT_RETENTION_DAYS}
+      />
     </div>
   );
 }

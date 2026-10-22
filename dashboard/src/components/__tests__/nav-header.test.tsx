@@ -1,13 +1,6 @@
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { NavHeader } from '../nav-header';
-
-// Mock next/link
-vi.mock('next/link', () => ({
-  default: ({ children, href }: React.PropsWithChildren<{ href: string }>) => (
-    <a href={href}>{children}</a>
-  ),
-}));
 
 describe('NavHeader', () => {
   it('renders the title', () => {

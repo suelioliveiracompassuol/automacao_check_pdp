@@ -104,7 +104,7 @@ describe('OperationFlagsGrid', () => {
       { ...resultsWithFlags[0], sku: 'SKU-003' }, // same vendor+country
     ];
     render(<OperationFlagsGrid results={duplicateResults} />);
-    expect(screen.getByText('1 operações')).toBeInTheDocument();
+    expect(screen.getByText('1 operação')).toBeInTheDocument();
   });
 
   it('renders one column header per operation plus the Flag column', () => {

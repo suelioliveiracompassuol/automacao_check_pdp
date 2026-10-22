@@ -1,7 +1,7 @@
 'use client';
 
 import * as RadixTabs from '@radix-ui/react-tabs';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
@@ -34,7 +34,7 @@ interface TabsTriggerProps {
 }
 
 /** Radix trigger with a shared-layout indicator (`layoutId`) that slides between tabs instead of
- * popping, since active state must be known by the parent to drive the `motion.span`. */
+ * popping, since active state must be known by the parent to drive the `m.span`. */
 export function TabsTrigger({ value, isActive, children, className }: TabsTriggerProps) {
   return (
     <RadixTabs.Trigger
@@ -46,7 +46,7 @@ export function TabsTrigger({ value, isActive, children, className }: TabsTrigge
       )}
     >
       {isActive && (
-        <motion.span
+        <m.span
           layoutId="tabs-active-indicator"
           className="absolute inset-0 -z-10 rounded-full bg-highlight"
           transition={{ type: 'spring', stiffness: 500, damping: 35 }}

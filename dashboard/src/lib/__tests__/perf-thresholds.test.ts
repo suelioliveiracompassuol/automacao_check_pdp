@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   classifyMetric,
   formatMetric,
-  formatBytes,
+  ratingTone,
   RATING_LABEL,
   PERF_METRICS,
   ratingLabel,
@@ -24,6 +24,13 @@ describe('perf-thresholds', () => {
       expect(ratingLabel('lcp', classifyMetric('lcp', 2999))).toBe('Supera');
       expect(ratingLabel('lcp', classifyMetric('lcp', 3500))).toBe('Atende');
       expect(ratingLabel('lcp', classifyMetric('lcp', 4500))).toBe('Abaixo');
+    });
+
+    it('classifica Start Render (coluna da planilha do WebPageTest) com os limites do FCP', () => {
+      expect(classifyMetric('startRender', 1800)).toBe('good');
+      expect(classifyMetric('startRender', 2500)).toBe('needs-improvement');
+      expect(classifyMetric('startRender', 3001)).toBe('poor');
+      expect(formatMetric('startRender', 2104)).toBe('2,10 s');
     });
 
     it('mantém limite inclusivo e rótulos padrão nas demais métricas', () => {
@@ -89,15 +96,12 @@ describe('perf-thresholds', () => {
     });
   });
 
-  describe('formatBytes', () => {
-    it('formata bytes em B, KB e MB', () => {
-      expect(formatBytes(500)).toBe('500 B');
-      expect(formatBytes(552960)).toBe('540 KB');
-      expect(formatBytes(1887437)).toBe('1,8 MB');
-    });
-
-    it('retorna travessão para null', () => {
-      expect(formatBytes(null)).toBe('—');
+  describe('ratingTone', () => {
+    it('mapeia cada rating para suas classes', () => {
+      expect(ratingTone('good').dot).toBe('bg-success');
+      expect(ratingTone('needs-improvement').text).toBe('text-warning-darkest');
+      expect(ratingTone('poor').stroke).toBe('var(--color-alert)');
+      expect(ratingTone(null).text).toBe('text-low-emphasis');
     });
   });
 

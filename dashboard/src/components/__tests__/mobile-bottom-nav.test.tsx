@@ -2,14 +2,6 @@ import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { MobileBottomNav } from '../mobile-bottom-nav';
 
-vi.mock('next/link', () => ({
-  default: ({ children, href, ...rest }: React.PropsWithChildren<{ href: string }>) => (
-    <a href={href} {...rest}>
-      {children}
-    </a>
-  ),
-}));
-
 const { usePathname } = vi.hoisted(() => ({ usePathname: vi.fn(() => '/') }));
 vi.mock('next/navigation', () => ({ usePathname }));
 

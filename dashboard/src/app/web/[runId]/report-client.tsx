@@ -1,13 +1,15 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import type { PdpCheckResult } from '@/lib/types';
+import { useMemo, useState } from 'react';
+import { m } from 'framer-motion';
 import { FilterBar } from '@/components/filter-bar';
-import { PdpCard } from '@/components/pdp-card';
 import { OperationFlagsGrid } from '@/components/operation-flags-grid';
-import { motion } from 'framer-motion';
+import { PdpCard } from '@/components/pdp-card';
+import { filterResults, NO_FILTERS, type ResultFilters } from '@/lib/report';
+import type { PdpCheckResult } from '@/lib/types';
 
-type FilterStatus = 'all' | 'pass' | 'fail';
+/** Só os primeiros cards entram escalonados; o resto aparece junto (listas longas não esperam). */
+const MAX_STAGGERED = 10;
 
 interface ReportClientProps {
   results: PdpCheckResult[];
@@ -16,78 +18,56 @@ interface ReportClientProps {
 }
 
 export function ReportClient({ results, runId, screenshots }: ReportClientProps) {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedVendor, setSelectedVendor] = useState('all');
-  const [selectedOperation, setSelectedOperation] = useState('all');
-  const [selectedStatus, setSelectedStatus] = useState<FilterStatus>('all');
+  const [filters, setFilters] = useState<ResultFilters>(NO_FILTERS);
 
-  const filteredResults = useMemo(() => {
-    return results.filter((r) => {
-      if (selectedVendor !== 'all' && r.vendor.toLowerCase() !== selectedVendor) {
-        return false;
-      }
-      if (selectedOperation !== 'all') {
-        if (r.country.toUpperCase() !== selectedOperation) {
-          return false;
-        }
-      }
-      if (selectedStatus === 'pass') {
-        return r.success;
-      }
-      if (selectedStatus === 'fail') {
-        return !r.success;
-      }
+  const setFilter =
+    <K extends keyof ResultFilters>(key: K) =>
+    (value: ResultFilters[K]) =>
+      setFilters((prev) => ({ ...prev, [key]: value }));
 
-      if (searchQuery) {
-        const q = searchQuery.toLowerCase();
-        const matchesSku = r.sku.toLowerCase().includes(q);
-        const matchesName = r.name?.toLowerCase().includes(q);
-        if (!matchesSku && !matchesName) {
-          return false;
-        }
-      }
-
-      return true;
-    });
-  }, [results, selectedVendor, selectedOperation, selectedStatus, searchQuery]);
+  const filteredResults = useMemo(() => filterResults(results, filters), [results, filters]);
 
   return (
     <div className="space-y-6">
       <FilterBar
         results={results}
-        searchQuery={searchQuery}
-        selectedVendor={selectedVendor}
-        selectedOperation={selectedOperation}
-        selectedStatus={selectedStatus}
-        onSearchChange={setSearchQuery}
-        onVendorChange={setSelectedVendor}
-        onOperationChange={setSelectedOperation}
-        onStatusChange={setSelectedStatus}
+        searchQuery={filters.search}
+        selectedVendor={filters.vendor}
+        selectedOperation={filters.country}
+        selectedStatus={filters.status}
+        onSearchChange={setFilter('search')}
+        onVendorChange={setFilter('vendor')}
+        onOperationChange={setFilter('country')}
+        onStatusChange={setFilter('status')}
       />
       <OperationFlagsGrid results={filteredResults} />
 
-      {/* Results section header */}
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold text-highlight">Resultados por PDP</h2>
-        <span className="text-xs text-medium-emphasis bg-neutral-75 px-2.5 py-1 rounded-full">
+        <span
+          aria-live="polite"
+          className="text-xs text-medium-emphasis bg-neutral-75 px-2.5 py-1 rounded-full"
+        >
           {filteredResults.length} {filteredResults.length === 1 ? 'item' : 'itens'}
         </span>
       </div>
 
       <div className="space-y-3">
         {filteredResults.map((result, i) => (
-          <motion.div
+          <m.div
             key={`${result.sku}-${result.timestamp}`}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.03, duration: 0.3 }}
+            transition={{ delay: Math.min(i, MAX_STAGGERED) * 0.03, duration: 0.3 }}
           >
             <PdpCard result={result} runId={runId} screenshots={screenshots} />
-          </motion.div>
+          </m.div>
         ))}
         {filteredResults.length === 0 && (
           <div className="text-center py-16">
-            <div className="text-4xl mb-3">🔍</div>
+            <div className="text-4xl mb-3" aria-hidden="true">
+              🔍
+            </div>
             <p className="text-medium-emphasis font-medium">Nenhum resultado encontrado</p>
             <p className="text-low-emphasis text-sm mt-1">Tente ajustar os filtros ou a busca</p>
           </div>

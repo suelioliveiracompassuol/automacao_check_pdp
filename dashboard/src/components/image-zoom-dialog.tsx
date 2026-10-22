@@ -179,6 +179,8 @@ export function ImageZoomDialog({ src, title, onClose }: ImageZoomDialogProps) {
             }}
           >
             {src !== null && (
+              // <img> nativo: o zoom/pan usa transform e tamanho intrínseco, que o next/image não ajuda.
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={src}
                 alt={title}

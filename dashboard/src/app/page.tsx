@@ -1,5 +1,6 @@
 import { BarChart3 } from 'lucide-react';
 
+import { EmptyState } from '@/components/empty-state';
 import { CoverageSection } from '@/components/visao-geral/coverage-section';
 import { HeroSection, type PlatformStat } from '@/components/visao-geral/hero-section';
 import { HighlightsSection } from '@/components/visao-geral/highlights-section';
@@ -7,18 +8,15 @@ import {
   PlatformBreakdownSection,
   type PlatformBreakdownData,
 } from '@/components/visao-geral/platform-breakdown-section';
-import { Card } from '@/components/ui/card';
-import { getReportById, getReportIndex } from '@/lib/data';
 import { TOTAL_CHECKS } from '@/lib/checks-catalog';
+import { getReportById, getReportIndex, getReportsByPlatform } from '@/lib/data';
 import { PLATFORM_META, PLATFORMS } from '@/lib/platforms';
-import { type MonitoringReport, type Platform, type ReportIndexEntry } from '@/lib/types';
+import { groupByCountry, passRate } from '@/lib/report';
+import type { MonitoringReport, ReportIndexEntry } from '@/lib/types';
 
-const PLATFORM_IDS: Platform[] = PLATFORMS.map((p) => p.platform);
-
-function passRateOf(report: MonitoringReport | null): number | null {
-  if (!report || report.summary.total === 0) return null;
-  return Math.round((report.summary.passed / report.summary.total) * 100);
-}
+/** Execuções exibidas no gráfico de evolução e na matriz de erros. */
+const EVOLUTION_RUNS = 10;
+const MATRIX_RUNS = 4;
 
 function loadReports(entries: ReportIndexEntry[]): MonitoringReport[] {
   return entries
@@ -26,85 +24,54 @@ function loadReports(entries: ReportIndexEntry[]): MonitoringReport[] {
     .filter((r): r is MonitoringReport => r !== null);
 }
 
-export default function HomePage() {
-  const index = getReportIndex();
-  const allRuns = index.reports;
+const entryPassRate = (r: { summary: { passed: number; total: number } }) =>
+  passRate(r.summary.passed, r.summary.total);
 
-  const latestEntry = allRuns[0];
-  if (!latestEntry) {
+export default function HomePage() {
+  if (getReportIndex().reports.length === 0) {
     return (
-      <Card className="py-16 text-center">
-        <BarChart3 className="mx-auto mb-3 h-8 w-8 text-primary-light" />
-        <h1 className="text-lg font-bold text-highlight">Nenhuma execução disponível</h1>
-        <p className="mt-1 text-sm text-medium-emphasis">
-          As métricas aparecerão aqui após a primeira execução.
-        </p>
-      </Card>
+      <EmptyState
+        icon={<BarChart3 />}
+        title="Nenhuma execução disponível"
+        description="As métricas aparecerão aqui após a primeira execução."
+      />
     );
   }
 
-  const runsByPlatform = Object.fromEntries(
-    PLATFORM_IDS.map((p) => [p, allRuns.filter((r) => (r.platform ?? 'web') === p)]),
-  ) as Record<Platform, ReportIndexEntry[]>;
+  // Plataformas "em breve" não têm execuções a exibir, mesmo que existam entradas de teste.
+  const runsOf = (meta: (typeof PLATFORMS)[number]) =>
+    meta.upcoming ? [] : getReportsByPlatform(meta.platform);
 
-  const latestWebEntry = runsByPlatform.web[0] ?? latestEntry;
-  const latestWebReport = getReportById(latestWebEntry.runId);
+  const webRuns = getReportsByPlatform('web');
+  const latestWebReport = webRuns[0] ? getReportById(webRuns[0].runId) : null;
+  const webResults = latestWebReport?.results ?? [];
 
-  const webRuns = runsByPlatform.web;
-
-  const countries = latestWebReport
-    ? [...new Set(latestWebReport.results.map((r) => r.country.toUpperCase()))].sort()
-    : [];
-
-  const channelsByCountry = latestWebReport
-    ? latestWebReport.results.reduce<Map<string, Set<string>>>((channels, result) => {
-        const country = result.country.toUpperCase();
-        const countryChannels = channels.get(country) ?? new Set<string>();
-        countryChannels.add(result.channel ?? 'ecommerce');
-        channels.set(country, countryChannels);
-        return channels;
-      }, new Map())
-    : new Map<string, Set<string>>();
-
-  const vendorsByCountry = latestWebReport
-    ? latestWebReport.results.reduce<Map<string, Set<string>>>((vendors, result) => {
-        const country = result.country.toUpperCase();
-        const countryVendors = vendors.get(country) ?? new Set<string>();
-        countryVendors.add(result.vendor.toLowerCase());
-        vendors.set(country, countryVendors);
-        return vendors;
-      }, new Map())
-    : new Map<string, Set<string>>();
+  const channelsByCountry = groupByCountry(webResults, (r) => r.channel ?? 'ecommerce');
+  const vendorsByCountry = groupByCountry(webResults, (r) => r.vendor.toLowerCase());
+  const countries = [...channelsByCountry.keys()].sort();
 
   const platformStats: PlatformStat[] = PLATFORMS.map((meta) => {
-    const runs = meta.upcoming ? [] : runsByPlatform[meta.platform];
+    const runs = runsOf(meta);
     const latest = runs[0] ? getReportById(runs[0].runId) : null;
     return {
       meta,
-      passRate: passRateOf(latest),
+      passRate: latest && latest.summary.total > 0 ? entryPassRate(latest) : null,
       runsCount: runs.length,
       lastRunAt: runs[0]?.startTime ?? null,
-      trend: runs
-        .slice(0, 10)
-        .reverse()
-        .map((r) =>
-          r.summary.total > 0 ? Math.round((r.summary.passed / r.summary.total) * 100) : 0,
-        ),
+      trend: runs.slice(0, EVOLUTION_RUNS).reverse().map(entryPassRate),
     };
   });
 
-  // All platforms get a tab; upcoming ones (and any without runs) render an empty state.
-  const platformBreakdown: PlatformBreakdownData[] = PLATFORMS.map(
-    ({ platform, label, upcoming }) => {
-      const runs = upcoming ? [] : runsByPlatform[platform];
-      return {
-        platform,
-        label,
-        evolutionData: runs.slice(0, 10).reverse(),
-        reports: loadReports(runs.slice(0, 4)).reverse(),
-      };
-    },
-  );
+  // Todas as plataformas ganham uma aba; as sem execuções mostram um estado vazio.
+  const platformBreakdown: PlatformBreakdownData[] = PLATFORMS.map((meta) => {
+    const runs = runsOf(meta);
+    return {
+      platform: meta.platform,
+      label: meta.label,
+      evolutionData: runs.slice(0, EVOLUTION_RUNS).reverse(),
+      reports: loadReports(runs.slice(0, MATRIX_RUNS)).reverse(),
+    };
+  });
 
   return (
     <div className="space-y-16 animate-fade-in-up">

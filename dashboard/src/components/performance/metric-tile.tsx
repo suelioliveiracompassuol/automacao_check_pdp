@@ -4,7 +4,9 @@ import {
   classifyMetric,
   formatMetric,
   ratingLabel,
+  ratingTone,
 } from '@/lib/perf-thresholds';
+import { formatDecimal, formatMs } from '@/lib/format';
 import { cn } from '@/lib/utils';
 
 interface MetricTileProps {
@@ -16,17 +18,14 @@ interface MetricTileProps {
 
 function formatDelta(key: PerfMetricKey, diff: number): string {
   const abs = Math.abs(diff);
-  const def = PERF_METRICS[key];
-  if (def.unit === 'ms') {
-    if (abs < 1000) {
-      return `${Math.round(abs)} ms`;
-    }
-    return `${(abs / 1000).toFixed(2).replace('.', ',')} s`;
+  switch (PERF_METRICS[key].unit) {
+    case 'ms':
+      return formatMs(abs);
+    case 'unitless':
+      return formatDecimal(abs, 2);
+    default:
+      return String(Math.round(abs));
   }
-  if (def.unit === 'unitless') {
-    return abs.toFixed(2).replace('.', ',');
-  }
-  return String(Math.round(abs));
 }
 
 export function MetricTile({ metricKey, value, previousValue, className }: MetricTileProps) {
@@ -55,23 +54,7 @@ export function MetricTile({ metricKey, value, previousValue, className }: Metri
     }
   }
 
-  const dotColor =
-    rating === 'good'
-      ? 'bg-success'
-      : rating === 'needs-improvement'
-        ? 'bg-warning'
-        : rating === 'poor'
-          ? 'bg-alert'
-          : 'bg-neutral-300';
-
-  const ratingTextColor =
-    rating === 'good'
-      ? 'text-success-dark'
-      : rating === 'needs-improvement'
-        ? 'text-warning-darkest'
-        : rating === 'poor'
-          ? 'text-alert-dark'
-          : 'text-low-emphasis';
+  const tone = ratingTone(rating);
 
   return (
     <div
@@ -95,9 +78,9 @@ export function MetricTile({ metricKey, value, previousValue, className }: Metri
       <div className="flex items-center gap-1.5 text-xs font-medium">
         <span
           aria-hidden="true"
-          className={cn('inline-block h-2 w-2 rounded-full shrink-0', dotColor)}
+          className={cn('inline-block h-2 w-2 rounded-full shrink-0', tone.dot)}
         />
-        <span className={ratingTextColor}>{ratingLabel(metricKey, rating)}</span>
+        <span className={tone.text}>{ratingLabel(metricKey, rating)}</span>
       </div>
     </div>
   );

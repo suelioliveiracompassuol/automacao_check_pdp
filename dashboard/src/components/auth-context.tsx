@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import {
   getAuth,
   onAuthStateChanged,
@@ -27,14 +27,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Monitor auth state changes
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      setLoading(false);
-    });
-    return () => unsubscribe();
-  }, []);
+  useEffect(
+    () =>
+      onAuthStateChanged(auth, (currentUser) => {
+        setUser(currentUser);
+        setLoading(false);
+      }),
+    [],
+  );
 
   const login = useCallback(async (email: string, password: string) => {
     try {
@@ -58,11 +58,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  return (
-    <AuthContext.Provider value={{ user, loading, login, logout, error }}>
-      {children}
-    </AuthContext.Provider>
+  // Memoizado para não re-renderizar todos os consumidores a cada render do provider.
+  const value = useMemo(
+    () => ({ user, loading, login, logout, error }),
+    [user, loading, login, logout, error],
   );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {

@@ -6,7 +6,7 @@ import { History, ChevronDown, Check, CheckCircle2, XCircle } from 'lucide-react
 import { FaAndroid } from 'react-icons/fa';
 import { usePathname } from 'next/navigation';
 import type { ReportIndexEntry } from '@/lib/types';
-import { formatDate, formatDuration } from '@/lib/utils';
+import { formatDate, formatDuration } from '@/lib/format';
 
 interface HistoryDropdownProps {
   runs: ReportIndexEntry[];
@@ -111,7 +111,7 @@ export function HistoryDropdown({
                     <div className="flex flex-col">
                       <span className="flex items-center gap-1 font-medium">
                         {run.platform === 'android' && <FaAndroid className="w-3 h-3" />}
-                        {formatDate(run?.startTime)}
+                        {formatDate(run.startTime)}
                       </span>
                       <span className="text-xs text-low-emphasis mt-0.5">
                         {formatDuration(run.durationMs)}

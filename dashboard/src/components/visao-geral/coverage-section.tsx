@@ -1,7 +1,8 @@
 import { SectionHeader } from '@/components/ui/card';
-import { cn, getCountryFlag } from '@/lib/utils';
-import { COUNTRY_INFO } from '@/lib/types';
-import { VENDOR_LABELS } from './content';
+import { CountryFlag } from '@/components/ui/country-flag';
+import { cn } from '@/lib/utils';
+import { COUNTRY_INFO, VENDOR_INFO } from '@/lib/constants';
+import type { Vendor } from '@/lib/types';
 import { ChecksOverview } from '@/components/checks-overview';
 
 interface CoverageSectionProps {
@@ -35,17 +36,17 @@ export function CoverageSection({
                 : 'border-neutral-75 bg-surface opacity-60',
             )}
           >
-            <img
-              src={getCountryFlag(code)}
+            <CountryFlag
+              code={code}
               alt={`Bandeira do ${label}`}
               width={28}
               height={20}
-              className="mb-1 h-5 w-7 rounded-sm object-cover"
+              className="mb-1 h-5 w-7"
             />
             <span className="text-sm font-bold text-high-emphasis">{label}</span>
             <div className="mt-2 flex flex-wrap justify-center gap-1">
               {[...(vendorsByCountry.get(code) ?? [])].map((vendor) => {
-                const info = VENDOR_LABELS[vendor];
+                const info = VENDOR_INFO[vendor as Vendor];
                 if (!info) return null;
                 return (
                   <span

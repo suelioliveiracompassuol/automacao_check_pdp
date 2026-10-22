@@ -3,23 +3,6 @@ import { describe, it, expect, vi } from 'vitest';
 import { HistoryDropdown } from '../history-dropdown';
 import type { ReportIndexEntry } from '@/lib/types';
 
-vi.mock('next/link', () => ({
-  default: ({
-    children,
-    href,
-    onClick,
-    className,
-  }: React.PropsWithChildren<{
-    href: string;
-    onClick?: () => void;
-    className?: string;
-  }>) => (
-    <a href={href} onClick={onClick} className={className}>
-      {children}
-    </a>
-  ),
-}));
-
 vi.mock('next/navigation', () => ({
   usePathname: () => '/',
 }));

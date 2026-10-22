@@ -2,30 +2,29 @@ import { Card } from '@/components/ui/card';
 import { ScoreRing } from './score-ring';
 import { MetricTile } from './metric-tile';
 import { OpportunitiesList } from './opportunities-list';
-import { formatBytes, PAGE_TYPE_LABEL } from '@/lib/perf-thresholds';
+import { formatBytes } from '@/lib/format';
+import { PAGE_TYPE_LABEL, type PerfMetricKey } from '@/lib/perf-thresholds';
 import type { PerfMetrics, PerfSkuResult } from '@/lib/types';
-import { ExternalLink, AlertTriangle, FileText } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { ExternalLink, AlertTriangle, Download } from 'lucide-react';
+import { cn, getPerfFileUrl, perfReportDownloadName } from '@/lib/utils';
 
 interface SkuPerfCardProps {
   result: PerfSkuResult;
   previous?: PerfMetrics | null;
-  basePath?: string;
   className?: string;
 }
 
-export function SkuPerfCard({
-  result,
-  previous,
-  basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '',
-  className,
-}: SkuPerfCardProps) {
-  const normalizedBasePath = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath;
+/** Mesma ordem das colunas da planilha do WebPageTest. */
+const CARD_METRICS = [
+  'startRender',
+  'lcp',
+  'speedIndex',
+  'tbt',
+  'cls',
+  'ttfb',
+] as const satisfies readonly PerfMetricKey[];
 
-  const reportUrl = result.reportHtmlPath
-    ? `${normalizedBasePath}/perf/${result.reportHtmlPath}`
-    : null;
-
+export function SkuPerfCard({ result, previous, className }: SkuPerfCardProps) {
   return (
     <Card className={cn('flex flex-col justify-between gap-5', className)}>
       {/* Cabeçalho */}
@@ -78,36 +77,14 @@ export function SkuPerfCard({
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 flex-1 w-full">
-              <MetricTile
-                metricKey="lcp"
-                value={result.median?.lcp ?? null}
-                previousValue={previous?.lcp}
-              />
-              <MetricTile
-                metricKey="cls"
-                value={result.median?.cls ?? null}
-                previousValue={previous?.cls}
-              />
-              <MetricTile
-                metricKey="tbt"
-                value={result.median?.tbt ?? null}
-                previousValue={previous?.tbt}
-              />
-              <MetricTile
-                metricKey="fcp"
-                value={result.median?.fcp ?? null}
-                previousValue={previous?.fcp}
-              />
-              <MetricTile
-                metricKey="speedIndex"
-                value={result.median?.speedIndex ?? null}
-                previousValue={previous?.speedIndex}
-              />
-              <MetricTile
-                metricKey="ttfb"
-                value={result.median?.ttfb ?? null}
-                previousValue={previous?.ttfb}
-              />
+              {CARD_METRICS.map((key) => (
+                <MetricTile
+                  key={key}
+                  metricKey={key}
+                  value={result.median?.[key] ?? null}
+                  previousValue={previous?.[key]}
+                />
+              ))}
             </div>
           </div>
 
@@ -139,18 +116,16 @@ export function SkuPerfCard({
           {/* Oportunidades */}
           <OpportunitiesList items={result.opportunities} />
 
-          {/* Link para relatório completo do Lighthouse */}
-          {reportUrl && (
+          {/* Download do relatório completo do Lighthouse */}
+          {result.reportJsonPath && (
             <div className="border-t border-neutral-75 pt-3">
               <a
-                href={reportUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+                href={getPerfFileUrl(result.reportJsonPath)}
+                download={perfReportDownloadName(result.reportJsonPath)}
                 className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary-dark hover:text-primary-darkest transition-colors"
               >
-                <FileText className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                <span>Relatório completo do Lighthouse</span>
-                <ExternalLink className="h-3 w-3" aria-hidden="true" />
+                <Download className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                <span>Baixar relatório do Lighthouse (JSON)</span>
               </a>
             </div>
           )}
