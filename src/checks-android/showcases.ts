@@ -1,6 +1,10 @@
 import { CheckResult } from "../types.js";
 import { ANDROID_SELECTORS } from "./configs/selectors.js";
-import { dismissZeeDog, scrollPdpUntilVisible } from "./pdpScreen.js";
+import {
+  dismissZeeDog,
+  scrollPdpUntilVisible,
+  ShowcasePageSummary,
+} from "./pdpScreen.js";
 
 /**
  * Native Android showcase / carousel verification.
@@ -12,14 +16,22 @@ import { dismissZeeDog, scrollPdpUntilVisible } from "./pdpScreen.js";
 async function verifyNativeShowcase(
   driver: WebdriverIO.Browser,
   resourceId: string,
-): Promise<{ rendered: boolean; itemCount: number }> {
+): Promise<{
+  rendered: boolean;
+  itemCount: number;
+  pageSummary?: ShowcasePageSummary;
+}> {
   await dismissZeeDog(driver);
 
   const el = driver.$(
     `android=new UiSelector().resourceIdMatches(".*:id/${resourceId}")`,
   );
-  if ((await scrollPdpUntilVisible(driver, el)) === 0) {
-    return { rendered: false, itemCount: 0 };
+  const { visibleHeight, pageSummary } = await scrollPdpUntilVisible(
+    driver,
+    el,
+  );
+  if (visibleHeight === 0) {
+    return { rendered: false, itemCount: 0, pageSummary };
   }
 
   // Inspect child cards/elements to ensure the adapter is bound and populated
@@ -52,7 +64,7 @@ async function checkShowcaseAndroid(
 ): Promise<CheckResult> {
   const { feature, featureKey, label, resourceId } = spec;
   try {
-    const { rendered, itemCount } = await verifyNativeShowcase(
+    const { rendered, itemCount, pageSummary } = await verifyNativeShowcase(
       driver,
       resourceId,
     );
@@ -74,7 +86,8 @@ async function checkShowcaseAndroid(
       passed: false,
       status: "fail",
       message: `${label} não encontrada ou vazia na tela`,
-      details: { rendered: false, resourceId },
+      // What the page had instead (e.g. the Einstein variant of the brand showcase)
+      details: { rendered: false, resourceId, pageSummary },
     };
   } catch (error) {
     return {

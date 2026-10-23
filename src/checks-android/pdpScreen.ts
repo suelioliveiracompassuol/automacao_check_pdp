@@ -103,7 +103,7 @@ const touchSwipe: ScrollMethod = async (driver, direction, screen) => {
 async function scrollPdp(
   driver: WebdriverIO.Browser,
   direction: "down" | "up",
-): Promise<boolean> {
+): Promise<{ moved: boolean; source?: string }> {
   let source: string;
   let screen: { width: number; height: number };
   try {
@@ -111,7 +111,7 @@ async function scrollPdp(
     screen = await driver.getWindowSize();
   } catch (e) {
     logScrollError("getPageSource/getWindowSize", e);
-    return false;
+    return { moved: false };
   }
   for (const [name, method] of [
     ["scrollGesture", scrollGesture],
@@ -121,14 +121,44 @@ async function scrollPdp(
       await method(driver, direction, screen);
       const after = await driver.getPageSource();
       if (after !== source) {
-        return true;
+        return { moved: true, source: after };
       }
       source = after;
     } catch (e) {
       logScrollError(name, e);
     }
   }
-  return false;
+  return { moved: false, source };
+}
+
+/** What a page source shows about showcases: carousel-like resource-ids and showcase titles. */
+export interface ShowcasePageSummary {
+  resourceIds: string[];
+  showcaseTitles: string[];
+}
+
+const SHOWCASE_ID_PATTERN = /showcase|carousel|einstein|brand|recommend|personaliz|^rv/i;
+const SHOWCASE_TITLE_IDS = ["tvMoreBrandProductsTitle", "tvEinsteinShowcaseTitle"];
+
+/**
+ * Summarizes a UiAutomator page source for the report when a showcase isn't found, so a run
+ * shows which showcase components (if any) the app rendered instead of the expected one.
+ */
+export function summarizeShowcases(source: string): ShowcasePageSummary {
+  const ids = new Set<string>();
+  const titles = new Set<string>();
+  for (const node of source.match(/<[^>]+resource-id="[^"]*:id\/[^"]+"[^>]*>/g) ?? []) {
+    const id = /resource-id="[^"]*:id\/([^"]+)"/.exec(node)?.[1];
+    if (!id || !SHOWCASE_ID_PATTERN.test(id)) {
+      continue;
+    }
+    ids.add(id);
+    const text = /\stext="([^"]*)"/.exec(node)?.[1];
+    if (SHOWCASE_TITLE_IDS.includes(id) && text) {
+      titles.add(text);
+    }
+  }
+  return { resourceIds: [...ids].sort(), showcaseTitles: [...titles] };
 }
 
 /**
@@ -142,15 +172,21 @@ async function scrollPdp(
 export async function scrollPdpUntilVisible(
   driver: WebdriverIO.Browser,
   el: ChainablePromiseElement,
-): Promise<number> {
+): Promise<{ visibleHeight: number; pageSummary?: ShowcasePageSummary }> {
   let direction: "down" | "up" = "down";
   const moved = { down: 0, up: 0 };
+  // Every screen seen on the way, so a miss reports what the whole page had
+  const sources: string[] = [];
   for (let i = 0; i < MAX_SCROLLS; i++) {
     const visibleHeight = await getVisibleHeight(el);
     if (visibleHeight >= MIN_VISIBLE_HEIGHT) {
-      return visibleHeight;
+      return { visibleHeight };
     }
-    if (await scrollPdp(driver, direction)) {
+    const { moved: didMove, source } = await scrollPdp(driver, direction);
+    if (source) {
+      sources.push(source);
+    }
+    if (didMove) {
       moved[direction]++;
       continue;
     }
@@ -162,11 +198,16 @@ export async function scrollPdpUntilVisible(
   }
   const visibleHeight = await getVisibleHeight(el);
   if (visibleHeight >= MIN_VISIBLE_HEIGHT) {
-    return visibleHeight;
+    return { visibleHeight };
   }
+  const pageSummary = summarizeShowcases(sources.join("\n"));
   console.log(
     `   ℹ️  Elemento não encontrado após rolar ${moved.down}x para baixo e ${moved.up}x para cima` +
-      (moved.down === 0 ? " (a página não rolou)" : ""),
+      (moved.down === 0 ? " (a página não rolou)" : "") +
+      ` — vitrines na página: ${pageSummary.resourceIds.join(", ") || "nenhuma"}` +
+      (pageSummary.showcaseTitles.length
+        ? ` (títulos: ${pageSummary.showcaseTitles.join(" | ")})`
+        : ""),
   );
-  return 0;
+  return { visibleHeight: 0, pageSummary };
 }

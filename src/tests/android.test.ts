@@ -33,6 +33,7 @@ import {
   findRemoteConfigEntriesInNetworkLog,
 } from "../checks-android/appNetworkFlags.js";
 import { StepScreenshotRecorder } from "../checks-android/stepScreenshots.js";
+import { summarizeShowcases } from "../checks-android/pdpScreen.js";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -503,6 +504,39 @@ test.describe("Android Unit Tests", () => {
         { from: 1800, to: 600 },
         { from: 1800, to: 600 },
       ]);
+    });
+
+    // UiAutomator page source of a PDP where the brand slot came as the Einstein variant
+    const einsteinBrandSource = [
+      '<android.widget.TextView resource-id="com.naturaeco.app.avon:id/tvProductName" text="Batom" />',
+      '<android.widget.TextView resource-id="com.naturaeco.app.avon:id/tvEinsteinShowcaseTitle" text="mais produtos da marca" />',
+      '<androidx.recyclerview.widget.RecyclerView resource-id="com.naturaeco.app.avon:id/rvEinsteinShowcase" />',
+    ].join("\n");
+
+    test("summarizeShowcases lists showcase ids and titles from the page source", () => {
+      expect(summarizeShowcases(einsteinBrandSource)).toEqual({
+        resourceIds: ["rvEinsteinShowcase", "tvEinsteinShowcaseTitle"],
+        showcaseTitles: ["mais produtos da marca"],
+      });
+      expect(summarizeShowcases("")).toEqual({
+        resourceIds: [],
+        showcaseTitles: [],
+      });
+    });
+
+    test("a missing showcase reports what the page had instead", async () => {
+      const driver = {
+        $: () => ({ isDisplayed: async () => false }),
+        getWindowSize: async () => ({ width: 1080, height: 2400 }),
+        getPageSource: async () => einsteinBrandSource,
+        execute: async () => true,
+      } as unknown as WebdriverIO.Browser;
+      const result = await checkBrandShowcaseAndroid(driver);
+      expect(result.status).toBe("fail");
+      expect(result.details?.pageSummary).toEqual({
+        resourceIds: ["rvEinsteinShowcase", "tvEinsteinShowcaseTitle"],
+        showcaseTitles: ["mais produtos da marca"],
+      });
     });
 
     test("closes the ZeeDog card before scrolling when it is displayed", async () => {
