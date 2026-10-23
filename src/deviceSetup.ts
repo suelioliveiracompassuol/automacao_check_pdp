@@ -40,7 +40,8 @@ export async function createAndroidSession(
 
 /**
  * Device language/region for the session's country (Appium UiAutomator2 sets it before the app
- * starts), so Natura LATAM and Avon open in that country — see deviceLocaleFor.
+ * starts), so Natura LATAM and Avon open in that country — see deviceLocaleFor. Used for the
+ * local and BrowserStack sessions; LambdaTest takes its own keys in LT:Options.
  */
 function localeCapabilities(target: AndroidSessionTarget) {
   const { language, locale } = deviceLocaleFor(target.country);
@@ -161,7 +162,6 @@ function createLambdaTestSession(
     "appium:autoGrantPermissions": true,
     "appium:disableWindowAnimation": true,
     "appium:newCommandTimeout": 180,
-    ...localeCapabilities(target),
     "LT:Options": {
       username: userName,
       accessKey,
@@ -172,6 +172,10 @@ function createLambdaTestSession(
       w3c: true,
       // Captures the app's own traffic so commerce flags come from what the app received.
       network: process.env.ANDROID_NETWORK_CAPTURE !== "false",
+      // LambdaTest's own device language/region (Android `locale` = country code only); it
+      // ignores appium:language/appium:locale on real devices, so the LATAM app fell back to
+      // Argentina for a Chile session.
+      ...deviceLocaleFor(target.country),
     },
   };
 
