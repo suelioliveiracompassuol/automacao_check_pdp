@@ -176,6 +176,9 @@ function createLambdaTestSession(
       // ignores appium:language/appium:locale on real devices, so the LATAM app fell back to
       // Argentina for a Chile session.
       ...deviceLocaleFor(target.country),
+      // Device traffic through an IP of the session's country: the Colombia BFF's WAF (Akamai)
+      // answered 403 to every call from the farm's IP. Brazil works without it, so it's left as is.
+      ...(target.country !== "BR" ? { geoLocation: target.country } : {}),
     },
   };
 
