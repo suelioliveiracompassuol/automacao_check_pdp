@@ -160,6 +160,12 @@ export function findRemoteConfigEntriesInNetworkLog(
   return null;
 }
 
+const LOG_DOWNLOAD_TIMEOUT_MS = 90_000;
+
+function isTimeout(e: unknown): boolean {
+  return e instanceof Error && (e.name === "TimeoutError" || e.name === "AbortError");
+}
+
 async function fetchLambdaTestNetworkLog(sessionId: string): Promise<unknown> {
   const user = process.env.LAMBDATEST_USERNAME;
   const key = process.env.LAMBDATEST_ACCESS_KEY;
@@ -168,24 +174,34 @@ async function fetchLambdaTestNetworkLog(sessionId: string): Promise<unknown> {
   }
   const auth = Buffer.from(`${user}:${key}`).toString("base64");
 
-  // Logs are processed after the session closes, so the first attempts may 404.
+  // Logs are processed after the session closes, so the first attempts may 404; a log with a
+  // lot of traffic (e.g. an app retrying a blocked API) can also take long to download.
   const maxAttempts = 5;
   for (let attempt = 1; ; attempt++) {
-    const res = await fetch(`${LT_SESSION_API}/${sessionId}/log/network`, {
-      headers: { Authorization: `Basic ${auth}`, Accept: "application/json" },
-      signal: AbortSignal.timeout(30_000),
-    });
-    if (res.ok) {
-      const json = (await res.json()) as unknown;
-      // Some log APIs answer with a signed URL to the actual file instead of inline data.
-      const signedUrl = asRecord(json)?.url;
-      if (typeof signedUrl === "string" && signedUrl.startsWith("http")) {
-        const file = await fetch(signedUrl, {
-          signal: AbortSignal.timeout(30_000),
-        });
-        return (await file.json()) as unknown;
+    let res: Response;
+    try {
+      res = await fetch(`${LT_SESSION_API}/${sessionId}/log/network`, {
+        headers: { Authorization: `Basic ${auth}`, Accept: "application/json" },
+        signal: AbortSignal.timeout(LOG_DOWNLOAD_TIMEOUT_MS),
+      });
+      if (res.ok) {
+        const json = (await res.json()) as unknown;
+        // Some log APIs answer with a signed URL to the actual file instead of inline data.
+        const signedUrl = asRecord(json)?.url;
+        if (typeof signedUrl === "string" && signedUrl.startsWith("http")) {
+          const file = await fetch(signedUrl, {
+            signal: AbortSignal.timeout(LOG_DOWNLOAD_TIMEOUT_MS),
+          });
+          return (await file.json()) as unknown;
+        }
+        return json;
       }
-      return json;
+    } catch (e) {
+      if (!isTimeout(e) || attempt >= maxAttempts) {
+        throw e;
+      }
+      await new Promise((r) => setTimeout(r, attempt * 5000));
+      continue;
     }
     if (res.status !== 404 || attempt >= maxAttempts) {
       throw new Error(`log de rede indisponível: HTTP ${res.status}`);
