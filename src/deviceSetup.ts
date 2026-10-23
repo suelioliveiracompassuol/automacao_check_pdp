@@ -1,6 +1,11 @@
 import { remote } from "webdriverio";
 import type { Capabilities } from "@wdio/types";
 import type { SkuConfig } from "./types.js";
+import {
+  AndroidSessionTarget,
+  deviceLocaleFor,
+  findAndroidApp,
+} from "./checks-android/configs/apps.js";
 
 /**
  * DEVICE_FARM_PROVIDER: "lambdatest" (default, the provider in use) | "browserstack" | "local".
@@ -19,19 +24,32 @@ export function getDeviceFarmProvider(): string {
  * both share the same uploaded app storage, so an app uploaded via https://applive.lambdatest.com/app
  * can be reused here through its `lt://` id.
  */
-export async function createAndroidSession(): Promise<WebdriverIO.Browser> {
+export async function createAndroidSession(
+  target: AndroidSessionTarget,
+): Promise<WebdriverIO.Browser> {
   const provider = getDeviceFarmProvider();
 
   if (provider === "local") {
-    return createLocalSession();
+    return createLocalSession(target);
   }
   if (provider === "lambdatest") {
-    return createLambdaTestSession();
+    return createLambdaTestSession(target);
   }
-  return createBrowserStackSession();
+  return createBrowserStackSession(target);
 }
 
-function createLocalSession(): Promise<WebdriverIO.Browser> {
+/**
+ * Device language/region for the session's country (Appium UiAutomator2 sets it before the app
+ * starts), so Natura LATAM and Avon open in that country — see deviceLocaleFor.
+ */
+function localeCapabilities(target: AndroidSessionTarget) {
+  const { language, locale } = deviceLocaleFor(target.country);
+  return { "appium:language": language, "appium:locale": locale };
+}
+
+function createLocalSession(
+  target: AndroidSessionTarget,
+): Promise<WebdriverIO.Browser> {
   const host = process.env.APPIUM_HOST || "127.0.0.1";
   const port = Number.parseInt(process.env.APPIUM_PORT || "4723", 10);
   const appPath = process.env.ANDROID_APP_PATH || process.env.ANDROID_APK_PATH;
@@ -47,6 +65,7 @@ function createLocalSession(): Promise<WebdriverIO.Browser> {
     "appium:autoGrantPermissions": true,
     "appium:disableWindowAnimation": true,
     "appium:newCommandTimeout": 180,
+    ...localeCapabilities(target),
   };
 
   return remote({
@@ -59,7 +78,9 @@ function createLocalSession(): Promise<WebdriverIO.Browser> {
   });
 }
 
-function createBrowserStackSession(): Promise<WebdriverIO.Browser> {
+function createBrowserStackSession(
+  target: AndroidSessionTarget,
+): Promise<WebdriverIO.Browser> {
   const userName = process.env.BROWSERSTACK_USERNAME;
   const accessKey = process.env.BROWSERSTACK_ACCESS_KEY;
   const appId = process.env.BROWSERSTACK_APP_ID;
@@ -87,6 +108,7 @@ function createBrowserStackSession(): Promise<WebdriverIO.Browser> {
     "appium:autoGrantPermissions": true,
     "appium:disableWindowAnimation": true,
     "appium:newCommandTimeout": 180,
+    ...localeCapabilities(target),
     "bstack:options": {
       userName,
       accessKey,
@@ -108,10 +130,13 @@ function createBrowserStackSession(): Promise<WebdriverIO.Browser> {
   });
 }
 
-function createLambdaTestSession(): Promise<WebdriverIO.Browser> {
+function createLambdaTestSession(
+  target: AndroidSessionTarget,
+): Promise<WebdriverIO.Browser> {
   const userName = process.env.LAMBDATEST_USERNAME;
   const accessKey = process.env.LAMBDATEST_ACCESS_KEY;
-  const appId = process.env.LAMBDATEST_APP_ID;
+  const appIdEnv = target.app.lambdaTestAppIdEnv;
+  const appId = process.env[appIdEnv];
 
   if (!userName || !accessKey) {
     throw new Error(
@@ -120,7 +145,7 @@ function createLambdaTestSession(): Promise<WebdriverIO.Browser> {
   }
   if (!appId) {
     throw new Error(
-      "LAMBDATEST_APP_ID não configurado — faça upload do APK/AAB em https://applive.lambdatest.com/app e informe o id retornado (lt://...)",
+      `${appIdEnv} não configurado (app ${target.app.key}) — faça upload do APK/AAB em https://applive.lambdatest.com/app e informe o id retornado (lt://...)`,
     );
   }
 
@@ -136,12 +161,13 @@ function createLambdaTestSession(): Promise<WebdriverIO.Browser> {
     "appium:autoGrantPermissions": true,
     "appium:disableWindowAnimation": true,
     "appium:newCommandTimeout": 180,
+    ...localeCapabilities(target),
     "LT:Options": {
       username: userName,
       accessKey,
       project: "PDP Feature Monitor",
       build: process.env.GITHUB_RUN_ID || "local",
-      name: "Android PDP check",
+      name: `Android PDP check ${target.app.key} ${target.country}`,
       isRealMobile: true,
       w3c: true,
       // Captures the app's own traffic so commerce flags come from what the app received.
@@ -160,8 +186,7 @@ function createLambdaTestSession(): Promise<WebdriverIO.Browser> {
 }
 
 /**
- * The applicationId varies per brand flavor (app/build.gradle.kts in ncf-whitelabel-cf-android),
- * NOT a single fixed package — confirmed against the uploaded LambdaTest app (net.natura.semprepresente).
+ * The applicationId varies per brand flavor (see ANDROID_APPS in checks-android/configs/apps.ts).
  * A ".dev"/".hml" suffix is appended depending on the build mode; ANDROID_APP_PACKAGE overrides
  * everything when set, useful when testing a dev/hml build.
  */
@@ -169,13 +194,13 @@ export function resolveAndroidAppPackage(sku: SkuConfig): string {
   if (process.env.ANDROID_APP_PACKAGE) {
     return process.env.ANDROID_APP_PACKAGE;
   }
-  if (sku.vendor === "avon") {
-    return "com.naturaeco.app.avon";
+  const app = findAndroidApp(sku);
+  if (!app) {
+    throw new Error(
+      `Nenhum app Android para ${sku.vendor}-${sku.country} (ver checks-android/configs/apps.ts)`,
+    );
   }
-  if (sku.vendor === "natura" && sku.country === "BR") {
-    return "net.natura.semprepresente";
-  }
-  return "com.naturaeco.app.natura";
+  return app.packageName;
 }
 
 /**

@@ -25,9 +25,15 @@ import { toSafeFileName } from "./utils.js";
 import { generateHtmlReport, generateJsonReport } from "./reporter.js";
 import { upsertReportIndexEntry } from "./reportIndex.js";
 import {
-  distributeIntoChunks,
+  AndroidSessionPlan,
   parseAndroidConcurrency,
+  planAndroidSessions,
 } from "./androidConcurrency.js";
+import { runWithConcurrency } from "./concurrency.js";
+import {
+  isOperationSelected,
+  parseAndroidOperations,
+} from "./checks-android/configs/apps.js";
 import {
   createAndroidSession,
   openPdpDeepLink,
@@ -317,15 +323,17 @@ async function attachAppSessionFlags(
   }
 }
 
-/** Opens one device session, logs in once, then checks every SKU in `skus` sequentially before closing it.
+/** Opens one device session (one app, device set to one country), logs in once, then checks every
+ * SKU of the plan sequentially before closing it.
  * Each SKU check is isolated: if checkPdpOnDriver throws (outside its own internal error handling,
  * e.g. buildPdpUrl failing), the SKU is recorded as a failure instead of aborting the rest of the
  * session's SKUs. */
-async function runSessionForSkus(
-  skus: SkuConfig[],
+async function runSession(
+  plan: AndroidSessionPlan,
   outputDir: string,
 ): Promise<PdpCheckResult[]> {
-  const driver = await createAndroidSession();
+  const { skus } = plan;
+  const driver = await createAndroidSession(plan);
   const results: PdpCheckResult[] = [];
   try {
     await loginOnceOnDriver(driver, skus[0]);
@@ -376,8 +384,8 @@ async function main() {
   // Which SKUs to check, in priority order:
   //   1. ANDROID_SKUS — comma-separated list, e.g. "NATBRA-70983,NATBRA-76420"
   //   2. ANDROID_SKU — single SKU (kept for backward compat with the original POC)
-  //   3. default — every Natura BR ecommerce SKU (excludes the social commerce duplicates,
-  //      which share the same `sku` value as their ecommerce counterpart)
+  //   3. default — every ecommerce SKU of the ANDROID_OPERATIONS (default "natura-BR"); social
+  //      commerce duplicates share the same `sku` value as their ecommerce counterpart
   const skusFilter = process.env.ANDROID_SKUS?.trim()
     ? process.env.ANDROID_SKUS.split(",")
         .map((s) => s.trim())
@@ -385,54 +393,58 @@ async function main() {
     : process.env.ANDROID_SKU?.trim()
       ? [process.env.ANDROID_SKU.trim()]
       : null;
+  const operations = parseAndroidOperations();
 
-  const targetSkus = skusFilter
-    ? allSkus.filter((s) => skusFilter.includes(s.sku))
-    : allSkus.filter(
-        (s) =>
-          s.vendor === "natura" &&
-          s.country === "BR" &&
-          (s.channel || "ecommerce") === "ecommerce",
-      );
+  const targetSkus = allSkus.filter(
+    (s) =>
+      (s.channel || "ecommerce") === "ecommerce" &&
+      (skusFilter
+        ? skusFilter.includes(s.sku)
+        : isOperationSelected(s, operations)),
+  );
 
   if (targetSkus.length === 0) {
     throw new Error(
-      `Nenhum SKU encontrado (filtro=${skusFilter?.join(",") ?? "<default natura/BR ecommerce>"})`,
+      `Nenhum SKU encontrado (filtro=${skusFilter?.join(",") ?? `operações ${operations.join(",")}`})`,
     );
   }
 
   console.log(`📱 SKUs a verificar (Android): ${targetSkus.length}`);
-  targetSkus.forEach((s) => console.log(`   - ${s.sku} (${s.name})`));
+  targetSkus.forEach((s) =>
+    console.log(`   - ${s.sku} (${s.vendor}-${s.country}) ${s.name}`),
+  );
 
   const concurrency = parseAndroidConcurrency(targetSkus.length);
-  const sessionChunks = distributeIntoChunks(targetSkus, concurrency);
+  const { plans, unsupported } = planAndroidSessions(targetSkus, concurrency);
+  const results: PdpCheckResult[] = unsupported.map((sku) =>
+    buildErrorResult(
+      sku,
+      `Nenhum app Android cobre ${sku.vendor}-${sku.country}`,
+    ),
+  );
   console.log(
-    `🧵 Sessões paralelas: ${sessionChunks.length} (login 1x por sessão, PDPs navegados em sequência dentro dela)`,
+    `🧵 Sessões: ${plans.length} (${plans.map((p) => `${p.app.key}/${p.country}`).join(", ")}), ` +
+      `até ${concurrency} em paralelo (login 1x por sessão, PDPs em sequência dentro dela)`,
   );
 
-  // Promise.allSettled (not Promise.all): one session rejecting outright must not discard the
-  // results other sessions already completed. The session's SKUs are instead recorded as
-  // failures so they stay visible in the report.
-  const sessionOutcomes = await Promise.allSettled(
-    sessionChunks.map((chunk) => runSessionForSkus(chunk, outputDir)),
+  // A session that fails outright (e.g. the app's APK id isn't configured) must not discard the
+  // results of the other sessions: its SKUs are recorded as failures so they stay in the report.
+  const sessionResults = await runWithConcurrency(
+    plans.map((plan, i) => async () => {
+      try {
+        return await runSession(plan, outputDir);
+      } catch (e) {
+        const error = e instanceof Error ? e.message : String(e);
+        console.error(
+          `❌ Sessão ${i + 1} (${plan.app.key}/${plan.country}) falhou por completo (SKUs perdidos: ${plan.skus.map((s) => s.sku).join(", ")}):`,
+          e,
+        );
+        return plan.skus.map((sku) => buildErrorResult(sku, error));
+      }
+    }),
+    concurrency,
   );
-  const results: PdpCheckResult[] = [];
-  sessionOutcomes.forEach((outcome, i) => {
-    if (outcome.status === "fulfilled") {
-      results.push(...outcome.value);
-    } else {
-      const chunk = sessionChunks[i];
-      const error =
-        outcome.reason instanceof Error
-          ? outcome.reason.message
-          : String(outcome.reason);
-      console.error(
-        `❌ Sessão ${i + 1} falhou por completo (SKUs perdidos: ${chunk.map((s) => s.sku).join(", ")}):`,
-        outcome.reason,
-      );
-      results.push(...chunk.map((sku) => buildErrorResult(sku, error)));
-    }
-  });
+  results.push(...sessionResults.flat());
 
   const report: MonitoringReport = {
     runId,

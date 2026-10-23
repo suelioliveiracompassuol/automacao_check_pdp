@@ -8,8 +8,7 @@
  *
  * `cv_buy_button` confirmed against the QA team's ncf-natura-cf-automation-mobile repo
  * (tests/elements/android/elementsAndroid.js, naturaBrasil.btnBuyProductByPDP).
- * `textFallback` is a PT-BR-only last resort (only reached if the resource-id above fails)
- * — extend it with the Spanish/Avon equivalents once those operations are configured.
+ * `textFallback` is a pt/es last resort, only reached if the resource-ids above fail.
  */
 export const ANDROID_SELECTORS = {
   /**
@@ -43,10 +42,11 @@ export const ANDROID_SELECTORS = {
   pdp: {
     /**
      * Close icon of the ZeeDog floating messages ("cupom para você", ncf-ui-cf-android
-     * ZeeDogComponent.kt): Compose, no resource-id, contentDescription = zee_dog_close_accessibility.
-     * PT-BR only — extend with the Spanish/Avon strings once those operations are configured.
+     * ZeeDogComponent.kt): Compose, no resource-id, contentDescription = zee_dog_close_accessibility,
+     * translated per locale: "fechar recados, botão." (pt) / "Cerrar mensajes, botón." (es-AR/CL/CO/MX/PE).
      */
-    zeeDogClose: 'new UiSelector().descriptionMatches("(?i)^fechar recados.*")',
+    zeeDogClose:
+      'new UiSelector().descriptionMatches("(?i)^(fechar recados|cerrar mensajes).*")',
   },
   /**
    * Auth flow locators confirmed against ncf-natura-cf-automation-mobile

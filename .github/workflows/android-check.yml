@@ -13,8 +13,13 @@ on:
 
   workflow_dispatch:
     inputs:
+      android_operations:
+        description: "Operações (ex: natura-BR,natura-AR,avon-MX; vazio = variável ANDROID_OPERATIONS ou natura-BR)"
+        required: false
+        default: ""
+        type: string
       android_skus:
-        description: "SKUs a verificar no app (separados por vírgula, vazio = variável ANDROID_SKUS ou todos Natura BR)"
+        description: "SKUs a verificar no app (separados por vírgula; tem prioridade sobre as operações)"
         required: false
         default: ""
         type: string
@@ -64,7 +69,11 @@ jobs:
           DEVICE_FARM_PROVIDER: ${{ vars.DEVICE_FARM_PROVIDER || 'lambdatest' }}
           LAMBDATEST_USERNAME: ${{ secrets.LAMBDATEST_USERNAME }}
           LAMBDATEST_ACCESS_KEY: ${{ secrets.LAMBDATEST_ACCESS_KEY }}
+          # Um APK por app: Natura BR, Natura LATAM (AR/CL/CO/PE/MX) e Avon (BR/AR/MX).
+          # Só é preciso o do app das operações em ANDROID_OPERATIONS.
           LAMBDATEST_APP_ID: ${{ secrets.LAMBDATEST_APP_ID }}
+          LAMBDATEST_APP_ID_NATURA_LATAM: ${{ secrets.LAMBDATEST_APP_ID_NATURA_LATAM }}
+          LAMBDATEST_APP_ID_AVON: ${{ secrets.LAMBDATEST_APP_ID_AVON }}
           # SKUs do Firestore (mesma coleção `skus` e mesmos secrets do monitor Web)
           FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
           FIREBASE_CLIENT_EMAIL: ${{ secrets.FIREBASE_CLIENT_EMAIL }}
@@ -74,6 +83,7 @@ jobs:
           # Login opcional (roda anônimo se não definido) e seleção de SKUs/concorrência
           ANDROID_LOGIN_EMAIL: ${{ secrets.ANDROID_LOGIN_EMAIL }}
           ANDROID_LOGIN_PASSWORD: ${{ secrets.ANDROID_LOGIN_PASSWORD }}
+          ANDROID_OPERATIONS: ${{ inputs.android_operations || vars.ANDROID_OPERATIONS }}
           ANDROID_SKUS: ${{ inputs.android_skus || vars.ANDROID_SKUS }}
           ANDROID_CONCURRENCY: ${{ vars.ANDROID_CONCURRENCY }}
         continue-on-error: true

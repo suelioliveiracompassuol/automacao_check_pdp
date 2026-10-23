@@ -17,7 +17,14 @@ import {
 import {
   distributeIntoChunks,
   parseAndroidConcurrency,
+  planAndroidSessions,
 } from "../androidConcurrency.js";
+import {
+  deviceLocaleFor,
+  findAndroidApp,
+  isOperationSelected,
+  parseAndroidOperations,
+} from "../checks-android/configs/apps.js";
 import {
   findCommerceFlagsInNetworkLog,
   findRemoteConfigEntriesInNetworkLog,
@@ -490,6 +497,74 @@ test.describe("Android Unit Tests", () => {
       } as unknown as WebdriverIO.Browser);
       await recorder.capture("Erro");
       expect(recorder.save(os.tmpdir(), "NATBRA-1")).toEqual([]);
+    });
+  });
+
+  test.describe("Android apps (Natura BR, Natura LATAM, Avon)", () => {
+    const sku = (
+      code: string,
+      vendor: SkuConfig["vendor"],
+      country: SkuConfig["country"],
+    ) => ({ sku: code, name: code, vendor, country }) as SkuConfig;
+
+    test("maps each brand and country to its app", () => {
+      expect(findAndroidApp(sku("A", "natura", "BR"))?.packageName).toBe(
+        "net.natura.semprepresente",
+      );
+      for (const country of ["AR", "CL", "CO", "PE", "MX"] as const) {
+        expect(findAndroidApp(sku("A", "natura", country))?.key).toBe(
+          "natura-latam",
+        );
+      }
+      for (const country of ["BR", "AR", "MX"] as const) {
+        expect(findAndroidApp(sku("A", "avon", country))?.key).toBe("avon");
+      }
+      expect(findAndroidApp(sku("A", "avon", "CL"))).toBeUndefined();
+    });
+
+    test("sets the device locale the app reads to pick the country", () => {
+      expect(deviceLocaleFor("BR")).toEqual({ language: "pt", locale: "BR" });
+      expect(deviceLocaleFor("MX")).toEqual({ language: "es", locale: "MX" });
+    });
+
+    test("ANDROID_OPERATIONS defaults to Natura BR and is case-insensitive", () => {
+      expect(parseAndroidOperations(undefined)).toEqual(["natura-br"]);
+      const ops = parseAndroidOperations(" natura-AR, avon-mx ");
+      expect(isOperationSelected(sku("A", "natura", "AR"), ops)).toBe(true);
+      expect(isOperationSelected(sku("A", "avon", "MX"), ops)).toBe(true);
+      expect(isOperationSelected(sku("A", "natura", "BR"), ops)).toBe(false);
+    });
+
+    test("plans one session per app + country, sharing the concurrency budget", () => {
+      const { plans, unsupported } = planAndroidSessions(
+        [
+          sku("BR1", "natura", "BR"),
+          sku("BR2", "natura", "BR"),
+          sku("AR1", "natura", "AR"),
+          sku("AV1", "avon", "AR"),
+          sku("CL1", "avon", "CL"),
+        ],
+        2,
+      );
+      expect(
+        plans.map((p) => [p.app.key, p.country, p.skus.map((s) => s.sku)]),
+      ).toEqual([
+        ["natura-br", "BR", ["BR1", "BR2"]],
+        ["natura-latam", "AR", ["AR1"]],
+        ["avon", "AR", ["AV1"]],
+      ]);
+      expect(unsupported.map((s) => s.sku)).toEqual(["CL1"]);
+    });
+
+    test("with a single app + country, splits SKUs across the concurrency like before", () => {
+      const { plans } = planAndroidSessions(
+        ["1", "2", "3"].map((c) => sku(c, "natura", "BR")),
+        2,
+      );
+      expect(plans.map((p) => p.skus.map((s) => s.sku))).toEqual([
+        ["1", "3"],
+        ["2"],
+      ]);
     });
   });
 
