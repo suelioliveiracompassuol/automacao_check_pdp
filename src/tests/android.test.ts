@@ -1,6 +1,9 @@
 import { test, expect } from "@playwright/test";
 import { resolveAndroidAppPackage } from "../deviceSetup.js";
-import { getAndroidCredentialsFromEnv } from "../checks-android/login.js";
+import {
+  androidCredentialEnvNames,
+  getAndroidCredentialsFromEnv,
+} from "../checks-android/login.js";
 import {
   buildRemoteConfigFlags,
   resolveNotifyMeFlag,
@@ -91,23 +94,46 @@ test.describe("Android Unit Tests", () => {
   });
 
   test.describe("getAndroidCredentialsFromEnv", () => {
+    const naturaBR = { vendor: "natura", country: "BR" } as const;
+    const naturaAR = { vendor: "natura", country: "AR" } as const;
+
     test("returns null if email or password are missing", () => {
       delete process.env.ANDROID_LOGIN_EMAIL;
       delete process.env.ANDROID_LOGIN_PASSWORD;
-      expect(getAndroidCredentialsFromEnv()).toBeNull();
+      expect(getAndroidCredentialsFromEnv(naturaBR)).toBeNull();
 
       process.env.ANDROID_LOGIN_EMAIL = "test@example.com";
       delete process.env.ANDROID_LOGIN_PASSWORD;
-      expect(getAndroidCredentialsFromEnv()).toBeNull();
+      expect(getAndroidCredentialsFromEnv(naturaBR)).toBeNull();
     });
 
-    test("returns credentials when both email and password are set", () => {
+    test("Natura BR keeps ANDROID_LOGIN_EMAIL/ANDROID_LOGIN_PASSWORD", () => {
       process.env.ANDROID_LOGIN_EMAIL = "user@natura.net";
       process.env.ANDROID_LOGIN_PASSWORD = "secretPassword";
-      const creds = getAndroidCredentialsFromEnv();
-      expect(creds).toEqual({
+      expect(getAndroidCredentialsFromEnv(naturaBR)).toEqual({
         email: "user@natura.net",
         password: "secretPassword",
+      });
+    });
+
+    test("other operations use their own variables and never the BR account", () => {
+      process.env.ANDROID_LOGIN_EMAIL = "br@natura.net";
+      process.env.ANDROID_LOGIN_PASSWORD = "br";
+      delete process.env.ANDROID_LOGIN_EMAIL_NATURA_AR;
+      delete process.env.ANDROID_LOGIN_PASSWORD_NATURA_AR;
+      expect(getAndroidCredentialsFromEnv(naturaAR)).toBeNull();
+
+      process.env.ANDROID_LOGIN_EMAIL_NATURA_AR = "ar@natura.net";
+      process.env.ANDROID_LOGIN_PASSWORD_NATURA_AR = "ar";
+      expect(getAndroidCredentialsFromEnv(naturaAR)).toEqual({
+        email: "ar@natura.net",
+        password: "ar",
+      });
+      expect(
+        androidCredentialEnvNames({ vendor: "avon", country: "BR" }),
+      ).toEqual({
+        email: "ANDROID_LOGIN_EMAIL_AVON_BR",
+        password: "ANDROID_LOGIN_PASSWORD_AVON_BR",
       });
     });
   });

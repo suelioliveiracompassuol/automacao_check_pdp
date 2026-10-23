@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import type { SkuConfig } from "../types.js";
 import { ANDROID_SELECTORS } from "./configs/selectors.js";
 
 /** Login screen sets FLAG_SECURE (screenshots fail), so the UI hierarchy is the only way to see what's on screen. */
@@ -42,10 +43,35 @@ export interface AndroidCredentials {
   password: string;
 }
 
-/** Reads ANDROID_LOGIN_EMAIL/ANDROID_LOGIN_PASSWORD — returns null when either is unset (login skipped). */
-export function getAndroidCredentialsFromEnv(): AndroidCredentials | null {
-  const email = process.env.ANDROID_LOGIN_EMAIL;
-  const password = process.env.ANDROID_LOGIN_PASSWORD;
+/**
+ * Env var names with the test account of an operation. Accounts are per brand and country:
+ * Natura BR keeps the original ANDROID_LOGIN_EMAIL/ANDROID_LOGIN_PASSWORD; every other
+ * operation has its own, e.g. ANDROID_LOGIN_EMAIL_NATURA_AR / ANDROID_LOGIN_PASSWORD_AVON_MX.
+ */
+export function androidCredentialEnvNames(
+  operation: Pick<SkuConfig, "vendor" | "country">,
+): { email: string; password: string } {
+  if (operation.vendor === "natura" && operation.country === "BR") {
+    return { email: "ANDROID_LOGIN_EMAIL", password: "ANDROID_LOGIN_PASSWORD" };
+  }
+  const suffix = `${operation.vendor}_${operation.country}`.toUpperCase();
+  return {
+    email: `ANDROID_LOGIN_EMAIL_${suffix}`,
+    password: `ANDROID_LOGIN_PASSWORD_${suffix}`,
+  };
+}
+
+/**
+ * Test account for the operation (see androidCredentialEnvNames). Returns null when either
+ * value is unset: the session then runs anonymously — another country's account is never used,
+ * since it doesn't exist in that country's store.
+ */
+export function getAndroidCredentialsFromEnv(
+  operation: Pick<SkuConfig, "vendor" | "country">,
+): AndroidCredentials | null {
+  const names = androidCredentialEnvNames(operation);
+  const email = process.env[names.email];
+  const password = process.env[names.password];
   if (!email || !password) {
     return null;
   }

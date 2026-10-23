@@ -81,8 +81,26 @@ jobs:
           # Remote Config e commerce flags são lidos do log de rede da sessão no LambdaTest
           # (o que o próprio app recebeu); nenhum secret do Firebase é necessário aqui.
           # Login opcional (roda anônimo se não definido) e seleção de SKUs/concorrência
+          # Conta de teste por operação (a do Natura BR não existe nas outras lojas).
+          # Sem a conta da operação, a sessão roda sem login.
           ANDROID_LOGIN_EMAIL: ${{ secrets.ANDROID_LOGIN_EMAIL }}
           ANDROID_LOGIN_PASSWORD: ${{ secrets.ANDROID_LOGIN_PASSWORD }}
+          ANDROID_LOGIN_EMAIL_NATURA_AR: ${{ secrets.ANDROID_LOGIN_EMAIL_NATURA_AR }}
+          ANDROID_LOGIN_PASSWORD_NATURA_AR: ${{ secrets.ANDROID_LOGIN_PASSWORD_NATURA_AR }}
+          ANDROID_LOGIN_EMAIL_NATURA_CL: ${{ secrets.ANDROID_LOGIN_EMAIL_NATURA_CL }}
+          ANDROID_LOGIN_PASSWORD_NATURA_CL: ${{ secrets.ANDROID_LOGIN_PASSWORD_NATURA_CL }}
+          ANDROID_LOGIN_EMAIL_NATURA_CO: ${{ secrets.ANDROID_LOGIN_EMAIL_NATURA_CO }}
+          ANDROID_LOGIN_PASSWORD_NATURA_CO: ${{ secrets.ANDROID_LOGIN_PASSWORD_NATURA_CO }}
+          ANDROID_LOGIN_EMAIL_NATURA_PE: ${{ secrets.ANDROID_LOGIN_EMAIL_NATURA_PE }}
+          ANDROID_LOGIN_PASSWORD_NATURA_PE: ${{ secrets.ANDROID_LOGIN_PASSWORD_NATURA_PE }}
+          ANDROID_LOGIN_EMAIL_NATURA_MX: ${{ secrets.ANDROID_LOGIN_EMAIL_NATURA_MX }}
+          ANDROID_LOGIN_PASSWORD_NATURA_MX: ${{ secrets.ANDROID_LOGIN_PASSWORD_NATURA_MX }}
+          ANDROID_LOGIN_EMAIL_AVON_BR: ${{ secrets.ANDROID_LOGIN_EMAIL_AVON_BR }}
+          ANDROID_LOGIN_PASSWORD_AVON_BR: ${{ secrets.ANDROID_LOGIN_PASSWORD_AVON_BR }}
+          ANDROID_LOGIN_EMAIL_AVON_AR: ${{ secrets.ANDROID_LOGIN_EMAIL_AVON_AR }}
+          ANDROID_LOGIN_PASSWORD_AVON_AR: ${{ secrets.ANDROID_LOGIN_PASSWORD_AVON_AR }}
+          ANDROID_LOGIN_EMAIL_AVON_MX: ${{ secrets.ANDROID_LOGIN_EMAIL_AVON_MX }}
+          ANDROID_LOGIN_PASSWORD_AVON_MX: ${{ secrets.ANDROID_LOGIN_PASSWORD_AVON_MX }}
           ANDROID_OPERATIONS: ${{ inputs.android_operations || vars.ANDROID_OPERATIONS }}
           ANDROID_SKUS: ${{ inputs.android_skus || vars.ANDROID_SKUS }}
           ANDROID_CONCURRENCY: ${{ vars.ANDROID_CONCURRENCY }}

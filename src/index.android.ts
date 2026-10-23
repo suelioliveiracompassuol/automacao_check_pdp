@@ -51,6 +51,7 @@ import {
 import { buildRemoteConfigFlags } from "./checks-android/remoteConfig.js";
 import { readAppSessionFlags } from "./checks-android/appNetworkFlags.js";
 import {
+  androidCredentialEnvNames,
   getAndroidCredentialsFromEnv,
   loginAndroid,
 } from "./checks-android/login.js";
@@ -75,11 +76,17 @@ async function loginOnceOnDriver(
   driver: WebdriverIO.Browser,
   sessionSku: SkuConfig,
 ): Promise<void> {
-  const credentials = getAndroidCredentialsFromEnv();
+  const credentials = getAndroidCredentialsFromEnv(sessionSku);
   if (!credentials) {
+    const { email } = androidCredentialEnvNames(sessionSku);
+    console.log(
+      `   ℹ️  Sem conta de teste para ${sessionSku.vendor}-${sessionSku.country} (${email}): sessão anônima`,
+    );
     return;
   }
-  console.log("   🔐 Fazendo login...");
+  console.log(
+    `   🔐 Fazendo login (${sessionSku.vendor}-${sessionSku.country})...`,
+  );
   // Plain launch (no deep link data) so the Account tab is reachable; the session
   // persists on device, so it survives the terminateApp() inside openPdpDeepLink below.
   await driver
