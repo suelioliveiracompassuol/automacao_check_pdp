@@ -19,6 +19,7 @@ import {
   getCommerceFlagsByCategory,
   countCommerceFlags,
 } from "./checks/remoteConfig.js";
+import { reportIndexFileName } from "./reportIndex.js";
 
 /**
  * Read a screenshot file (relative to outputDir) and return a base64 data URI,
@@ -530,6 +531,26 @@ export function generateHtmlReport(report: MonitoringReport): string {
           : ""
       }
       ${
+        result.stepScreenshots?.length
+          ? `
+        <div class="page-screenshot">
+          <strong>📸 Etapas do check</strong>
+          <div class="step-screenshots">
+            ${result.stepScreenshots
+              .map(
+                (s, i) => `
+            <a href="${s.path}" target="_blank" class="step-screenshot">
+              <img src="${s.path}" alt="${s.label}" loading="lazy">
+              <span>${i + 1}. ${s.label}</span>
+            </a>`,
+              )
+              .join("")}
+          </div>
+        </div>
+      `
+          : ""
+      }
+      ${
         result.playwrightTracePath
           ? `
         <div class="page-screenshot">
@@ -543,7 +564,8 @@ export function generateHtmlReport(report: MonitoringReport): string {
   `;
 
   const generateHistory = () => {
-    // History is loaded dynamically at runtime from docs/reports/index.json.
+    // History is loaded dynamically at runtime from the platform's index in docs/reports/
+    // (index.json for Web, index.android.json for Android — see reportIndex.ts).
     // This avoids broken relative paths when the report is placed at different
     // directory depths (e.g. docs/last-report.html vs docs/reports/run_X/report.html).
     return `
@@ -556,9 +578,10 @@ export function generateHtmlReport(report: MonitoringReport): string {
         var currentRunId = ${JSON.stringify(runId)};
         // Detect whether this page is inside a reports/run_* sub-directory.
         var isInRunDir = window.location.pathname.indexOf('/reports/run_') >= 0;
-        // From reports/run_XXX/report.html  -> ../index.json  = reports/index.json
-        // From docs/last-report.html        -> reports/index.json = reports/index.json
-        var indexUrl = isInRunDir ? '../index.json' : 'reports/index.json';
+        // From reports/run_XXX/report.html  -> ../<index>  = reports/<index>
+        // From docs/last-report.html        -> reports/<index>
+        var indexFile = ${JSON.stringify(reportIndexFileName(results[0]?.platform))};
+        var indexUrl = isInRunDir ? '../' + indexFile : 'reports/' + indexFile;
         fetch(indexUrl)
           .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
           .then(function(data) {
@@ -895,6 +918,27 @@ export function generateHtmlReport(report: MonitoringReport): string {
     .page-screenshot a {
       color: #3b82f6;
       text-decoration: none;
+    }
+
+    .step-screenshots {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      margin-top: 8px;
+    }
+
+    .step-screenshot {
+      flex: 0 0 auto;
+      width: 140px;
+      font-size: 12px;
+    }
+
+    .step-screenshot img {
+      width: 100%;
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      display: block;
+      margin-bottom: 4px;
     }
 
     .feature-group-header {

@@ -39,8 +39,10 @@ function seed() {
       startTime: '2024-05-01T13:00:00Z',
       summary: { total: 0, passed: 0, failed: 0, errors: 0 },
     }),
-    // Plataforma "em breve": não deve aparecer nos números.
+    // Android (beta) com execução registrada, mas sem o report.json no disco.
     makeIndexEntry({ runId: 'run_android', platform: 'android' }),
+    // iOS ainda é "em breve": entradas dele nunca aparecem nos números.
+    makeIndexEntry({ runId: 'run_ios', platform: 'ios' }),
   ];
   data.reports = {
     run_3: makeReport({ runId: 'run_3', results }),
@@ -67,11 +69,14 @@ describe('HomePage', () => {
     render(<HomePage />);
 
     const hero = screen.getByRole('region', { name: 'Visão geral da automação' });
-    expect(within(hero).getByText('2 monitorados')).toBeInTheDocument();
-    expect(within(hero).getByText('3')).toBeInTheDocument(); // execuções web
+    // Até 2 países, os nomes aparecem por extenso
+    expect(within(hero).getByText('Argentina e Brasil')).toBeInTheDocument();
+    expect(within(hero).getByText('3 execuções')).toBeInTheDocument(); // card da Web
     // 2 de 3 PDPs passaram na última execução web
     expect(within(hero).getByText('67%')).toBeInTheDocument();
-    expect(within(hero).getAllByText('Em breve')).toHaveLength(2);
+    // Só o iOS é "em breve"; o Android é beta
+    expect(within(hero).getAllByText('Em breve')).toHaveLength(1);
+    expect(within(hero).getAllByText('Beta').length).toBeGreaterThan(0);
 
     const coverage = screen.getByRole('region', { name: 'Cobertura' });
     expect(within(coverage).getByText('Minha Loja')).toBeInTheDocument();
@@ -94,5 +99,27 @@ describe('HomePage', () => {
 
     await userEvent.click(screen.getByRole('tab', { name: /android/i }));
     expect(screen.getByText('Ainda não há dados para Android')).toBeInTheDocument();
+  });
+
+  it('mostra KPIs e cobertura do Android só com as features que o app executa', async () => {
+    seed();
+    data.reports.run_android = makeReport({
+      runId: 'run_android',
+      results: [
+        makeResult({ sku: 'AND-1', platform: 'android', features: [makeFeature()] }),
+        makeResult({ sku: 'AND-2', platform: 'android', features: [makeFeature()] }),
+      ],
+    });
+    render(<HomePage />);
+
+    const hero = screen.getByRole('region', { name: 'Visão geral da automação' });
+    // Uma única feature (reviews) no app, contra o catálogo completo da Web
+    expect(within(hero).getByText('1 por PDP')).toBeInTheDocument();
+    expect(within(hero).getByText('Brasil')).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('tab', { name: /android/i }));
+    const coverage = screen.getAllByRole('region', { name: 'Cobertura' }).at(-1)!;
+    expect(within(coverage).getByText('Avaliações')).toBeInTheDocument();
+    expect(within(coverage).queryByText('Nota (rating)')).not.toBeInTheDocument();
   });
 });

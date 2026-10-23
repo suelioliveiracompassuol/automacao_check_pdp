@@ -11,18 +11,26 @@ export interface PlatformMeta {
   channel: string;
   /** Not live yet — rendered as "em breve" instead of pass-rate stats. */
   upcoming?: boolean;
+  /** Live but still being validated — shown with a "Beta" badge. */
+  beta?: boolean;
 }
 
 /** Single source for platform labels/icons/routes, shared by the home cards and page heroes. */
 export const PLATFORMS: PlatformMeta[] = [
-  { platform: 'web', label: 'Web', href: '/web', icon: Globe, channel: 'Site · Natura & Avon' },
+  {
+    platform: 'web',
+    label: 'Web',
+    href: '/web',
+    icon: Globe,
+    channel: 'Site · Natura & Avon · Minha Loja',
+  },
   {
     platform: 'android',
     label: 'Android',
     href: '/android',
     icon: FaAndroid,
-    channel: 'App nativo',
-    upcoming: true,
+    channel: 'App nativo · Appium',
+    beta: true,
   },
   {
     platform: 'ios',

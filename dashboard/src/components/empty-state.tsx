@@ -22,7 +22,9 @@ export function EmptyState({ icon, title, badge, description }: EmptyStateProps)
       )}
       <h1 className="text-xl font-bold text-highlight">{title}</h1>
       {description && (
-        <p className="mx-auto mt-2 max-w-lg text-sm text-medium-emphasis">{description}</p>
+        <div className="mx-auto mt-2 max-w-lg text-sm leading-relaxed text-medium-emphasis">
+          {description}
+        </div>
       )}
     </div>
   );

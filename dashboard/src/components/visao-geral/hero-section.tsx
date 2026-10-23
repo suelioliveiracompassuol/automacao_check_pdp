@@ -1,7 +1,9 @@
 import Link from 'next/link';
-import { ArrowUpRight, CalendarClock, Globe2, ListChecks, PlayCircle } from 'lucide-react';
+import { ArrowUpRight, CalendarClock, Globe2, ListChecks, Package, PlayCircle } from 'lucide-react';
 import type { ReactNode } from 'react';
+import { BetaBadge } from '@/components/beta-badge';
 import type { PlatformMeta } from '@/lib/platforms';
+import { countryLabel } from '@/lib/constants';
 import { formatDate } from '@/lib/format';
 import { cn } from '@/lib/utils';
 
@@ -15,14 +17,20 @@ export interface PlatformStat {
   trend: number[];
 }
 
-interface HeroSectionProps {
-  /** Platform the KPI row refers to — each stack has its own runs/countries/checks, so the
-   * row is labelled explicitly instead of looking like a cross-platform total. */
-  kpiPlatform: PlatformMeta;
-  totalRuns: number;
-  countriesCount: number;
+export interface PlatformKpi {
+  meta: PlatformMeta;
+  runsCount: number;
+  /** Country codes covered by the platform's latest run. */
+  countries: string[];
+  /** PDPs checked in the platform's latest run. */
+  pdpsCount: number;
   checksCount: number;
   lastRunAt: string | null;
+}
+
+interface HeroSectionProps {
+  /** One KPI row per live platform — scope (countries, PDPs, checks) differs between stacks. */
+  platformKpis: PlatformKpi[];
   /** Per-platform pass-rate breakdown — each stack has its own scope/checks, so they're shown
    * side by side instead of blended into one "overall" number that wouldn't mean much. */
   platformStats: PlatformStat[];
@@ -79,7 +87,10 @@ function PlatformCard({ meta, passRate, runsCount, lastRunAt, trend }: PlatformS
             <Icon className="h-5 w-5" />
           </span>
           <div className="min-w-0">
-            <p className="font-bold text-highlight">{meta.label}</p>
+            <p className="flex items-center gap-2 font-bold text-highlight">
+              {meta.label}
+              {meta.beta && <BetaBadge />}
+            </p>
             <p className="truncate text-xs text-medium-emphasis">{meta.channel}</p>
           </div>
         </div>
@@ -145,15 +156,57 @@ function Kpi({ icon, label, value }: { icon: ReactNode; label: string; value: Re
   );
 }
 
-export function HeroSection({
-  kpiPlatform,
-  totalRuns,
-  countriesCount,
+function countriesLabel(countries: string[]) {
+  if (countries.length === 0) return '—';
+  if (countries.length <= 2) {
+    return countries.map(countryLabel).join(' e ');
+  }
+  return `${countries.length} monitorados`;
+}
+
+function PlatformKpiRow({
+  meta,
+  runsCount,
+  countries,
+  pdpsCount,
   checksCount,
   lastRunAt,
-  platformStats,
-}: HeroSectionProps) {
-  const KpiPlatformIcon = kpiPlatform.icon;
+}: PlatformKpi) {
+  const Icon = meta.icon;
+  return (
+    <div>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-surface px-3 py-1 text-xs font-bold text-primary-dark shadow-tiny">
+          <Icon className="h-3.5 w-3.5" aria-hidden="true" />
+          {meta.label}
+        </span>
+        {meta.beta && <BetaBadge />}
+        <span className="text-xs text-medium-emphasis">{meta.channel}</span>
+      </div>
+      <div className="mt-4 grid grid-cols-2 gap-5 @3xl:grid-cols-5">
+        <Kpi icon={<PlayCircle className="h-4 w-4" />} label="Execuções" value={runsCount} />
+        <Kpi
+          icon={<Globe2 className="h-4 w-4" />}
+          label={countries.length === 1 ? 'País' : 'Países'}
+          value={countriesLabel(countries)}
+        />
+        <Kpi icon={<Package className="h-4 w-4" />} label="PDPs por execução" value={pdpsCount} />
+        <Kpi
+          icon={<ListChecks className="h-4 w-4" />}
+          label="Checagens"
+          value={`${checksCount} por PDP`}
+        />
+        <Kpi
+          icon={<CalendarClock className="h-4 w-4" />}
+          label="Última execução"
+          value={lastRunAt ? formatDate(lastRunAt) : '—'}
+        />
+      </div>
+    </div>
+  );
+}
+
+export function HeroSection({ platformKpis, platformStats }: HeroSectionProps) {
   return (
     <section aria-labelledby="hero-heading" className="space-y-5">
       <div className="relative overflow-hidden rounded-card bg-primary-wash px-6 py-8 sm:px-10 sm:py-10">
@@ -180,31 +233,10 @@ export function HeroSection({
             Avon em múltiplos países da América Latina.
           </p>
 
-          <div className="mt-8 flex flex-wrap items-center gap-x-3 gap-y-1">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-surface px-3 py-1 text-xs font-bold text-primary-darkest shadow-tiny">
-              <KpiPlatformIcon className="h-3.5 w-3.5" aria-hidden="true" />
-              Dados de {kpiPlatform.label}
-            </span>
-            <span className="text-xs text-medium-emphasis">{kpiPlatform.channel}</span>
-          </div>
-
-          <div className="mt-4 grid grid-cols-2 gap-5 @3xl:grid-cols-4">
-            <Kpi icon={<PlayCircle className="h-4 w-4" />} label="Execuções" value={totalRuns} />
-            <Kpi
-              icon={<Globe2 className="h-4 w-4" />}
-              label="Países"
-              value={`${countriesCount} monitorados`}
-            />
-            <Kpi
-              icon={<ListChecks className="h-4 w-4" />}
-              label="Checagens"
-              value={`${checksCount} por PDP`}
-            />
-            <Kpi
-              icon={<CalendarClock className="h-4 w-4" />}
-              label="Última execução"
-              value={lastRunAt ? formatDate(lastRunAt) : '—'}
-            />
+          <div className="mt-8 space-y-6">
+            {platformKpis.map((kpi) => (
+              <PlatformKpiRow key={kpi.meta.platform} {...kpi} />
+            ))}
           </div>
         </div>
       </div>

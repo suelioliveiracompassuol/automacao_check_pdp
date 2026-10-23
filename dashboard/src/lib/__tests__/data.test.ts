@@ -72,6 +72,40 @@ describe('data.ts', () => {
       expect(result).toEqual(mockIndex);
       expect(fs.readFileSync).toHaveBeenCalledWith(expect.stringContaining('index.json'), 'utf-8');
     });
+
+    it('junta o index.android.json (workflow separado), sem duplicar e mais recente primeiro', () => {
+      const entry = (runId: string, startTime: string, platform?: 'android') => ({
+        ...mockIndex.reports[0],
+        runId,
+        startTime,
+        ...(platform ? { platform } : {}),
+      });
+      const files: Record<string, unknown> = {
+        'index.json': {
+          reports: [
+            entry('run_3', '2024-01-03T00:00:00Z'),
+            // legado: Android gravado no índice web antes da separação
+            entry('run_android_1', '2024-01-01T00:00:00Z', 'android'),
+          ],
+        },
+        'index.android.json': {
+          reports: [
+            entry('run_android_2', '2024-01-04T00:00:00Z', 'android'),
+            entry('run_android_1', '2024-01-01T00:00:00Z', 'android'),
+          ],
+        },
+      };
+      const fileFor = (p: unknown) =>
+        Object.keys(files).find((name) => String(p).replace(/\\/g, '/').endsWith(`/${name}`));
+      vi.mocked(fs.existsSync).mockImplementation((p) => fileFor(p) !== undefined);
+      vi.mocked(fs.readFileSync).mockImplementation((p) => JSON.stringify(files[fileFor(p)!]));
+
+      expect(getReportIndex().reports.map((r) => r.runId)).toEqual([
+        'run_android_2',
+        'run_3',
+        'run_android_1',
+      ]);
+    });
   });
 
   describe('getReportById', () => {

@@ -45,11 +45,11 @@ describe('platforms', () => {
 });
 
 describe('navigation', () => {
-  it('marca "em breve" nas plataformas ainda não lançadas', () => {
-    const android = PLATFORM_NAV.find((n) => n.href === '/android');
-    const web = PLATFORM_NAV.find((n) => n.href === '/web');
-    expect(android?.badge).toBe('em breve');
-    expect(web?.badge).toBeUndefined();
+  it('marca "em breve" nas plataformas não lançadas e "beta" nas em validação', () => {
+    const badgeOf = (href: string) => PLATFORM_NAV.find((n) => n.href === href)?.badge;
+    expect(badgeOf('/ios')).toBe('em breve');
+    expect(badgeOf('/android')).toBe('beta');
+    expect(badgeOf('/web')).toBeUndefined();
   });
 
   it('inclui todas as rotas principais', () => {

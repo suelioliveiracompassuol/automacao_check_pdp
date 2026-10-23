@@ -1,0 +1,162 @@
+name: PDP Android Monitor (beta)
+
+# Separado do PDP Feature Monitor (Web) para que o Android, ainda em beta e dependente de
+# device farm externo, não atrase, quebre nem dispare alertas do monitor Web. Grava só os
+# próprios arquivos (docs/reports/run_android_*/ e docs/reports/index.android.json), então o
+# push não conflita com o do Web nem com o de performance.
+
+on:
+  # Diário às 10:00 UTC (7:00 BRT): depois do Web (8:00) e da performance (9:00), para não
+  # disputarem o push no mesmo minuto.
+  schedule:
+    - cron: "0 10 * * *"
+
+  workflow_dispatch:
+    inputs:
+      android_skus:
+        description: "SKUs a verificar no app (separados por vírgula, vazio = variável ANDROID_SKUS ou todos Natura BR)"
+        required: false
+        default: ""
+        type: string
+      send_email:
+        description: "Enviar e-mail com o resultado (no beta o e-mail é opcional)"
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+# Uma execução por vez: duas sessões simultâneas no device farm disputariam aparelhos e o push.
+concurrency:
+  group: pdp-android-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  android:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref_name }}
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: 📦 Install dependencies
+        # Sem navegadores do Playwright: o check Android roda no device farm via Appium.
+        run: npm ci
+
+      - name: 📱 Run PDP checks (Android)
+        id: checks
+        run: npm run check:android
+        env:
+          # Device farm (obrigatório — runners do GitHub não têm virtualização Android)
+          DEVICE_FARM_PROVIDER: ${{ vars.DEVICE_FARM_PROVIDER || 'lambdatest' }}
+          LAMBDATEST_USERNAME: ${{ secrets.LAMBDATEST_USERNAME }}
+          LAMBDATEST_ACCESS_KEY: ${{ secrets.LAMBDATEST_ACCESS_KEY }}
+          LAMBDATEST_APP_ID: ${{ secrets.LAMBDATEST_APP_ID }}
+          # SKUs do Firestore (mesma coleção `skus` e mesmos secrets do monitor Web)
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+          FIREBASE_CLIENT_EMAIL: ${{ secrets.FIREBASE_CLIENT_EMAIL }}
+          FIREBASE_PRIVATE_KEY: ${{ secrets.FIREBASE_PRIVATE_KEY }}
+          # Remote Config e commerce flags são lidos do log de rede da sessão no LambdaTest
+          # (o que o próprio app recebeu); nenhum secret do Firebase é necessário aqui.
+          # Login opcional (roda anônimo se não definido) e seleção de SKUs/concorrência
+          ANDROID_LOGIN_EMAIL: ${{ secrets.ANDROID_LOGIN_EMAIL }}
+          ANDROID_LOGIN_PASSWORD: ${{ secrets.ANDROID_LOGIN_PASSWORD }}
+          ANDROID_SKUS: ${{ inputs.android_skus || vars.ANDROID_SKUS }}
+          ANDROID_CONCURRENCY: ${{ vars.ANDROID_CONCURRENCY }}
+        continue-on-error: true
+
+      - name: 📊 Find report directory
+        id: find_report
+        run: |
+          REPORT_DIR=$(ls -td docs/reports/run_android_* 2>/dev/null | head -1)
+          echo "report_dir=$REPORT_DIR" >> $GITHUB_OUTPUT
+          if [ -f "$REPORT_DIR/report.json" ]; then
+            SUMMARY=$(jq -r '"Total: \(.summary.total), Passed: \(.summary.passed), Failed: \(.summary.failed), Errors: \(.summary.errors)"' "$REPORT_DIR/report.json")
+            echo "summary=$SUMMARY" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 📤 Upload report artifact
+        if: steps.find_report.outputs.report_dir != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: pdp-monitor-report-android-${{ github.run_number }}
+          path: ${{ steps.find_report.outputs.report_dir }}
+          retention-days: 30
+
+      - name: 🧹 Remove old screenshots and HTML reports
+        run: |
+          # Só os runs Android; os do Web são limpos pelo workflow deles.
+          # Run dir names carry the timestamp; file mtimes are reset by checkout.
+          CUTOFF=$(( ($(date +%s) - 10 * 86400) * 1000 ))
+          for dir in docs/reports/run_android_*/; do
+            [ -d "$dir" ] || continue
+            ts=$(basename "$dir"); ts=${ts#run_android_}
+            [[ "$ts" =~ ^[0-9]+$ ]] || continue
+            if (( ts < CUTOFF )); then
+              find "$dir" -type f \( -name '*.png' -o -name '*.html' \) -delete
+              find "$dir" -mindepth 1 -type d -empty -delete
+            fi
+          done
+
+      - name: 💾 Commit Android report
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          # Só arquivos do Android: nada do Web (index.json, last-report.*) entra neste commit.
+          git add -f docs/reports/index.android.json 2>/dev/null || true
+          git add -f -A -- 'docs/reports/run_android_*' 2>/dev/null || true
+          if git diff --staged --quiet; then
+            echo "Nada para commitar"
+            exit 0
+          fi
+          git commit -m "chore: update android report [run #${{ github.run_number }}]"
+          # Outro workflow pode ter dado push no meio tempo; como os arquivos não se sobrepõem,
+          # o rebase não conflita — só tenta de novo se perder a corrida do push.
+          for attempt in 1 2 3; do
+            git pull --rebase origin ${{ github.ref_name }} && git push origin HEAD:${{ github.ref_name }} && exit 0
+            echo "Push falhou (tentativa $attempt), tentando de novo..."
+            sleep $((attempt * 10))
+          done
+          exit 1
+
+      - name: 📧 Send email notification
+        # Beta: só envia quando pedido no disparo manual ou com a variável ANDROID_ALERTS_ENABLED=true.
+        if: inputs.send_email == true || (vars.ANDROID_ALERTS_ENABLED == 'true' && steps.checks.outcome == 'failure')
+        uses: dawidd6/action-send-mail@v3
+        continue-on-error: true
+        with:
+          server_address: ${{ secrets.SMTP_SERVER }}
+          server_port: ${{ secrets.SMTP_PORT }}
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: "📱 [beta] PDP Monitor Android - ${{ steps.checks.outcome == 'failure' && 'falhas encontradas' || 'resultado' }}"
+          to: ${{ secrets.ALERT_EMAIL_TO }}
+          from: ${{ secrets.ALERT_EMAIL_FROM }}
+          body: |
+            Monitoramento de PDPs no app Android (beta).
+
+            📱 Resumo: ${{ steps.find_report.outputs.summary || 'sem execução' }}
+
+            📅 Execução: ${{ github.run_number }}
+            🔗 Workflow: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+            Verifique o relatório completo no artifact do workflow.
+          attachments: ${{ steps.find_report.outputs.report_dir }}/report.html
+
+      - name: ✅ Check final status
+        # Fica vermelho só neste workflow; o monitor Web não é afetado.
+        if: steps.checks.outcome == 'failure'
+        run: exit 1

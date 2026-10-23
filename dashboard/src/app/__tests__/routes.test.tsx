@@ -26,10 +26,15 @@ vi.mock('@/lib/data', () => ({
   getReportsByPlatform: (platform: string) =>
     data.entries.filter((e) => (e.platform ?? 'web') === platform),
   getReportById: (id: string) => data.reports[id] ?? null,
+  getLastReportByPlatform: (platform: string) => {
+    const latest = data.entries.find((e) => (e.platform ?? 'web') === platform);
+    return latest ? (data.reports[latest.runId] ?? null) : null;
+  },
   getScreenshotsForRun: () => [],
 }));
 
 import AndroidPage from '../android/page';
+import AndroidReportPage, { generateStaticParams as androidParams } from '../android/[runId]/page';
 import IosPage from '../ios/page';
 import LegacyReportRedirect, { generateStaticParams as reportParams } from '../report/[runId]/page';
 import LegacyVisaoGeralRedirect from '../visao-geral/page';
@@ -46,16 +51,49 @@ beforeEach(() => {
   };
 });
 
-describe('rotas de plataforma em breve', () => {
-  it('Android e iOS mostram o estado "Em breve"', () => {
-    const { unmount } = render(<AndroidPage />);
-    expect(
-      screen.getByRole('heading', { name: /android ainda não disponível/i }),
-    ).toBeInTheDocument();
-    unmount();
+describe('/ios', () => {
+  it('mostra o estado "Em breve"', () => {
     render(<IosPage />);
     expect(screen.getByRole('heading', { name: /ios ainda não disponível/i })).toBeInTheDocument();
     expect(screen.getByText('Em breve')).toBeInTheDocument();
+  });
+});
+
+describe('/android', () => {
+  it('orienta a rodar o check:android quando ainda não há execução', () => {
+    render(<AndroidPage />);
+    expect(
+      screen.getByRole('heading', { name: 'Nenhuma execução Android ainda' }),
+    ).toBeInTheDocument();
+    expect(screen.getByText('npm run check:android')).toBeInTheDocument();
+  });
+
+  it('mostra a última execução Android', () => {
+    data.reports.run_android = makeReport({
+      runId: 'run_android',
+      results: [makeResult({ name: 'Produto App', platform: 'android' })],
+    });
+    render(<AndroidPage />);
+    expect(
+      screen.getByRole('heading', { name: 'PDP Feature Monitor — Android' }),
+    ).toBeInTheDocument();
+    expect(screen.getByText('Produto App')).toBeInTheDocument();
+  });
+
+  it('pré-renderiza só execuções Android e mostra a pedida', async () => {
+    expect(await androidParams()).toEqual([{ runId: 'run_android' }]);
+    data.reports.run_android = makeReport({
+      runId: 'run_android',
+      results: [makeResult({ name: 'Produto App' })],
+    });
+    render(await AndroidReportPage({ params: Promise.resolve({ runId: 'run_android' }) }));
+    expect(screen.getByText('Produto App')).toBeInTheDocument();
+  });
+
+  it('responde 404 para execução Android inexistente', async () => {
+    await expect(AndroidReportPage({ params: Promise.resolve({ runId: 'nope' }) })).rejects.toThrow(
+      'NEXT_NOT_FOUND',
+    );
   });
 });
 

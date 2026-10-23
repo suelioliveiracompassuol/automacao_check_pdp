@@ -5,7 +5,7 @@ export interface NavItem {
   href: string;
   label: string;
   icon: PlatformMeta['icon'];
-  /** Ex.: "em breve" para plataformas ainda não lançadas. */
+  /** "em breve" (ainda não lançada) ou "beta" (em validação). */
   badge?: string;
 }
 
@@ -15,11 +15,11 @@ export const MAIN_NAV: NavItem[] = [
   { href: '/performance', label: 'Performance', icon: Gauge },
 ];
 
-export const PLATFORM_NAV: NavItem[] = PLATFORMS.map(({ href, label, icon, upcoming }) => ({
+export const PLATFORM_NAV: NavItem[] = PLATFORMS.map(({ href, label, icon, upcoming, beta }) => ({
   href,
   label,
   icon,
-  badge: upcoming ? 'em breve' : undefined,
+  badge: upcoming ? 'em breve' : beta ? 'beta' : undefined,
 }));
 
 export const ADMIN_NAV: NavItem[] = [{ href: '/skus', label: 'SKUs', icon: Database }];

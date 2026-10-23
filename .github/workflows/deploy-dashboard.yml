@@ -4,10 +4,10 @@ on:
   # Run manually when you want to update the dashboard
   workflow_dispatch:
 
-  # Republica depois de cada monitoramento: features (PDP Feature Monitor) e Web Vitals
-  # (PDP Performance), que rodam em workflows separados.
+  # Republica depois de cada monitoramento: features Web (PDP Feature Monitor), app Android
+  # (PDP Android Monitor (beta)) e Web Vitals (PDP Performance), que rodam em workflows separados.
   workflow_run:
-    workflows: ["PDP Feature Monitor", "PDP Performance"]
+    workflows: ["PDP Feature Monitor", "PDP Android Monitor (beta)", "PDP Performance"]
     types: [completed]
     branches: [master]
 

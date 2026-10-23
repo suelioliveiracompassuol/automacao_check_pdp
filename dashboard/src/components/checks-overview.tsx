@@ -1,17 +1,26 @@
 import { cn } from '@/lib/utils';
 import { CHECKS_CATALOG, TOTAL_CHECKS } from '@/lib/checks-catalog';
 
-/** Shared with the /visao-geral coverage section — same catalog, same card style, always in sync. */
-export function ChecksOverview() {
+/** Shared with the /visao-geral coverage section — same catalog, same card style, always in sync.
+ * `featureKeys` restricts it to the checks a given platform actually runs. */
+export function ChecksOverview({ featureKeys }: { featureKeys?: string[] }) {
+  const categories = CHECKS_CATALOG.map((category) => ({
+    ...category,
+    items: featureKeys
+      ? category.items.filter((item) => featureKeys.includes(item.key))
+      : category.items,
+  })).filter((category) => category.items.length > 0);
+  const total = featureKeys ? categories.reduce((n, c) => n + c.items.length, 0) : TOTAL_CHECKS;
+
   return (
     <section aria-labelledby="checks-overview-heading" className="space-y-6">
       <div className="flex items-baseline justify-between">
         <h2 id="checks-overview-heading" className="text-lg font-bold text-highlight">
           O que verificamos em cada PDP
         </h2>
-        <span className="text-xs text-low-emphasis">{TOTAL_CHECKS} checagens automáticas</span>
+        <span className="text-xs text-low-emphasis">{total} checagens automáticas</span>
       </div>
-      {CHECKS_CATALOG.map((category) => (
+      {categories.map((category) => (
         <div key={category.title}>
           <h3 className="mb-3 text-xs font-bold uppercase tracking-widest text-low-emphasis">
             {category.title}
