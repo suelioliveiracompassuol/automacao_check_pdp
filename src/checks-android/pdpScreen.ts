@@ -45,30 +45,90 @@ export async function getVisibleHeight(
   return size?.height ?? 0;
 }
 
+/** Logs each distinct scroll failure once, so a run shows why a page didn't move. */
+const loggedScrollErrors = new Set<string>();
+function logScrollError(method: string, error: unknown): void {
+  const message = `${method}: ${error instanceof Error ? error.message : String(error)}`;
+  if (!loggedScrollErrors.has(message)) {
+    loggedScrollErrors.add(message);
+    console.log(`   ⚠️  Scroll da PDP falhou (${message})`);
+  }
+}
+
+type ScrollMethod = (
+  driver: WebdriverIO.Browser,
+  direction: "down" | "up",
+  screen: { width: number; height: number },
+) => Promise<void>;
+
+/** UiAutomator2's scroll gesture over GESTURE_AREA. */
+const scrollGesture: ScrollMethod = async (driver, direction, screen) => {
+  await driver.execute("mobile: scrollGesture", {
+    left: Math.round(screen.width * GESTURE_AREA.left),
+    top: Math.round(screen.height * GESTURE_AREA.top),
+    width: Math.round(screen.width * GESTURE_AREA.width),
+    height: Math.round(screen.height * GESTURE_AREA.height),
+    direction,
+    percent: 1,
+  });
+};
+
+/**
+ * Plain touch swipe (W3C actions) across GESTURE_AREA: fallback for apps where the scroll
+ * gesture doesn't move the page (seen on the Avon app, same layout as Natura BR).
+ */
+const touchSwipe: ScrollMethod = async (driver, direction, screen) => {
+  const x = Math.round(screen.width / 2);
+  const bottom = Math.round(
+    screen.height * (GESTURE_AREA.top + GESTURE_AREA.height),
+  );
+  const top = Math.round(screen.height * GESTURE_AREA.top);
+  const [from, to] = direction === "down" ? [bottom, top] : [top, bottom];
+  await driver
+    .action("pointer", { parameters: { pointerType: "touch" } })
+    .move({ x, y: from })
+    .down()
+    .pause(100)
+    .move({ x, y: to, duration: 500 })
+    .up()
+    .perform();
+};
+
 /**
  * Scrolls the PDP half a screen. Returns whether the screen changed: the gesture's own
  * "can scroll more" result is unreliable on the PDP's NestedScrollView (false after the first
- * swipe), so the end of the page is detected by an unchanged page source instead.
+ * swipe), so the end of the page is detected by an unchanged page source instead. Tries the
+ * scroll gesture first, then a touch swipe; only when neither moves the page is it the end.
  */
 async function scrollPdp(
   driver: WebdriverIO.Browser,
   direction: "down" | "up",
 ): Promise<boolean> {
+  let source: string;
+  let screen: { width: number; height: number };
   try {
-    const before = await driver.getPageSource();
-    const { width, height } = await driver.getWindowSize();
-    await driver.execute("mobile: scrollGesture", {
-      left: Math.round(width * GESTURE_AREA.left),
-      top: Math.round(height * GESTURE_AREA.top),
-      width: Math.round(width * GESTURE_AREA.width),
-      height: Math.round(height * GESTURE_AREA.height),
-      direction,
-      percent: 1,
-    });
-    return (await driver.getPageSource()) !== before;
-  } catch {
+    source = await driver.getPageSource();
+    screen = await driver.getWindowSize();
+  } catch (e) {
+    logScrollError("getPageSource/getWindowSize", e);
     return false;
   }
+  for (const [name, method] of [
+    ["scrollGesture", scrollGesture],
+    ["touchSwipe", touchSwipe],
+  ] as const) {
+    try {
+      await method(driver, direction, screen);
+      const after = await driver.getPageSource();
+      if (after !== source) {
+        return true;
+      }
+      source = after;
+    } catch (e) {
+      logScrollError(name, e);
+    }
+  }
+  return false;
 }
 
 /**
@@ -84,19 +144,29 @@ export async function scrollPdpUntilVisible(
   el: ChainablePromiseElement,
 ): Promise<number> {
   let direction: "down" | "up" = "down";
+  const moved = { down: 0, up: 0 };
   for (let i = 0; i < MAX_SCROLLS; i++) {
     const visibleHeight = await getVisibleHeight(el);
     if (visibleHeight >= MIN_VISIBLE_HEIGHT) {
       return visibleHeight;
     }
-    if (!(await scrollPdp(driver, direction))) {
-      if (direction === "up") {
-        break;
-      }
-      await sleepMs(LAZY_LOAD_WAIT_MS);
-      direction = "up";
+    if (await scrollPdp(driver, direction)) {
+      moved[direction]++;
+      continue;
     }
+    if (direction === "up") {
+      break;
+    }
+    await sleepMs(LAZY_LOAD_WAIT_MS);
+    direction = "up";
   }
   const visibleHeight = await getVisibleHeight(el);
-  return visibleHeight >= MIN_VISIBLE_HEIGHT ? visibleHeight : 0;
+  if (visibleHeight >= MIN_VISIBLE_HEIGHT) {
+    return visibleHeight;
+  }
+  console.log(
+    `   ℹ️  Elemento não encontrado após rolar ${moved.down}x para baixo e ${moved.up}x para cima` +
+      (moved.down === 0 ? " (a página não rolou)" : ""),
+  );
+  return 0;
 }

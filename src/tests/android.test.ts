@@ -459,6 +459,52 @@ test.describe("Android Unit Tests", () => {
       ]);
     });
 
+    /** Avon case: the scroll gesture never moves the page, a touch swipe does. */
+    const swipeOnlyDriver = (visibleAfterSwipes: number) => {
+      const swipes: { from: number; to: number }[] = [];
+      const points: number[] = [];
+      const chain = {
+        move: (p: { y: number }) => {
+          points.push(p.y);
+          return chain;
+        },
+        down: () => chain,
+        pause: () => chain,
+        up: () => chain,
+        perform: async () => {
+          swipes.push({ from: points[0], to: points[1] });
+          points.length = 0;
+        },
+      };
+      const driver = {
+        $: () => ({
+          isDisplayed: async () => true,
+          getSize: async () => ({
+            width: 1080,
+            height: swipes.length >= visibleAfterSwipes ? 700 : 10,
+          }),
+          $$: async () => [{}],
+          click: async () => undefined,
+        }),
+        getWindowSize: async () => ({ width: 1080, height: 2400 }),
+        getPageSource: async () => `swipes:${swipes.length}`,
+        execute: async () => true,
+        action: () => chain,
+      } as unknown as WebdriverIO.Browser;
+      return { driver, swipes };
+    };
+
+    test("falls back to a touch swipe when the scroll gesture doesn't move the page", async () => {
+      const { driver, swipes } = swipeOnlyDriver(2);
+      const result = await checkBrandShowcaseAndroid(driver);
+      expect(result.status).toBe("pass");
+      // Swipes up from 75% to 25% of the screen (scrolling the page down)
+      expect(swipes).toEqual([
+        { from: 1800, to: 600 },
+        { from: 1800, to: 600 },
+      ]);
+    });
+
     test("closes the ZeeDog card before scrolling when it is displayed", async () => {
       const calls: string[] = [];
       const mockDriver = {
