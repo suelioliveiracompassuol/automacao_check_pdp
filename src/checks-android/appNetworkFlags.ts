@@ -194,18 +194,70 @@ async function fetchLambdaTestNetworkLog(sessionId: string): Promise<unknown> {
   }
 }
 
-export interface AppSessionFlags {
-  commerce: CommerceFeatureFlags | null;
-  remoteConfigEntries: Record<string, string> | null;
+/** A failed response of the PDP API (BFF pages/v2/product/<SKU>) the app called. */
+export interface PdpApiError {
+  status: number;
+  /** BFF the app called, e.g. "bff-app-natura-colombia" — shows a wrong-country app at a glance. */
+  bff: string;
+  /** 403 with Akamai's "Access Denied" page: the WAF blocked the device, not the BFF. */
+  blockedByWaf: boolean;
 }
 
 /**
- * Commerce feature flags and Remote Config as the Android app received them, read from the
- * device farm's network capture of the (already closed) session. The script never calls the
- * BFF or Firebase itself. Returns null when there's no capture for this provider/config.
+ * The app's own PDP API response per SKU, from the session's network log: when it failed, the
+ * check results only say "nothing on screen", while the real cause is the API (blocked by the
+ * WAF, product missing in the BFF of the country the app opened in...). Only failures are
+ * returned, keyed by SKU.
+ */
+export function findPdpApiErrors(
+  payload: unknown,
+  skuCodes: readonly string[],
+): Record<string, PdpApiError> {
+  const entries = extractNetworkEntries(payload);
+  const errors: Record<string, PdpApiError> = {};
+  for (const sku of skuCodes) {
+    const last = entries
+      .filter((e) => e.url.includes(`/pages/v2/product/${sku}`))
+      .pop();
+    if (!last?.status || last.status < 400) {
+      continue;
+    }
+    errors[sku] = {
+      status: last.status,
+      bff: /bff-app-[a-z-]+/.exec(last.url)?.[0] ?? new URL(last.url).host,
+      blockedByWaf: last.status === 403 && /access denied/i.test(last.body ?? ""),
+    };
+  }
+  return errors;
+}
+
+/** Report message for a PdpApiError. */
+export function describePdpApiError(error: PdpApiError): string {
+  if (error.blockedByWaf) {
+    return `API da PDP bloqueada pelo WAF (403 Access Denied) em ${error.bff}`;
+  }
+  const hint =
+    error.status === 404
+      ? " — produto não existe nesse BFF (o app abriu no país certo?)"
+      : "";
+  return `API da PDP respondeu ${error.status} em ${error.bff}${hint}`;
+}
+
+export interface AppSessionFlags {
+  commerce: CommerceFeatureFlags | null;
+  remoteConfigEntries: Record<string, string> | null;
+  pdpApiErrors: Record<string, PdpApiError>;
+}
+
+/**
+ * Commerce feature flags, Remote Config and the PDP API errors of `skuCodes`, as the Android app
+ * received them, read from the device farm's network capture of the (already closed) session.
+ * The script never calls the BFF or Firebase itself. Returns null when there's no capture for
+ * this provider/config.
  */
 export async function readAppSessionFlags(
   sessionId: string,
+  skuCodes: readonly string[],
 ): Promise<AppSessionFlags | null> {
   const provider = getDeviceFarmProvider();
   if (provider !== "lambdatest") {
@@ -221,5 +273,6 @@ export async function readAppSessionFlags(
   return {
     commerce: findCommerceFlagsInNetworkLog(log),
     remoteConfigEntries: findRemoteConfigEntriesInNetworkLog(log),
+    pdpApiErrors: findPdpApiErrors(log, skuCodes),
   };
 }

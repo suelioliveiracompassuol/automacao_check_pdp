@@ -29,7 +29,9 @@ import {
   parseAndroidOperations,
 } from "../checks-android/configs/apps.js";
 import {
+  describePdpApiError,
   findCommerceFlagsInNetworkLog,
+  findPdpApiErrors,
   findRemoteConfigEntriesInNetworkLog,
 } from "../checks-android/appNetworkFlags.js";
 import { StepScreenshotRecorder } from "../checks-android/stepScreenshots.js";
@@ -801,6 +803,50 @@ test.describe("Android Unit Tests", () => {
           har([entry("https://x/feature-flag", flagsBody)]),
         ),
       ).toBeNull();
+    });
+
+    test("findPdpApiErrors reports the failed PDP API calls per SKU", () => {
+      const api = "https://ncf-apigw.prd.naturacloud.com";
+      const status = (url: string, code: number, text?: string) => ({
+        request: { url },
+        response: { status: code, content: { text } },
+      });
+      const errors = findPdpApiErrors(
+        har([
+          // Colombia: the WAF blocked the device
+          status(
+            `${api}/bff-app-natura-colombia/pages/v2/product/NATCOL-1`,
+            403,
+            "<HTML><HEAD><TITLE>Access Denied</TITLE></HEAD></HTML>",
+          ),
+          // Chile SKU asked to the Argentina BFF (app opened in the wrong country)
+          status(
+            `${api}/bff-app-natura-argentina/pages/v2/product/NATCHL-1`,
+            404,
+            '{"errorKey":999}',
+          ),
+          status(`${api}/bff-app-natura-brazil/pages/v2/product/NATBRA-1`, 200),
+        ]),
+        ["NATCOL-1", "NATCHL-1", "NATBRA-1", "NATBRA-2"],
+      );
+      expect(errors).toEqual({
+        "NATCOL-1": {
+          status: 403,
+          bff: "bff-app-natura-colombia",
+          blockedByWaf: true,
+        },
+        "NATCHL-1": {
+          status: 404,
+          bff: "bff-app-natura-argentina",
+          blockedByWaf: false,
+        },
+      });
+      expect(describePdpApiError(errors["NATCOL-1"])).toBe(
+        "API da PDP bloqueada pelo WAF (403 Access Denied) em bff-app-natura-colombia",
+      );
+      expect(describePdpApiError(errors["NATCHL-1"])).toBe(
+        "API da PDP respondeu 404 em bff-app-natura-argentina — produto não existe nesse BFF (o app abriu no país certo?)",
+      );
     });
 
     test("ignores Firebase Remote Config traffic", () => {

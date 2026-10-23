@@ -49,7 +49,10 @@ import {
   checkRecommendationShowcaseAndroid,
 } from "./checks-android/showcases.js";
 import { buildRemoteConfigFlags } from "./checks-android/remoteConfig.js";
-import { readAppSessionFlags } from "./checks-android/appNetworkFlags.js";
+import {
+  describePdpApiError,
+  readAppSessionFlags,
+} from "./checks-android/appNetworkFlags.js";
 import {
   androidCredentialEnvNames,
   getAndroidCredentialsFromEnv,
@@ -291,17 +294,28 @@ function isSuccessful(features: CheckResult[], error?: string): boolean {
  * Commerce flags and Remote Config are read from the closed session's network capture (what
  * the app itself received), so they're attached to every SKU checked in that session. The
  * add-to-cart verdict depends on `wl_notify_me`, so it's completed here and `success` recomputed.
+ * A failed PDP API response becomes the SKU's error (see findPdpApiErrors).
  */
 async function attachAppSessionFlags(
   sessionId: string,
   results: PdpCheckResult[],
 ): Promise<void> {
   try {
-    const flags = await readAppSessionFlags(sessionId);
+    const flags = await readAppSessionFlags(
+      sessionId,
+      results.map((r) => r.sku),
+    );
     if (!flags) {
       return;
     }
     for (const r of results) {
+      const apiError = flags.pdpApiErrors[r.sku];
+      if (apiError && !r.error) {
+        // The real cause behind "nothing on screen": counted as an error, not a feature failure
+        r.error = describePdpApiError(apiError);
+        r.success = false;
+        console.log(`   ❌ ${r.sku}: ${r.error}`);
+      }
       if (flags.commerce) {
         r.commerceFeatureFlags = flags.commerce;
       }
