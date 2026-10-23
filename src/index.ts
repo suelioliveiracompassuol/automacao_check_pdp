@@ -26,7 +26,7 @@ import {
   dismissCookieBanner,
   scrollAndLoadContent,
 } from "./checks/featureRunner.js";
-import { generateHtmlReport, generateJsonReport } from "./reporter.js";
+import { generateJsonReport } from "./reporter.js";
 import { upsertReportIndexEntry } from "./reportIndex.js";
 import { setupEndpointMonitor } from "./checks/endpointResponse.js";
 import { checkI18nKeys } from "./checks/i18n.js";
@@ -749,11 +749,8 @@ async function main() {
     results,
   };
 
-  // Save reports
-  const htmlPath = path.join(outputDir, "report.html");
+  // Save report (the dashboard renders it)
   const jsonPath = path.join(outputDir, "report.json");
-
-  fs.writeFileSync(htmlPath, generateHtmlReport(report));
   fs.writeFileSync(jsonPath, generateJsonReport(report));
 
   // Copy to last-report files and update index
@@ -761,7 +758,6 @@ async function main() {
     const docsDir = path.join(process.cwd(), "docs");
 
     // Copy to last-report
-    fs.copyFileSync(htmlPath, path.join(docsDir, "last-report.html"));
     fs.copyFileSync(jsonPath, path.join(docsDir, "last-report.json"));
 
     // Update index.json (upsert by runId, lock-protected against concurrent writers —
@@ -772,8 +768,7 @@ async function main() {
       endTime: report.endTime,
       durationMs: report.durationMs,
       summary: report.summary,
-      // Paths relative to the /docs root for the frontend
-      htmlPath: path.join("reports", runId, "report.html").replace(/\\/g, "/"),
+      // Path relative to the /docs root for the frontend
       jsonPath: path.join("reports", runId, "report.json").replace(/\\/g, "/"),
     });
     console.log(`\n✅  Índice de relatórios atualizado`);
@@ -789,7 +784,7 @@ async function main() {
   console.log(`❌ Falhou: ${report.summary.failed}/${report.summary.total}`);
   console.log(`⚠️  Erros: ${report.summary.errors}/${report.summary.total}`);
   console.log(`⏱️  Duração: ${(durationMs / 1000).toFixed(1)}s`);
-  console.log(`📄 Relatório: ${htmlPath}`);
+  console.log(`📄 Relatório: ${jsonPath}`);
   console.log("=".repeat(60));
 
   // Exit with error code if any failures

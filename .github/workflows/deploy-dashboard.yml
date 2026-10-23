@@ -69,7 +69,6 @@ jobs:
           cp -r dashboard/out pages_output
           rm -rf pages_output/reports
           cp -r docs/reports pages_output/reports
-          cp docs/last-report.html pages_output/last-report.html 2>/dev/null || true
           cp docs/last-report.json pages_output/last-report.json 2>/dev/null || true
           cp -r docs/perf pages_output/perf 2>/dev/null || true
 

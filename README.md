@@ -186,13 +186,12 @@ Configurar em Settings → Secrets and variables → Actions:
 
 ## Relatórios
 
-Após cada execução, um relatório é gerado em `docs/reports/run_<timestamp>/`:
+Após cada execução, um relatório é gerado em `docs/reports/run_<timestamp>/` (Android: `run_android_<timestamp>/`) e exibido pelo dashboard:
 
-- `report.html` — Relatório visual completo
 - `report.json` — Dados estruturados
 - `screenshots/` — Capturas de tela (fullpage, falhas, evidências)
 
-O relatório inclui:
+O dashboard mostra:
 - Resumo geral (passou/falhou/erros) por operação
 - Status de cada feature por SKU
 - Screenshots de evidência

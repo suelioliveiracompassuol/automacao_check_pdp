@@ -22,7 +22,6 @@ function makeEntry(overrides: Partial<ReportIndexEntry> = {}): ReportIndexEntry 
     endTime: "2026-01-01T00:01:00.000Z",
     durationMs: 60_000,
     summary: { total: 1, passed: 1, failed: 0, errors: 0 },
-    htmlPath: "reports/run_test_1/report.html",
     jsonPath: "reports/run_test_1/report.json",
     ...overrides,
   };

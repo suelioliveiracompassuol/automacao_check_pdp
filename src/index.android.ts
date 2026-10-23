@@ -22,7 +22,7 @@ import {
 } from "./types.js";
 import { StepScreenshotRecorder } from "./checks-android/stepScreenshots.js";
 import { toSafeFileName } from "./utils.js";
-import { generateHtmlReport, generateJsonReport } from "./reporter.js";
+import { generateJsonReport } from "./reporter.js";
 import { upsertReportIndexEntry } from "./reportIndex.js";
 import {
   AndroidSessionPlan,
@@ -467,12 +467,9 @@ async function main() {
     results,
   };
 
-  const htmlPath = path.join(outputDir, "report.html");
   const jsonPath = path.join(outputDir, "report.json");
-
-  fs.writeFileSync(htmlPath, generateHtmlReport(report));
   fs.writeFileSync(jsonPath, generateJsonReport(report));
-  console.log(`\n✅ Relatórios salvos em ${outputDir} (HTML + JSON)`);
+  console.log(`\n✅ Relatório salvo em ${jsonPath}`);
 
   // Register in docs/reports/index.android.json (platform: "android") so the dashboard finds this run
   try {
@@ -482,7 +479,6 @@ async function main() {
       endTime: report.endTime,
       durationMs: report.durationMs,
       summary: report.summary,
-      htmlPath: path.join("reports", runId, "report.html").replace(/\\/g, "/"),
       jsonPath: path.join("reports", runId, "report.json").replace(/\\/g, "/"),
       platform: "android",
     });

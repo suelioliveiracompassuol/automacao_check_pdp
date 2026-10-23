@@ -15,7 +15,8 @@ export interface ReportIndexEntry {
   endTime: string;
   durationMs: number;
   summary: MonitoringReport["summary"];
-  htmlPath: string;
+  /** Legacy: runs from before the HTML report was removed still carry it. */
+  htmlPath?: string;
   jsonPath: string;
   platform?: Platform;
 }
