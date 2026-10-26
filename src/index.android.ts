@@ -22,6 +22,7 @@ import {
   StepScreenshot,
 } from "./types.js";
 import { StepScreenshotRecorder } from "./checks-android/stepScreenshots.js";
+import { waitForPdpLoaded } from "./checks-android/pdpScreen.js";
 import { toSafeFileName } from "./utils.js";
 import { generateJsonReport } from "./reporter.js";
 import { upsertReportIndexEntry } from "./reportIndex.js";
@@ -153,6 +154,11 @@ async function checkPdpOnDriver(
   try {
     const navStartTime = Date.now();
     await openPdpDeepLink(driver, deepLinkUrl, sku);
+    if (!(await waitForPdpLoaded(driver))) {
+      console.log(
+        "   ⚠️  PDP não terminou de carregar (esqueleto na tela) — checando assim mesmo",
+      );
+    }
 
     // Verify Add to Cart button and capture load time without duplicate waits
     const addToCartResult = await checkAddToCartAndroid(driver, navStartTime);

@@ -34,11 +34,15 @@ import {
   extractPdpImageUrls,
   findPdpApiErrors,
   findPdpApiImages,
+  hasPdpApiCall,
   PdpApiImages,
   findRemoteConfigEntriesInNetworkLog,
 } from "../checks-android/appNetworkFlags.js";
 import { StepScreenshotRecorder } from "../checks-android/stepScreenshots.js";
-import { summarizeShowcases } from "../checks-android/pdpScreen.js";
+import {
+  summarizeShowcases,
+  waitForPdpLoaded,
+} from "../checks-android/pdpScreen.js";
 import {
   applyPdpApiImages,
   checkImagesAndroid,
@@ -918,11 +922,50 @@ test.describe("Android Unit Tests", () => {
       expect(result.message).toContain("tela mostra 2 de 4 imagens da API");
     });
 
+    test("hasPdpApiCall tells a complete session log from one still being processed", () => {
+      const log = { log: { entries: [pdpBody({ variations: [] })] } };
+      expect(hasPdpApiCall(log, "NATBRA-1")).toBe(true);
+      expect(hasPdpApiCall(log, "NATBRA-2")).toBe(false);
+      expect(hasPdpApiCall([], "NATBRA-1")).toBe(false);
+    });
+
     test("applyPdpApiImages leaves other features and missing captures alone", () => {
       const other = { ...screenResult(1), featureKey: "addToCart" as const };
       expect(applyPdpApiImages(other, api(0))).toBe(other);
       const screen = screenResult(1);
       expect(applyPdpApiImages(screen, undefined)).toBe(screen);
+    });
+  });
+
+  test.describe("waitForPdpLoaded", () => {
+    /** PDP whose skeleton goes away after `loadedAfterPolls` polls, then shows "Cód. 2830". */
+    const loadingDriver = (loadedAfterPolls: number) => {
+      let polls = 0;
+      const driver = {
+        $: (selector: string) =>
+          selector.includes("shimmerLayouts")
+            ? { isDisplayed: async () => polls < loadedAfterPolls }
+            : selector.includes("tvCode")
+              ? { getText: async () => (polls >= loadedAfterPolls ? "Cód. 2830" : "") }
+              : { isDisplayed: async () => false },
+        waitUntil: async (condition: () => Promise<boolean>, opts: { timeout: number }) => {
+          for (let i = 0; i * 500 < opts.timeout; i++, polls++) {
+            if (await condition()) {
+              return true;
+            }
+          }
+          throw new Error("timeout");
+        },
+      } as unknown as WebdriverIO.Browser;
+      return driver;
+    };
+
+    test("waits for the skeleton to go away and the product code to show up", async () => {
+      expect(await waitForPdpLoaded(loadingDriver(40), 45_000)).toBe(true);
+    });
+
+    test("an empty product code is still loading", async () => {
+      expect(await waitForPdpLoaded(loadingDriver(200), 45_000)).toBe(false);
     });
   });
 

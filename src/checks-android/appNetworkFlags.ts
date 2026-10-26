@@ -349,6 +349,22 @@ export function findPdpApiImages(
   return result;
 }
 
+/**
+ * LambdaTest answers 200 with a partial log while it's still processing a session that just
+ * closed (seen on a short session that ended while another was still running: no flags at all).
+ * The app always calls the PDP API when a PDP opens, so a log without the last SKU's call is
+ * incomplete and is downloaded again.
+ */
+const INCOMPLETE_LOG_RETRIES = 4;
+const INCOMPLETE_LOG_WAIT_MS = 15_000;
+
+/** Whether the captured log already has the app's PDP API call for `sku`. */
+export function hasPdpApiCall(payload: unknown, sku: string): boolean {
+  return extractNetworkEntries(payload).some((e) =>
+    e.url.includes(`/pages/v2/product/${sku}`),
+  );
+}
+
 export interface AppSessionFlags {
   commerce: CommerceFeatureFlags | null;
   remoteConfigEntries: Record<string, string> | null;
@@ -376,7 +392,27 @@ export async function readAppSessionFlags(
   if (!isAndroidNetworkCaptureEnabled()) {
     return null;
   }
-  const log = await fetchLambdaTestNetworkLog(sessionId);
+  let log = await fetchLambdaTestNetworkLog(sessionId);
+  const lastSku = skuCodes[skuCodes.length - 1];
+  for (
+    let attempt = 1;
+    lastSku &&
+    !hasPdpApiCall(log, lastSku) &&
+    attempt <= INCOMPLETE_LOG_RETRIES;
+    attempt++
+  ) {
+    console.log(
+      `   ⏳ Log de rede da sessão ${sessionId} ainda incompleto (sem a API da PDP de ${lastSku}, ` +
+        `${extractNetworkEntries(log).length} requisições); nova tentativa ${attempt}/${INCOMPLETE_LOG_RETRIES} em ${INCOMPLETE_LOG_WAIT_MS / 1000}s`,
+    );
+    await new Promise((r) => setTimeout(r, INCOMPLETE_LOG_WAIT_MS));
+    log = await fetchLambdaTestNetworkLog(sessionId);
+  }
+  if (lastSku && !hasPdpApiCall(log, lastSku)) {
+    console.log(
+      `   ⚠️  Log de rede da sessão ${sessionId} sem a API da PDP de ${lastSku} mesmo após as tentativas: flags e imagens da API podem faltar.`,
+    );
+  }
   return {
     commerce: findCommerceFlagsInNetworkLog(log),
     remoteConfigEntries: findRemoteConfigEntriesInNetworkLog(log),

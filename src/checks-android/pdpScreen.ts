@@ -16,6 +16,8 @@ const GESTURE_AREA = { top: 0.25, height: 0.5, left: 0.1, width: 0.8 };
 const MAX_SCROLLS = 30;
 /** Lazy sections (Einstein, brand products) are appended after the PDP loads. */
 const LAZY_LOAD_WAIT_MS = 1500;
+/** Generous: a cold PDP on the device farm has taken ~23s. */
+const PDP_LOAD_TIMEOUT_MS = 45_000;
 
 /**
  * Closes the ZeeDog floating messages card ("cupom para você") if it's on screen. It shows up
@@ -32,6 +34,36 @@ export async function dismissZeeDog(
   } catch {
     // Best effort: the card is not always shown
   }
+}
+
+/**
+ * Waits for the PDP to finish loading: skeleton gone and the product code filled in. A slow PDP
+ * (seen at ~23s) otherwise has its checks run against the skeleton: no buy button yet, and an
+ * image carousel (fixed size, so already "visible") without its "1 / N" counter.
+ * Returns whether it loaded in time; the checks run either way and report what they see.
+ */
+export async function waitForPdpLoaded(
+  driver: WebdriverIO.Browser,
+  timeoutMs = PDP_LOAD_TIMEOUT_MS,
+): Promise<boolean> {
+  const skeleton = driver.$(`android=${ANDROID_SELECTORS.pdp.skeleton}`);
+  const productCode = driver.$(`android=${ANDROID_SELECTORS.pdp.productCode}`);
+  return driver
+    .waitUntil(
+      async () => {
+        await dismissZeeDog(driver);
+        if (await skeleton.isDisplayed().catch(() => false)) {
+          return false;
+        }
+        const code = await productCode.getText().catch(() => "");
+        return /\d/.test(code);
+      },
+      { timeout: timeoutMs, interval: 500 },
+    )
+    .then(
+      () => true,
+      () => false,
+    );
 }
 
 /** Visible height in px (UiAutomator reports the on-screen bounds); 0 when not displayed. */

@@ -52,6 +52,14 @@ export const ANDROID_SELECTORS = {
   },
   pdp: {
     /**
+     * Loading state of the PDP's main block (item_product_base_information_ne.xml): until the
+     * product arrives, shimmerLayouts (price/chips/benefits skeleton) is shown and tvCode
+     * ("Cód. %s", every locale) is empty. ProductBaseInformationViewHolder.hideSkeletonAndAnimateContent
+     * hides the skeleton and fills the real content. Both ids exist only in this block.
+     */
+    skeleton: 'new UiSelector().resourceIdMatches(".*:id/shimmerLayouts")',
+    productCode: 'new UiSelector().resourceIdMatches(".*:id/tvCode")',
+    /**
      * Close icon of the ZeeDog floating messages ("cupom para você", ncf-ui-cf-android
      * ZeeDogComponent.kt): Compose, no resource-id, contentDescription = zee_dog_close_accessibility,
      * translated per locale: "fechar recados, botão." (pt) / "Cerrar mensajes, botón." (es-AR/CL/CO/MX/PE).
