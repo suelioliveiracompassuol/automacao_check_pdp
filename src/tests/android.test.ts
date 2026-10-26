@@ -31,11 +31,21 @@ import {
 import {
   describePdpApiError,
   findCommerceFlagsInNetworkLog,
+  extractPdpImageUrls,
   findPdpApiErrors,
+  findPdpApiImages,
+  PdpApiImages,
   findRemoteConfigEntriesInNetworkLog,
 } from "../checks-android/appNetworkFlags.js";
 import { StepScreenshotRecorder } from "../checks-android/stepScreenshots.js";
 import { summarizeShowcases } from "../checks-android/pdpScreen.js";
+import {
+  applyPdpApiImages,
+  checkImagesAndroid,
+  parseImageCounter,
+} from "../checks-android/images.js";
+import { contentRatio, decodePng } from "../checks-android/pngImage.js";
+import * as zlib from "node:zlib";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -557,6 +567,362 @@ test.describe("Android Unit Tests", () => {
 
       await checkBrandShowcaseAndroid(mockDriver);
       expect(calls).toEqual([`android=${ANDROID_SELECTORS.pdp.zeeDogClose}`]);
+    });
+  });
+
+  /**
+   * Builds a width×height RGBA PNG (CRCs zeroed — the decoder doesn't check them), cycling
+   * through all five row filters so the decoder's unfiltering is exercised. `pixel` gives each
+   * pixel's [r, g, b].
+   */
+  const makePng = (
+    width: number,
+    height: number,
+    pixel: (x: number, y: number) => number[],
+  ): Buffer => {
+    const chunk = (type: string, data: Buffer) => {
+      const len = Buffer.alloc(4);
+      len.writeUInt32BE(data.length);
+      return Buffer.concat([len, Buffer.from(type, "ascii"), data, Buffer.alloc(4)]);
+    };
+    const ihdr = Buffer.alloc(13);
+    ihdr.writeUInt32BE(width, 0);
+    ihdr.writeUInt32BE(height, 4);
+    ihdr.set([8, 6, 0, 0, 0], 8);
+    const stride = width * 4;
+    const pixels = Buffer.alloc(stride * height);
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        pixels.set([...pixel(x, y), 255], y * stride + x * 4);
+      }
+    }
+    const paeth = (a: number, b: number, c: number) => {
+      const p = a + b - c;
+      const [pa, pb, pc] = [Math.abs(p - a), Math.abs(p - b), Math.abs(p - c)];
+      return pa <= pb && pa <= pc ? a : pb <= pc ? b : c;
+    };
+    const raw = Buffer.alloc((stride + 1) * height);
+    for (let y = 0; y < height; y++) {
+      const filter = y % 5;
+      raw[y * (stride + 1)] = filter;
+      for (let x = 0; x < stride; x++) {
+        const at = (yy: number, xx: number) =>
+          yy >= 0 && xx >= 0 ? pixels[yy * stride + xx] : 0;
+        const [a, b, c] = [at(y, x - 4), at(y - 1, x), at(y - 1, x - 4)];
+        const predictor = [0, a, b, (a + b) >> 1, paeth(a, b, c)][filter];
+        raw[y * (stride + 1) + 1 + x] = (at(y, x) - predictor) & 0xff;
+      }
+    }
+    return Buffer.concat([
+      Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]),
+      chunk("IHDR", ihdr),
+      chunk("IDAT", zlib.deflateSync(raw)),
+      chunk("IEND", Buffer.alloc(0)),
+    ]);
+  };
+  const WHITE = [250, 250, 250];
+  const blankPng = makePng(100, 120, () => WHITE);
+  /** Product photo on a white background: a colored shape in the middle. */
+  const photoPng = makePng(100, 120, (x, y) =>
+    x > 30 && x < 70 && y > 30 && y < 90 ? [180, 90, 60] : WHITE,
+  );
+
+  test.describe("decodePng / contentRatio", () => {
+    test("decodes the pixels of every row filter", () => {
+      const img = decodePng(
+        makePng(7, 10, (x, y) => [x * 30, y * 20, (x * y) % 256]),
+      );
+      expect([img.width, img.height, img.channels]).toEqual([7, 10, 4]);
+      for (let y = 0; y < 10; y++) {
+        for (let x = 0; x < 7; x++) {
+          const i = (y * 7 + x) * 4;
+          expect([...img.data.subarray(i, i + 3)]).toEqual([
+            x * 30,
+            y * 20,
+            (x * y) % 256,
+          ]);
+        }
+      }
+    });
+
+    test("a flat image has no content; a photo on white does", () => {
+      expect(contentRatio(decodePng(blankPng))).toBe(0);
+      expect(contentRatio(decodePng(photoPng))).toBeGreaterThan(0.1);
+    });
+
+    test("only the crop is analyzed", () => {
+      // Arrow drawn on the left edge of an otherwise blank page
+      const arrowPng = makePng(100, 120, (x) => (x < 10 ? [0, 0, 0] : WHITE));
+      const middle = { left: 0.2, top: 0.1, width: 0.6, height: 0.7 };
+      expect(contentRatio(decodePng(arrowPng))).toBeGreaterThan(0);
+      expect(contentRatio(decodePng(arrowPng), middle)).toBe(0);
+    });
+
+    test("rejects what isn't a PNG", () => {
+      expect(() => decodePng(Buffer.from("fake-png"))).toThrow("não é um PNG");
+    });
+  });
+
+  test.describe("checkImagesAndroid with mock driver", () => {
+    test("parseImageCounter reads the app's 'N / total' counter", () => {
+      expect(parseImageCounter("2 / 7")).toEqual({ page: 2, total: 7 });
+      expect(parseImageCounter("3/4")).toEqual({ page: 3, total: 4 });
+      expect(parseImageCounter("")).toBeNull();
+      expect(parseImageCounter(undefined)).toBeNull();
+    });
+
+    /**
+     * Carousel with one screenshot per image. The counter is shown when there's more than one
+     * image and follows the taps; `tapWorks: false` keeps the pager stuck.
+     */
+    const carouselDriver = (
+      pages: Buffer[],
+      { carouselHeight = 1300, tapWorks = true } = {},
+    ) => {
+      let current = 0;
+      const taps: { x: number; y: number }[] = [];
+      const carousel = {
+        elementId: "carousel",
+        isDisplayed: async () => carouselHeight > 0,
+        getSize: async () => ({ width: 1080, height: carouselHeight }),
+        getLocation: async () => ({ x: 0, y: 200 }),
+      };
+      const counter = {
+        isDisplayed: async () => pages.length > 1,
+        getText: async () => `${current + 1} / ${pages.length}`,
+      };
+      const action = {
+        move: (point: { x: number; y: number }) => {
+          taps.push(point);
+          return action;
+        },
+        down: () => action,
+        pause: () => action,
+        up: () => action,
+        perform: async () => {
+          if (tapWorks) {
+            current = Math.min(current + 1, pages.length - 1);
+          }
+        },
+      };
+      const driver = {
+        $: (selector: string) =>
+          selector.includes("cvProductImages")
+            ? carousel
+            : selector.includes("tvImageCounter")
+              ? counter
+              : { isDisplayed: async () => false },
+        takeElementScreenshot: async (id: string) => {
+          expect(id).toBe("carousel");
+          return pages[current].toString("base64");
+        },
+        action: () => action,
+      } as unknown as WebdriverIO.Browser;
+      return { driver, taps };
+    };
+    const fast = { imageLoadTimeoutMs: 0 };
+
+    test("passes when every image of the gallery renders", async () => {
+      const { driver, taps } = carouselDriver([photoPng, photoPng, photoPng]);
+      const result = await checkImagesAndroid(driver, fast);
+      expect(result.status).toBe("pass");
+      expect(result.message).toBe(
+        "3 imagem(ns) carregada(s) corretamente (carrossel presente)",
+      );
+      expect(result.details).toMatchObject({ imageCount: 3, loadedCount: 3 });
+      // Taps the app's "next image" area (right 20% of the carousel), never a swipe that
+      // starts on it — the area is drawn over the pager and swallows the drag
+      expect(taps).toEqual(Array(2).fill({ x: 972, y: 850 }));
+    });
+
+    test("a single image (no counter) is checked without changing page", async () => {
+      const { driver, taps } = carouselDriver([photoPng]);
+      const result = await checkImagesAndroid(driver, fast);
+      expect(result.status).toBe("pass");
+      expect(result.details).toMatchObject({ imageCount: 1, loadedCount: 1 });
+      expect(taps).toHaveLength(0);
+    });
+
+    test("fails pointing at the blank images", async () => {
+      const { driver } = carouselDriver([photoPng, blankPng, photoPng, blankPng]);
+      const result = await checkImagesAndroid(driver, fast);
+      expect(result.status).toBe("fail");
+      expect(result.message).toBe("2 ok, 2 imagem(ns) em branco (posição 2, 4)");
+      expect(result.details?.blankPositions).toEqual([2, 4]);
+    });
+
+    test("fails when no image loads", async () => {
+      const { driver } = carouselDriver([blankPng, blankPng]);
+      const result = await checkImagesAndroid(driver, fast);
+      expect(result.status).toBe("fail");
+      expect(result.message).toBe(
+        "Imagens encontradas (2) mas nenhuma carregou (em branco na tela)",
+      );
+    });
+
+    test("warns when the carousel doesn't move to the next image", async () => {
+      const { driver, taps } = carouselDriver([photoPng, photoPng, photoPng], {
+        tapWorks: false,
+      });
+      const result = await checkImagesAndroid(driver, fast);
+      expect(result.status).toBe("warning");
+      expect(result.message).toContain("carrossel não avançou para a imagem 2");
+      expect(result.details).toMatchObject({ loadedCount: 1, pageStuckAt: 2 });
+      expect(taps).toHaveLength(2); // one retry
+    });
+
+    test("caps a long gallery without warning", async () => {
+      const { driver } = carouselDriver(Array(12).fill(photoPng));
+      const result = await checkImagesAndroid(driver, fast);
+      expect(result.status).toBe("pass");
+      expect(result.message).toBe(
+        "10 imagem(ns) carregada(s) corretamente (carrossel presente) — 10 de 12 verificadas",
+      );
+    });
+
+    test("fails when the carousel isn't on screen", async () => {
+      const { driver } = carouselDriver([photoPng], { carouselHeight: 0 });
+      // The carousel wait polls for 10s: move the clock forward to keep the test short
+      const realNow = Date.now;
+      let fakeNow = realNow();
+      Date.now = () => (fakeNow += 5_000);
+      try {
+        const result = await checkImagesAndroid(driver, fast);
+        expect(result.status).toBe("fail");
+        expect(result.message).toBe(
+          "Carrossel de imagens do produto não encontrado na tela",
+        );
+      } finally {
+        Date.now = realNow;
+      }
+    });
+  });
+
+  test.describe("PDP API images", () => {
+    const IMG = "https://production.na01.natura.com/on/demandware.static/-/Sites-natura-br-storefront-catalog/default/dw1/";
+    const pdpBody = (body: unknown) => ({
+      request: { url: "https://bff-app-natura-brazil.example.com/pages/v2/product/NATBRA-1" },
+      response: { status: 200, content: { text: JSON.stringify(body) } },
+    });
+    const download = (url: string, status = 200) => ({
+      request: { url },
+      response: { status, content: {} },
+    });
+
+    test("extractPdpImageUrls picks the SKU's own variant bannerCollection", () => {
+      expect(
+        extractPdpImageUrls(
+          {
+            variations: [
+              { productId: "NATBRA-2", bannerCollection: [`${IMG}b.jpg`] },
+              { productId: "NATBRA-1", bannerCollection: [`${IMG}a1.jpg`, `${IMG}a2.jpg`, ""] },
+            ],
+            images: { large: [{ absURL: `${IMG}ignored.jpg` }] },
+          },
+          "NATBRA-1",
+        ),
+      ).toEqual({ source: "variations", urls: [`${IMG}a1.jpg`, `${IMG}a2.jpg`] });
+    });
+
+    test("extractPdpImageUrls falls back to the first variant, then to images.large/medium", () => {
+      expect(
+        extractPdpImageUrls(
+          { variations: [{ productId: "X", bannerCollection: [`${IMG}x.jpg`] }] },
+          "NATBRA-1",
+        ).urls,
+      ).toEqual([`${IMG}x.jpg`]);
+      expect(
+        extractPdpImageUrls(
+          { variations: [], images: { large: [{ absURL: `${IMG}l.jpg` }], medium: [{ absURL: `${IMG}m.jpg` }] } },
+          "NATBRA-1",
+        ),
+      ).toEqual({ source: "images", urls: [`${IMG}l.jpg`] });
+      expect(
+        extractPdpImageUrls({ data: { images: { medium: [{ absURL: `${IMG}m.jpg` }] } } }, "NATBRA-1").urls,
+      ).toEqual([`${IMG}m.jpg`]);
+    });
+
+    test("findPdpApiImages crosses the API images with the app's downloads", () => {
+      const images = findPdpApiImages(
+        {
+          log: {
+            entries: [
+              pdpBody({
+                variations: [
+                  {
+                    productId: "NATBRA-1",
+                    bannerCollection: [`${IMG}1.jpg`, `${IMG}2.jpg?sw=800`, `${IMG}3.jpg`],
+                  },
+                ],
+              }),
+              download(`${IMG}1.jpg`),
+              download(`${IMG}2.jpg`), // matched without the query string
+              download(`${IMG}3.jpg`, 404),
+            ],
+          },
+        },
+        ["NATBRA-1", "NATBRA-9"],
+      );
+      expect(images).toEqual({
+        "NATBRA-1": {
+          source: "variations",
+          urls: [`${IMG}1.jpg`, `${IMG}2.jpg?sw=800`, `${IMG}3.jpg`],
+          failed: [{ url: `${IMG}3.jpg`, status: 404 }],
+          downloadedCount: 2,
+        },
+      });
+    });
+
+    const screenResult = (imageCount: number) => ({
+      feature: "Imagens do produto",
+      featureKey: "images" as const,
+      passed: true,
+      status: "pass" as const,
+      message: `${imageCount} imagem(ns) carregada(s) corretamente (carrossel presente)`,
+      details: { hasCarousel: true, imageCount, loadedCount: imageCount },
+    });
+    const api = (urls: number, extra: Partial<PdpApiImages> = {}): PdpApiImages => ({
+      source: "variations",
+      urls: Array.from({ length: urls }, (_, i) => `${IMG}${i}.jpg`),
+      failed: [],
+      downloadedCount: urls,
+      ...extra,
+    });
+
+    test("applyPdpApiImages adds the API count to a passing screen result", () => {
+      const result = applyPdpApiImages(screenResult(3), api(3));
+      expect(result.status).toBe("pass");
+      expect(result.message).toBe(
+        "3 imagem(ns) carregada(s) corretamente (carrossel presente) · API: 3 imagem(ns), 3 baixada(s) pelo app",
+      );
+      expect(result.details?.api).toEqual({ source: "variations", imageCount: 3, downloadedCount: 3 });
+    });
+
+    test("applyPdpApiImages fails when the API sent no images or a download failed", () => {
+      expect(applyPdpApiImages(screenResult(1), api(0))).toMatchObject({
+        status: "fail",
+        passed: false,
+        message: expect.stringMatching(/^API da PDP não retornou imagens do produto/),
+      });
+      const failed = applyPdpApiImages(
+        screenResult(3),
+        api(3, { failed: [{ url: `${IMG}2.jpg?sw=800`, status: 404 }], downloadedCount: 2 }),
+      );
+      expect(failed.status).toBe("fail");
+      expect(failed.message).toMatch(/^1 de 3 imagem\(ns\) da API com erro no download \(HTTP 404 2\.jpg\)/);
+    });
+
+    test("applyPdpApiImages warns when the screen shows fewer images than the API", () => {
+      const result = applyPdpApiImages(screenResult(2), api(4));
+      expect(result.status).toBe("warning");
+      expect(result.message).toContain("tela mostra 2 de 4 imagens da API");
+    });
+
+    test("applyPdpApiImages leaves other features and missing captures alone", () => {
+      const other = { ...screenResult(1), featureKey: "addToCart" as const };
+      expect(applyPdpApiImages(other, api(0))).toBe(other);
+      const screen = screenResult(1);
+      expect(applyPdpApiImages(screen, undefined)).toBe(screen);
     });
   });
 

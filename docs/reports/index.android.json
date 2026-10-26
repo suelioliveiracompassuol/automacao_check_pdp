@@ -1,6 +1,48 @@
 {
   "reports": [
     {
+      "runId": "run_android_1793031414197",
+      "startTime": "2026-10-26T16:16:54.197Z",
+      "endTime": "2026-10-26T16:21:59.412Z",
+      "durationMs": 305215,
+      "summary": {
+        "total": 3,
+        "passed": 3,
+        "failed": 0,
+        "errors": 0
+      },
+      "jsonPath": "reports/run_android_1793031414197/report.json",
+      "platform": "android"
+    },
+    {
+      "runId": "run_android_1793026577236",
+      "startTime": "2026-10-26T14:56:17.236Z",
+      "endTime": "2026-10-26T15:07:34.852Z",
+      "durationMs": 677616,
+      "summary": {
+        "total": 8,
+        "passed": 8,
+        "failed": 0,
+        "errors": 0
+      },
+      "jsonPath": "reports/run_android_1793026577236/report.json",
+      "platform": "android"
+    },
+    {
+      "runId": "run_android_1793025472004",
+      "startTime": "2026-10-26T14:37:52.004Z",
+      "endTime": "2026-10-26T14:45:35.139Z",
+      "durationMs": 463135,
+      "summary": {
+        "total": 8,
+        "passed": 8,
+        "failed": 0,
+        "errors": 0
+      },
+      "jsonPath": "reports/run_android_1793025472004/report.json",
+      "platform": "android"
+    },
+    {
       "runId": "run_android_1793023441525",
       "startTime": "2026-10-26T14:04:01.525Z",
       "endTime": "2026-10-26T14:09:58.270Z",

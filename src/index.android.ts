@@ -1,7 +1,8 @@
 /**
  * Android PDP Feature Monitor - Orchestrator
  *
- * Scope (per roadmap Phase 2): a handful of features (add to cart, showcases, remote config)
+ * Scope (per roadmap Phase 2): a handful of features (add to cart, product images, showcases,
+ * remote config)
  * across all Natura BR SKUs by default. Runs N device sessions in parallel (ANDROID_CONCURRENCY);
  * within each session it logs in ONCE, then navigates PDP-to-PDP (deep link + checks) reusing the
  * same driver, instead of opening a fresh device/login per SKU.
@@ -44,6 +45,10 @@ import {
   applyNotifyMeFlag,
   checkAddToCartAndroid,
 } from "./checks-android/addToCart.js";
+import {
+  applyPdpApiImages,
+  checkImagesAndroid,
+} from "./checks-android/images.js";
 import {
   checkBrandShowcaseAndroid,
   checkRecommendationShowcaseAndroid,
@@ -154,6 +159,10 @@ async function checkPdpOnDriver(
     loadTime = addToCartResult.loadTime ?? Date.now() - navStartTime;
     features.push(addToCartResult);
     await steps.capture("PDP aberta");
+
+    // Carousel sits at the top of the PDP: checked before the showcase checks scroll down
+    features.push(await checkImagesAndroid(driver));
+    await steps.capture("Imagens do produto");
 
     // Native showcase checks verify native RecyclerView rendering with populated items
     features.push(await checkBrandShowcaseAndroid(driver));
@@ -294,7 +303,8 @@ function isSuccessful(features: CheckResult[], error?: string): boolean {
  * Commerce flags and Remote Config are read from the closed session's network capture (what
  * the app itself received), so they're attached to every SKU checked in that session. The
  * add-to-cart verdict depends on `wl_notify_me`, so it's completed here and `success` recomputed.
- * A failed PDP API response becomes the SKU's error (see findPdpApiErrors).
+ * A failed PDP API response becomes the SKU's error (see findPdpApiErrors), and the images the API
+ * sent (and the app's downloads of them) complete the images verdict (see applyPdpApiImages).
  */
 async function attachAppSessionFlags(
   sessionId: string,
@@ -331,11 +341,17 @@ async function attachAppSessionFlags(
         );
         r.success = isSuccessful(r.features, r.error);
       }
+      const apiImages = flags.pdpApiImages[r.sku];
+      if (apiImages) {
+        r.features = r.features.map((f) => applyPdpApiImages(f, apiImages));
+        r.success = isSuccessful(r.features, r.error);
+      }
     }
     console.log(
       `   ✓ Flags do app capturadas do tráfego da sessão ${sessionId}: ` +
         `commerce ${flags.commerce ? "ok" : "não encontradas"}, ` +
-        `Remote Config ${flags.remoteConfigEntries ? "ok" : "não encontrado"}`,
+        `Remote Config ${flags.remoteConfigEntries ? "ok" : "não encontrado"}, ` +
+        `imagens da API em ${Object.keys(flags.pdpApiImages).length}/${results.length} SKU(s)`,
     );
   } catch (e) {
     console.log(

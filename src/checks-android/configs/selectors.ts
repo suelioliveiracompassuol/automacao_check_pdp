@@ -39,6 +39,17 @@ export const ANDROID_SELECTORS = {
     brandRecyclerView: "rvMoreBrandProducts",
     recommendationRecyclerView: "rvEinsteinShowcase",
   },
+  /**
+   * Product image carousel, from ncf-whitelabel-cf-android item_product_base_information_ne.xml /
+   * ProductBaseInformationViewHolder.setUpImagesCarousel: cvProductImages is a ComposeView
+   * hosting ncf-ui's BannerCarouselComposable (HorizontalPager of Coil AsyncImages, no
+   * contentDescription/placeholder/error drawable), and tvImageCounter shows "1 / N" — only
+   * when there is more than one image.
+   */
+  images: {
+    carousel: 'new UiSelector().resourceIdMatches(".*:id/cvProductImages")',
+    counter: 'new UiSelector().resourceIdMatches(".*:id/tvImageCounter")',
+  },
   pdp: {
     /**
      * Close icon of the ZeeDog floating messages ("cupom para você", ncf-ui-cf-android

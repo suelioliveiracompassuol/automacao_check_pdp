@@ -259,14 +259,105 @@ export function describePdpApiError(error: PdpApiError): string {
   return `API da PDP respondeu ${error.status} em ${error.bff}${hint}`;
 }
 
+/** Product images the PDP API sent the app, and how the app's download of each one went. */
+export interface PdpApiImages {
+  /** "variations" (selected variant's bannerCollection) or "images" (product without variants). */
+  source: "variations" | "images";
+  urls: string[];
+  /** Downloads that came back with an HTTP error. */
+  failed: { url: string; status: number }[];
+  /** URLs with a successful download in the session's capture. */
+  downloadedCount: number;
+}
+
+function stringList(v: unknown): string[] {
+  return Array.isArray(v)
+    ? v.filter((s): s is string => typeof s === "string" && s.length > 0)
+    : [];
+}
+
+/**
+ * The carousel images in a PDP API body, the way ncf-whitelabel-cf-android picks them
+ * (ProductBaseInformationViewHolder): with variants, the selected variant's bannerCollection
+ * (the SKU's own variant, else the first one); without, images.large (or medium) absURLs.
+ */
+export function extractPdpImageUrls(
+  body: Record<string, unknown>,
+  sku: string,
+): Pick<PdpApiImages, "source" | "urls"> {
+  const product =
+    "variations" in body || "images" in body
+      ? body
+      : (asRecord(body.data) ?? body);
+  const variations = (
+    Array.isArray(product.variations) ? product.variations : []
+  )
+    .map(asRecord)
+    .filter((v): v is Record<string, unknown> => v !== undefined);
+  if (variations.length > 0) {
+    const variant =
+      variations.find((v) => v.productId === sku) ?? variations[0];
+    return { source: "variations", urls: stringList(variant.bannerCollection) };
+  }
+  const images = asRecord(product.images);
+  const list = Array.isArray(images?.large) ? images.large : images?.medium;
+  return {
+    source: "images",
+    urls: (Array.isArray(list) ? list : [])
+      .map((i) => asRecord(i)?.absURL)
+      .filter((u): u is string => typeof u === "string" && u.length > 0),
+  };
+}
+
+const withoutQuery = (url: string) => url.split("?")[0];
+
+/**
+ * Per SKU, the images its PDP API response (last successful pages/v2/product/<SKU> with a JSON
+ * body) listed for the carousel, crossed with the app's own downloads of those URLs in the same
+ * capture. SKUs whose API body wasn't captured are left out.
+ */
+export function findPdpApiImages(
+  payload: unknown,
+  skuCodes: readonly string[],
+): Record<string, PdpApiImages> {
+  const entries = extractNetworkEntries(payload);
+  const result: Record<string, PdpApiImages> = {};
+  for (const sku of skuCodes) {
+    const { body } = findLastJsonBody(entries, (url) =>
+      url.includes(`/pages/v2/product/${sku}`),
+    );
+    if (!body) {
+      continue;
+    }
+    const { source, urls } = extractPdpImageUrls(body, sku);
+    const failed: PdpApiImages["failed"] = [];
+    let downloadedCount = 0;
+    for (const url of urls) {
+      const download = entries
+        .filter(
+          (e) => e.url === url || withoutQuery(e.url) === withoutQuery(url),
+        )
+        .pop();
+      if (download?.status && download.status >= 400) {
+        failed.push({ url, status: download.status });
+      } else if (download) {
+        downloadedCount++;
+      }
+    }
+    result[sku] = { source, urls, failed, downloadedCount };
+  }
+  return result;
+}
+
 export interface AppSessionFlags {
   commerce: CommerceFeatureFlags | null;
   remoteConfigEntries: Record<string, string> | null;
   pdpApiErrors: Record<string, PdpApiError>;
+  pdpApiImages: Record<string, PdpApiImages>;
 }
 
 /**
- * Commerce feature flags, Remote Config and the PDP API errors of `skuCodes`, as the Android app
+ * Commerce feature flags, Remote Config and the PDP API errors and images of `skuCodes`, as the Android app
  * received them, read from the device farm's network capture of the (already closed) session.
  * The script never calls the BFF or Firebase itself. Returns null when there's no capture for
  * this provider/config.
@@ -290,5 +381,6 @@ export async function readAppSessionFlags(
     commerce: findCommerceFlagsInNetworkLog(log),
     remoteConfigEntries: findRemoteConfigEntriesInNetworkLog(log),
     pdpApiErrors: findPdpApiErrors(log, skuCodes),
+    pdpApiImages: findPdpApiImages(log, skuCodes),
   };
 }
