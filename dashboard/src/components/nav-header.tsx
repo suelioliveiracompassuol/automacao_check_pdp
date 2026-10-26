@@ -1,42 +1,51 @@
 import Link from 'next/link';
 import { formatDate } from '@/lib/format';
+import { PLATFORM_META } from '@/lib/platforms';
+import type { Platform } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
 export interface LastRunSummary {
+  platform: Platform;
+  runId: string;
   startTime: string;
   failed: number;
   errors: number;
 }
 
-/** Health of the most recent daily (web) run — derived from the report index at build time,
- * so the badge never claims "all good" when the last run had failures. */
-function LastRunStatus({ startTime, failed, errors }: LastRunSummary) {
+/** Health of a platform's most recent run — derived from the report index at build time,
+ * so the badge never claims "all good" when the last run had failures. Links to that run. */
+function LastRunStatus({ platform, runId, startTime, failed, errors }: LastRunSummary) {
+  const { label: platformLabel, href } = PLATFORM_META[platform];
   const problems = failed + errors;
   const ok = problems === 0;
-  const label = ok
-    ? 'Última execução sem falhas'
-    : `${problems} ${problems === 1 ? 'falha' : 'falhas'} na última execução`;
+  const status = ok ? 'sem falhas' : `${problems} ${problems === 1 ? 'falha' : 'falhas'}`;
+  const label = `${platformLabel}: ${status} na última execução`;
 
   return (
-    <div
+    <Link
+      href={`${href}/${runId}`}
+      aria-label={label}
       title={`${label} — ${formatDate(startTime)}`}
       className={cn(
-        'flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium',
+        'flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-colors',
         ok
-          ? 'border-success-lightest bg-success-lightest/50 text-success-dark'
-          : 'border-alert-lightest bg-alert-lightest/60 text-alert-dark',
+          ? 'border-success-lightest bg-success-lightest/50 text-success-dark hover:bg-success-lightest'
+          : 'border-alert-lightest bg-alert-lightest/60 text-alert-dark hover:bg-alert-lightest',
       )}
     >
       <span
         aria-hidden="true"
         className={cn('h-2 w-2 shrink-0 rounded-full', ok ? 'bg-success' : 'bg-alert')}
       />
-      <span className="sr-only sm:not-sr-only">{label}</span>
-    </div>
+      <span aria-hidden="true">
+        <span className="font-bold">{platformLabel}</span>
+        <span className="hidden sm:inline"> · {status}</span>
+      </span>
+    </Link>
   );
 }
 
-export function NavHeader({ lastRun }: { lastRun?: LastRunSummary | null }) {
+export function NavHeader({ lastRuns = [] }: { lastRuns?: LastRunSummary[] }) {
   return (
     <header id="app-nav-header" className="sticky top-0 z-40 bg-surface/90 backdrop-blur-lg">
       <div className="bg-brand-gradient h-1" aria-hidden="true" />
@@ -56,7 +65,13 @@ export function NavHeader({ lastRun }: { lastRun?: LastRunSummary | null }) {
               </span>
             </span>
           </Link>
-          {lastRun && <LastRunStatus {...lastRun} />}
+          {lastRuns.length > 0 && (
+            <nav aria-label="Status das automações" className="flex items-center gap-2">
+              {lastRuns.map((run) => (
+                <LastRunStatus key={run.platform} {...run} />
+              ))}
+            </nav>
+          )}
         </div>
       </div>
     </header>

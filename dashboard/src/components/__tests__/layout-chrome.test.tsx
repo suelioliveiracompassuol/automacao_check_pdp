@@ -34,18 +34,40 @@ describe('Sidebar', () => {
 });
 
 describe('NavHeader', () => {
-  it('indica última execução sem falhas', () => {
-    render(<NavHeader lastRun={{ startTime: '2024-05-01T13:00:00Z', failed: 0, errors: 0 }} />);
-    expect(screen.getByText('Última execução sem falhas')).toBeInTheDocument();
+  const web = { platform: 'web' as const, runId: 'run_1', startTime: '2024-05-01T13:00:00Z' };
+  const android = {
+    platform: 'android' as const,
+    runId: 'run_android_1',
+    startTime: '2024-05-01T15:00:00Z',
+  };
+
+  it('mostra um status por automação, cada um levando à sua execução', () => {
+    render(
+      <NavHeader
+        lastRuns={[
+          { ...web, failed: 0, errors: 0 },
+          { ...android, failed: 1, errors: 0 },
+        ]}
+      />,
+    );
+    expect(
+      screen.getByRole('link', { name: 'Web: sem falhas na última execução' }),
+    ).toHaveAttribute('href', '/web/run_1');
+    expect(
+      screen.getByRole('link', { name: 'Android: 1 falha na última execução' }),
+    ).toHaveAttribute('href', '/android/run_android_1');
   });
 
-  it('conta falhas e erros no singular e no plural', () => {
-    const { rerender } = render(
-      <NavHeader lastRun={{ startTime: '2024-05-01T13:00:00Z', failed: 1, errors: 0 }} />,
-    );
-    expect(screen.getByText('1 falha na última execução')).toBeInTheDocument();
-    rerender(<NavHeader lastRun={{ startTime: '2024-05-01T13:00:00Z', failed: 2, errors: 1 }} />);
-    expect(screen.getByText('3 falhas na última execução')).toBeInTheDocument();
+  it('conta falhas e erros no plural', () => {
+    render(<NavHeader lastRuns={[{ ...web, failed: 2, errors: 1 }]} />);
+    expect(
+      screen.getByRole('link', { name: 'Web: 3 falhas na última execução' }),
+    ).toBeInTheDocument();
+  });
+
+  it('sem execuções, não mostra status', () => {
+    render(<NavHeader lastRuns={[]} />);
+    expect(screen.queryByRole('navigation', { name: 'Status das automações' })).toBeNull();
   });
 });
 

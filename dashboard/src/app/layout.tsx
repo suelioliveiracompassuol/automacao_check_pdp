@@ -6,6 +6,7 @@ import { Sidebar } from '@/components/sidebar';
 import { MobileBottomNav } from '@/components/mobile-bottom-nav';
 import { MotionProvider } from '@/components/motion-provider';
 import { getReportsByPlatform } from '@/lib/data';
+import { PLATFORMS } from '@/lib/platforms';
 import type { LastRunSummary } from '@/components/nav-header';
 
 // next/font auto-hospeda as fontes no build: sem requisição bloqueante ao Google Fonts e sem
@@ -29,15 +30,18 @@ export const metadata: Metadata = {
   description: 'Dashboard de monitoramento automatizado de features em PDPs Natura/Avon',
 };
 
-function getLastWebRun(): LastRunSummary | null {
-  try {
-    const entry = getReportsByPlatform('web')[0];
-    if (!entry) return null;
-    const { failed, errors } = entry.summary;
-    return { startTime: entry.startTime, failed, errors };
-  } catch {
-    return null;
-  }
+/** Last run of each live platform (iOS still "em breve" has none), for the header badges. */
+function getLastRuns(): LastRunSummary[] {
+  return PLATFORMS.filter((p) => !p.upcoming).flatMap(({ platform }) => {
+    try {
+      const entry = getReportsByPlatform(platform)[0];
+      if (!entry) return [];
+      const { failed, errors } = entry.summary;
+      return [{ platform, runId: entry.runId, startTime: entry.startTime, failed, errors }];
+    } catch {
+      return [];
+    }
+  });
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -51,7 +55,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Pular para o conteúdo
         </a>
         <MotionProvider>
-          <NavHeader lastRun={getLastWebRun()} />
+          <NavHeader lastRuns={getLastRuns()} />
           {/* Altura mínima = tela menos o header (69px), para a sidebar ir até o fim em páginas curtas. */}
           <div className="mx-auto flex min-h-[calc(100dvh-69px)] max-w-360 items-start">
             <Sidebar />
