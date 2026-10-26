@@ -4,10 +4,10 @@ on:
   # Run manually when you want to update the dashboard
   workflow_dispatch:
 
-  # Republica depois de cada monitoramento: features (PDP Feature Monitor) e Web Vitals
-  # (PDP Performance), que rodam em workflows separados.
+  # Republica depois de cada monitoramento: features Web (PDP Feature Monitor), app Android
+  # (PDP Android Monitor (beta)) e Web Vitals (PDP Performance), que rodam em workflows separados.
   workflow_run:
-    workflows: ["PDP Feature Monitor", "PDP Performance"]
+    workflows: ["PDP Feature Monitor", "PDP Android Monitor (beta)", "PDP Performance"]
     types: [completed]
     branches: [master]
 
@@ -69,7 +69,6 @@ jobs:
           cp -r dashboard/out pages_output
           rm -rf pages_output/reports
           cp -r docs/reports pages_output/reports
-          cp docs/last-report.html pages_output/last-report.html 2>/dev/null || true
           cp docs/last-report.json pages_output/last-report.json 2>/dev/null || true
           cp -r docs/perf pages_output/perf 2>/dev/null || true
 

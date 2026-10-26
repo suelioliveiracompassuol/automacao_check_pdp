@@ -59,6 +59,23 @@ FEATURES_FILTER="reviews,rating" npm run check
 OPERATIONS_FILTER="natura-BR,avon-BR" npm run check
 ```
 
+### Execução Local (Android)
+
+Monitora o app nativo Android via WebdriverIO + Appium, em um device farm (LambdaTest App
+Automate por padrão, ou BrowserStack/local via `DEVICE_FARM_PROVIDER`). Veja `.env.example` para
+a lista completa de variáveis (device farm, concorrência, filtro de SKUs, login, Remote Config).
+
+```bash
+# Rodar todas as verificações Android (SKUs Natura/BR/ecommerce por padrão)
+npm run check:android
+
+# Filtrar SKUs específicos
+ANDROID_SKUS="NATBRA-70983,NATBRA-76420" npm run check:android
+
+# Controlar quantas sessões de device rodam em paralelo (default 2, teto 5)
+ANDROID_CONCURRENCY=3 npm run check:android
+```
+
 ## Scripts Utilitários
 
 | Script | Descrição |
@@ -115,13 +132,17 @@ Configurar em Settings → Secrets and variables → Actions:
 
 ```
 ├── src/
-│   ├── index.ts              # Orquestrador principal
+│   ├── index.ts              # Orquestrador principal (Web/Playwright)
+│   ├── index.android.ts      # Orquestrador Android (WebdriverIO/Appium)
+│   ├── deviceSetup.ts        # Criação/encerramento de sessão do device farm
+│   ├── androidConcurrency.ts # Chunking de SKUs por sessão / limite de concorrência (Android)
+│   ├── reportIndex.ts        # Escrita compartilhada de docs/reports/index.json (Web + Android)
 │   ├── browserSetup.ts       # Configuração do Playwright
-│   ├── concurrency.ts        # Controle de paralelismo
+│   ├── concurrency.ts        # Controle de paralelismo (Web)
 │   ├── reporter.ts           # Gerador de relatórios HTML/JSON
 │   ├── types.ts              # Tipos TypeScript
 │   ├── utils.ts              # Utilitários
-│   ├── checks/               # Módulos de verificação
+│   ├── checks/               # Módulos de verificação (Web)
 │   │   ├── configs/          # Configurações por operação
 │   │   ├── reviews.ts
 │   │   ├── aiReviewSummary.ts
@@ -137,6 +158,12 @@ Configurar em Settings → Secrets and variables → Actions:
 │   │   ├── shopTheSet.ts
 │   │   ├── contentBanners.ts
 │   │   ├── i18n.ts
+│   │   └── remoteConfig.ts
+│   ├── checks-android/       # Módulos de verificação (Android)
+│   │   ├── configs/selectors.ts
+│   │   ├── login.ts
+│   │   ├── addToCart.ts
+│   │   ├── showcases.ts
 │   │   └── remoteConfig.ts
 │   └── tests/                # Testes unitários
 ├── dashboard/                # Dashboard React (Next.js)
@@ -159,13 +186,12 @@ Configurar em Settings → Secrets and variables → Actions:
 
 ## Relatórios
 
-Após cada execução, um relatório é gerado em `docs/reports/run_<timestamp>/`:
+Após cada execução, um relatório é gerado em `docs/reports/run_<timestamp>/` (Android: `run_android_<timestamp>/`) e exibido pelo dashboard:
 
-- `report.html` — Relatório visual completo
 - `report.json` — Dados estruturados
 - `screenshots/` — Capturas de tela (fullpage, falhas, evidências)
 
-O relatório inclui:
+O dashboard mostra:
 - Resumo geral (passou/falhou/erros) por operação
 - Status de cada feature por SKU
 - Screenshots de evidência

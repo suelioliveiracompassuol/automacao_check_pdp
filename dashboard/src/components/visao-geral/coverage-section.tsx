@@ -2,20 +2,70 @@ import { SectionHeader } from '@/components/ui/card';
 import { CountryFlag } from '@/components/ui/country-flag';
 import { cn } from '@/lib/utils';
 import { COUNTRY_INFO, VENDOR_INFO } from '@/lib/constants';
-import type { Vendor } from '@/lib/types';
+import type { Platform, Vendor } from '@/lib/types';
 import { ChecksOverview } from '@/components/checks-overview';
 
-interface CoverageSectionProps {
+export interface PlatformCoverageData {
+  platform: Platform;
+  hasRuns: boolean;
   countries: string[];
-  channelsByCountry: Map<string, Set<string>>;
-  vendorsByCountry: Map<string, Set<string>>;
+  vendorsByCountry: Record<string, string[]>;
+  channelsByCountry: Record<string, string[]>;
+  /** Feature keys the platform's latest run executed; undefined = full catalog (Web). */
+  featureKeys?: string[];
 }
 
-export function CoverageSection({
+function CountryGrid({
   countries,
-  channelsByCountry,
   vendorsByCountry,
-}: CoverageSectionProps) {
+  channelsByCountry,
+}: Pick<PlatformCoverageData, 'countries' | 'vendorsByCountry' | 'channelsByCountry'>) {
+  return (
+    <div className="mb-6 grid grid-cols-2 gap-3 @md:grid-cols-3 @3xl:grid-cols-6">
+      {Object.entries(COUNTRY_INFO).map(([code, { label }]) => (
+        <div
+          key={code}
+          className={cn(
+            'flex flex-col items-center rounded-2xl border p-4 text-center',
+            countries.includes(code)
+              ? 'border-primary-lightest bg-primary-wash'
+              : 'border-neutral-75 bg-surface opacity-60',
+          )}
+        >
+          <CountryFlag
+            code={code}
+            alt={`Bandeira do ${label}`}
+            width={28}
+            height={20}
+            className="mb-1 h-5 w-7"
+          />
+          <span className="text-sm font-bold text-high-emphasis">{label}</span>
+          <div className="mt-2 flex flex-wrap justify-center gap-1">
+            {(vendorsByCountry[code] ?? []).map((vendor) => {
+              const info = VENDOR_INFO[vendor as Vendor];
+              if (!info) return null;
+              return (
+                <span
+                  key={vendor}
+                  className={cn('rounded-full px-2 py-0.5 text-[11px] font-bold', info.className)}
+                >
+                  {info.label}
+                </span>
+              );
+            })}
+            {channelsByCountry[code]?.includes('socialcommerce') && (
+              <span className="rounded-full bg-info-lightest px-2 py-0.5 text-[11px] font-bold text-info-dark">
+                Minha Loja
+              </span>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export function CoverageSection({ data }: { data: PlatformCoverageData }) {
   return (
     <section aria-labelledby="coverage-heading">
       <SectionHeader
@@ -24,50 +74,8 @@ export function CoverageSection({
         title="Cobertura"
         description="Países e tipos de verificação monitorados"
       />
-
-      <div className="mb-6 grid grid-cols-2 gap-3 @md:grid-cols-3 @3xl:grid-cols-6">
-        {Object.entries(COUNTRY_INFO).map(([code, { label }]) => (
-          <div
-            key={code}
-            className={cn(
-              'flex flex-col items-center rounded-2xl border p-4 text-center',
-              countries.includes(code)
-                ? 'border-primary-lightest bg-primary-wash'
-                : 'border-neutral-75 bg-surface opacity-60',
-            )}
-          >
-            <CountryFlag
-              code={code}
-              alt={`Bandeira do ${label}`}
-              width={28}
-              height={20}
-              className="mb-1 h-5 w-7"
-            />
-            <span className="text-sm font-bold text-high-emphasis">{label}</span>
-            <div className="mt-2 flex flex-wrap justify-center gap-1">
-              {[...(vendorsByCountry.get(code) ?? [])].map((vendor) => {
-                const info = VENDOR_INFO[vendor as Vendor];
-                if (!info) return null;
-                return (
-                  <span
-                    key={vendor}
-                    className={cn('rounded-full px-2 py-0.5 text-[11px] font-bold', info.className)}
-                  >
-                    {info.label}
-                  </span>
-                );
-              })}
-              {channelsByCountry.get(code)?.has('socialcommerce') && (
-                <span className="rounded-full bg-info-lightest px-2 py-0.5 text-[11px] font-bold text-info-dark">
-                  Minha Loja
-                </span>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <ChecksOverview />
+      <CountryGrid {...data} />
+      <ChecksOverview featureKeys={data.featureKeys} />
     </section>
   );
 }

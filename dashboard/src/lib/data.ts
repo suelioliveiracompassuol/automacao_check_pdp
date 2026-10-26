@@ -47,7 +47,25 @@ function readJsonFile<T>(filePath: string): T | null {
 
 export const getLastReport = cache((): MonitoringReport => readJson('last-report.json'));
 
-export const getReportIndex = cache((): ReportIndex => readJson('reports', 'index.json'));
+/**
+ * Execuções de todas as plataformas, mais recente primeiro. Web grava docs/reports/index.json e
+ * o Android, que roda num workflow separado, grava index.android.json (opcional). Entradas
+ * Android antigas ainda podem estar no index.json; o runId evita duplicar.
+ */
+export const getReportIndex = cache((): ReportIndex => {
+  const web = readJson<ReportIndex>('reports', 'index.json').reports;
+  const android = readOptionalJson<ReportIndex>('reports', 'index.android.json')?.reports ?? [];
+  if (android.length === 0) return { reports: web };
+
+  const byRunId = new Map<string, ReportIndexEntry>();
+  for (const entry of [...android, ...web]) {
+    if (!byRunId.has(entry.runId)) byRunId.set(entry.runId, entry);
+  }
+  const reports = [...byRunId.values()].sort(
+    (a, b) => (Date.parse(b.startTime) || 0) - (Date.parse(a.startTime) || 0),
+  );
+  return { reports };
+});
 
 export const getReportById = cache((runId: string): MonitoringReport | null =>
   readOptionalJson('reports', runId, 'report.json'),

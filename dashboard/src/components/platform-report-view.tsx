@@ -1,27 +1,29 @@
 import { ReportClient } from '@/app/web/[runId]/report-client';
 import { PlatformHero } from '@/components/platform-hero';
+import { PlatformHistoryDropdown } from '@/components/platform-history-dropdown';
 import { SummaryCards } from '@/components/summary-cards';
-import { WebHistoryDropdown } from '@/components/web-history-dropdown';
 import { getScreenshotsForRun } from '@/lib/data';
-import type { MonitoringReport } from '@/lib/types';
+import { PLATFORM_META } from '@/lib/platforms';
+import type { MonitoringReport, Platform } from '@/lib/types';
 
-interface WebReportViewProps {
+interface PlatformReportViewProps {
+  platform: Platform;
   report: MonitoringReport;
   description?: string;
 }
 
-/** Conteúdo das páginas /web (última execução) e /web/[runId] (execução do histórico). */
-export function WebReportView({ report, description }: WebReportViewProps) {
+/** Página de uma execução (a mais recente ou uma do histórico) de /web e /android. */
+export function PlatformReportView({ platform, report, description }: PlatformReportViewProps) {
   const screenshots = getScreenshotsForRun(report.runId);
 
   return (
     <div className="space-y-6 animate-fade-in-up">
       <PlatformHero
-        platform="web"
-        title="PDP Feature Monitor — Web"
+        platform={platform}
+        title={`PDP Feature Monitor — ${PLATFORM_META[platform].label}`}
         description={description}
         report={report}
-        action={<WebHistoryDropdown />}
+        action={<PlatformHistoryDropdown platform={platform} />}
       />
       <SummaryCards {...report.summary} />
       <ReportClient results={report.results} runId={report.runId} screenshots={screenshots} />

@@ -16,10 +16,11 @@ describe('Sidebar', () => {
     render(<Sidebar />);
     expect(screen.getByRole('link', { name: 'Visão Geral' })).not.toHaveAttribute('aria-current');
     expect(screen.getByRole('link', { name: 'Web' })).toHaveAttribute('aria-current', 'page');
-    expect(screen.getByRole('link', { name: 'Android (em breve)' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'Android (beta)' })).toHaveAttribute(
       'href',
       '/android',
     );
+    expect(screen.getByRole('link', { name: 'iOS (em breve)' })).toHaveAttribute('href', '/ios');
     expect(screen.getByRole('link', { name: 'SKUs' })).toHaveAttribute('href', '/skus');
   });
 
@@ -59,7 +60,7 @@ describe('PlatformHero', () => {
         action={<button>Histórico</button>}
       />,
     );
-    expect(screen.getByText('Site · Natura & Avon')).toBeInTheDocument();
+    expect(screen.getByText('Site · Natura & Avon · Minha Loja')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Monitor Web' })).toBeInTheDocument();
     expect(screen.getByText('Descrição')).toBeInTheDocument();
     expect(screen.getByText('2m 5s')).toBeInTheDocument();

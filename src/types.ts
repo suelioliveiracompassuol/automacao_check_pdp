@@ -30,6 +30,12 @@ export interface CheckResult {
   flagValue?: unknown;
 }
 
+/** Screenshot of one step of a check (path relative to the run folder) */
+export interface StepScreenshot {
+  label: string;
+  path: string;
+}
+
 /**
  * Result of checking a single PDP
  */
@@ -41,6 +47,8 @@ export interface PdpCheckResult {
   country: string;
   /** Channel: ecommerce (default) or socialcommerce (Minha Loja) */
   channel?: Channel;
+  /** Platform the check ran on. Defaults to "web" when omitted (legacy reports). */
+  platform?: Platform;
   timestamp: string;
   /** Overall status: true if all required checks passed */
   success: boolean;
@@ -52,6 +60,8 @@ export interface PdpCheckResult {
   error?: string;
   /** Full page screenshot on failure */
   pageScreenshot?: string;
+  /** Android: one screenshot per step of the check, in order (saved when the SKU fails) */
+  stepScreenshots?: StepScreenshot[];
   /** Playwright trace .zip when PLAYWRIGHT_TRACE is enabled */
   playwrightTracePath?: string;
   /** Captured Remote Config flags for this domain */
@@ -83,6 +93,7 @@ export interface MonitoringReport {
  * Base interface for feature checker functions
  */
 export type FeatureChecker = (page: Page) => Promise<CheckResult>;
+export type Platform = "web" | "android" | "ios";
 export type Vendor = "natura" | "avon";
 export type Country = "BR" | "AR" | "CL" | "CO" | "MX" | "PE";
 export type Channel = "ecommerce" | "socialcommerce";

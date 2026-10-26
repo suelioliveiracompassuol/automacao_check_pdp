@@ -1,0 +1,268 @@
+import { remote } from "webdriverio";
+import type { Capabilities } from "@wdio/types";
+import type { SkuConfig } from "./types.js";
+import {
+  AndroidSessionTarget,
+  deviceLocaleFor,
+  findAndroidApp,
+} from "./checks-android/configs/apps.js";
+
+/**
+ * DEVICE_FARM_PROVIDER: "lambdatest" (default, the provider in use) | "browserstack" | "local".
+ * Only LambdaTest exposes the session network log the app flags are read from.
+ */
+export function getDeviceFarmProvider(): string {
+  return (process.env.DEVICE_FARM_PROVIDER || "lambdatest").toLowerCase();
+}
+
+/**
+ * Creates an Appium session against a device farm or a local Android emulator/device.
+ * Mirrors browserSetup.ts's role for the web checks, but for a native Android app via Appium.
+ *
+ * Provider is selected via DEVICE_FARM_PROVIDER (see getDeviceFarmProvider).
+ * Note: LambdaTest's automated Appium product is "App Automate" (not the manual "App Live" UI) —
+ * both share the same uploaded app storage, so an app uploaded via https://applive.lambdatest.com/app
+ * can be reused here through its `lt://` id.
+ */
+export async function createAndroidSession(
+  target: AndroidSessionTarget,
+): Promise<WebdriverIO.Browser> {
+  const provider = getDeviceFarmProvider();
+
+  if (provider === "local") {
+    return createLocalSession(target);
+  }
+  if (provider === "lambdatest") {
+    return createLambdaTestSession(target);
+  }
+  return createBrowserStackSession(target);
+}
+
+/**
+ * Device language/region for the session's country (Appium UiAutomator2 sets it before the app
+ * starts), so Natura LATAM and Avon open in that country — see deviceLocaleFor. Used for the
+ * local and BrowserStack sessions; LambdaTest takes its own keys in LT:Options.
+ */
+function localeCapabilities(target: AndroidSessionTarget) {
+  const { language, locale } = deviceLocaleFor(target.country);
+  return { "appium:language": language, "appium:locale": locale };
+}
+
+function createLocalSession(
+  target: AndroidSessionTarget,
+): Promise<WebdriverIO.Browser> {
+  const host = process.env.APPIUM_HOST || "127.0.0.1";
+  const port = Number.parseInt(process.env.APPIUM_PORT || "4723", 10);
+  const appPath = process.env.ANDROID_APP_PATH || process.env.ANDROID_APK_PATH;
+
+  const capabilities: Capabilities.WebdriverIOConfig["capabilities"] = {
+    platformName: "Android",
+    "appium:automationName": "UiAutomator2",
+    ...(appPath ? { "appium:app": appPath } : {}),
+    "appium:deviceName": process.env.ANDROID_DEVICE_NAME || "Android Emulator",
+    "appium:platformVersion": process.env.ANDROID_OS_VERSION || "13.0",
+    "appium:noReset": true,
+    "appium:autoLaunch": false,
+    "appium:autoGrantPermissions": true,
+    "appium:disableWindowAnimation": true,
+    "appium:newCommandTimeout": 180,
+    ...localeCapabilities(target),
+  };
+
+  return remote({
+    protocol: "http",
+    hostname: host,
+    port,
+    path: process.env.APPIUM_PATH || "/",
+    logLevel: "warn",
+    capabilities,
+  });
+}
+
+function createBrowserStackSession(
+  target: AndroidSessionTarget,
+): Promise<WebdriverIO.Browser> {
+  const userName = process.env.BROWSERSTACK_USERNAME;
+  const accessKey = process.env.BROWSERSTACK_ACCESS_KEY;
+  const appId = process.env.BROWSERSTACK_APP_ID;
+
+  if (!userName || !accessKey) {
+    throw new Error(
+      "BROWSERSTACK_USERNAME/BROWSERSTACK_ACCESS_KEY não configurados — necessários para abrir sessão no device farm",
+    );
+  }
+  if (!appId) {
+    throw new Error(
+      "BROWSERSTACK_APP_ID não configurado — faça upload do APK/AAB (bstack CLI ou API) e informe o id retornado (bs://...)",
+    );
+  }
+
+  const capabilities: Capabilities.WebdriverIOConfig["capabilities"] = {
+    platformName: "Android",
+    "appium:automationName": "UiAutomator2",
+    "appium:app": appId,
+    "appium:noReset": true,
+    // InitActivity is singleInstance/noHistory and only parses deep link extras on a cold
+    // onCreate — auto-launching it first would make our deepLink call a warm onNewIntent
+    // that the app ignores, landing on Home instead of the PDP.
+    "appium:autoLaunch": false,
+    "appium:autoGrantPermissions": true,
+    "appium:disableWindowAnimation": true,
+    "appium:newCommandTimeout": 180,
+    ...localeCapabilities(target),
+    "bstack:options": {
+      userName,
+      accessKey,
+      deviceName: process.env.ANDROID_DEVICE_NAME || "Google Pixel 7",
+      osVersion: process.env.ANDROID_OS_VERSION || "13.0",
+      projectName: "PDP Feature Monitor",
+      buildName: process.env.GITHUB_RUN_ID || "local",
+      sessionName: "Android PDP check",
+    },
+  };
+
+  return remote({
+    protocol: "https",
+    hostname: "hub-cloud.browserstack.com",
+    port: 443,
+    path: "/wd/hub",
+    logLevel: "warn",
+    capabilities,
+  });
+}
+
+function createLambdaTestSession(
+  target: AndroidSessionTarget,
+): Promise<WebdriverIO.Browser> {
+  const userName = process.env.LAMBDATEST_USERNAME;
+  const accessKey = process.env.LAMBDATEST_ACCESS_KEY;
+  const appIdEnv = target.app.lambdaTestAppIdEnv;
+  const appId = process.env[appIdEnv];
+
+  if (!userName || !accessKey) {
+    throw new Error(
+      "LAMBDATEST_USERNAME/LAMBDATEST_ACCESS_KEY não configurados — necessários para abrir sessão no device farm",
+    );
+  }
+  if (!appId) {
+    throw new Error(
+      `${appIdEnv} não configurado (app ${target.app.key}) — faça upload do APK/AAB em https://applive.lambdatest.com/app e informe o id retornado (lt://...)`,
+    );
+  }
+
+  const capabilities: Capabilities.WebdriverIOConfig["capabilities"] = {
+    platformName: "Android",
+    "appium:automationName": "UiAutomator2",
+    "appium:app": appId,
+    "appium:deviceName": process.env.ANDROID_DEVICE_NAME || "Galaxy S22 5G",
+    "appium:platformVersion": process.env.ANDROID_OS_VERSION || "12",
+    "appium:noReset": true,
+    // See comment in createBrowserStackSession: avoids a warm onNewIntent that the app ignores.
+    "appium:autoLaunch": false,
+    "appium:autoGrantPermissions": true,
+    "appium:disableWindowAnimation": true,
+    "appium:newCommandTimeout": 180,
+    "LT:Options": {
+      username: userName,
+      accessKey,
+      project: "PDP Feature Monitor",
+      build: process.env.GITHUB_RUN_ID || "local",
+      name: `Android PDP check ${target.app.key} ${target.country}`,
+      isRealMobile: true,
+      w3c: true,
+      // Captures the app's own traffic so commerce flags come from what the app received.
+      network: process.env.ANDROID_NETWORK_CAPTURE !== "false",
+      // LambdaTest's own device language/region (Android `locale` = country code only); it
+      // ignores appium:language/appium:locale on real devices, so the LATAM app fell back to
+      // Argentina for a Chile session.
+      ...deviceLocaleFor(target.country),
+      // Device traffic through an IP of the session's country: the Colombia BFF's WAF (Akamai)
+      // answered 403 to every call from the farm's IP. Brazil works without it, so it's left as is.
+      ...(target.country !== "BR" ? { geoLocation: target.country } : {}),
+    },
+  };
+
+  return remote({
+    protocol: "https",
+    hostname: "mobile-hub.lambdatest.com",
+    port: 443,
+    path: "/wd/hub",
+    logLevel: "warn",
+    capabilities,
+  });
+}
+
+/**
+ * The applicationId varies per brand flavor (see ANDROID_APPS in checks-android/configs/apps.ts).
+ * A ".dev"/".hml" suffix is appended depending on the build mode; ANDROID_APP_PACKAGE overrides
+ * everything when set, useful when testing a dev/hml build.
+ */
+export function resolveAndroidAppPackage(sku: SkuConfig): string {
+  if (process.env.ANDROID_APP_PACKAGE) {
+    return process.env.ANDROID_APP_PACKAGE;
+  }
+  const app = findAndroidApp(sku);
+  if (!app) {
+    throw new Error(
+      `Nenhum app Android para ${sku.vendor}-${sku.country} (ver checks-android/configs/apps.ts)`,
+    );
+  }
+  return app.packageName;
+}
+
+/**
+ * Opens a PDP directly via the app's Android App Links (https://{host}/p/{slug}/{sku}),
+ * bypassing in-app search. Uses Appium's `mobile: deepLink` extension instead of a raw
+ * `adb shell am start`, since device farms typically don't expose adb shell access.
+ *
+ * InitActivity doesn't override onNewIntent (confirmed in ncf-whitelabel-cf-android), so if the
+ * device farm reuses a still-running app process the deep link intent never reaches
+ * callDeeplinkResolver() with fresh data — the app just falls through to Home. terminateApp
+ * first forces a real cold onCreate() so the deep link's intent.data is actually used.
+ */
+export async function openPdpDeepLink(
+  driver: WebdriverIO.Browser,
+  url: string,
+  sku: SkuConfig,
+): Promise<void> {
+  const appPackage = resolveAndroidAppPackage(sku);
+
+  // In device farms, terminateApp() is asynchronous. Wait deterministically for the app
+  // to transition to NOT_RUNNING (0) rather than using an arbitrary pause.
+  await driver
+    .terminateApp(appPackage)
+    .catch((e) => console.debug("   (debug) terminateApp falhou (best-effort):", e));
+  await driver
+    .waitUntil(
+      async () => {
+        try {
+          const state = await driver.queryAppState(appPackage);
+          // 0 = NOT_RUNNING, 1 = NOT_RUNNING (cached/stopped)
+          return state === 0 || state === 1;
+        } catch {
+          return true; // if queryAppState is unsupported, proceed
+        }
+      },
+      { timeout: 3000, interval: 200 },
+    )
+    .catch(() => {});
+
+  await driver.execute("mobile: deepLink", {
+    url,
+    package: appPackage,
+  });
+}
+
+/** Ends the Appium session, releasing the device back to the farm's pool. */
+export async function closeAndroidSession(
+  driver: WebdriverIO.Browser,
+): Promise<void> {
+  await driver
+    .deleteSession()
+    .catch((e) =>
+      console.warn(
+        "⚠️  deleteSession falhou — a sessão pode ter ficado presa/consumindo cota no device farm:",
+        e,
+      ),
+    );
+}
