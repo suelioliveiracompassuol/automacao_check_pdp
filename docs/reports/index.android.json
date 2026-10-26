@@ -1,6 +1,20 @@
 {
   "reports": [
     {
+      "runId": "run_android_1793040139981",
+      "startTime": "2026-10-26T18:42:19.981Z",
+      "endTime": "2026-10-26T18:54:34.347Z",
+      "durationMs": 734366,
+      "summary": {
+        "total": 11,
+        "passed": 8,
+        "failed": 0,
+        "errors": 3
+      },
+      "jsonPath": "reports/run_android_1793040139981/report.json",
+      "platform": "android"
+    },
+    {
       "runId": "run_android_1793023441525",
       "startTime": "2026-10-26T14:04:01.525Z",
       "endTime": "2026-10-26T14:09:58.270Z",

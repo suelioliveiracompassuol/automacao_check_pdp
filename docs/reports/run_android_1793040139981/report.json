@@ -1,0 +1,616 @@
+{
+  "runId": "run_android_1793040139981",
+  "startTime": "2026-10-26T18:42:19.981Z",
+  "endTime": "2026-10-26T18:54:34.347Z",
+  "durationMs": 734366,
+  "summary": {
+    "total": 11,
+    "passed": 8,
+    "failed": 0,
+    "errors": 3
+  },
+  "results": [
+    {
+      "sku": "NATARG-00068",
+      "name": "Base serum nude me",
+      "url": "https://www.naturacosmeticos.com.ar/p/base-serum-nude-me/NATARG-00068",
+      "vendor": "natura",
+      "country": "AR",
+      "platform": "android",
+      "timestamp": "2026-10-26T18:42:21.355Z",
+      "success": false,
+      "features": [],
+      "error": "LAMBDATEST_APP_ID_NATURA_LATAM não configurado (app natura-latam) — faça upload do APK/AAB em https://applive.lambdatest.com/app e informe o id retornado (lt://...)",
+      "remoteConfigFlags": null,
+      "commerceFeatureFlags": null
+    },
+    {
+      "sku": "NATARG-81950",
+      "name": "Homem Potence EDP 100ml",
+      "url": "https://www.naturacosmeticos.com.ar/p/homem-potence-edp-100-ml/NATARG-81950",
+      "vendor": "natura",
+      "country": "AR",
+      "platform": "android",
+      "timestamp": "2026-10-26T18:42:21.355Z",
+      "success": false,
+      "features": [],
+      "error": "LAMBDATEST_APP_ID_NATURA_LATAM não configurado (app natura-latam) — faça upload do APK/AAB em https://applive.lambdatest.com/app e informe o id retornado (lt://...)",
+      "remoteConfigFlags": null,
+      "commerceFeatureFlags": null
+    },
+    {
+      "sku": "NATARG-83323",
+      "name": "Kriska Shock EDT Femenino 100ml",
+      "url": "https://www.naturacosmeticos.com.ar/p/kriska-shock-eau-de-toilette-femenino-100ml/NATARG-83323",
+      "vendor": "natura",
+      "country": "AR",
+      "platform": "android",
+      "timestamp": "2026-10-26T18:42:21.355Z",
+      "success": false,
+      "features": [],
+      "error": "LAMBDATEST_APP_ID_NATURA_LATAM não configurado (app natura-latam) — faça upload do APK/AAB em https://applive.lambdatest.com/app e informe o id retornado (lt://...)",
+      "remoteConfigFlags": null,
+      "commerceFeatureFlags": null
+    },
+    {
+      "sku": "NATBRA-110181",
+      "name": "Base Sérum Nude Me Una 30ml",
+      "url": "https://www.natura.com.br/p/base-serum-nude-me-una-30-ml/NATBRA-110181",
+      "vendor": "natura",
+      "country": "BR",
+      "platform": "android",
+      "timestamp": "2026-10-26T18:44:13.914Z",
+      "success": true,
+      "loadTime": 17434,
+      "features": [
+        {
+          "feature": "Botão Adicionar à Sacola",
+          "featureKey": "addToCart",
+          "passed": true,
+          "status": "pass",
+          "message": "Botão de compra encontrado na tela — texto: \"adicionar\"",
+          "loadTime": 17434,
+          "details": {
+            "isDisplayed": true,
+            "isEnabled": true,
+            "text": "adicionar",
+            "state": "buy",
+            "inStock": true,
+            "notifyMeFlag": null,
+            "loadTime": 17434
+          }
+        },
+        {
+          "feature": "Imagens do produto",
+          "featureKey": "images",
+          "passed": true,
+          "status": "pass",
+          "message": "5 imagem(ns) carregada(s) corretamente (carrossel presente)",
+          "details": {
+            "hasCarousel": true,
+            "imageCount": 5,
+            "checkedCount": 5,
+            "loadedCount": 5,
+            "blankCount": 0
+          }
+        },
+        {
+          "feature": "Vitrine \"Mais produtos da marca\"",
+          "featureKey": "brandShowcase",
+          "passed": true,
+          "status": "pass",
+          "message": "Vitrine \"mais produtos da marca\" renderizada no app Android (RecyclerView com conteúdo)",
+          "details": {
+            "rendered": true,
+            "itemCount": 0,
+            "resourceId": "rvMoreBrandProducts"
+          }
+        },
+        {
+          "feature": "Vitrine \"Achamos que você vai gostar\"",
+          "featureKey": "recommendationShowcase",
+          "passed": true,
+          "status": "pass",
+          "message": "Vitrine de recomendações renderizada no app Android (RecyclerView com conteúdo)",
+          "details": {
+            "rendered": true,
+            "itemCount": 0,
+            "resourceId": "rvEinsteinShowcase"
+          }
+        }
+      ],
+      "remoteConfigFlags": null,
+      "commerceFeatureFlags": null
+    },
+    {
+      "sku": "NATBRA-122112",
+      "name": "Corretivo Cobertura Extrema 24h Una",
+      "url": "https://www.natura.com.br/p/corretivo-cobertura-extrema-24h-una-8-ml/NATBRA-122112",
+      "vendor": "natura",
+      "country": "BR",
+      "platform": "android",
+      "timestamp": "2026-10-26T18:45:28.083Z",
+      "success": true,
+      "loadTime": 17650,
+      "features": [
+        {
+          "feature": "Botão Adicionar à Sacola",
+          "featureKey": "addToCart",
+          "passed": true,
+          "status": "pass",
+          "message": "Botão de compra encontrado na tela — texto: \"adicionar\"",
+          "loadTime": 17650,
+          "details": {
+            "isDisplayed": true,
+            "isEnabled": true,
+            "text": "adicionar",
+            "state": "buy",
+            "inStock": true,
+            "notifyMeFlag": null,
+            "loadTime": 17650
+          }
+        },
+        {
+          "feature": "Imagens do produto",
+          "featureKey": "images",
+          "passed": true,
+          "status": "pass",
+          "message": "6 imagem(ns) carregada(s) corretamente (carrossel presente)",
+          "details": {
+            "hasCarousel": true,
+            "imageCount": 6,
+            "checkedCount": 6,
+            "loadedCount": 6,
+            "blankCount": 0
+          }
+        },
+        {
+          "feature": "Vitrine \"Mais produtos da marca\"",
+          "featureKey": "brandShowcase",
+          "passed": true,
+          "status": "pass",
+          "message": "Vitrine \"mais produtos da marca\" renderizada no app Android (RecyclerView com conteúdo)",
+          "details": {
+            "rendered": true,
+            "itemCount": 0,
+            "resourceId": "rvMoreBrandProducts"
+          }
+        },
+        {
+          "feature": "Vitrine \"Achamos que você vai gostar\"",
+          "featureKey": "recommendationShowcase",
+          "passed": true,
+          "status": "pass",
+          "message": "Vitrine de recomendações renderizada no app Android (RecyclerView com conteúdo)",
+          "details": {
+            "rendered": true,
+            "itemCount": 0,
+            "resourceId": "rvEinsteinShowcase"
+          }
+        }
+      ],
+      "remoteConfigFlags": null,
+      "commerceFeatureFlags": null
+    },
+    {
+      "sku": "NATBRA-169786",
+      "name": "Kaiak Ultra Masculino 100ml",
+      "url": "https://www.natura.com.br/p/deo-colonia-kaiak-ultra-masculino-100ml/NATBRA-169786",
+      "vendor": "natura",
+      "country": "BR",
+      "platform": "android",
+      "timestamp": "2026-10-26T18:46:43.812Z",
+      "success": true,
+      "loadTime": 19272,
+      "features": [
+        {
+          "feature": "Botão Adicionar à Sacola",
+          "featureKey": "addToCart",
+          "passed": true,
+          "status": "pass",
+          "message": "Produto indisponível: botão \"me avise\" exibido (wl_notify_me não capturada) — texto: \"me avise\"",
+          "loadTime": 19272,
+          "details": {
+            "isDisplayed": true,
+            "isEnabled": true,
+            "text": "me avise",
+            "state": "notifyMe",
+            "inStock": false,
+            "notifyMeFlag": null,
+            "loadTime": 19272
+          }
+        },
+        {
+          "feature": "Imagens do produto",
+          "featureKey": "images",
+          "passed": true,
+          "status": "pass",
+          "message": "3 imagem(ns) carregada(s) corretamente (carrossel presente)",
+          "details": {
+            "hasCarousel": true,
+            "imageCount": 3,
+            "checkedCount": 3,
+            "loadedCount": 3,
+            "blankCount": 0
+          }
+        },
+        {
+          "feature": "Vitrine \"Mais produtos da marca\"",
+          "featureKey": "brandShowcase",
+          "passed": true,
+          "status": "pass",
+          "message": "Vitrine \"mais produtos da marca\" renderizada no app Android (RecyclerView com conteúdo)",
+          "details": {
+            "rendered": true,
+            "itemCount": 0,
+            "resourceId": "rvMoreBrandProducts"
+          }
+        },
+        {
+          "feature": "Vitrine \"Achamos que você vai gostar\"",
+          "featureKey": "recommendationShowcase",
+          "passed": true,
+          "status": "pass",
+          "message": "Vitrine de recomendações renderizada no app Android (RecyclerView com conteúdo)",
+          "details": {
+            "rendered": true,
+            "itemCount": 0,
+            "resourceId": "rvEinsteinShowcase"
+          }
+        }
+      ],
+      "remoteConfigFlags": null,
+      "commerceFeatureFlags": null
+    },
+    {
+      "sku": "NATBRA-172407",
+      "name": "Óleo em Creme Tododia Jambo Rosa e Flor de Caju",
+      "url": "https://www.natura.com.br/p/oleo-em-creme-ultranutritivo-restaurador-tododia-jambo-rosa-e-flor-de-caju-200-ml/NATBRA-172407",
+      "vendor": "natura",
+      "country": "BR",
+      "platform": "android",
+      "timestamp": "2026-10-26T18:47:49.456Z",
+      "success": true,
+      "loadTime": 18234,
+      "features": [
+        {
+          "feature": "Botão Adicionar à Sacola",
+          "featureKey": "addToCart",
+          "passed": true,
+          "status": "pass",
+          "message": "Botão de compra encontrado na tela — texto: \"adicionar\"",
+          "loadTime": 18234,
+          "details": {
+            "isDisplayed": true,
+            "isEnabled": true,
+            "text": "adicionar",
+            "state": "buy",
+            "inStock": true,
+            "notifyMeFlag": null,
+            "loadTime": 18234
+          }
+        },
+        {
+          "feature": "Imagens do produto",
+          "featureKey": "images",
+          "passed": true,
+          "status": "pass",
+          "message": "5 imagem(ns) carregada(s) corretamente (carrossel presente)",
+          "details": {
+            "hasCarousel": true,
+            "imageCount": 5,
+            "checkedCount": 5,
+            "loadedCount": 5,
+            "blankCount": 0
+          }
+        },
+        {
+          "feature": "Vitrine \"Mais produtos da marca\"",
+          "featureKey": "brandShowcase",
+          "passed": true,
+          "status": "pass",
+          "message": "Vitrine \"mais produtos da marca\" renderizada no app Android (RecyclerView com conteúdo)",
+          "details": {
+            "rendered": true,
+            "itemCount": 0,
+            "resourceId": "rvMoreBrandProducts"
+          }
+        },
+        {
+          "feature": "Vitrine \"Achamos que você vai gostar\"",
+          "featureKey": "recommendationShowcase",
+          "passed": true,
+          "status": "pass",
+          "message": "Vitrine de recomendações renderizada no app Android (RecyclerView com conteúdo)",
+          "details": {
+            "rendered": true,
+            "itemCount": 0,
+            "resourceId": "rvEinsteinShowcase"
+          }
+        }
+      ],
+      "remoteConfigFlags": null,
+      "commerceFeatureFlags": null
+    },
+    {
+      "sku": "NATBRA-2830",
+      "name": "Sabonete em Barra Puro Vegetal Tododia Algodão 5 un de 90g cada",
+      "url": "https://www.natura.com.br/p/sabonete-em-barra-puro-vegetal-tododia-algodao-5-un-de-90-g-cada/NATBRA-2830",
+      "vendor": "natura",
+      "country": "BR",
+      "platform": "android",
+      "timestamp": "2026-10-26T18:49:05.662Z",
+      "success": true,
+      "loadTime": 20473,
+      "features": [
+        {
+          "feature": "Botão Adicionar à Sacola",
+          "featureKey": "addToCart",
+          "passed": true,
+          "status": "pass",
+          "message": "Produto indisponível: botão \"me avise\" exibido (wl_notify_me não capturada) — texto: \"me avise\"",
+          "loadTime": 20473,
+          "details": {
+            "isDisplayed": true,
+            "isEnabled": true,
+            "text": "me avise",
+            "state": "notifyMe",
+            "inStock": false,
+            "notifyMeFlag": null,
+            "loadTime": 20473
+          }
+        },
+        {
+          "feature": "Imagens do produto",
+          "featureKey": "images",
+          "passed": true,
+          "status": "pass",
+          "message": "3 imagem(ns) carregada(s) corretamente (carrossel presente)",
+          "details": {
+            "hasCarousel": true,
+            "imageCount": 3,
+            "checkedCount": 3,
+            "loadedCount": 3,
+            "blankCount": 0
+          }
+        },
+        {
+          "feature": "Vitrine \"Mais produtos da marca\"",
+          "featureKey": "brandShowcase",
+          "passed": true,
+          "status": "pass",
+          "message": "Vitrine \"mais produtos da marca\" renderizada no app Android (RecyclerView com conteúdo)",
+          "details": {
+            "rendered": true,
+            "itemCount": 0,
+            "resourceId": "rvMoreBrandProducts"
+          }
+        },
+        {
+          "feature": "Vitrine \"Achamos que você vai gostar\"",
+          "featureKey": "recommendationShowcase",
+          "passed": true,
+          "status": "pass",
+          "message": "Vitrine de recomendações renderizada no app Android (RecyclerView com conteúdo)",
+          "details": {
+            "rendered": true,
+            "itemCount": 0,
+            "resourceId": "rvEinsteinShowcase"
+          }
+        }
+      ],
+      "remoteConfigFlags": null,
+      "commerceFeatureFlags": null
+    },
+    {
+      "sku": "NATBRA-70983",
+      "name": "Creme Hidratante para as Mãos Ekos Castanha 75g",
+      "url": "https://www.natura.com.br/p/creme-hidratante-para-as-maos-ekos-castanha-75-g/NATBRA-70983",
+      "vendor": "natura",
+      "country": "BR",
+      "platform": "android",
+      "timestamp": "2026-10-26T18:50:08.562Z",
+      "success": true,
+      "loadTime": 17981,
+      "features": [
+        {
+          "feature": "Botão Adicionar à Sacola",
+          "featureKey": "addToCart",
+          "passed": true,
+          "status": "pass",
+          "message": "Botão de compra encontrado na tela — texto: \"adicionar\"",
+          "loadTime": 17981,
+          "details": {
+            "isDisplayed": true,
+            "isEnabled": true,
+            "text": "adicionar",
+            "state": "buy",
+            "inStock": true,
+            "notifyMeFlag": null,
+            "loadTime": 17981
+          }
+        },
+        {
+          "feature": "Imagens do produto",
+          "featureKey": "images",
+          "passed": true,
+          "status": "pass",
+          "message": "4 imagem(ns) carregada(s) corretamente (carrossel presente)",
+          "details": {
+            "hasCarousel": true,
+            "imageCount": 4,
+            "checkedCount": 4,
+            "loadedCount": 4,
+            "blankCount": 0
+          }
+        },
+        {
+          "feature": "Vitrine \"Mais produtos da marca\"",
+          "featureKey": "brandShowcase",
+          "passed": true,
+          "status": "pass",
+          "message": "Vitrine \"mais produtos da marca\" renderizada no app Android (RecyclerView com conteúdo)",
+          "details": {
+            "rendered": true,
+            "itemCount": 0,
+            "resourceId": "rvMoreBrandProducts"
+          }
+        },
+        {
+          "feature": "Vitrine \"Achamos que você vai gostar\"",
+          "featureKey": "recommendationShowcase",
+          "passed": true,
+          "status": "pass",
+          "message": "Vitrine de recomendações renderizada no app Android (RecyclerView com conteúdo)",
+          "details": {
+            "rendered": true,
+            "itemCount": 0,
+            "resourceId": "rvEinsteinShowcase"
+          }
+        }
+      ],
+      "remoteConfigFlags": null,
+      "commerceFeatureFlags": null
+    },
+    {
+      "sku": "NATBRA-76420",
+      "name": "Desodorante Perfume Essencial Masculino 100ml",
+      "url": "https://www.natura.com.br/p/desodorante-perfume-essencial-masculino-100-ml/NATBRA-76420",
+      "vendor": "natura",
+      "country": "BR",
+      "platform": "android",
+      "timestamp": "2026-10-26T18:51:24.779Z",
+      "success": true,
+      "loadTime": 18528,
+      "features": [
+        {
+          "feature": "Botão Adicionar à Sacola",
+          "featureKey": "addToCart",
+          "passed": true,
+          "status": "pass",
+          "message": "Botão de compra encontrado na tela — texto: \"adicionar\"",
+          "loadTime": 18528,
+          "details": {
+            "isDisplayed": true,
+            "isEnabled": true,
+            "text": "adicionar",
+            "state": "buy",
+            "inStock": true,
+            "notifyMeFlag": null,
+            "loadTime": 18528
+          }
+        },
+        {
+          "feature": "Imagens do produto",
+          "featureKey": "images",
+          "passed": true,
+          "status": "pass",
+          "message": "3 imagem(ns) carregada(s) corretamente (carrossel presente)",
+          "details": {
+            "hasCarousel": true,
+            "imageCount": 3,
+            "checkedCount": 3,
+            "loadedCount": 3,
+            "blankCount": 0
+          }
+        },
+        {
+          "feature": "Vitrine \"Mais produtos da marca\"",
+          "featureKey": "brandShowcase",
+          "passed": true,
+          "status": "pass",
+          "message": "Vitrine \"mais produtos da marca\" renderizada no app Android (RecyclerView com conteúdo)",
+          "details": {
+            "rendered": true,
+            "itemCount": 0,
+            "resourceId": "rvMoreBrandProducts"
+          }
+        },
+        {
+          "feature": "Vitrine \"Achamos que você vai gostar\"",
+          "featureKey": "recommendationShowcase",
+          "passed": true,
+          "status": "pass",
+          "message": "Vitrine de recomendações renderizada no app Android (RecyclerView com conteúdo)",
+          "details": {
+            "rendered": true,
+            "itemCount": 0,
+            "resourceId": "rvEinsteinShowcase"
+          }
+        }
+      ],
+      "remoteConfigFlags": null,
+      "commerceFeatureFlags": null
+    },
+    {
+      "sku": "NATBRA-92786",
+      "name": "Mamãe e Bebê Água de Colônia 100ml",
+      "url": "https://www.natura.com.br/p/mamae-e-bebe-agua-de-colonia-100-ml/NATBRA-92786",
+      "vendor": "natura",
+      "country": "BR",
+      "platform": "android",
+      "timestamp": "2026-10-26T18:52:31.783Z",
+      "success": true,
+      "loadTime": 20259,
+      "features": [
+        {
+          "feature": "Botão Adicionar à Sacola",
+          "featureKey": "addToCart",
+          "passed": true,
+          "status": "pass",
+          "message": "Botão de compra encontrado na tela — texto: \"adicionar\"",
+          "loadTime": 20259,
+          "details": {
+            "isDisplayed": true,
+            "isEnabled": true,
+            "text": "adicionar",
+            "state": "buy",
+            "inStock": true,
+            "notifyMeFlag": null,
+            "loadTime": 20259
+          }
+        },
+        {
+          "feature": "Imagens do produto",
+          "featureKey": "images",
+          "passed": true,
+          "status": "pass",
+          "message": "3 imagem(ns) carregada(s) corretamente (carrossel presente)",
+          "details": {
+            "hasCarousel": true,
+            "imageCount": 3,
+            "checkedCount": 3,
+            "loadedCount": 3,
+            "blankCount": 0
+          }
+        },
+        {
+          "feature": "Vitrine \"Mais produtos da marca\"",
+          "featureKey": "brandShowcase",
+          "passed": true,
+          "status": "pass",
+          "message": "Vitrine \"mais produtos da marca\" renderizada no app Android (RecyclerView com conteúdo)",
+          "details": {
+            "rendered": true,
+            "itemCount": 0,
+            "resourceId": "rvMoreBrandProducts"
+          }
+        },
+        {
+          "feature": "Vitrine \"Achamos que você vai gostar\"",
+          "featureKey": "recommendationShowcase",
+          "passed": true,
+          "status": "pass",
+          "message": "Vitrine de recomendações renderizada no app Android (RecyclerView com conteúdo)",
+          "details": {
+            "rendered": true,
+            "itemCount": 0,
+            "resourceId": "rvEinsteinShowcase"
+          }
+        }
+      ],
+      "remoteConfigFlags": null,
+      "commerceFeatureFlags": null
+    }
+  ]
+}
