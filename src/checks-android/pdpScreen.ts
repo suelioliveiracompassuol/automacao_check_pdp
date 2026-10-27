@@ -163,6 +163,27 @@ async function scrollPdp(
   return { moved: false, source };
 }
 
+/**
+ * Visits the PDP from the current position down to the end of the page, half a screen at a time
+ * (same gestures as scrollPdpUntilVisible). `visit` runs on each screen, the current one included.
+ * Returns how many times the page scrolled.
+ */
+export async function forEachPdpScreenDown(
+  driver: WebdriverIO.Browser,
+  visit: () => Promise<void>,
+): Promise<number> {
+  await visit();
+  let scrolls = 0;
+  while (scrolls < MAX_SCROLLS) {
+    if (!(await scrollPdp(driver, "down")).moved) {
+      break;
+    }
+    scrolls++;
+    await visit();
+  }
+  return scrolls;
+}
+
 /** What a page source shows about showcases: carousel-like resource-ids and showcase titles. */
 export interface ShowcasePageSummary {
   resourceIds: string[];

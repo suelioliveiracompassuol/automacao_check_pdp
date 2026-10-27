@@ -31,7 +31,10 @@ import {
 import {
   describePdpApiError,
   findCommerceFlagsInNetworkLog,
+  extractPdpContentBanners,
   extractPdpImageUrls,
+  findPdpApiContentBanners,
+  PdpApiContentBanners,
   findPdpApiErrors,
   findPdpApiImages,
   hasPdpApiCall,
@@ -48,6 +51,10 @@ import {
   checkImagesAndroid,
   parseImageCounter,
 } from "../checks-android/images.js";
+import {
+  applyPdpApiContentBanners,
+  checkContentBannersAndroid,
+} from "../checks-android/contentBanners.js";
 import { contentRatio, decodePng } from "../checks-android/pngImage.js";
 import * as zlib from "node:zlib";
 import * as fs from "node:fs";
@@ -934,6 +941,216 @@ test.describe("Android Unit Tests", () => {
       expect(applyPdpApiImages(other, api(0))).toBe(other);
       const screen = screenResult(1);
       expect(applyPdpApiImages(screen, undefined)).toBe(screen);
+    });
+  });
+
+  test.describe("checkContentBannersAndroid with mock driver", () => {
+    type Banner = { id: string; kind: "banner" | "widepic"; height?: number; png?: Buffer };
+    /**
+     * PDP whose screens (top to bottom) show the given banners; each scroll moves to the next
+     * screen and the page source stops changing at the last one.
+     */
+    const bannersDriver = (screens: Banner[][]) => {
+      let current = 0;
+      const shots: string[] = [];
+      const scroll = () => {
+        current = Math.min(current + 1, screens.length - 1);
+      };
+      const action = {
+        move: () => action,
+        down: () => action,
+        pause: () => action,
+        up: () => action,
+        perform: async () => scroll(),
+      };
+      const driver = {
+        $: () => ({ isDisplayed: async () => false }),
+        $$: async (selector: string) =>
+          screens[current]
+            .filter((b) =>
+              selector.includes(b.kind === "banner" ? "bannerImage" : "ivWidepicImage"),
+            )
+            .map((b) => ({
+              elementId: b.id,
+              isDisplayed: async () => true,
+              getSize: async () => ({ width: 1000, height: b.height ?? 900 }),
+            })),
+        takeElementScreenshot: async (id: string) => {
+          shots.push(id);
+          const banner = screens[current].find((b) => b.id === id);
+          return (banner?.png ?? photoPng).toString("base64");
+        },
+        getWindowSize: async () => ({ width: 1080, height: 2400 }),
+        getPageSource: async () => `screen:${current}`,
+        execute: async () => scroll(),
+        action: () => action,
+      } as unknown as WebdriverIO.Browser;
+      return { driver, shots };
+    };
+    const fast = { imageLoadTimeoutMs: 0 };
+
+    test("passes when every banner on the page renders, judging each one once", async () => {
+      const { driver, shots } = bannersDriver([
+        [],
+        [{ id: "b1", kind: "banner" }],
+        [{ id: "b1", kind: "banner" }, { id: "w1", kind: "widepic" }],
+        [],
+      ]);
+      const result = await checkContentBannersAndroid(driver, fast);
+      expect(result.status).toBe("pass");
+      expect(result.message).toBe("2 banner(s) de conteúdo carregado(s) na tela");
+      expect(result.details).toMatchObject({
+        bannersOnScreen: 2,
+        kinds: ["banner", "widepic"],
+        loadedCount: 2,
+        scrolls: 3,
+      });
+      expect(shots).toEqual(["b1", "w1"]);
+    });
+
+    test("is N/A when the PDP has no banners", async () => {
+      const { driver } = bannersDriver([[], []]);
+      const result = await checkContentBannersAndroid(driver, fast);
+      expect(result).toMatchObject({ status: "na", passed: true });
+    });
+
+    test("fails on a blank banner", async () => {
+      const { driver } = bannersDriver([
+        [{ id: "b1", kind: "banner" }, { id: "w1", kind: "widepic", png: blankPng }],
+      ]);
+      const result = await checkContentBannersAndroid(driver, fast);
+      expect(result.status).toBe("fail");
+      expect(result.message).toBe("1 ok, 1 banner(s) em branco na tela");
+    });
+
+    test("a banner blank on one screen and loaded on the next did load", async () => {
+      const { driver } = bannersDriver([
+        [{ id: "b1", kind: "banner", png: blankPng }],
+        [{ id: "b1", kind: "banner" }],
+      ]);
+      const result = await checkContentBannersAndroid(driver, fast);
+      expect(result.status).toBe("pass");
+      expect(result.details).toMatchObject({ loadedCount: 1, blankCount: 0 });
+    });
+
+    test("a banner only peeking in at the screen edge isn't judged", async () => {
+      const { driver, shots } = bannersDriver([[{ id: "b1", kind: "banner", height: 50 }]]);
+      const result = await checkContentBannersAndroid(driver, fast);
+      expect(result.status).toBe("warning");
+      expect(result.message).toContain("apareceu só parcialmente");
+      expect(shots).toHaveLength(0);
+    });
+  });
+
+  test.describe("PDP API content banners", () => {
+    const IMG = "https://production.na01.natura.com/on/demandware.static/-/Sites-natura-br-storefront-catalog/default/dw1/";
+    const media = (type: string, files: string[]) => ({
+      entity: "neProductPageMediaContent",
+      neProductPageMediaContent: {
+        type,
+        title: "título",
+        mediaItems: files.map((f) => ({ image: { mobile: { url: `${IMG}${f}` }, desktop: { url: `${IMG}d-${f}` } } })),
+      },
+    });
+
+    test("extractPdpContentBanners reads the neProductPageMediaContent components", () => {
+      expect(
+        extractPdpContentBanners({
+          productComponents: [
+            { entity: "neProductPageAccordion", neProductPageAccordion: [] },
+            media("type1", ["a.jpg"]),
+            media("type2", ["b.jpg", "c.jpg"]),
+          ],
+        }),
+      ).toEqual([
+        { type: "type1", urls: [`${IMG}a.jpg`] },
+        { type: "type2", urls: [`${IMG}b.jpg`, `${IMG}c.jpg`] },
+      ]);
+      expect(extractPdpContentBanners({ data: { productComponents: [media("type1", [])] } })).toEqual([
+        { type: "type1", urls: [] },
+      ]);
+      expect(extractPdpContentBanners({ name: "sem componentes" })).toEqual([]);
+    });
+
+    test("findPdpApiContentBanners crosses the banner images with the app's downloads", () => {
+      const banners = findPdpApiContentBanners(
+        {
+          log: {
+            entries: [
+              {
+                request: { url: "https://bff-app-natura-brazil.example.com/pages/v2/product/NATBRA-1" },
+                response: {
+                  status: 200,
+                  content: { text: JSON.stringify({ productComponents: [media("type2", ["b.jpg", "c.jpg", "d.jpg"])] }) },
+                },
+              },
+              { request: { url: `${IMG}b.jpg?sw=1200&q=80` }, response: { status: 200 } },
+              { request: { url: `${IMG}c.jpg?sw=1200&q=80` }, response: { status: 500 } },
+            ],
+          },
+        },
+        ["NATBRA-1", "NATBRA-9"],
+      );
+      expect(banners).toEqual({
+        "NATBRA-1": {
+          components: [{ type: "type2", urls: [`${IMG}b.jpg`, `${IMG}c.jpg`, `${IMG}d.jpg`] }],
+          urls: [`${IMG}b.jpg`, `${IMG}c.jpg`, `${IMG}d.jpg`],
+          failed: [{ url: `${IMG}c.jpg`, status: 500 }],
+          downloadedCount: 1,
+        },
+      });
+    });
+
+    const screen = (status: "pass" | "na") => ({
+      feature: "Banners de conteúdo do produto",
+      featureKey: "contentBanners" as const,
+      passed: true,
+      status,
+      message: status === "pass" ? "1 banner(s) de conteúdo carregado(s) na tela" : "Produto sem banners",
+      details: {},
+    });
+    const api = (extra: Partial<PdpApiContentBanners> = {}): PdpApiContentBanners => ({
+      components: [{ type: "type1", urls: [`${IMG}a.jpg`] }],
+      urls: [`${IMG}a.jpg`],
+      failed: [],
+      downloadedCount: 1,
+      ...extra,
+    });
+
+    test("applyPdpApiContentBanners adds the API counts to a passing screen result", () => {
+      const result = applyPdpApiContentBanners(screen("pass"), api());
+      expect(result.status).toBe("pass");
+      expect(result.message).toBe(
+        "1 banner(s) de conteúdo carregado(s) na tela · API: 1 banner(s), 1 imagem(ns), 1 baixada(s) pelo app",
+      );
+    });
+
+    test("applyPdpApiContentBanners fails when the API sent banners the screen didn't show", () => {
+      expect(applyPdpApiContentBanners(screen("na"), api())).toMatchObject({
+        status: "fail",
+        passed: false,
+        message: "API da PDP enviou 1 banner(s) de conteúdo, mas nenhum apareceu na tela",
+      });
+    });
+
+    test("applyPdpApiContentBanners fails when a banner download failed", () => {
+      const result = applyPdpApiContentBanners(
+        screen("pass"),
+        api({ failed: [{ url: `${IMG}a.jpg`, status: 404 }], downloadedCount: 0 }),
+      );
+      expect(result.status).toBe("fail");
+      expect(result.message).toMatch(/^1 de 1 imagem\(ns\) de banner com erro no download \(HTTP 404 a\.jpg\)/);
+    });
+
+    test("applyPdpApiContentBanners keeps N/A when the API has no banners, and leaves other features alone", () => {
+      expect(applyPdpApiContentBanners(screen("na"), api({ components: [], urls: [], downloadedCount: 0 }))).toMatchObject({
+        status: "na",
+        message: "Produto sem banners · API: sem banners",
+      });
+      const other = { ...screen("pass"), featureKey: "images" as const };
+      expect(applyPdpApiContentBanners(other, api())).toBe(other);
+      const s = screen("pass");
+      expect(applyPdpApiContentBanners(s, undefined)).toBe(s);
     });
   });
 

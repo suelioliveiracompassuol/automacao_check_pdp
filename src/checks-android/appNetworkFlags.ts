@@ -311,6 +311,38 @@ export function extractPdpImageUrls(
 
 const withoutQuery = (url: string) => url.split("?")[0];
 
+/** The app's downloads of `urls` in the capture (it adds CDN resize params to the query string). */
+function crossWithDownloads(
+  entries: CapturedEntry[],
+  urls: string[],
+): Pick<PdpApiImages, "failed" | "downloadedCount"> {
+  const failed: PdpApiImages["failed"] = [];
+  let downloadedCount = 0;
+  for (const url of urls) {
+    const download = entries
+      .filter(
+        (e) => e.url === url || withoutQuery(e.url) === withoutQuery(url),
+      )
+      .pop();
+    if (download?.status && download.status >= 400) {
+      failed.push({ url, status: download.status });
+    } else if (download) {
+      downloadedCount++;
+    }
+  }
+  return { failed, downloadedCount };
+}
+
+/** Last successful PDP API JSON body of `sku` in the capture. */
+function findPdpApiBody(
+  entries: CapturedEntry[],
+  sku: string,
+): Record<string, unknown> | null {
+  return findLastJsonBody(entries, (url) =>
+    url.includes(`/pages/v2/product/${sku}`),
+  ).body;
+}
+
 /**
  * Per SKU, the images its PDP API response (last successful pages/v2/product/<SKU> with a JSON
  * body) listed for the carousel, crossed with the app's own downloads of those URLs in the same
@@ -323,28 +355,72 @@ export function findPdpApiImages(
   const entries = extractNetworkEntries(payload);
   const result: Record<string, PdpApiImages> = {};
   for (const sku of skuCodes) {
-    const { body } = findLastJsonBody(entries, (url) =>
-      url.includes(`/pages/v2/product/${sku}`),
-    );
+    const body = findPdpApiBody(entries, sku);
     if (!body) {
       continue;
     }
     const { source, urls } = extractPdpImageUrls(body, sku);
-    const failed: PdpApiImages["failed"] = [];
-    let downloadedCount = 0;
-    for (const url of urls) {
-      const download = entries
-        .filter(
-          (e) => e.url === url || withoutQuery(e.url) === withoutQuery(url),
-        )
-        .pop();
-      if (download?.status && download.status >= 400) {
-        failed.push({ url, status: download.status });
-      } else if (download) {
-        downloadedCount++;
-      }
+    result[sku] = { source, urls, ...crossWithDownloads(entries, urls) };
+  }
+  return result;
+}
+
+/** Content banners the PDP API sent the app, and how the app's download of their images went. */
+export interface PdpApiContentBanners {
+  /** One per neProductPageMediaContent component: "type1" is a single banner, any other a widepic. */
+  components: { type: string; urls: string[] }[];
+  /** Every component's image URLs. */
+  urls: string[];
+  failed: { url: string; status: number }[];
+  downloadedCount: number;
+}
+
+/**
+ * The content banner components of a PDP API body, the way ncf-whitelabel-cf-android reads them
+ * (ProductDetailsResponseToModelAdapter.biuldComponentMediaContent): productComponents entries
+ * with entity "neProductPageMediaContent", each image from mediaItems[].image.mobile.url.
+ */
+export function extractPdpContentBanners(
+  body: Record<string, unknown>,
+): PdpApiContentBanners["components"] {
+  const product =
+    "productComponents" in body ? body : (asRecord(body.data) ?? body);
+  return (
+    Array.isArray(product.productComponents) ? product.productComponents : []
+  )
+    .map(asRecord)
+    .filter((c) => c?.entity === "neProductPageMediaContent")
+    .map((c) => {
+      const media = asRecord(c?.neProductPageMediaContent);
+      const items = Array.isArray(media?.mediaItems) ? media.mediaItems : [];
+      return {
+        type: typeof media?.type === "string" ? media.type : "",
+        urls: items
+          .map((i) => asRecord(asRecord(asRecord(i)?.image)?.mobile)?.url)
+          .filter((u): u is string => typeof u === "string" && u.length > 0),
+      };
+    });
+}
+
+/**
+ * Per SKU, the content banners its PDP API response listed, crossed with the app's downloads of
+ * their images. Widepic pages are only loaded when shown, so images never downloaded aren't a
+ * failure. SKUs whose API body wasn't captured are left out.
+ */
+export function findPdpApiContentBanners(
+  payload: unknown,
+  skuCodes: readonly string[],
+): Record<string, PdpApiContentBanners> {
+  const entries = extractNetworkEntries(payload);
+  const result: Record<string, PdpApiContentBanners> = {};
+  for (const sku of skuCodes) {
+    const body = findPdpApiBody(entries, sku);
+    if (!body) {
+      continue;
     }
-    result[sku] = { source, urls, failed, downloadedCount };
+    const components = extractPdpContentBanners(body);
+    const urls = components.flatMap((c) => c.urls);
+    result[sku] = { components, urls, ...crossWithDownloads(entries, urls) };
   }
   return result;
 }
@@ -370,10 +446,11 @@ export interface AppSessionFlags {
   remoteConfigEntries: Record<string, string> | null;
   pdpApiErrors: Record<string, PdpApiError>;
   pdpApiImages: Record<string, PdpApiImages>;
+  pdpApiContentBanners: Record<string, PdpApiContentBanners>;
 }
 
 /**
- * Commerce feature flags, Remote Config and the PDP API errors and images of `skuCodes`, as the Android app
+ * Commerce feature flags, Remote Config and the PDP API errors, images and content banners of `skuCodes`, as the Android app
  * received them, read from the device farm's network capture of the (already closed) session.
  * The script never calls the BFF or Firebase itself. Returns null when there's no capture for
  * this provider/config.
@@ -418,5 +495,6 @@ export async function readAppSessionFlags(
     remoteConfigEntries: findRemoteConfigEntriesInNetworkLog(log),
     pdpApiErrors: findPdpApiErrors(log, skuCodes),
     pdpApiImages: findPdpApiImages(log, skuCodes),
+    pdpApiContentBanners: findPdpApiContentBanners(log, skuCodes),
   };
 }

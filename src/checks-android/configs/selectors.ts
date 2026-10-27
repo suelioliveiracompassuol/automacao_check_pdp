@@ -50,6 +50,19 @@ export const ANDROID_SELECTORS = {
     carousel: 'new UiSelector().resourceIdMatches(".*:id/cvProductImages")',
     counter: 'new UiSelector().resourceIdMatches(".*:id/tvImageCounter")',
   },
+  /**
+   * Content banners (API component neProductPageMediaContent), from ncf-whitelabel-cf-android
+   * ProductDetailsAdapter.getPageMediaType: type "type1" → item_banner_view_ne.xml
+   * (ProductMediaContentBannerViewHolder, one image in bannerImage); any other type →
+   * item_widepic_view.xml (ProductMediaContentWidePicViewHolder, a ViewPager2 whose pages are
+   * item_widepic_image_view.xml / ivWidepicImage). Both are ShapeableImageViews loaded by Glide
+   * (ncf-ui ImageLoader.loadImage: spinner placeholder, outlined_product_perfumery error icon).
+   * Both ids exist only in these layouts.
+   */
+  contentBanners: {
+    banner: 'new UiSelector().resourceIdMatches(".*:id/bannerImage")',
+    widepic: 'new UiSelector().resourceIdMatches(".*:id/ivWidepicImage")',
+  },
   pdp: {
     /**
      * Loading state of the PDP's main block (item_product_base_information_ne.xml): until the

@@ -1,8 +1,8 @@
 /**
  * Android PDP Feature Monitor - Orchestrator
  *
- * Scope (per roadmap Phase 2): a handful of features (add to cart, product images, showcases,
- * remote config)
+ * Scope (per roadmap Phase 2): a handful of features (add to cart, product images, content
+ * banners, showcases, remote config)
  * across all Natura BR SKUs by default. Runs N device sessions in parallel (ANDROID_CONCURRENCY);
  * within each session it logs in ONCE, then navigates PDP-to-PDP (deep link + checks) reusing the
  * same driver, instead of opening a fresh device/login per SKU.
@@ -50,6 +50,10 @@ import {
   applyPdpApiImages,
   checkImagesAndroid,
 } from "./checks-android/images.js";
+import {
+  applyPdpApiContentBanners,
+  checkContentBannersAndroid,
+} from "./checks-android/contentBanners.js";
 import {
   checkBrandShowcaseAndroid,
   checkRecommendationShowcaseAndroid,
@@ -169,6 +173,10 @@ async function checkPdpOnDriver(
     // Carousel sits at the top of the PDP: checked before the showcase checks scroll down
     features.push(await checkImagesAndroid(driver));
     await steps.capture("Imagens do produto");
+
+    // Scrolls from the top to the bottom of the PDP, where the showcase checks start searching
+    features.push(await checkContentBannersAndroid(driver));
+    await steps.capture("Banners de conteúdo");
 
     // Native showcase checks verify native RecyclerView rendering with populated items
     features.push(await checkBrandShowcaseAndroid(driver));
@@ -309,8 +317,9 @@ function isSuccessful(features: CheckResult[], error?: string): boolean {
  * Commerce flags and Remote Config are read from the closed session's network capture (what
  * the app itself received), so they're attached to every SKU checked in that session. The
  * add-to-cart verdict depends on `wl_notify_me`, so it's completed here and `success` recomputed.
- * A failed PDP API response becomes the SKU's error (see findPdpApiErrors), and the images the API
- * sent (and the app's downloads of them) complete the images verdict (see applyPdpApiImages).
+ * A failed PDP API response becomes the SKU's error (see findPdpApiErrors), and the images and
+ * content banners the API sent (and the app's downloads of them) complete those verdicts (see
+ * applyPdpApiImages, applyPdpApiContentBanners).
  */
 async function attachAppSessionFlags(
   sessionId: string,
@@ -350,6 +359,13 @@ async function attachAppSessionFlags(
       const apiImages = flags.pdpApiImages[r.sku];
       if (apiImages) {
         r.features = r.features.map((f) => applyPdpApiImages(f, apiImages));
+        r.success = isSuccessful(r.features, r.error);
+      }
+      const apiBanners = flags.pdpApiContentBanners[r.sku];
+      if (apiBanners) {
+        r.features = r.features.map((f) =>
+          applyPdpApiContentBanners(f, apiBanners),
+        );
         r.success = isSuccessful(r.features, r.error);
       }
     }
