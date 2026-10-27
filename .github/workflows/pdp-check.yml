@@ -34,7 +34,8 @@ jobs:
     # Fixado: o ubuntu-latest passou a ser o 26.04 (out/2026), que o Playwright 1.59 não suporta
     # ("Playwright does not support chromium on ubuntu26.04-x64"). Rever ao atualizar o Playwright.
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    # Folga para lentidão de infra (apt/mirror) não cancelar o monitor antes dos checks
+    timeout-minutes: 50
     environment:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
@@ -45,7 +46,8 @@ jobs:
       - name: 📥 Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          # Raso: o histórico completo (reports commitados) leva ~6 min; o push só precisa do pull --rebase
+          fetch-depth: 1
           ref: ${{ github.ref_name }}
 
       - name: 🟢 Setup Node.js
@@ -57,8 +59,26 @@ jobs:
       - name: 📦 Install dependencies
         run: npm ci
 
+      - name: 🔖 Get Playwright version
+        id: pw_version
+        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> $GITHUB_OUTPUT
+
+      - name: 💾 Cache Playwright browsers
+        id: pw_cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-24.04-${{ steps.pw_version.outputs.version }}-chromium-firefox
+
       - name: 🎭 Install Playwright browsers
+        if: steps.pw_cache.outputs.cache-hit != 'true'
+        timeout-minutes: 15
         run: npx playwright install chromium firefox --with-deps
+
+      - name: 🎭 Install Playwright system deps (cache hit)
+        if: steps.pw_cache.outputs.cache-hit == 'true'
+        timeout-minutes: 15
+        run: npx playwright install-deps chromium firefox
 
       - name: 🔍 Run PDP checks (Web)
         id: checks

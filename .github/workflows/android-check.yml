@@ -48,7 +48,8 @@ jobs:
       - name: 📥 Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          # Raso: o histórico completo (reports commitados) leva ~6 min; o push só precisa do pull --rebase
+          fetch-depth: 1
           ref: ${{ github.ref_name }}
 
       - name: 🟢 Setup Node.js
