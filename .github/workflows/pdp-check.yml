@@ -1,9 +1,9 @@
 name: PDP Feature Monitor
 
 on:
-  # Run daily at 8:00 UTC (5:00 BRT)
+  # Run daily at 5:00 UTC (2:00 BRT)
   schedule:
-    - cron: "0 8 * * *"
+    - cron: "0 5 * * *"
 
   # Allow manual trigger with optional filters
   workflow_dispatch:

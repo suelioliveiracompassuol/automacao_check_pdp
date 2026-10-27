@@ -6,10 +6,10 @@ name: PDP Android Monitor (beta)
 # push não conflita com o do Web nem com o de performance.
 
 on:
-  # Diário às 10:00 UTC (7:00 BRT): depois do Web (8:00) e da performance (9:00), para não
+  # Diário às 7:00 UTC (4:00 BRT): depois do Web (5:00) e da performance (6:00), para não
   # disputarem o push no mesmo minuto.
   schedule:
-    - cron: "0 10 * * *"
+    - cron: "0 7 * * *"
 
   workflow_dispatch:
     inputs:

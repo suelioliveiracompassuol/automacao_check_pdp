@@ -1,10 +1,10 @@
 name: PDP Performance
 
 on:
-  # Diário às 9:00 UTC (6:00 BRT), uma hora depois do PDP Feature Monitor, para os dois não
+  # Diário às 6:00 UTC (3:00 BRT), uma hora depois do PDP Feature Monitor, para os dois não
   # disputarem o push em docs/ no mesmo minuto.
   schedule:
-    - cron: "0 9 * * *"
+    - cron: "0 6 * * *"
 
   # Disparo manual. Campos vazios = mesmos SKUs e conexão da execução diária.
   # Atenção: a medição entra no mesmo histórico do dashboard; SKUs ou conexão diferentes
