@@ -27,6 +27,7 @@ export const DOMAINS: DomainConfig[] = [
       "favoriteButton",
       "productVariations",
       "contentBanners",
+      "coupons",
     ],
   },
   {
@@ -49,6 +50,7 @@ export const DOMAINS: DomainConfig[] = [
       "favoriteButton",
       "productVariations",
       "contentBanners",
+      "coupons",
     ],
   },
   {
@@ -71,6 +73,7 @@ export const DOMAINS: DomainConfig[] = [
       "favoriteButton",
       "productVariations",
       "contentBanners",
+      "coupons",
     ],
   },
   {
@@ -93,6 +96,7 @@ export const DOMAINS: DomainConfig[] = [
       "favoriteButton",
       "productVariations",
       "contentBanners",
+      "coupons",
     ],
   },
   {
@@ -115,6 +119,7 @@ export const DOMAINS: DomainConfig[] = [
       "favoriteButton",
       "productVariations",
       "contentBanners",
+      "coupons",
     ],
   },
   {
@@ -137,6 +142,7 @@ export const DOMAINS: DomainConfig[] = [
       "favoriteButton",
       "productVariations",
       "contentBanners",
+      "coupons",
     ],
   },
   // ===== Natura Social Commerce (Minha Loja) =====
@@ -162,6 +168,7 @@ export const DOMAINS: DomainConfig[] = [
       // "favoriteButton", não tem no social commerce
       "productVariations",
       "contentBanners",
+      "coupons",
     ],
   },
   // ===== Avon Social Commerce (Minha Loja) =====
@@ -187,6 +194,7 @@ export const DOMAINS: DomainConfig[] = [
       // "favoriteButton", não tem no social commerce
       "productVariations",
       "contentBanners",
+      "coupons",
     ],
   },
   // ===== Avon Ecommerce =====
@@ -210,6 +218,7 @@ export const DOMAINS: DomainConfig[] = [
       "favoriteButton",
       "productVariations",
       "contentBanners",
+      "coupons",
     ],
   },
   {

@@ -141,6 +141,13 @@ export const CHECKS_CATALOG: ChecklistCategory[] = [
         desc: 'Seletores de cor/tamanho funcionais',
         bg: 'bg-success-lightest/50',
       },
+      {
+        key: 'coupons',
+        emoji: '🏷️',
+        name: 'Card de cupons',
+        desc: 'Exibido quando enable_coupons_pdp está ativa',
+        bg: 'bg-alert-lightest/50',
+      },
     ],
   },
   {

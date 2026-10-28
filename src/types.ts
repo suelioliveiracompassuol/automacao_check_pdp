@@ -116,7 +116,8 @@ export type FeatureKey =
   | "addToCart"
   | "favoriteButton"
   | "productVariations"
-  | "contentBanners";
+  | "contentBanners"
+  | "coupons";
 
 export interface SkuConfig {
   sku: string;

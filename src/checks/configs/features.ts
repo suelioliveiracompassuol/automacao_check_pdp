@@ -37,4 +37,5 @@ export const FEATURES: FeatureConfig[] = [
   { key: "favoriteButton", name: "Botão de Favoritos" },
   { key: "productVariations", name: "Seletor de Variações do Produto" },
   { key: "contentBanners", name: "Banners de conteúdo do produto" },
+  { key: "coupons", name: "Card de cupons" },
 ];

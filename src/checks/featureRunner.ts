@@ -33,6 +33,7 @@ import {
   checkFavoriteButton,
   checkProductVariations,
   checkContentBanners,
+  checkCoupons,
 } from "./index.js";
 
 // ---------------------------------------------------------------------------
@@ -61,6 +62,7 @@ export const FEATURE_CHECKERS: Record<
   favoriteButton: checkFavoriteButton,
   productVariations: checkProductVariations,
   contentBanners: checkContentBanners,
+  coupons: checkCoupons,
 };
 
 // ---------------------------------------------------------------------------

@@ -72,4 +72,5 @@ export const ALL_FEATURE_KEYS: FeatureKey[] = [
   'favoriteButton',
   'productVariations',
   'contentBanners',
+  'coupons',
 ];

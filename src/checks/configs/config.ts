@@ -215,8 +215,14 @@ export const SELECTORS = {
 
   // Content Banners (widepic / product content banners)
   contentBanners: {
-    section: '[data-gtm-product-content-type]',
-    image: 'img',
+    section: "[data-gtm-product-content-type]",
+    image: "img",
+  },
+
+  // Card de cupons (ncf-ssr product-coupons) — identificado pelo ícone, agnóstico de idioma.
+  // No header o mesmo ícone fica dentro de <div>, não de <button>.
+  coupons: {
+    banner: 'button:has(i[data-icon-name="outlined-finance-tagdiscount"])',
   },
 
   // Structural selector for showcase sections
@@ -253,4 +259,14 @@ export const TIMING = {
   elementTimeout: 10000,
   /** Wait after page load for dynamic content (ms) */
   pageLoadSettleTime: 2000,
+  /**
+   * Max extra wait for a late Firebase Remote Config response, counted after the scroll pass (ms).
+   * Measured up to ~19 s after navigation under concurrency (Natura CO).
+   */
+  remoteConfigWait: 20000,
+  /**
+   * Max wait for the coupons banner (ms). It only renders after the client-side Remote Config
+   * fetch, which lands 9–20 s after navigation; the banner shows 3–10 s later (measured).
+   */
+  couponsTimeout: 30000,
 };

@@ -10,6 +10,7 @@
 import { Page } from "@playwright/test";
 import { FeatureKey } from "../types.js";
 import { getNestedValue } from "../utils.js";
+import { TIMING } from "./configs/config.js";
 
 // =============================================================================
 // BFF ENDPOINT MAPPING
@@ -217,6 +218,7 @@ export async function getCommerceFeatureFlagsFromPage(
       socialCommerceMinhaLoja: flags.socialCommerceMinhaLoja as
         | boolean
         | undefined,
+      couponCenter: flags.couponCenter as boolean | undefined,
     };
   } catch (error) {
     console.log(
@@ -311,6 +313,8 @@ export interface RemoteConfigFlags {
   enable_image_zoom_pdp_web_responsive?: boolean;
   enable_media_video_carousel_pdp?: boolean;
   free_freight_tag?: boolean;
+  /** Card de cupons na PDP (ncf-ssr: também exige o commerce flag couponCenter). */
+  enable_coupons_pdp?: boolean;
 
   // // =========================================================================
   // // REVIEWS FLAGS (individual)
@@ -381,6 +385,9 @@ export interface CommerceFeatureFlags {
   // Social Commerce
   socialCommerce?: boolean;
   socialCommerceMinhaLoja?: boolean;
+
+  // Coupons
+  couponCenter?: boolean;
 }
 
 /** Keys merged by {@link mergeCommerceFeatureFlags} (excludes metadata). */
@@ -404,6 +411,7 @@ const COMMERCE_FLAG_DATA_KEYS: (keyof CommerceFeatureFlags)[] = [
   "newExperienceEnable",
   "socialCommerce",
   "socialCommerceMinhaLoja",
+  "couponCenter",
 ];
 
 /**
@@ -450,6 +458,8 @@ export interface RemoteConfigMapping {
   configKey: string;
   /** Path within the config object (e.g., "filter" or "recommendation.enabled") */
   configPath?: string;
+  /** Only check the feature when the flag was captured as true (absent = not checked). */
+  requireCaptured?: boolean;
 }
 
 // =============================================================================
@@ -472,6 +482,7 @@ export const FEATURE_REMOTE_CONFIG_MAP: Partial<
     configPath: "recommendation.enabled",
   },
   shopTheSet: { configKey: "enable_shoptheset_pdp" },
+  coupons: { configKey: "enable_coupons_pdp", requireCaptured: true },
 };
 
 // =============================================================================
@@ -511,6 +522,10 @@ export function setupRemoteConfigCapture(
     locale,
   };
   let captured = false;
+  let markCaptured: () => void = () => {};
+  const capturedSignal = new Promise<void>((resolve) => {
+    markCaptured = resolve;
+  });
 
   const responseHandler = async (response: {
     url: () => string;
@@ -534,6 +549,7 @@ export function setupRemoteConfigCapture(
             unknown
           >;
           captured = true;
+          markCaptured();
         }
       } catch {
         // Response not JSON or parsing failed - continue
@@ -545,8 +561,16 @@ export function setupRemoteConfigCapture(
 
   // Return collector function
   return async (): Promise<RemoteConfigFlags | null> => {
-    // Give a small delay to ensure any pending responses are processed
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    // Some sites (e.g. Natura AR) only fetch Remote Config ~12 s after navigation,
+    // after the scroll pass is over — wait for it instead of a fixed short delay
+    let timer: NodeJS.Timeout | undefined;
+    await Promise.race([
+      capturedSignal,
+      new Promise((resolve) => {
+        timer = setTimeout(resolve, TIMING.remoteConfigWait);
+      }),
+    ]);
+    clearTimeout(timer);
     page.off("response", responseHandler);
 
     if (captured && Object.keys(capturedFlags).length > 2) {
@@ -595,6 +619,7 @@ export function parseCommerceFeatureFlags(
     socialCommerceMinhaLoja: body.socialCommerceMinhaLoja as
       | boolean
       | undefined,
+    couponCenter: body.couponCenter as boolean | undefined,
   };
 }
 
@@ -796,6 +821,7 @@ export function setupCommerceFeatureFlagCapture(
             "cnRecommendation",
             "productRecommendation",
             "newExperienceEnable",
+            "couponCenter",
           ];
 
           for (const flag of booleanFlags) {
@@ -854,6 +880,7 @@ export function setupCommerceFeatureFlagCapture(
             | undefined,
           location: body.location as boolean | undefined,
           newExperienceEnable: body.newExperienceEnable as boolean | undefined,
+          couponCenter: body.couponCenter as boolean | undefined,
         };
       }
     } catch {
@@ -924,6 +951,9 @@ export function getCommerceFlagsByCategory(
 
   if (flags.newExperienceEnable !== undefined) {
     otherFlags.newExperienceEnable = flags.newExperienceEnable;
+  }
+  if (flags.couponCenter !== undefined) {
+    otherFlags.couponCenter = flags.couponCenter;
   }
   if (Object.keys(otherFlags).length > 0) {
     categories["🔧 Other Commerce"] = otherFlags;
@@ -1087,6 +1117,7 @@ export function parseRemoteConfigEntries(
     "enable_image_zoom_pdp_web_responsive",
     "enable_media_video_carousel_pdp",
     "free_freight_tag",
+    "enable_coupons_pdp",
     "enable_product_card_rating",
     "wl_show_rating_on_product_card",
   ] as const;
@@ -1126,21 +1157,26 @@ export function isFeatureEnabledByRemoteConfig(
   featureKey: FeatureKey,
   flags: RemoteConfigFlags | null,
 ): { enabled: boolean; flagValue: unknown; flagKey?: string } {
-  // If no flags captured, assume feature is enabled (don't break existing behavior)
-  if (!flags) {
-    return { enabled: true, flagValue: undefined };
-  }
-
   const mapping = FEATURE_REMOTE_CONFIG_MAP[featureKey];
   if (!mapping) {
     // No mapping for this feature - assume enabled
     return { enabled: true, flagValue: undefined };
   }
 
-  const configValue = flags[mapping.configKey as keyof RemoteConfigFlags];
+  // If no flags captured, assume feature is enabled (don't break existing behavior)
+  if (!flags && !mapping.requireCaptured) {
+    return { enabled: true, flagValue: undefined };
+  }
+
+  const configValue = flags?.[mapping.configKey as keyof RemoteConfigFlags];
   if (configValue === undefined) {
-    // Flag not captured - assume enabled
-    return { enabled: true, flagValue: undefined, flagKey: mapping.configKey };
+    // Flag not captured - assume enabled (don't break existing behavior),
+    // unless the feature only exists behind the flag
+    return {
+      enabled: !mapping.requireCaptured,
+      flagValue: undefined,
+      flagKey: mapping.configKey,
+    };
   }
 
   // If there's a path, get nested value
@@ -1157,6 +1193,31 @@ export function isFeatureEnabledByRemoteConfig(
     : mapping.configKey;
 
   return { enabled, flagValue: value, flagKey };
+}
+
+/**
+ * Maps monitor feature keys to the Commerce feature flag that also gates them
+ */
+export const FEATURE_COMMERCE_FLAG_MAP: Partial<
+  Record<FeatureKey, keyof CommerceFeatureFlags>
+> = {
+  coupons: "couponCenter",
+};
+
+/**
+ * Checks if a feature is enabled according to Commerce feature flags.
+ * Only an explicit `false` disables it; a flag not captured assumes enabled.
+ */
+export function isFeatureEnabledByCommerceFlags(
+  featureKey: FeatureKey,
+  flags: CommerceFeatureFlags | null,
+): { enabled: boolean; flagValue: unknown; flagKey?: string } {
+  const flagKey = FEATURE_COMMERCE_FLAG_MAP[featureKey];
+  if (!flagKey) {
+    return { enabled: true, flagValue: undefined };
+  }
+  const value = flags?.[flagKey];
+  return { enabled: value !== false, flagValue: value, flagKey };
 }
 
 /**
@@ -1278,6 +1339,9 @@ export function getFlagsByCategory(
   }
   if (flags.free_freight_tag !== undefined) {
     pdpFlags.free_freight_tag = flags.free_freight_tag;
+  }
+  if (flags.enable_coupons_pdp !== undefined) {
+    pdpFlags.enable_coupons_pdp = flags.enable_coupons_pdp;
   }
   if (flags.wl_notify_me !== undefined) {
     pdpFlags.wl_notify_me = flags.wl_notify_me;

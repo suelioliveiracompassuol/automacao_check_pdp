@@ -41,6 +41,7 @@ import {
   setupRemoteConfigCapture,
   setupCommerceFeatureFlagCapture,
   isFeatureEnabledByRemoteConfig,
+  isFeatureEnabledByCommerceFlags,
   formatFlagsForLog,
   getFlagsByCategory,
   countCapturedFlags,
@@ -298,6 +299,18 @@ async function checkPdp(params: CheckPdpParams): Promise<PdpCheckResult> {
         featureConfig.key,
         remoteConfigFlags,
       );
+      if (!rcCheck.enabled && rcCheck.flagKey && rcCheck.flagValue === undefined) {
+        // Feature only exists behind a flag that wasn't captured - can't tell if it should show
+        features.push({
+          feature: featureConfig.name,
+          featureKey: featureConfig.key,
+          passed: true,
+          status: "na",
+          message: `Flag ${rcCheck.flagKey} não capturada no Remote Config — verificação não se aplica`,
+          flagKey: rcCheck.flagKey,
+        });
+        continue;
+      }
       if (!rcCheck.enabled && rcCheck.flagKey) {
         // Feature is disabled by remote config - not an error
         features.push({
@@ -308,6 +321,24 @@ async function checkPdp(params: CheckPdpParams): Promise<PdpCheckResult> {
           message: `Desabilitado via Remote Config (${rcCheck.flagKey}=${JSON.stringify(rcCheck.flagValue)})`,
           flagKey: rcCheck.flagKey,
           flagValue: rcCheck.flagValue,
+        });
+        continue;
+      }
+
+      // Some features are also gated by a Commerce feature flag (e.g. coupons → couponCenter)
+      const commerceCheck = isFeatureEnabledByCommerceFlags(
+        featureConfig.key,
+        commerceFeatureFlags,
+      );
+      if (!commerceCheck.enabled && commerceCheck.flagKey) {
+        features.push({
+          feature: featureConfig.name,
+          featureKey: featureConfig.key,
+          passed: true,
+          status: "disabled",
+          message: `Desabilitado via Commerce Feature Flag (${commerceCheck.flagKey}=${JSON.stringify(commerceCheck.flagValue)})`,
+          flagKey: commerceCheck.flagKey,
+          flagValue: commerceCheck.flagValue,
         });
         continue;
       }

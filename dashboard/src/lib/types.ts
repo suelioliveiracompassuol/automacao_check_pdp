@@ -104,7 +104,8 @@ export type FeatureKey =
   | 'addToCart'
   | 'favoriteButton'
   | 'productVariations'
-  | 'contentBanners';
+  | 'contentBanners'
+  | 'coupons';
 
 export interface SkuEntry {
   id: string;
