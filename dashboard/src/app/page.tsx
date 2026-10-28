@@ -34,9 +34,9 @@ function toRecord(groups: Map<string, Set<string>>): Record<string, string[]> {
   return Object.fromEntries([...groups].map(([country, values]) => [country, [...values]]));
 }
 
-const featureKeysOf = (results: PdpCheckResult[]) => [
-  ...new Set(results.flatMap((r) => r.features.map((f) => f.featureKey))),
-];
+/** Checagens da plataforma: as declaradas em PLATFORMS ou, sem elas, as da última execução. */
+const featureKeysOf = (meta: PlatformMeta, results: PdpCheckResult[]): string[] =>
+  meta.featureKeys ?? [...new Set(results.flatMap((r) => r.features.map((f) => f.featureKey)))];
 
 /** Execuções da plataforma, mais recentes primeiro; "em breve" não exibe nada, mesmo com dados. */
 const runsOf = (meta: PlatformMeta) => (meta.upcoming ? [] : getReportsByPlatform(meta.platform));
@@ -66,7 +66,7 @@ export default function HomePage() {
       countries: [...new Set(results.map((r) => r.country.toUpperCase()))].sort(),
       pdpsCount: results.length,
       // Web roda o catálogo inteiro; Android só as features que o app suporta.
-      checksCount: meta.platform === 'web' ? TOTAL_CHECKS : featureKeysOf(results).length,
+      checksCount: meta.platform === 'web' ? TOTAL_CHECKS : featureKeysOf(meta, results).length,
       lastRunAt: runs[0].startTime,
     }));
 
@@ -78,7 +78,7 @@ export default function HomePage() {
       countries: [...vendorsByCountry.keys()].sort(),
       vendorsByCountry: toRecord(vendorsByCountry),
       channelsByCountry: toRecord(groupByCountry(results, (r) => r.channel ?? 'ecommerce')),
-      featureKeys: meta.platform === 'web' ? undefined : featureKeysOf(results),
+      featureKeys: meta.platform === 'web' ? undefined : featureKeysOf(meta, results),
     };
     return {
       platform: meta.platform,

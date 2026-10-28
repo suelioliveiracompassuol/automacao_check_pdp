@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { makeFeature, makeIndexEntry, makeReport, makeResult } from '@/test/fixtures';
 import type { MonitoringReport, ReportIndexEntry } from '@/lib/types';
+import { PLATFORM_META } from '@/lib/platforms';
 
 const data = vi.hoisted(() => ({
   entries: [] as ReportIndexEntry[],
@@ -101,7 +102,7 @@ describe('HomePage', () => {
     expect(screen.getByText('Ainda não há dados para Android')).toBeInTheDocument();
   });
 
-  it('mostra KPIs e cobertura do Android só com as features que o app executa', async () => {
+  it('mostra KPIs e cobertura do Android com as checagens declaradas, não as da última execução', async () => {
     seed();
     data.reports.run_android = makeReport({
       runId: 'run_android',
@@ -113,13 +114,17 @@ describe('HomePage', () => {
     render(<HomePage />);
 
     const hero = screen.getByRole('region', { name: 'Visão geral da automação' });
-    // Uma única feature (reviews) no app, contra o catálogo completo da Web
-    expect(within(hero).getByText('1 por PDP')).toBeInTheDocument();
+    // A execução só tem reviews, mas vale a lista de PLATFORM_META.android.featureKeys
+    // (uma checagem nova aparece antes da próxima execução)
+    expect(
+      within(hero).getByText(`${PLATFORM_META.android.featureKeys!.length} por PDP`),
+    ).toBeInTheDocument();
     expect(within(hero).getByText('Brasil')).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole('tab', { name: /android/i }));
     const coverage = screen.getAllByRole('region', { name: 'Cobertura' }).at(-1)!;
-    expect(within(coverage).getByText('Avaliações')).toBeInTheDocument();
-    expect(within(coverage).queryByText('Nota (rating)')).not.toBeInTheDocument();
+    expect(within(coverage).getByText('Adicionar à sacola')).toBeInTheDocument();
+    expect(within(coverage).getByText('Banners de conteúdo')).toBeInTheDocument();
+    expect(within(coverage).queryByText('Avaliações')).not.toBeInTheDocument();
   });
 });
