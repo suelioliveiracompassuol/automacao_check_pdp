@@ -33,6 +33,8 @@ import {
   checkFavoriteButton,
   checkProductVariations,
   checkContentBanners,
+  checkCoupons,
+  checkGiftModule,
 } from "./index.js";
 
 // ---------------------------------------------------------------------------
@@ -61,7 +63,12 @@ export const FEATURE_CHECKERS: Record<
   favoriteButton: checkFavoriteButton,
   productVariations: checkProductVariations,
   contentBanners: checkContentBanners,
+  coupons: checkCoupons,
+  giftModule: checkGiftModule,
 };
+
+/** Checkers that click on the page — run after the parallel read-only phase, one at a time. */
+export const INTERACTIVE_FEATURES: ReadonlySet<string> = new Set(["giftModule"]);
 
 // ---------------------------------------------------------------------------
 // Grouping metadata

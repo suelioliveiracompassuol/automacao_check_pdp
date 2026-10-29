@@ -41,6 +41,7 @@ import {
   openPdpDeepLink,
   closeAndroidSession,
   resolveAndroidAppPackage,
+  SessionStartError,
 } from "./deviceSetup.js";
 import {
   applyNotifyMeFlag,
@@ -488,22 +489,49 @@ async function main() {
 
   // A session that fails outright (e.g. the app's APK id isn't configured) must not discard the
   // results of the other sessions: its SKUs are recorded as failures so they stay in the report.
+  const failSession = (plan: AndroidSessionPlan, i: number, e: unknown) => {
+    const error = e instanceof Error ? e.message : String(e);
+    console.error(
+      `❌ Sessão ${i + 1} (${plan.app.key}/${plan.country}) falhou por completo (SKUs perdidos: ${plan.skus.map((s) => s.sku).join(", ")}):`,
+      e,
+    );
+    return plan.skus.map((sku) => buildErrorResult(sku, error));
+  };
+
+  // Sessions the farm didn't open (no device allocated in time, often because the parallel ones
+  // hold the devices) are retried once, one at a time, after the others have released theirs.
+  const notStarted: number[] = [];
   const sessionResults = await runWithConcurrency(
     plans.map((plan, i) => async () => {
       try {
         return await runSession(plan, outputDir);
       } catch (e) {
-        const error = e instanceof Error ? e.message : String(e);
-        console.error(
-          `❌ Sessão ${i + 1} (${plan.app.key}/${plan.country}) falhou por completo (SKUs perdidos: ${plan.skus.map((s) => s.sku).join(", ")}):`,
-          e,
-        );
-        return plan.skus.map((sku) => buildErrorResult(sku, error));
+        if (e instanceof SessionStartError) {
+          console.warn(
+            `⏳ Sessão ${i + 1} (${plan.app.key}/${plan.country}) não abriu no device farm (${e.message}) — nova tentativa ao fim das demais`,
+          );
+          notStarted.push(i);
+          return [];
+        }
+        return failSession(plan, i, e);
       }
     }),
     concurrency,
   );
   results.push(...sessionResults.flat());
+
+  for (const i of notStarted) {
+    const plan = plans[i];
+    console.log(
+      `
+🔁 Nova tentativa da sessão ${i + 1} (${plan.app.key}/${plan.country})`,
+    );
+    try {
+      results.push(...(await runSession(plan, outputDir)));
+    } catch (e) {
+      results.push(...failSession(plan, i, e));
+    }
+  }
 
   const report: MonitoringReport = {
     runId,

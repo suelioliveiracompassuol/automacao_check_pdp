@@ -28,7 +28,11 @@ Automação para monitorar features e seções das páginas de produto (PDP) dos
 | Vitrines | Carrosseis "Mais da marca" e "Recomendações" |
 | Shop the Set | Compre junto / kit |
 | Banners de conteúdo | Banners informativos na PDP |
+| Card de cupons | Card "economize com cupons" (só com `enable_coupons_pdp` ativa e `couponCenter` não desligado) |
+| Módulo de presente | Acordeão "esse pedido é para presente?" com opções de entrega (só com `gift_module_pdp.enabled` e ao menos uma opção web em `enable_module_gift_cart`) |
 | i18n | Verificação de internacionalização |
+
+Features desligadas via Firebase Remote Config ou Commerce feature flag aparecem como **desabilitadas** (não contam como falha). Cupons e módulo de presente só existem atrás de flag: se a flag não for capturada no Remote Config, a verificação fica **N/A**.
 
 ## Execução Local
 
@@ -82,6 +86,28 @@ ANDROID_CONCURRENCY=3 npm run check:android
 |--------|-----------|
 | `extract-feature-flags.ts` | Extrai feature flags do Commerce a partir de `__NEXT_DATA__`, React Fiber, globals e RSC payloads |
 | `capture-remote-config.ts` | Intercepta requests do Firebase Remote Config e salva configurações em JSON |
+
+### Imagens de referência das features
+
+O dashboard mostra, ao lado de cada feature da Web, uma imagem de referência do elemento que a checagem procura. As imagens ficam em `dashboard/public/feature-refs/<grupo>/<featureKey>.png`, com um grupo por operação: `natura-br`, `natura-ar`, `natura-latam` (CO/CL/PE/MX, capturado da Colômbia), `avon-br`, `avon-ar`, `avon-mx`, `minha-loja-natura` e `minha-loja-avon`.
+
+```bash
+# Captura as imagens que faltam (abre 1 SKU por grupo)
+npm run refs:capture
+
+# Só alguns grupos / SKUs, substituindo as imagens existentes
+REFS_GROUPS="natura-br,minha-loja-avon" REFS_OVERWRITE=true npm run refs:capture
+SKU_FILTER="NATBRA-108403" npm run refs:capture
+```
+
+| Variável | Descrição |
+|----------|-----------|
+| `REFS_GROUPS` | Grupos a capturar (padrão: todos) |
+| `SKU_FILTER` | SKUs a usar na captura |
+| `REFS_OVERWRITE` | `true` substitui imagens existentes (padrão: mantém, para não sobrescrever prints manuais) |
+| `HEADLESS` | `false` abre o browser visível |
+
+Se o WAF bloquear a captura, basta salvar o print manualmente no mesmo caminho. Os alvos de cada feature estão em `src/featureRefs.ts`.
 
 ## Dashboard (React/Next.js)
 
@@ -142,6 +168,8 @@ Configurar em Settings → Secrets and variables → Actions:
 │   ├── reporter.ts           # Gerador de relatórios HTML/JSON
 │   ├── types.ts              # Tipos TypeScript
 │   ├── utils.ts              # Utilitários
+│   ├── featureRefs.ts        # Alvos das imagens de referência por feature
+│   ├── captureFeatureRefs.ts # Captura das imagens de referência (npm run refs:capture)
 │   ├── checks/               # Módulos de verificação (Web)
 │   │   ├── configs/          # Configurações por operação
 │   │   ├── reviews.ts
@@ -157,6 +185,8 @@ Configurar em Settings → Secrets and variables → Actions:
 │   │   ├── showcases.ts
 │   │   ├── shopTheSet.ts
 │   │   ├── contentBanners.ts
+│   │   ├── coupons.ts
+│   │   ├── giftModule.ts
 │   │   ├── i18n.ts
 │   │   └── remoteConfig.ts
 │   ├── checks-android/       # Módulos de verificação (Android)
@@ -167,6 +197,7 @@ Configurar em Settings → Secrets and variables → Actions:
 │   │   └── remoteConfig.ts
 │   └── tests/                # Testes unitários
 ├── dashboard/                # Dashboard React (Next.js)
+│   ├── public/feature-refs/  # Imagens de referência por grupo de operação
 │   ├── src/
 │   │   ├── app/
 │   │   ├── components/
@@ -193,7 +224,7 @@ Após cada execução, um relatório é gerado em `docs/reports/run_<timestamp>/
 
 O dashboard mostra:
 - Resumo geral (passou/falhou/erros) por operação
-- Status de cada feature por SKU
+- Status de cada feature por SKU, com imagem de referência (Web)
 - Screenshots de evidência
 - Links diretos para as PDPs
 

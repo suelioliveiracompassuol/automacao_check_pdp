@@ -2,7 +2,7 @@ import { ReportClient } from '@/app/web/[runId]/report-client';
 import { PlatformHero } from '@/components/platform-hero';
 import { PlatformHistoryDropdown } from '@/components/platform-history-dropdown';
 import { SummaryCards } from '@/components/summary-cards';
-import { getScreenshotsForRun } from '@/lib/data';
+import { getFeatureRefIndex, getScreenshotsForRun } from '@/lib/data';
 import { PLATFORM_META } from '@/lib/platforms';
 import type { MonitoringReport, Platform } from '@/lib/types';
 
@@ -26,7 +26,13 @@ export function PlatformReportView({ platform, report, description }: PlatformRe
         action={<PlatformHistoryDropdown platform={platform} />}
       />
       <SummaryCards {...report.summary} />
-      <ReportClient results={report.results} runId={report.runId} screenshots={screenshots} />
+      <ReportClient
+        results={report.results}
+        runId={report.runId}
+        screenshots={screenshots}
+        // Reference images show the Web PDP; the Android app looks different
+        featureRefs={platform === 'web' ? getFeatureRefIndex() : undefined}
+      />
     </div>
   );
 }

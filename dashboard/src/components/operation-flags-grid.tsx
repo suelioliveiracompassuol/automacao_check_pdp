@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 import * as Collapsible from '@radix-ui/react-collapsible';
 import { Check, ChevronDown, ShoppingCart, Wrench, X, type LucideIcon } from 'lucide-react';
 import { VendorLogo } from './vendor-logo';
@@ -16,7 +16,7 @@ function renderValue(value: unknown): React.ReactNode {
   if (value === true) {
     return (
       <Check
-        className="h-3.5 w-3.5 text-success-dark"
+        className="mx-auto h-3.5 w-3.5 text-success-dark"
         strokeWidth={3}
         role="img"
         aria-label="Ativo"
@@ -25,7 +25,12 @@ function renderValue(value: unknown): React.ReactNode {
   }
   if (value === false) {
     return (
-      <X className="h-3.5 w-3.5 text-alert-dark" strokeWidth={3} role="img" aria-label="Inativo" />
+      <X
+        className="mx-auto h-3.5 w-3.5 text-alert-dark"
+        strokeWidth={3}
+        role="img"
+        aria-label="Inativo"
+      />
     );
   }
   if (value === null || value === undefined) {
@@ -35,6 +40,18 @@ function renderValue(value: unknown): React.ReactNode {
     return null;
   }
   return <span className="text-high-emphasis">{String(value)}</span>;
+}
+
+// Flag names have no spaces (snake_case / dotted paths / camelCase), so the browser can't wrap
+// them and the sticky column grows to the longest name — allow a break after each "_" and "."
+// and before each uppercase letter.
+function breakableFlagName(name: string): React.ReactNode {
+  return name.split(/(?<=[._])|(?=[A-Z])/).map((part, i) => (
+    <Fragment key={i}>
+      {i > 0 && <wbr />}
+      {part}
+    </Fragment>
+  ));
 }
 
 // Individual review flags captured redundantly via product_reviews object — hide from table
@@ -54,7 +71,10 @@ function flattenFlags(flags: Record<string, unknown>): Record<string, unknown> {
   for (const [key, val] of Object.entries(flags)) {
     if (key === '_raw' || key === 'capturedAt' || key === 'locale') continue;
     if (HIDDEN_FLAGS.has(key)) continue;
-    if (typeof val === 'object' && val !== null) {
+    if (Array.isArray(val)) {
+      // e.g. gift_module_pdp.bundle_tags: one cell instead of a row per index
+      result[key] = val.join(', ');
+    } else if (typeof val === 'object' && val !== null) {
       const nested = flattenFlags(val as Record<string, unknown>);
       for (const [nk, nv] of Object.entries(nested)) {
         result[`${key}.${nk}`] = nv;
@@ -117,7 +137,7 @@ function FlagsTable({
         <table className="min-w-full text-[11px] sm:text-xs border-separate border-spacing-0">
           <thead>
             <tr className="align-top">
-              <th className="sticky top-0 left-0 z-30 min-w-36 max-w-44 whitespace-normal wrap-break-word border-b border-neutral-100 bg-neutral-50 px-2 py-2 text-left font-semibold text-medium-emphasis shadow-[2px_0_4px_-2px_rgba(0,0,0,0.12)]">
+              <th className="sticky top-0 left-0 z-30 w-44 min-w-44 max-w-44 whitespace-normal wrap-break-word border-b border-neutral-100 bg-neutral-50 px-2 py-2 text-left font-semibold text-medium-emphasis shadow-[2px_0_4px_-2px_rgba(0,0,0,0.12)]">
                 Flag
               </th>
               {operations.map((op) => {
@@ -152,11 +172,11 @@ function FlagsTable({
             {allKeys.map((k, i) => {
               const rowBg = i % 2 === 0 ? 'bg-white' : 'bg-neutral-50';
               return (
-                <tr key={k} className={`${rowBg} align-top`}>
+                <tr key={k} className={`${rowBg} align-middle`}>
                   <td
                     className={`sticky left-0 z-10 ${rowBg} whitespace-normal wrap-break-word border-b border-neutral-75 px-2 py-2 shadow-[2px_0_4px_-2px_rgba(0,0,0,0.12)]`}
                   >
-                    <code className="text-medium-emphasis">{k}</code>
+                    <code className="text-medium-emphasis">{breakableFlagName(k)}</code>
                   </td>
                   {flatByOp.map((flat, j) => {
                     const raw = flat[k];
@@ -164,7 +184,7 @@ function FlagsTable({
                       <td
                         key={operations[j].key}
                         title={typeof raw === 'string' ? raw : undefined}
-                        className="max-w-26 truncate border-b border-neutral-75 px-1.5 py-2 text-center"
+                        className="max-w-18 truncate border-b border-neutral-75 px-1.5 py-2 text-center"
                       >
                         {renderValue(raw)}
                       </td>

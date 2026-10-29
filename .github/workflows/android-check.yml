@@ -110,7 +110,7 @@ jobs:
       - name: 📊 Find report directory
         id: find_report
         run: |
-          REPORT_DIR=$(ls -td docs/reports/run_android_* 2>/dev/null | head -1)
+          REPORT_DIR=$(ls -d docs/reports/run_android_* 2>/dev/null | sort -t_ -k3 -n | tail -1)
           echo "report_dir=$REPORT_DIR" >> $GITHUB_OUTPUT
           if [ -f "$REPORT_DIR/report.json" ]; then
             SUMMARY=$(jq -r '"Total: \(.summary.total), Passed: \(.summary.passed), Failed: \(.summary.failed), Errors: \(.summary.errors)"' "$REPORT_DIR/report.json")

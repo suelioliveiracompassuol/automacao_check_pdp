@@ -215,8 +215,23 @@ export const SELECTORS = {
 
   // Content Banners (widepic / product content banners)
   contentBanners: {
-    section: '[data-gtm-product-content-type]',
-    image: 'img',
+    section: "[data-gtm-product-content-type]",
+    image: "img",
+  },
+
+  // Card de cupons (ncf-ssr product-coupons) — identificado pelo ícone, agnóstico de idioma.
+  // No header o mesmo ícone fica dentro de <div>, não de <button>.
+  coupons: {
+    banner: 'button:has(i[data-icon-name="outlined-finance-tagdiscount"])',
+  },
+
+  // Módulo de presente (ncf-ssr assemble-your-gift) — trigger identificado pelo testid + ícone,
+  // agnóstico de idioma. As opções ficam dentro do acordeão.
+  giftModule: {
+    trigger:
+      '[data-testid="accordion-component"]:has(i[data-icon-name="outlined-content-gift"])',
+    cardMessageOption: '[data-testid="card-message-button"]',
+    searchBagOption: '[data-testid="search-bag-button"]',
   },
 
   // Structural selector for showcase sections
@@ -253,4 +268,28 @@ export const TIMING = {
   elementTimeout: 10000,
   /** Wait after page load for dynamic content (ms) */
   pageLoadSettleTime: 2000,
+  /**
+   * Max extra wait for a late Firebase Remote Config response, counted after the scroll pass (ms).
+   * Measured up to ~19 s after navigation under concurrency (Natura CO).
+   */
+  remoteConfigWait: 20000,
+  /**
+   * Wait used instead of {@link remoteConfigWait} when no RC-gated feature will run or the
+   * operation already timed out once in this run (ms).
+   */
+  remoteConfigShortWait: 500,
+  /** Extra time after the first Remote Config response for follow-up responses (ms). */
+  remoteConfigGrace: 500,
+  /**
+   * Max wait for the coupons banner (ms). It only renders after the client-side Remote Config
+   * fetch, which lands 9–20 s after navigation; the banner shows 3–10 s later (measured).
+   */
+  couponsTimeout: 30000,
+  /** Max wait for the gift module (ms) — like the coupons banner, it renders after the client-side Remote Config fetch. */
+  giftModuleTimeout: 30000,
+  /**
+   * Max wait for the reviews header controls — sort dropdown and filter button (ms). They're
+   * client-only chunks that can land well after #reviews itself (seen past 8 s on Natura PE).
+   */
+  reviewHeaderTimeout: 20000,
 };

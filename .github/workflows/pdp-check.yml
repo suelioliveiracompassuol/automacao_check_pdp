@@ -95,7 +95,7 @@ jobs:
         id: find_report
         run: |
           # Web writes to docs/reports/run_<timestamp>/ (Android runs live in their own workflow)
-          REPORT_DIR=$(ls -td docs/reports/run_[0-9]* 2>/dev/null | head -1)
+          REPORT_DIR=$(ls -d docs/reports/run_[0-9]* 2>/dev/null | sort -t_ -k2 -n | tail -1)
           echo "report_dir=$REPORT_DIR" >> $GITHUB_OUTPUT
           if [ -f "$REPORT_DIR/report.json" ]; then
             SUMMARY=$(cat "$REPORT_DIR/report.json" | jq -r '"Total: \(.summary.total), Passed: \(.summary.passed), Failed: \(.summary.failed), Errors: \(.summary.errors)"')
@@ -129,7 +129,9 @@ jobs:
           # The check script already writes the report to docs/reports/run_<ts>/ and updates
           # docs/reports/index.json. last-report.json is the Web shortcut the dashboard Home
           # page reads directly.
-          REPORT_DIR=$(ls -td docs/reports/run_[0-9]* 2>/dev/null | head -1)
+          # Newest run by the timestamp in its name, not by mtime: the cleanup step above deletes
+          # files from old run dirs, which bumps their mtime and made `ls -t` pick a stale run.
+          REPORT_DIR=$(ls -d docs/reports/run_[0-9]* 2>/dev/null | sort -t_ -k2 -n | tail -1)
           if [ ! -f "$REPORT_DIR/report.json" ]; then
             echo "⚠️  No report found in docs/reports/ — skipping publish"
             exit 0

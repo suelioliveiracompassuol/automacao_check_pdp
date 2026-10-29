@@ -22,6 +22,7 @@ import {
 } from "./types.js";
 import {
   FEATURE_CHECKERS,
+  INTERACTIVE_FEATURES,
   logFeaturesGrouped,
   dismissCookieBanner,
   scrollAndLoadContent,
@@ -41,6 +42,8 @@ import {
   setupRemoteConfigCapture,
   setupCommerceFeatureFlagCapture,
   isFeatureEnabledByRemoteConfig,
+  isFeatureEnabledByCommerceFlags,
+  FEATURE_REMOTE_CONFIG_MAP,
   formatFlagsForLog,
   getFlagsByCategory,
   countCapturedFlags,
@@ -74,6 +77,12 @@ interface CheckPdpParams {
   cachedRemoteConfig?: RemoteConfigFlags | null;
   cachedCommerceFlags?: CommerceFeatureFlags | null;
 }
+
+/**
+ * Operations (vendor-country-channel) whose PDP didn't fetch Remote Config within the long wait
+ * in this run — later SKUs of the same operation only wait briefly.
+ */
+const operationsWithoutRemoteConfig = new Set<string>();
 
 /**
  * Check a single PDP for all applicable features
@@ -220,7 +229,17 @@ async function checkPdp(params: CheckPdpParams): Promise<PdpCheckResult> {
 
     // Capture remote config flags if not already cached
     if (!remoteConfigFlags && collectRemoteConfig) {
-      remoteConfigFlags = await collectRemoteConfig();
+      // Only wait for a late Remote Config fetch when some feature to run depends on it
+      const operationKey = `${sku.vendor}-${sku.country}-${sku.channel ?? "ecommerce"}`;
+      const longWait =
+        applicableFeatures.some((f) => FEATURE_REMOTE_CONFIG_MAP[f.key]) &&
+        !operationsWithoutRemoteConfig.has(operationKey);
+      remoteConfigFlags = await collectRemoteConfig(
+        longWait ? TIMING.remoteConfigWait : TIMING.remoteConfigShortWait,
+      );
+      if (!remoteConfigFlags && longWait) {
+        operationsWithoutRemoteConfig.add(operationKey);
+      }
       if (remoteConfigFlags) {
         const totalFlags = countCapturedFlags(remoteConfigFlags);
         console.log(
@@ -298,6 +317,18 @@ async function checkPdp(params: CheckPdpParams): Promise<PdpCheckResult> {
         featureConfig.key,
         remoteConfigFlags,
       );
+      if (rcCheck.notCaptured) {
+        // Feature only exists behind a flag that wasn't captured - can't tell if it should show
+        features.push({
+          feature: featureConfig.name,
+          featureKey: featureConfig.key,
+          passed: true,
+          status: "na",
+          message: `Flag ${rcCheck.flagKey} não capturada no Remote Config — verificação não se aplica`,
+          flagKey: rcCheck.flagKey,
+        });
+        continue;
+      }
       if (!rcCheck.enabled && rcCheck.flagKey) {
         // Feature is disabled by remote config - not an error
         features.push({
@@ -312,20 +343,50 @@ async function checkPdp(params: CheckPdpParams): Promise<PdpCheckResult> {
         continue;
       }
 
+      // Some features are also gated by a Commerce feature flag (e.g. coupons → couponCenter)
+      const commerceCheck = isFeatureEnabledByCommerceFlags(
+        featureConfig.key,
+        commerceFeatureFlags,
+      );
+      if (!commerceCheck.enabled && commerceCheck.flagKey) {
+        features.push({
+          feature: featureConfig.name,
+          featureKey: featureConfig.key,
+          passed: true,
+          status: "disabled",
+          message: `Desabilitado via Commerce Feature Flag (${commerceCheck.flagKey}=${JSON.stringify(commerceCheck.flagValue)})`,
+          flagKey: commerceCheck.flagKey,
+          flagValue: commerceCheck.flagValue,
+        });
+        continue;
+      }
+
       runnableChecks.push({ featureConfig, checker, rcCheck });
     }
 
-    // Phase 2: Execute checks in parallel
+    const runCheck = async ({ featureConfig, checker, rcCheck }: RunnableCheck) => {
+      const result = await checker(page);
+      if (rcCheck.flagKey) {
+        result.flagKey = rcCheck.flagKey;
+        result.flagValue = rcCheck.flagValue;
+      }
+      return { featureConfig, result };
+    };
+
+    // Phase 2: Execute read-only checks in parallel
     const checkResults = await Promise.all(
-      runnableChecks.map(async ({ featureConfig, checker, rcCheck }) => {
-        const result = await checker(page);
-        if (rcCheck.flagKey) {
-          result.flagKey = rcCheck.flagKey;
-          result.flagValue = rcCheck.flagValue;
-        }
-        return { featureConfig, result };
-      }),
+      runnableChecks
+        .filter((c) => !INTERACTIVE_FEATURES.has(c.featureConfig.key))
+        .map(runCheck),
     );
+
+    // Phase 2b: Checks that click on the page run afterwards, one at a time,
+    // so the layout doesn't change under the parallel visibility checks
+    for (const c of runnableChecks) {
+      if (INTERACTIVE_FEATURES.has(c.featureConfig.key)) {
+        checkResults.push(await runCheck(c));
+      }
+    }
 
     // Phase 3: Collect results sequentially for failures
     for (const { result } of checkResults) {

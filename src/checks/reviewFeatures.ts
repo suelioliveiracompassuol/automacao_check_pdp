@@ -5,6 +5,7 @@ import {
   getGoToReviewsButtonReviewCount,
   pollUntilVisible,
 } from "../utils.js";
+import { TIMING } from "./configs/config.js";
 
 const REVIEWS_CONTAINER_SELECTOR = '[data-testid="reviews-component"], #reviews';
 const REVIEWS_FILTER_ICON_SELECTOR =
@@ -90,8 +91,13 @@ export async function checkReviewFilter(page: Page): Promise<CheckResult> {
       };
     }
 
-    // Look for filter icon inside reviews
-    const hasFilter = await pollUntilVisible(page, REVIEWS_FILTER_ICON_SELECTOR);
+    // Look for filter icon inside reviews. The filter is a client-only chunk (dynamic, ssr: false),
+    // so it can show up well after the sort button under concurrency
+    const hasFilter = await pollUntilVisible(
+      page,
+      REVIEWS_FILTER_ICON_SELECTOR,
+      TIMING.reviewHeaderTimeout,
+    );
 
     if (hasFilter) {
       return {
@@ -156,10 +162,11 @@ export async function checkReviewSort(page: Page): Promise<CheckResult> {
       };
     }
 
-    // Look for sort dropdown arrow icon inside reviews
+    // Look for sort dropdown arrow icon inside reviews (client-only, like the filter)
     const hasSortIcon = await pollUntilVisible(
       page,
       '#reviews [data-testid="reviews-sort"], #reviews i[class*="natds-icons-outlined-navigation-arrowbottom"]',
+      TIMING.reviewHeaderTimeout,
     );
 
     if (hasSortIcon) {
@@ -250,7 +257,11 @@ export async function checkReviewPhotos(page: Page): Promise<CheckResult> {
       )
       .count()
       .catch(() => 0);
-    const hasFilter = await pollUntilVisible(page, REVIEWS_FILTER_ICON_SELECTOR);
+    const hasFilter = await pollUntilVisible(
+      page,
+      REVIEWS_FILTER_ICON_SELECTOR,
+      TIMING.reviewHeaderTimeout,
+    );
 
     const reviewPhotos = {
       count: imgsCount,

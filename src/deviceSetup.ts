@@ -16,6 +16,28 @@ export function getDeviceFarmProvider(): string {
 }
 
 /**
+ * The device farm didn't open the session (e.g. no device allocated before the request timed out).
+ * Nothing ran on a device yet, so the session can be retried later.
+ */
+export class SessionStartError extends Error {
+  constructor(cause: unknown) {
+    super(cause instanceof Error ? cause.message : String(cause), { cause });
+    this.name = "SessionStartError";
+  }
+}
+
+/** remote() with its failure tagged as {@link SessionStartError}. */
+async function startSession(
+  options: Parameters<typeof remote>[0],
+): Promise<WebdriverIO.Browser> {
+  try {
+    return await remote(options);
+  } catch (e) {
+    throw new SessionStartError(e);
+  }
+}
+
+/**
  * Creates an Appium session against a device farm or a local Android emulator/device.
  * Mirrors browserSetup.ts's role for the web checks, but for a native Android app via Appium.
  *
@@ -69,7 +91,7 @@ function createLocalSession(
     ...localeCapabilities(target),
   };
 
-  return remote({
+  return startSession({
     protocol: "http",
     hostname: host,
     port,
@@ -121,7 +143,7 @@ function createBrowserStackSession(
     },
   };
 
-  return remote({
+  return startSession({
     protocol: "https",
     hostname: "hub-cloud.browserstack.com",
     port: 443,
@@ -182,7 +204,7 @@ function createLambdaTestSession(
     },
   };
 
-  return remote({
+  return startSession({
     protocol: "https",
     hostname: "mobile-hub.lambdatest.com",
     port: 443,

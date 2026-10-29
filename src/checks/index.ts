@@ -32,3 +32,5 @@ export {
   setupProductVariationsCapture,
 } from "./productVariations.js";
 export { checkContentBanners } from "./contentBanners.js";
+export { checkCoupons } from "./coupons.js";
+export { checkGiftModule } from "./giftModule.js";

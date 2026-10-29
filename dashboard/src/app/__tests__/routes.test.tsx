@@ -31,6 +31,7 @@ vi.mock('@/lib/data', () => ({
     return latest ? (data.reports[latest.runId] ?? null) : null;
   },
   getScreenshotsForRun: () => [],
+  getFeatureRefIndex: () => ({}),
 }));
 
 import AndroidPage from '../android/page';
