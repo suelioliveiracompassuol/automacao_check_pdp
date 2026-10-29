@@ -71,7 +71,10 @@ function flattenFlags(flags: Record<string, unknown>): Record<string, unknown> {
   for (const [key, val] of Object.entries(flags)) {
     if (key === '_raw' || key === 'capturedAt' || key === 'locale') continue;
     if (HIDDEN_FLAGS.has(key)) continue;
-    if (typeof val === 'object' && val !== null) {
+    if (Array.isArray(val)) {
+      // e.g. gift_module_pdp.bundle_tags: one cell instead of a row per index
+      result[key] = val.join(', ');
+    } else if (typeof val === 'object' && val !== null) {
       const nested = flattenFlags(val as Record<string, unknown>);
       for (const [nk, nv] of Object.entries(nested)) {
         result[`${key}.${nk}`] = nv;

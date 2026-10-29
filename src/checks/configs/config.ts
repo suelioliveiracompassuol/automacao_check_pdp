@@ -225,6 +225,15 @@ export const SELECTORS = {
     banner: 'button:has(i[data-icon-name="outlined-finance-tagdiscount"])',
   },
 
+  // Módulo de presente (ncf-ssr assemble-your-gift) — trigger identificado pelo testid + ícone,
+  // agnóstico de idioma. As opções ficam dentro do acordeão.
+  giftModule: {
+    trigger:
+      '[data-testid="accordion-component"]:has(i[data-icon-name="outlined-content-gift"])',
+    cardMessageOption: '[data-testid="card-message-button"]',
+    searchBagOption: '[data-testid="search-bag-button"]',
+  },
+
   // Structural selector for showcase sections
   showcase: {
     section:
@@ -269,4 +278,8 @@ export const TIMING = {
    * fetch, which lands 9–20 s after navigation; the banner shows 3–10 s later (measured).
    */
   couponsTimeout: 30000,
+  /** Max wait for the gift module (ms) — like the coupons banner, it renders after the client-side Remote Config fetch. */
+  giftModuleTimeout: 30000,
+  /** Max wait for the reviews filter button (ms) — loaded as a client-only chunk, after the rest of the reviews header. */
+  reviewFilterTimeout: 20000,
 };

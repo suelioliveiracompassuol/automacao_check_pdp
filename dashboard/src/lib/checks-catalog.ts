@@ -148,6 +148,13 @@ export const CHECKS_CATALOG: ChecklistCategory[] = [
         desc: 'Exibido quando enable_coupons_pdp está ativa',
         bg: 'bg-alert-lightest/50',
       },
+      {
+        key: 'giftModule',
+        emoji: '🎁',
+        name: 'Módulo de presente',
+        desc: 'Exibido com opções de entrega quando gift_module_pdp está ativa',
+        bg: 'bg-primary-wash',
+      },
     ],
   },
   {

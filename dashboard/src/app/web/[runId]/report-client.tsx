@@ -6,6 +6,7 @@ import { FilterBar } from '@/components/filter-bar';
 import { OperationFlagsGrid } from '@/components/operation-flags-grid';
 import { PdpCard } from '@/components/pdp-card';
 import { filterResults, NO_FILTERS, type ResultFilters } from '@/lib/report';
+import type { FeatureRefIndex } from '@/lib/feature-refs';
 import type { PdpCheckResult } from '@/lib/types';
 
 /** Só os primeiros cards entram escalonados; o resto aparece junto (listas longas não esperam). */
@@ -15,9 +16,10 @@ interface ReportClientProps {
   results: PdpCheckResult[];
   runId: string;
   screenshots: string[];
+  featureRefs?: FeatureRefIndex;
 }
 
-export function ReportClient({ results, runId, screenshots }: ReportClientProps) {
+export function ReportClient({ results, runId, screenshots, featureRefs }: ReportClientProps) {
   const [filters, setFilters] = useState<ResultFilters>(NO_FILTERS);
 
   const setFilter =
@@ -60,7 +62,12 @@ export function ReportClient({ results, runId, screenshots }: ReportClientProps)
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: Math.min(i, MAX_STAGGERED) * 0.03, duration: 0.3 }}
           >
-            <PdpCard result={result} runId={runId} screenshots={screenshots} />
+            <PdpCard
+              result={result}
+              runId={runId}
+              screenshots={screenshots}
+              featureRefs={featureRefs}
+            />
           </m.div>
         ))}
         {filteredResults.length === 0 && (

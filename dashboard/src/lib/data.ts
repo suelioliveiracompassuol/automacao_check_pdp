@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { cache } from 'react';
+import type { FeatureRefIndex } from './feature-refs';
 import { runsWithinDays } from './perf-history';
 import { platformOf } from './report';
 import type {
@@ -82,6 +83,27 @@ export function getLastReportByPlatform(platform: Platform): MonitoringReport | 
   const latest = getReportsByPlatform(platform)[0];
   return latest ? getReportById(latest.runId) : null;
 }
+
+const FEATURE_REFS_DIR = path.join(process.cwd(), 'public', 'feature-refs');
+
+/** Reference images present in public/feature-refs (see feature-refs.ts), by operation group. */
+export const getFeatureRefIndex = cache((): FeatureRefIndex => {
+  if (!fs.existsSync(FEATURE_REFS_DIR)) {
+    return {};
+  }
+  return Object.fromEntries(
+    fs
+      .readdirSync(FEATURE_REFS_DIR, { withFileTypes: true })
+      .filter((entry) => entry.isDirectory())
+      .map((entry) => [
+        entry.name,
+        fs
+          .readdirSync(path.join(FEATURE_REFS_DIR, entry.name))
+          .filter((fileName) => fileName.endsWith('.png'))
+          .map((fileName) => fileName.replace(/.png$/, '')),
+      ]),
+  );
+});
 
 // Web monitor screenshots follow the naming convention used by src/index.ts.
 const WEB_SCREENSHOT = /_(fullpage|error)_/i;

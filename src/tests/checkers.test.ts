@@ -10,6 +10,7 @@ import * as path from "node:path";
 import { checkPricing } from "../checks/pricing.js";
 import { checkShipping } from "../checks/shipping.js";
 import { checkCoupons } from "../checks/coupons.js";
+import { checkGiftModule } from "../checks/giftModule.js";
 import {
   isFeatureEnabledByCommerceFlags,
   isFeatureEnabledByRemoteConfig,
@@ -221,5 +222,121 @@ test.describe("Feature: Coupons", () => {
     expect(isFeatureEnabledByCommerceFlags("addToCart", off).enabled).toBe(
       true,
     );
+  });
+});
+
+// ---------------------------------------------------------------------------
+// checkGiftModule + gate (gift_module_pdp.enabled / enable_module_gift_cart web)
+// ---------------------------------------------------------------------------
+
+/** Acordeão como no ncf-ssr: trigger com testid + ícone, opções aparecem ao abrir. */
+const giftAccordion = (options: string) => `
+  <button data-testid="accordion-component" aria-expanded="false"
+    onclick="const open = this.getAttribute('aria-expanded') === 'true';
+             this.setAttribute('aria-expanded', String(!open));
+             document.getElementById('gift-content').style.display = open ? 'none' : 'block';">
+    <div><i data-icon-name="outlined-content-gift"></i></div><span>¿este pedido es para regalo?</span>
+  </button>
+  <div id="gift-content" style="display:none">${options}</div>`;
+
+const giftFlags = (gift: unknown, web?: Record<string, boolean>) => ({
+  capturedAt: "",
+  locale: "es-AR",
+  gift_module_pdp: gift as { enabled: boolean },
+  ...(web && {
+    enable_module_gift_cart: { enable_module_gift_web: web as never },
+  }),
+});
+
+test.describe("Feature: Gift module", () => {
+  test("deve passar com o módulo em tela e as opções ao abrir (qualquer idioma)", async ({
+    page,
+  }) => {
+    await loadWithContent(
+      page,
+      giftAccordion(
+        `<button data-testid="card-message-button">nosotros entregamos</button>
+         <button data-testid="search-bag-button">vos entregás</button>`,
+      ),
+    );
+    const result = await checkGiftModule(page);
+    expect(result.status).toBe("pass");
+    expect(result.details).toEqual({ cardMessage: true, searchBag: true });
+    // Acordeão volta ao estado original
+    await expect(page.getByTestId("accordion-component")).toHaveAttribute(
+      "aria-expanded",
+      "false",
+    );
+  });
+
+  test("deve falhar quando o acordeão abre sem opções de entrega", async ({
+    page,
+  }) => {
+    await loadWithContent(page, giftAccordion(""));
+    const result = await checkGiftModule(page);
+    expect(result.status).toBe("fail");
+  });
+
+  test("não deve confundir com outro acordeão (sem ícone de presente)", async ({
+    page,
+  }) => {
+    await loadWithContent(
+      page,
+      `<button data-testid="accordion-component" aria-expanded="false"><span>beneficios</span></button>`,
+    );
+    const result = await checkGiftModule(page);
+    expect(result.status).toBe("fail");
+    expect(result.message).toContain("não está em tela");
+  });
+
+  test("gift_module_pdp é lido por locale", () => {
+    const entries = {
+      gift_module_pdp: JSON.stringify({
+        "pt-BR": { enabled: true, bundle_tags: ["presente"] },
+        "es-AR": { enabled: false, bundle_tags: [] },
+      }),
+    };
+    expect(parseRemoteConfigEntries(entries, "pt-BR").gift_module_pdp).toEqual({
+      enabled: true,
+      bundle_tags: ["presente"],
+    });
+    expect(
+      parseRemoteConfigEntries(entries, "es-AR").gift_module_pdp?.enabled,
+    ).toBe(false);
+  });
+
+  test("gate: enabled + ao menos uma opção web", () => {
+    const run = (gift: unknown, web?: Record<string, boolean>) =>
+      isFeatureEnabledByRemoteConfig("giftModule", giftFlags(gift, web));
+
+    expect(
+      run({ enabled: true }, { card_message: true, search_bag: false }).enabled,
+    ).toBe(true);
+    expect(
+      run({ enabled: true }, { card_message: false, search_bag: true }).enabled,
+    ).toBe(true);
+    expect(
+      run({ enabled: false }, { card_message: true, search_bag: true }),
+    ).toMatchObject({
+      enabled: false,
+      flagValue: false,
+      flagKey: "gift_module_pdp.enabled",
+    });
+    // Sem nenhuma opção web o módulo não renderiza
+    const noOptions = run(
+      { enabled: true },
+      { card_message: false, search_bag: false },
+    );
+    expect(noOptions.enabled).toBe(false);
+    expect(noOptions.flagKey).toContain("enable_module_gift_web");
+    // Opções não capturadas: decide só pelo gift_module_pdp
+    expect(run({ enabled: true }).enabled).toBe(true);
+    // gift_module_pdp não capturado: não roda (vira N/A no runner)
+    expect(
+      isFeatureEnabledByRemoteConfig("giftModule", {
+        capturedAt: "",
+        locale: "pt-BR",
+      }),
+    ).toMatchObject({ enabled: false, flagValue: undefined });
   });
 });

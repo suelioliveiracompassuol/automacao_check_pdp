@@ -34,6 +34,7 @@ import {
   checkProductVariations,
   checkContentBanners,
   checkCoupons,
+  checkGiftModule,
 } from "./index.js";
 
 // ---------------------------------------------------------------------------
@@ -63,6 +64,7 @@ export const FEATURE_CHECKERS: Record<
   productVariations: checkProductVariations,
   contentBanners: checkContentBanners,
   coupons: checkCoupons,
+  giftModule: checkGiftModule,
 };
 
 // ---------------------------------------------------------------------------

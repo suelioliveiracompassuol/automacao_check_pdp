@@ -12,9 +12,11 @@ interface FeatureTableProps {
   features: CheckResult[];
   runId: string;
   pageScreenshot?: string;
+  /** featureKey → reference image URL; when set, the table gets a "Referência" column */
+  featureRefs?: Record<string, string>;
 }
 
-export function FeatureTable({ features, runId, pageScreenshot }: FeatureTableProps) {
+export function FeatureTable({ features, runId, pageScreenshot, featureRefs }: FeatureTableProps) {
   const [selectedScreenshot, setSelectedScreenshot] = useState<{
     src: string;
     title: string;
@@ -25,7 +27,16 @@ export function FeatureTable({ features, runId, pageScreenshot }: FeatureTablePr
   }
 
   const { passed, failed, total, percentage } = summarizeFeatures(features);
-
+  const style = (f: CheckResult) =>
+    cn(
+      'border-t border-neutral-50 transition-colors',
+      f.status === 'fail' && 'bg-alert-lightest/60 hover:bg-alert-lightest/50',
+      f.status === 'pass' && 'hover:bg-neutral-50/80',
+      f.status === 'warning' && 'bg-warning-lightest/40 hover:bg-warning-lightest/60',
+      f.status === 'error' && 'bg-primary-wash/60 hover:bg-primary-wash',
+      // Muted via background, not opacity, so text keeps AA contrast
+      (f.status === 'na' || f.status === 'disabled') && 'bg-neutral-50/60 text-low-emphasis',
+    );
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-3 px-1">
@@ -71,23 +82,16 @@ export function FeatureTable({ features, runId, pageScreenshot }: FeatureTablePr
               <th className="py-2.5 px-3 font-semibold text-medium-emphasis text-xs uppercase tracking-wide">
                 Detalhes
               </th>
+              {featureRefs && (
+                <th className="py-2.5 px-3 font-semibold text-medium-emphasis text-xs uppercase tracking-wide w-32">
+                  Referência
+                </th>
+              )}
             </tr>
           </thead>
           <tbody>
             {features.map((f, i) => (
-              <tr
-                key={`${f.featureKey}-${i}`}
-                className={cn(
-                  'border-t border-neutral-50 transition-colors',
-                  f.status === 'fail' && 'bg-alert-lightest/60 hover:bg-alert-lightest/50',
-                  f.status === 'pass' && 'hover:bg-neutral-50/80',
-                  f.status === 'warning' && 'bg-warning-lightest/40 hover:bg-warning-lightest/60',
-                  f.status === 'error' && 'bg-primary-wash/60 hover:bg-primary-wash',
-                  // Muted via background, not opacity, so text keeps AA contrast
-                  (f.status === 'na' || f.status === 'disabled') &&
-                    'bg-neutral-50/60 text-low-emphasis',
-                )}
-              >
+              <tr key={`${f.featureKey}-${i}`} className={cn(style(f))}>
                 <td className="py-2 px-3">
                   <StatusBadge status={f.status} />
                 </td>
@@ -95,6 +99,38 @@ export function FeatureTable({ features, runId, pageScreenshot }: FeatureTablePr
                 <td className="py-2 px-3 text-medium-emphasis max-w-md text-xs leading-relaxed">
                   {f.message}
                 </td>
+                {featureRefs && (
+                  <td className="py-1.5 px-3">
+                    {featureRefs[f.featureKey] ? (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setSelectedScreenshot({
+                            src: featureRefs[f.featureKey],
+                            title: `Referência — ${f.feature}`,
+                          })
+                        }
+                        className="block rounded border border-neutral-75 bg-white p-0.5 hover:border-primary transition-colors cursor-zoom-in"
+                        aria-label={`Ver imagem de referência: ${f.feature}`}
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element -- static export, no image optimizer */}
+                        <img
+                          src={featureRefs[f.featureKey]}
+                          alt=""
+                          loading="lazy"
+                          className="h-8 max-w-28 object-contain"
+                        />
+                      </button>
+                    ) : (
+                      <span
+                        className="text-low-emphasis text-xs"
+                        aria-label="Sem imagem de referência"
+                      >
+                        —
+                      </span>
+                    )}
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>

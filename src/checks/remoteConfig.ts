@@ -188,25 +188,19 @@ export async function getCommerceFeatureFlagsFromPage(
       businessModelB2B2C: flags.businessModelB2B2C as boolean | undefined,
       businessModelB2C: flags.businessModelB2C as boolean | undefined,
       businessModelB2C_B2B2C: flags.businessModelB2C_B2B2C as
-        | boolean
-        | undefined,
+        boolean | undefined,
       displayStockOnProductDetailPage: flags.displayStockOnProductDetailPage as
-        | boolean
-        | undefined,
+        boolean | undefined,
       newExperiencePdpEnable: flags.newExperiencePdpEnable as
-        | boolean
-        | undefined,
+        boolean | undefined,
       enablePdpFreightCalculation: flags.enablePdpFreightCalculation as
-        | boolean
-        | undefined,
+        boolean | undefined,
       enableDisplayFreeShippingPdp: flags.enableDisplayFreeShippingPdp as
-        | boolean
-        | undefined,
+        boolean | undefined,
       freeShippingValue: flags.freeShippingValue as number | undefined,
       nePagesPdV2: flags.nePagesPdV2 as boolean | undefined,
       newExperienceEnableGiftPdp: flags.newExperienceEnableGiftPdp as
-        | boolean
-        | undefined,
+        boolean | undefined,
       giftPackaging: flags.giftPackaging as boolean | undefined,
       enableGiftOnSite: flags.enableGiftOnSite as boolean | undefined,
       giftSku: flags.giftSku as string | undefined,
@@ -216,8 +210,7 @@ export async function getCommerceFeatureFlagsFromPage(
       newExperienceEnable: flags.newExperienceEnable as boolean | undefined,
       socialCommerce: flags.socialCommerce as boolean | undefined,
       socialCommerceMinhaLoja: flags.socialCommerceMinhaLoja as
-        | boolean
-        | undefined,
+        boolean | undefined,
       couponCenter: flags.couponCenter as boolean | undefined,
     };
   } catch (error) {
@@ -282,6 +275,15 @@ export interface EnableModuleGiftConfig {
 }
 
 /**
+ * Gift module on PDP configuration from Remote Config
+ */
+export interface GiftModulePdpConfig {
+  enabled: boolean;
+  /** Product refinements that make the PDP a gift bundle */
+  bundle_tags?: string[];
+}
+
+/**
  * Captured Remote Config flags relevant to PDP
  */
 export interface RemoteConfigFlags {
@@ -330,6 +332,8 @@ export interface RemoteConfigFlags {
   // =========================================================================
   gift_search_category_cart?: GiftSearchCategoryConfig;
   enable_module_gift_cart?: EnableModuleGiftConfig;
+  /** Módulo "esse pedido é para presente?" na PDP (ncf-ssr: também exige uma opção web em enable_module_gift_cart). */
+  gift_module_pdp?: GiftModulePdpConfig;
 
   // =========================================================================
   // PRODUCT CARD FLAGS
@@ -460,6 +464,11 @@ export interface RemoteConfigMapping {
   configPath?: string;
   /** Only check the feature when the flag was captured as true (absent = not checked). */
   requireCaptured?: boolean;
+  /**
+   * Further Remote Config paths of which at least one must also be true (e.g. the gift module
+   * needs a web gift option). Ignored when none of them was captured.
+   */
+  requiresAnyOf?: { configKey: string; configPath?: string }[];
 }
 
 // =============================================================================
@@ -483,6 +492,21 @@ export const FEATURE_REMOTE_CONFIG_MAP: Partial<
   },
   shopTheSet: { configKey: "enable_shoptheset_pdp" },
   coupons: { configKey: "enable_coupons_pdp", requireCaptured: true },
+  giftModule: {
+    configKey: "gift_module_pdp",
+    configPath: "enabled",
+    requireCaptured: true,
+    requiresAnyOf: [
+      {
+        configKey: "enable_module_gift_cart",
+        configPath: "enable_module_gift_web.card_message",
+      },
+      {
+        configKey: "enable_module_gift_cart",
+        configPath: "enable_module_gift_web.search_bag",
+      },
+    ],
+  },
 };
 
 // =============================================================================
@@ -594,20 +618,16 @@ export function parseCommerceFeatureFlags(
     businessModelB2C_B2B2C: body.businessModelB2C_B2B2C as boolean | undefined,
     // PDP Features
     displayStockOnProductDetailPage: body.displayStockOnProductDetailPage as
-      | boolean
-      | undefined,
+      boolean | undefined,
     newExperiencePdpEnable: body.newExperiencePdpEnable as boolean | undefined,
     enablePdpFreightCalculation: body.enablePdpFreightCalculation as
-      | boolean
-      | undefined,
+      boolean | undefined,
     enableDisplayFreeShippingPdp: body.enableDisplayFreeShippingPdp as
-      | boolean
-      | undefined,
+      boolean | undefined,
     freeShippingValue: body.freeShippingValue as number | undefined,
     nePagesPdV2: body.nePagesPdV2 as boolean | undefined,
     newExperienceEnableGiftPdp: body.newExperienceEnableGiftPdp as
-      | boolean
-      | undefined,
+      boolean | undefined,
     // Gift & Packaging
     giftPackaging: body.giftPackaging as boolean | undefined,
     enableGiftOnSite: body.enableGiftOnSite as boolean | undefined,
@@ -617,8 +637,7 @@ export function parseCommerceFeatureFlags(
     newExperienceEnable: body.newExperienceEnable as boolean | undefined,
     socialCommerce: body.socialCommerce as boolean | undefined,
     socialCommerceMinhaLoja: body.socialCommerceMinhaLoja as
-      | boolean
-      | undefined,
+      boolean | undefined,
     couponCenter: body.couponCenter as boolean | undefined,
   };
 }
@@ -853,31 +872,25 @@ export function setupCommerceFeatureFlagCapture(
           businessModelB2B2C: body.businessModelB2B2C as boolean | undefined,
           businessModelB2C: body.businessModelB2C as boolean | undefined,
           businessModelB2C_B2B2C: body.businessModelB2C_B2B2C as
-            | boolean
-            | undefined,
+            boolean | undefined,
           displayStockOnProductDetailPage:
             body.displayStockOnProductDetailPage as boolean | undefined,
           newExperiencePdpEnable: body.newExperiencePdpEnable as
-            | boolean
-            | undefined,
+            boolean | undefined,
           enablePdpFreightCalculation: body.enablePdpFreightCalculation as
-            | boolean
-            | undefined,
+            boolean | undefined,
           enableDisplayFreeShippingPdp: body.enableDisplayFreeShippingPdp as
-            | boolean
-            | undefined,
+            boolean | undefined,
           freeShippingValue: body.freeShippingValue as number | undefined,
           nePagesPdV2: body.nePagesPdV2 as boolean | undefined,
           newExperienceEnableGiftPdp: body.newExperienceEnableGiftPdp as
-            | boolean
-            | undefined,
+            boolean | undefined,
           giftPackaging: body.giftPackaging as boolean | undefined,
           enableGiftOnSite: body.enableGiftOnSite as boolean | undefined,
           giftSku: body.giftSku as string | undefined,
 
           productRecommendation: body.productRecommendation as
-            | boolean
-            | undefined,
+            boolean | undefined,
           location: body.location as boolean | undefined,
           newExperienceEnable: body.newExperienceEnable as boolean | undefined,
           couponCenter: body.couponCenter as boolean | undefined,
@@ -1088,6 +1101,19 @@ export function parseRemoteConfigEntries(
     }
   }
 
+  // Parse gift_module_pdp
+  if (entries.gift_module_pdp) {
+    try {
+      const parsed = JSON.parse(entries.gift_module_pdp);
+      const localeValue = parsed[locale] || parsed["pt-BR"];
+      if (localeValue) {
+        flags.gift_module_pdp = localeValue;
+      }
+    } catch {
+      // Invalid JSON
+    }
+  }
+
   // Parse enable_module_gift_cart
   if (entries.enable_module_gift_cart) {
     try {
@@ -1191,6 +1217,28 @@ export function isFeatureEnabledByRemoteConfig(
   const flagKey = mapping.configPath
     ? `${mapping.configKey}.${mapping.configPath}`
     : mapping.configKey;
+
+  if (enabled && mapping.requiresAnyOf && flags) {
+    const deps = mapping.requiresAnyOf.map((dep) => {
+      const depConfig = flags[dep.configKey as keyof RemoteConfigFlags];
+      return {
+        key: dep.configPath
+          ? `${dep.configKey}.${dep.configPath}`
+          : dep.configKey,
+        value: dep.configPath
+          ? getNestedValue(depConfig, dep.configPath)
+          : depConfig,
+      };
+    });
+    const captured = deps.filter((d) => d.value !== undefined);
+    if (captured.length > 0 && !captured.some((d) => d.value === true)) {
+      return {
+        enabled: false,
+        flagValue: Object.fromEntries(captured.map((d) => [d.key, d.value])),
+        flagKey: captured.map((d) => d.key).join(" | "),
+      };
+    }
+  }
 
   return { enabled, flagValue: value, flagKey };
 }
@@ -1348,6 +1396,18 @@ export function getFlagsByCategory(
   }
   if (Object.keys(pdpFlags).length > 0) {
     categories["🛍️ PDP Features"] = pdpFlags;
+  }
+
+  // Gift module on PDP (+ the web options it depends on)
+  if (flags.gift_module_pdp) {
+    categories["🎁 Gift (gift_module_pdp)"] = {
+      enabled: flags.gift_module_pdp.enabled,
+      bundle_tags: flags.gift_module_pdp.bundle_tags?.join(", "),
+      "web.card_message":
+        flags.enable_module_gift_cart?.enable_module_gift_web?.card_message,
+      "web.search_bag":
+        flags.enable_module_gift_cart?.enable_module_gift_web?.search_bag,
+    };
   }
 
   // Product Card Flags

@@ -6,6 +6,7 @@ import { ScreenshotViewer } from './screenshot-viewer';
 import { StepScreenshots } from './step-screenshots';
 import { CountryFlag } from './ui/country-flag';
 import { VendorLogo } from './vendor-logo';
+import { featureRefUrls, type FeatureRefIndex } from '@/lib/feature-refs';
 import { screenshotsForSku, summarizeFeatures } from '@/lib/report';
 import type { PdpCheckResult } from '@/lib/types';
 import { ChevronDown, ExternalLink, Clock, AlertCircle, CheckCircle2, XCircle } from 'lucide-react';
@@ -17,9 +18,11 @@ interface PdpCardProps {
   result: PdpCheckResult;
   runId: string;
   screenshots: string[];
+  /** Web only: shows the reference image column */
+  featureRefs?: FeatureRefIndex;
 }
 
-export function PdpCard({ result, runId, screenshots }: PdpCardProps) {
+export function PdpCard({ result, runId, screenshots, featureRefs }: PdpCardProps) {
   const [expanded, setExpanded] = useState(!result.success);
   const panelId = useId();
 
@@ -135,6 +138,7 @@ export function PdpCard({ result, runId, screenshots }: PdpCardProps) {
                 features={result.features}
                 runId={runId}
                 pageScreenshot={result.pageScreenshot}
+                featureRefs={featureRefs && featureRefUrls(featureRefs, result)}
               />
 
               {result.stepScreenshots && (
