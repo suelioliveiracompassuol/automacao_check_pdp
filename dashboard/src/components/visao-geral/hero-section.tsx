@@ -37,15 +37,19 @@ interface HeroSectionProps {
 }
 
 function rateTone(rate: number) {
-  if (rate >= 90)
+  if (rate >= 90) {
     return { text: 'text-success-dark', bar: 'bg-success', stroke: 'var(--color-success)' };
-  if (rate >= 70)
+  }
+  if (rate >= 70) {
     return { text: 'text-secondary-darkest', bar: 'bg-warning', stroke: 'var(--color-warning)' };
+  }
   return { text: 'text-alert-dark', bar: 'bg-alert', stroke: 'var(--color-alert)' };
 }
 
 function Sparkline({ values, stroke }: { values: number[]; stroke: string }) {
-  if (values.length < 2) return null;
+  if (values.length < 2) {
+    return null;
+  }
   const w = 120;
   const h = 36;
   const min = Math.min(...values, 50);
@@ -157,7 +161,9 @@ function Kpi({ icon, label, value }: { icon: ReactNode; label: string; value: Re
 }
 
 function countriesLabel(countries: string[]) {
-  if (countries.length === 0) return '—';
+  if (countries.length === 0) {
+    return '—';
+  }
   if (countries.length <= 2) {
     return countries.map(countryLabel).join(' e ');
   }

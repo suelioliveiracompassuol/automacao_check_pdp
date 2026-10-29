@@ -32,10 +32,15 @@ export function SkuList({ skus, onEdit, onDelete, disabled }: SkuListProps) {
       if (vendor !== ALL_OPTION && s.vendor !== vendor) {
         return false;
       }
-      if (country !== ALL_OPTION && s.country !== country) return false;
-      if (channel !== ALL_OPTION && s.channel !== channel) return false;
-      if (q !== '' && !s.name.toLowerCase().includes(q) && !s.sku.toLowerCase().includes(q))
+      if (country !== ALL_OPTION && s.country !== country) {
         return false;
+      }
+      if (channel !== ALL_OPTION && s.channel !== channel) {
+        return false;
+      }
+      if (q !== '' && !s.name.toLowerCase().includes(q) && !s.sku.toLowerCase().includes(q)) {
+        return false;
+      }
       return true;
     });
 

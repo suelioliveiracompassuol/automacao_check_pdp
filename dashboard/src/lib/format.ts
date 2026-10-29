@@ -24,7 +24,9 @@ export function formatDate(iso: string): string {
 /** "dd/mm/aaaa hh:mm"; devolve a string original se não for uma data válida. */
 export function formatDateTime(iso: string): string {
   const d = parseDate(iso);
-  if (!d) return iso;
+  if (!d) {
+    return iso;
+  }
   return d.toLocaleDateString('pt-BR', {
     day: '2-digit',
     month: '2-digit',
@@ -38,7 +40,9 @@ export function formatDateTime(iso: string): string {
 /** "dd/mm" para eixos e listas compactas. */
 export function formatShortDate(iso: string): string {
   const d = parseDate(iso);
-  if (!d) return iso.slice(0, 5);
+  if (!d) {
+    return iso.slice(0, 5);
+  }
   return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', timeZone: TIME_ZONE });
 }
 

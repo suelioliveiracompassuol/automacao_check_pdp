@@ -37,14 +37,20 @@ const DEFAULT_STATE: FormState = {
 };
 
 function toFormState(entry: SkuEntry | null): FormState {
-  if (entry === null) return DEFAULT_STATE;
+  if (entry === null) {
+    return DEFAULT_STATE;
+  }
   return { ...entry, slug: entry.slug ?? '' };
 }
 
 function validate(form: FormState): FormErrors {
   const errors: FormErrors = {};
-  if (form.sku.trim() === '') errors.sku = 'SKU é obrigatório';
-  if (form.name.trim() === '') errors.name = 'Nome é obrigatório';
+  if (form.sku.trim() === '') {
+    errors.sku = 'SKU é obrigatório';
+  }
+  if (form.name.trim() === '') {
+    errors.name = 'Nome é obrigatório';
+  }
   return errors;
 }
 
@@ -74,7 +80,9 @@ export function SkuForm({ open, initialData, onSubmit, onClose }: SkuFormProps) 
     e.preventDefault();
     const nextErrors = validate(form);
     setErrors(nextErrors);
-    if (Object.keys(nextErrors).length > 0) return;
+    if (Object.keys(nextErrors).length > 0) {
+      return;
+    }
 
     setLoading(true);
     setSubmitError(null);

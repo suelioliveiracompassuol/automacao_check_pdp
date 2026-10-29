@@ -37,13 +37,17 @@ export function ImageZoomDialog({ src, title, onClose }: ImageZoomDialogProps) {
   }, []);
 
   useEffect(() => {
-    if (src !== null) resetZoom();
+    if (src !== null) {
+      resetZoom();
+    }
   }, [src, resetZoom]);
 
   const changeZoom = (delta: number) => {
     setZoom((z) => {
       const next = clampZoom(z + delta);
-      if (next <= 1) setPosition({ x: 0, y: 0 });
+      if (next <= 1) {
+        setPosition({ x: 0, y: 0 });
+      }
       return next;
     });
   };
@@ -53,7 +57,9 @@ export function ImageZoomDialog({ src, title, onClose }: ImageZoomDialogProps) {
   };
 
   const handlePointerDown = (e: React.PointerEvent) => {
-    if (zoom <= 1) return;
+    if (zoom <= 1) {
+      return;
+    }
     e.currentTarget.setPointerCapture(e.pointerId);
     setDragging(true);
     dragStart.current = { x: e.clientX, y: e.clientY };
@@ -61,7 +67,9 @@ export function ImageZoomDialog({ src, title, onClose }: ImageZoomDialogProps) {
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
-    if (!dragging) return;
+    if (!dragging) {
+      return;
+    }
     setPosition({
       x: posStart.current.x + (e.clientX - dragStart.current.x),
       y: posStart.current.y + (e.clientY - dragStart.current.y),
@@ -72,7 +80,9 @@ export function ImageZoomDialog({ src, title, onClose }: ImageZoomDialogProps) {
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     const pan = (dx: number, dy: number) => {
-      if (zoom <= 1) return;
+      if (zoom <= 1) {
+        return;
+      }
       e.preventDefault();
       setPosition((p) => ({ x: p.x + dx, y: p.y + dy }));
     };
@@ -109,7 +119,9 @@ export function ImageZoomDialog({ src, title, onClose }: ImageZoomDialogProps) {
     <Dialog.Root
       open={src !== null}
       onOpenChange={(open) => {
-        if (!open) onClose();
+        if (!open) {
+          onClose();
+        }
       }}
     >
       <Dialog.Portal>

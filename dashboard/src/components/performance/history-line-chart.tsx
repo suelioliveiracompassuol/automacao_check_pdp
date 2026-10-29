@@ -51,7 +51,9 @@ export function HistoryLineChart({
 
   useEffect(() => {
     const el = wrapperRef.current;
-    if (!el || typeof ResizeObserver === 'undefined') return;
+    if (!el || typeof ResizeObserver === 'undefined') {
+      return;
+    }
     const observer = new ResizeObserver(([entry]) => {
       setWidth(Math.max(280, Math.round(entry.contentRect.width)));
     });
@@ -84,7 +86,9 @@ export function HistoryLineChart({
   const lastPoints = series.map((s) => {
     for (let i = s.values.length - 1; i >= 0; i--) {
       const v = s.values[i];
-      if (v !== null) return { i, v };
+      if (v !== null) {
+        return { i, v };
+      }
     }
     return null;
   });
@@ -97,13 +101,17 @@ export function HistoryLineChart({
 
   function indexFromClientX(clientX: number) {
     const rect = wrapperRef.current?.getBoundingClientRect();
-    if (!rect || n === 0) return null;
+    if (!rect || n === 0) {
+      return null;
+    }
     const x = clientX - rect.left - PAD.left;
     return Math.min(n - 1, Math.max(0, Math.round((x / plotW) * (n - 1))));
   }
 
   function onKeyDown(e: React.KeyboardEvent) {
-    if (n === 0) return;
+    if (n === 0) {
+      return;
+    }
     if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
       e.preventDefault();
       const delta = e.key === 'ArrowRight' ? 1 : -1;
@@ -198,13 +206,17 @@ export function HistoryLineChart({
           let current: { x: number; y: number }[] = [];
           s.values.forEach((v, i) => {
             if (v === null) {
-              if (current.length) segments.push(current);
+              if (current.length) {
+                segments.push(current);
+              }
               current = [];
             } else {
               current.push({ x: xAt(i), y: yAt(v) });
             }
           });
-          if (current.length) segments.push(current);
+          if (current.length) {
+            segments.push(current);
+          }
           return (
             <g key={s.key}>
               {segments.map((seg, k) =>

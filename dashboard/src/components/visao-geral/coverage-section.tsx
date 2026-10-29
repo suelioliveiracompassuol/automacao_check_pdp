@@ -43,7 +43,9 @@ function CountryGrid({
           <div className="mt-2 flex flex-wrap justify-center gap-1">
             {(vendorsByCountry[code] ?? []).map((vendor) => {
               const info = VENDOR_INFO[vendor as Vendor];
-              if (!info) return null;
+              if (!info) {
+                return null;
+              }
               return (
                 <span
                   key={vendor}

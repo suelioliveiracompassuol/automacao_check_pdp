@@ -113,9 +113,15 @@ export function niceScale(maxValue: number, tickCount = 5): { max: number; ticks
  */
 export function monotonePath(points: { x: number; y: number }[]): string {
   const n = points.length;
-  if (n === 0) return '';
-  if (n === 1) return `M ${points[0].x} ${points[0].y}`;
-  if (n === 2) return `M ${points[0].x} ${points[0].y} L ${points[1].x} ${points[1].y}`;
+  if (n === 0) {
+    return '';
+  }
+  if (n === 1) {
+    return `M ${points[0].x} ${points[0].y}`;
+  }
+  if (n === 2) {
+    return `M ${points[0].x} ${points[0].y} L ${points[1].x} ${points[1].y}`;
+  }
 
   const dx: number[] = [];
   const slope: number[] = [];
@@ -165,7 +171,9 @@ export function spreadLabels(ys: number[], minGap: number, top: number, bottom: 
   if (overflow > 0) {
     for (let k = placed.length - 1; k >= 0; k--) {
       placed[k] = Math.max(top, placed[k] - overflow);
-      if (k > 0) placed[k - 1] = Math.min(placed[k - 1], placed[k] - minGap);
+      if (k > 0) {
+        placed[k - 1] = Math.min(placed[k - 1], placed[k] - minGap);
+      }
     }
   }
   const result = new Array<number>(ys.length);

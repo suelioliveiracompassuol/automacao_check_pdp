@@ -14,7 +14,9 @@ interface StepScreenshotsProps {
 export function StepScreenshots({ steps, runId }: StepScreenshotsProps) {
   const [selected, setSelected] = useState<{ src: string; title: string } | null>(null);
 
-  if (steps.length === 0) return null;
+  if (steps.length === 0) {
+    return null;
+  }
 
   return (
     <div className="mt-3 space-y-2">

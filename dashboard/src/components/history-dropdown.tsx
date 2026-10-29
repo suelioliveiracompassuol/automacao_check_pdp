@@ -51,7 +51,9 @@ export function HistoryDropdown({
 
   // Close on Escape and hand focus back to the trigger
   useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      return;
+    }
     function handleKey(e: KeyboardEvent) {
       if (e.key === 'Escape') {
         setOpen(false);

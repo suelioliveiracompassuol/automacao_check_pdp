@@ -64,10 +64,18 @@ export const NO_FILTERS: ResultFilters = {
 export function filterResults(results: PdpCheckResult[], filters: ResultFilters): PdpCheckResult[] {
   const query = filters.search.trim().toLowerCase();
   return results.filter((r) => {
-    if (filters.vendor !== 'all' && r.vendor.toLowerCase() !== filters.vendor) return false;
-    if (filters.country !== 'all' && r.country.toUpperCase() !== filters.country) return false;
-    if (filters.status === 'pass' && !r.success) return false;
-    if (filters.status === 'fail' && r.success) return false;
+    if (filters.vendor !== 'all' && r.vendor.toLowerCase() !== filters.vendor) {
+      return false;
+    }
+    if (filters.country !== 'all' && r.country.toUpperCase() !== filters.country) {
+      return false;
+    }
+    if (filters.status === 'pass' && !r.success) {
+      return false;
+    }
+    if (filters.status === 'fail' && r.success) {
+      return false;
+    }
     if (query) {
       return [r.sku, r.name, r.url].some((field) => field?.toLowerCase().includes(query));
     }

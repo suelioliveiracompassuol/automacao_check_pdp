@@ -16,7 +16,9 @@ const REPORT_RETENTION_DAYS = 10;
 
 /** Descrição das condições de teste (equivalentes ao WebPageTest), quando a rodada as registra. */
 function describeConditions(conditions: PerfRun['conditions']): string | null {
-  if (!conditions) return null;
+  if (!conditions) {
+    return null;
+  }
   const { connectivity, downKbps, upKbps, rttMs, viewport } = conditions;
   return `${connectivity} (${formatKbps(downKbps)}/${formatKbps(upKbps)}, ${rttMs} ms) · tela ${viewport}`;
 }

@@ -45,7 +45,9 @@ function hasRuns(d: PlatformSectionData) {
 export function PlatformTabs({ data }: { data: PlatformSectionData[] }) {
   const [active, setActive] = useState((data.find(hasRuns) ?? data[0])?.platform);
 
-  if (data.length === 0) return null;
+  if (data.length === 0) {
+    return null;
+  }
 
   return (
     <Tabs value={active} onValueChange={(v) => setActive(v as Platform)}>

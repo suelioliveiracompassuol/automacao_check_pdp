@@ -20,7 +20,9 @@ export function Modal({ open, onClose, describedBy, className, children }: Modal
     <Dialog.Root
       open={open}
       onOpenChange={(next) => {
-        if (!next) onClose();
+        if (!next) {
+          onClose();
+        }
       }}
     >
       <Dialog.Portal>

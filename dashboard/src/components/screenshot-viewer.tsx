@@ -13,7 +13,9 @@ interface ScreenshotViewerProps {
 export function ScreenshotViewer({ screenshots, runId }: ScreenshotViewerProps) {
   const [selected, setSelected] = useState<string | null>(null);
 
-  if (screenshots.length === 0) return null;
+  if (screenshots.length === 0) {
+    return null;
+  }
 
   return (
     <>

@@ -96,7 +96,9 @@ describe('PerformanceHistory', () => {
     // A seção Low não é afetada
     expect(within(lowLegend).getAllByRole('button')[1]).toHaveAttribute('aria-pressed', 'true');
 
-    for (const b of [buttons[0], buttons[2], buttons[3]]) await user.click(b);
+    for (const b of [buttons[0], buttons[2], buttons[3]]) {
+      await user.click(b);
+    }
     expect(buttons.filter((b) => b.getAttribute('aria-pressed') === 'true')).toHaveLength(1);
   });
 

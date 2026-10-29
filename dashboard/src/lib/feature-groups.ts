@@ -47,8 +47,11 @@ export function groupFeaturesByCategory(features: CheckResult[]): FeatureGroup[]
 
   for (const f of features) {
     const pos = positionOf(f.featureKey);
-    if (pos) buckets[pos[0]].push({ f, order: pos[1] });
-    else technical.push(f);
+    if (pos) {
+      buckets[pos[0]].push({ f, order: pos[1] });
+    } else {
+      technical.push(f);
+    }
   }
 
   const groups: FeatureGroup[] = CHECKS_CATALOG.map((category, c) => ({

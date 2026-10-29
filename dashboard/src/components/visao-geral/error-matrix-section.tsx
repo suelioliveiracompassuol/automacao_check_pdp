@@ -25,8 +25,12 @@ function computeErrorMatrix(reports: MonitoringReport[]): MatrixRow[] {
   reports.forEach((report, runIndex) => {
     report.results.forEach((pdp) => {
       pdp.features.forEach((feature) => {
-        if (EXCLUDED_CHECKS.has(feature.featureKey)) return;
-        if (feature.status !== 'fail' && feature.status !== 'error') return;
+        if (EXCLUDED_CHECKS.has(feature.featureKey)) {
+          return;
+        }
+        if (feature.status !== 'fail' && feature.status !== 'error') {
+          return;
+        }
 
         const key = `${feature.featureKey}|${pdp.vendor.toLowerCase()}|${pdp.country.toUpperCase()}`;
         if (!matrix.has(key)) {

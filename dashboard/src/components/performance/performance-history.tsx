@@ -81,7 +81,9 @@ function KpiTile({
 
 function LcpGoalBadge({ value }: { value: number | null }) {
   const rating = classifyMetric('lcp', value);
-  if (!rating) return null;
+  if (!rating) {
+    return null;
+  }
   return (
     <span
       className={cn('rounded-full px-2 py-0.5 text-[11px] font-bold', ratingTone(rating).badge)}
@@ -157,7 +159,9 @@ function PageTypeHistory({
     setVisible((cur) => {
       const next = new Set(cur);
       if (next.has(key)) {
-        if (next.size > 1) next.delete(key); // sempre ao menos uma série visível
+        if (next.size > 1) {
+          next.delete(key);
+        } // sempre ao menos uma série visível
       } else {
         next.add(key);
       }

@@ -17,7 +17,9 @@ function describeTrend(data: EvolutionChartPoint[]): string {
   const first = data[0];
   const last = data[data.length - 1];
   const current = `Taxa de aprovação atual: ${last.passRate}% (${last.label}).`;
-  if (data.length < 2) return current;
+  if (data.length < 2) {
+    return current;
+  }
   const diff = last.passRate - first.passRate;
   const trend =
     diff === 0

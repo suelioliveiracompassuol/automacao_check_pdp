@@ -35,7 +35,9 @@ function readOptionalJson<T>(...segments: string[]): T | null {
 }
 
 function readJsonFile<T>(filePath: string): T | null {
-  if (!fs.existsSync(filePath)) return null;
+  if (!fs.existsSync(filePath)) {
+    return null;
+  }
   try {
     return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
   } catch {
@@ -56,11 +58,15 @@ export const getLastReport = cache((): MonitoringReport => readJson('last-report
 export const getReportIndex = cache((): ReportIndex => {
   const web = readJson<ReportIndex>('reports', 'index.json').reports;
   const android = readOptionalJson<ReportIndex>('reports', 'index.android.json')?.reports ?? [];
-  if (android.length === 0) return { reports: web };
+  if (android.length === 0) {
+    return { reports: web };
+  }
 
   const byRunId = new Map<string, ReportIndexEntry>();
   for (const entry of [...android, ...web]) {
-    if (!byRunId.has(entry.runId)) byRunId.set(entry.runId, entry);
+    if (!byRunId.has(entry.runId)) {
+      byRunId.set(entry.runId, entry);
+    }
   }
   const reports = [...byRunId.values()].sort(
     (a, b) => (Date.parse(b.startTime) || 0) - (Date.parse(a.startTime) || 0),
@@ -132,7 +138,9 @@ export const getPerfIndex = cache((): PerfIndex => {
   for (const dir of PERF_DIRS) {
     const index = readJsonFile<PerfIndex>(path.join(dir, 'index.json'));
     for (const run of index?.runs ?? []) {
-      if (!byRunId.has(run.runId)) byRunId.set(run.runId, run);
+      if (!byRunId.has(run.runId)) {
+        byRunId.set(run.runId, run);
+      }
     }
   }
   const runs = [...byRunId.values()].sort(
@@ -144,7 +152,9 @@ export const getPerfIndex = cache((): PerfIndex => {
 export const getPerfRun = cache((runId: string): PerfRun | null => {
   for (const dir of PERF_DIRS) {
     const run = readJsonFile<PerfRun>(path.join(dir, `${runId}.json`));
-    if (run) return run;
+    if (run) {
+      return run;
+    }
   }
   return null;
 });

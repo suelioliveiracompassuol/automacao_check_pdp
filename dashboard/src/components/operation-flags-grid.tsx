@@ -69,8 +69,12 @@ const HIDDEN_FLAGS = new Set([
 function flattenFlags(flags: Record<string, unknown>): Record<string, unknown> {
   const result: Record<string, unknown> = {};
   for (const [key, val] of Object.entries(flags)) {
-    if (key === '_raw' || key === 'capturedAt' || key === 'locale') continue;
-    if (HIDDEN_FLAGS.has(key)) continue;
+    if (key === '_raw' || key === 'capturedAt' || key === 'locale') {
+      continue;
+    }
+    if (HIDDEN_FLAGS.has(key)) {
+      continue;
+    }
     if (Array.isArray(val)) {
       // e.g. gift_module_pdp.bundle_tags: one cell instead of a row per index
       result[key] = val.join(', ');
@@ -116,7 +120,9 @@ function FlagsTable({
     return [...keys].sort();
   }, [operations, flagsKey]);
 
-  if (allKeys.length === 0) return null;
+  if (allKeys.length === 0) {
+    return null;
+  }
 
   // pre-compute flattened flags per operation
   const flatByOp = operations.map((op) => flattenFlags(op[flagsKey] || {}));
@@ -205,7 +211,9 @@ export function OperationFlagsGrid({ results }: OperationFlagsGridProps) {
     const map = new Map<string, OperationData>();
     for (const r of results) {
       const key = getOperationKey(r);
-      if (map.has(key)) continue;
+      if (map.has(key)) {
+        continue;
+      }
       if (!r.remoteConfigFlags && !r.commerceFeatureFlags) {
         continue;
       }

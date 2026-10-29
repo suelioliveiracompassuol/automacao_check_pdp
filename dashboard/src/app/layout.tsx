@@ -35,7 +35,9 @@ function getLastRuns(): LastRunSummary[] {
   return PLATFORMS.filter((p) => !p.upcoming).flatMap(({ platform }) => {
     try {
       const entry = getReportsByPlatform(platform)[0];
-      if (!entry) return [];
+      if (!entry) {
+        return [];
+      }
       const { failed, errors } = entry.summary;
       return [{ platform, runId: entry.runId, startTime: entry.startTime, failed, errors }];
     } catch {

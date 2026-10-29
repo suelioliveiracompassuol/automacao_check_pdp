@@ -42,7 +42,9 @@ export async function updateSku(
 ): Promise<SkuEntry | null> {
   const ref = doc(db, COL, id);
   const snap = await getDoc(ref);
-  if (!snap.exists()) return null;
+  if (!snap.exists()) {
+    return null;
+  }
 
   const current = snap.data() as Partial<SkuEntry>;
   const merged = { ...current, ...data } as Partial<SkuEntry>;
@@ -71,7 +73,9 @@ export async function updateSku(
 export async function deleteSku(id: string): Promise<boolean> {
   const ref = doc(db, COL, id);
   const snap = await getDoc(ref);
-  if (!snap.exists()) return false;
+  if (!snap.exists()) {
+    return false;
+  }
   await deleteDoc(ref);
   return true;
 }

@@ -28,6 +28,8 @@ export const ALL_NAV: NavItem[] = [...MAIN_NAV, ...PLATFORM_NAV, ...ADMIN_NAV];
 
 /** A home só é ativa em "/"; as demais rotas também ficam ativas nas sub-rotas (ex.: /web/run_1). */
 export function isNavActive(pathname: string, href: string): boolean {
-  if (href === '/') return pathname === '/';
+  if (href === '/') {
+    return pathname === '/';
+  }
   return pathname === href || pathname.startsWith(`${href}/`);
 }

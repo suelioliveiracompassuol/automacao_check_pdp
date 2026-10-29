@@ -9,6 +9,11 @@ const eslintConfig = [
   ...compat.extends('next/core-web-vitals', 'next/typescript'),
   prettier,
   {
+    rules: {
+      curly: ['error', 'all'],
+    },
+  },
+  {
     ignores: ['node_modules/**', '.next/**', 'out/**', 'coverage/**', 'next-env.d.ts'],
   },
 ];

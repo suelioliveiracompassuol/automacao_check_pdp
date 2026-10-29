@@ -54,7 +54,9 @@ export function SkusClient() {
         setSkus((prev) => [...prev, created]);
       } else {
         const updated = await updateSku(editingEntry.id, data);
-        if (updated === null) throw new Error('SKU não encontrado');
+        if (updated === null) {
+          throw new Error('SKU não encontrado');
+        }
         // O id muda quando sku/canal mudam, então substitui pelo id antigo.
         setSkus((prev) => prev.map((s) => (s.id === editingEntry.id ? updated : s)));
       }
@@ -64,7 +66,9 @@ export function SkusClient() {
   );
 
   const handleDelete = useCallback(async () => {
-    if (deletingId === null) return;
+    if (deletingId === null) {
+      return;
+    }
     await deleteSku(deletingId);
     setSkus((prev) => prev.filter((s) => s.id !== deletingId));
     setDeletingId(null);
