@@ -12,7 +12,7 @@ interface FeatureTableProps {
   features: CheckResult[];
   runId: string;
   pageScreenshot?: string;
-  /** featureKey → reference image URL; when set, the table gets a "Referência" column */
+  /** featureKey → reference image URL; when set, the table gets an "Imagem de referência" column */
   featureRefs?: Record<string, string>;
 }
 
@@ -84,7 +84,7 @@ export function FeatureTable({ features, runId, pageScreenshot, featureRefs }: F
               </th>
               {featureRefs && (
                 <th className="py-2.5 px-3 font-semibold text-medium-emphasis text-xs uppercase tracking-wide w-32">
-                  Referência
+                  Imagem de referência
                 </th>
               )}
             </tr>
@@ -107,7 +107,7 @@ export function FeatureTable({ features, runId, pageScreenshot, featureRefs }: F
                         onClick={() =>
                           setSelectedScreenshot({
                             src: featureRefs[f.featureKey],
-                            title: `Referência — ${f.feature}`,
+                            title: `Imagem de referência — ${f.feature}`,
                           })
                         }
                         className="block rounded border border-neutral-75 bg-white p-0.5 hover:border-primary transition-colors cursor-zoom-in"

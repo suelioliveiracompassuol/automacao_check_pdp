@@ -96,7 +96,7 @@ export async function checkReviewFilter(page: Page): Promise<CheckResult> {
     const hasFilter = await pollUntilVisible(
       page,
       REVIEWS_FILTER_ICON_SELECTOR,
-      TIMING.reviewFilterTimeout,
+      TIMING.reviewHeaderTimeout,
     );
 
     if (hasFilter) {
@@ -162,10 +162,11 @@ export async function checkReviewSort(page: Page): Promise<CheckResult> {
       };
     }
 
-    // Look for sort dropdown arrow icon inside reviews
+    // Look for sort dropdown arrow icon inside reviews (client-only, like the filter)
     const hasSortIcon = await pollUntilVisible(
       page,
       '#reviews [data-testid="reviews-sort"], #reviews i[class*="natds-icons-outlined-navigation-arrowbottom"]',
+      TIMING.reviewHeaderTimeout,
     );
 
     if (hasSortIcon) {
@@ -256,7 +257,11 @@ export async function checkReviewPhotos(page: Page): Promise<CheckResult> {
       )
       .count()
       .catch(() => 0);
-    const hasFilter = await pollUntilVisible(page, REVIEWS_FILTER_ICON_SELECTOR);
+    const hasFilter = await pollUntilVisible(
+      page,
+      REVIEWS_FILTER_ICON_SELECTOR,
+      TIMING.reviewHeaderTimeout,
+    );
 
     const reviewPhotos = {
       count: imgsCount,

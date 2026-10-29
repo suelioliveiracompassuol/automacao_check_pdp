@@ -190,7 +190,7 @@ describe('FeatureTable', () => {
 
   it('shows no reference column without featureRefs (Android)', () => {
     render(<FeatureTable features={mockFeatures} runId="run_123" />);
-    expect(screen.queryByText('Referência')).not.toBeInTheDocument();
+    expect(screen.queryByText('Imagem de referência')).not.toBeInTheDocument();
   });
 
   it('shows the reference thumbnail and opens it enlarged', () => {
@@ -201,15 +201,15 @@ describe('FeatureTable', () => {
         featureRefs={{ price: '/feature-refs/natura-br/price.png' }}
       />,
     );
-    expect(screen.getByText('Referência')).toBeInTheDocument();
+    expect(screen.getByText('Imagem de referência')).toBeInTheDocument();
     // Details stay visible and the reference column comes last
     expect(screen.getByText('Price not found')).toBeInTheDocument();
     const headers = screen.getAllByRole('columnheader').map((th) => th.textContent);
-    expect(headers).toEqual(['Status', 'Feature', 'Detalhes', 'Referência']);
+    expect(headers).toEqual(['Status', 'Feature', 'Detalhes', 'Imagem de referência']);
     // Features without an image get a placeholder
     expect(screen.getAllByLabelText('Sem imagem de referência')).toHaveLength(3);
 
     fireEvent.click(screen.getByRole('button', { name: 'Ver imagem de referência: Price' }));
-    expect(screen.getByText('Referência — Price')).toBeInTheDocument();
+    expect(screen.getByText('Imagem de referência — Price')).toBeInTheDocument();
   });
 });

@@ -333,9 +333,6 @@ export interface CommerceFeatureFlags {
 
   // Business Model
   businessModel?: string;
-  businessModelB2B2C?: boolean;
-  businessModelB2C?: boolean;
-  businessModelB2C_B2B2C?: boolean;
 
   // PDP Features
   displayStockOnProductDetailPage?: boolean;
@@ -344,7 +341,6 @@ export interface CommerceFeatureFlags {
   enableDisplayFreeShippingPdp?: boolean;
   freeShippingValue?: number;
   nePagesPdV2?: boolean;
-  newExperienceEnableGiftPdp?: boolean;
 
   // Gift & Packaging
   giftPackaging?: boolean;
@@ -366,16 +362,12 @@ export interface CommerceFeatureFlags {
 /** Keys merged by {@link mergeCommerceFeatureFlags} (excludes metadata). */
 const COMMERCE_FLAG_DATA_KEYS: (keyof CommerceFeatureFlags)[] = [
   "businessModel",
-  "businessModelB2B2C",
-  "businessModelB2C",
-  "businessModelB2C_B2B2C",
   "displayStockOnProductDetailPage",
   "newExperiencePdpEnable",
   "enablePdpFreightCalculation",
   "enableDisplayFreeShippingPdp",
   "freeShippingValue",
   "nePagesPdV2",
-  "newExperienceEnableGiftPdp",
   "giftPackaging",
   "enableGiftOnSite",
   "giftSku",
@@ -838,7 +830,6 @@ export function setupCommerceFeatureFlagCapture(
           // Try to build a partial flags object from HTML
           const partialFlags: Record<string, unknown> = {};
 
-
           for (const flag of booleanFlags) {
             const regex = new RegExp(`"${flag}"\\s*:\\s*(true|false)`);
             const match = htmlContent.match(regex);
@@ -902,9 +893,6 @@ export function getCommerceFlagsByCategory(
   }
   if (flags.nePagesPdV2 !== undefined) {
     pdpFlags.nePagesPdV2 = flags.nePagesPdV2;
-  }
-  if (flags.newExperienceEnableGiftPdp !== undefined) {
-    pdpFlags.newExperienceEnableGiftPdp = flags.newExperienceEnableGiftPdp;
   }
   if (Object.keys(pdpFlags).length > 0) {
     categories["🛍️ PDP Features"] = pdpFlags;

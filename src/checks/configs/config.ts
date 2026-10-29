@@ -287,6 +287,9 @@ export const TIMING = {
   couponsTimeout: 30000,
   /** Max wait for the gift module (ms) — like the coupons banner, it renders after the client-side Remote Config fetch. */
   giftModuleTimeout: 30000,
-  /** Max wait for the reviews filter button (ms) — loaded as a client-only chunk, after the rest of the reviews header. */
-  reviewFilterTimeout: 20000,
+  /**
+   * Max wait for the reviews header controls — sort dropdown and filter button (ms). They're
+   * client-only chunks that can land well after #reviews itself (seen past 8 s on Natura PE).
+   */
+  reviewHeaderTimeout: 20000,
 };
