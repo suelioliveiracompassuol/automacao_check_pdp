@@ -63,6 +63,12 @@ describe('ReportClient', () => {
     expect(screen.getByText('1 item')).toBeInTheDocument();
   });
 
+  it('groups PdpCards by operation, Natura before Avon', () => {
+    render(<ReportClient results={mockResults} runId="run_123" screenshots={[]} />);
+    const headings = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
+    expect(headings).toEqual(['Natura Brasil', 'Avon Argentina']);
+  });
+
   it('renders section header', () => {
     render(<ReportClient results={mockResults} runId="run_123" screenshots={[]} />);
     expect(screen.getByText('Resultados por PDP')).toBeInTheDocument();

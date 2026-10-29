@@ -52,7 +52,6 @@ export const DOMAINS: DomainConfig[] = [
       "productVariations",
       "contentBanners",
       "coupons",
-
       "giftModule",
     ],
   },
@@ -77,7 +76,6 @@ export const DOMAINS: DomainConfig[] = [
       "productVariations",
       "contentBanners",
       "coupons",
-
       "giftModule",
     ],
   },
@@ -102,7 +100,6 @@ export const DOMAINS: DomainConfig[] = [
       "productVariations",
       "contentBanners",
       "coupons",
-
       "giftModule",
     ],
   },
@@ -127,7 +124,6 @@ export const DOMAINS: DomainConfig[] = [
       "productVariations",
       "contentBanners",
       "coupons",
-
       "giftModule",
     ],
   },
@@ -152,7 +148,6 @@ export const DOMAINS: DomainConfig[] = [
       "productVariations",
       "contentBanners",
       "coupons",
-
       "giftModule",
     ],
   },
@@ -180,7 +175,6 @@ export const DOMAINS: DomainConfig[] = [
       "productVariations",
       "contentBanners",
       "coupons",
-
       "giftModule",
     ],
   },
@@ -225,8 +219,6 @@ export const DOMAINS: DomainConfig[] = [
       "reviewPhotos",
       "reviewRecommendation",
       "images",
-      //"pricing",
-      //"shipping",
       "rating",
       "ratingConsistency",
       "addToCart",
@@ -234,8 +226,6 @@ export const DOMAINS: DomainConfig[] = [
       "productVariations",
       "contentBanners",
       "coupons",
-
-      "giftModule",
     ],
   },
   {
@@ -246,7 +236,6 @@ export const DOMAINS: DomainConfig[] = [
     availableFeatures: [
       "brandShowcase",
       "images",
-      //  "pricing"
       "addToCart",
       "favoriteButton",
       "productVariations",
@@ -261,8 +250,6 @@ export const DOMAINS: DomainConfig[] = [
     availableFeatures: [
       "brandShowcase",
       "images",
-      // "pricing",
-      //"shipping",
       "addToCart",
       "favoriteButton",
       "productVariations",

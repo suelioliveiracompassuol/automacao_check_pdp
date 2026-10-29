@@ -15,6 +15,7 @@ export interface ReportIndexEntry {
   endTime: string;
   durationMs: number;
   summary: MonitoringReport["summary"];
+  skuSource?: MonitoringReport["skuSource"];
   /** Legacy: runs from before the HTML report was removed still carry it. */
   htmlPath?: string;
   jsonPath: string;

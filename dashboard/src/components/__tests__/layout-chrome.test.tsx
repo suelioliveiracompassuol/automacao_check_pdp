@@ -89,4 +89,14 @@ describe('PlatformHero', () => {
     expect(screen.getByText('run_42')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Histórico' })).toBeInTheDocument();
   });
+
+  it('mostra a fonte dos SKUs quando o relatório a informa', () => {
+    const { rerender } = render(
+      <PlatformHero platform="web" title="Monitor" report={makeReport({ skuSource: 'json' })} />,
+    );
+    expect(screen.getByText('SKUs: skus.json')).toBeInTheDocument();
+
+    rerender(<PlatformHero platform="web" title="Monitor" report={makeReport()} />);
+    expect(screen.queryByText(/^SKUs:/)).not.toBeInTheDocument();
+  });
 });

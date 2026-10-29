@@ -4,7 +4,9 @@ import { useMemo, useState } from 'react';
 import { m } from 'framer-motion';
 import { FilterBar } from '@/components/filter-bar';
 import { OperationFlagsGrid } from '@/components/operation-flags-grid';
+import { OperationGroupHeader } from '@/components/operation-group-header';
 import { PdpCard } from '@/components/pdp-card';
+import { groupByOperation } from '@/lib/operation-groups';
 import { filterResults, NO_FILTERS, type ResultFilters } from '@/lib/report';
 import type { FeatureRefIndex } from '@/lib/feature-refs';
 import type { PdpCheckResult } from '@/lib/types';
@@ -28,6 +30,14 @@ export function ReportClient({ results, runId, screenshots, featureRefs }: Repor
       setFilters((prev) => ({ ...prev, [key]: value }));
 
   const filteredResults = useMemo(() => filterResults(results, filters), [results, filters]);
+  // Escalonamento da animação segue a ordem de exibição (grupo a grupo), não a do relatório
+  const groups = useMemo(() => {
+    let index = 0;
+    return groupByOperation(filteredResults, (r) => r).map((group) => ({
+      ...group,
+      items: group.items.map((result) => ({ result, index: index++ })),
+    }));
+  }, [filteredResults]);
 
   return (
     <div className="space-y-6">
@@ -54,21 +64,32 @@ export function ReportClient({ results, runId, screenshots, featureRefs }: Repor
         </span>
       </div>
 
-      <div className="space-y-3">
-        {filteredResults.map((result, i) => (
-          <m.div
-            key={`${result.sku}-${result.timestamp}`}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: Math.min(i, MAX_STAGGERED) * 0.03, duration: 0.3 }}
-          >
-            <PdpCard
-              result={result}
-              runId={runId}
-              screenshots={screenshots}
-              featureRefs={featureRefs}
+      <div className="space-y-8">
+        {groups.map((group) => (
+          <section key={group.key} aria-labelledby={`group-${group.key}`}>
+            <OperationGroupHeader
+              groupKey={group.key}
+              label={group.label}
+              count={group.items.length}
             />
-          </m.div>
+            <div className="space-y-3">
+              {group.items.map(({ result, index }) => (
+                <m.div
+                  key={`${result.sku}-${result.timestamp}`}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: Math.min(index, MAX_STAGGERED) * 0.03, duration: 0.3 }}
+                >
+                  <PdpCard
+                    result={result}
+                    runId={runId}
+                    screenshots={screenshots}
+                    featureRefs={featureRefs}
+                  />
+                </m.div>
+              ))}
+            </div>
+          </section>
         ))}
         {filteredResults.length === 0 && (
           <div className="text-center py-16">

@@ -46,11 +46,16 @@ export interface StepScreenshot {
   path: string;
 }
 
+/** De onde veio a lista de SKUs da execução: Firestore, ou o fallback config/skus.json. */
+export type SkuSource = 'firestore' | 'json';
+
 export interface MonitoringReport {
   runId: string;
   startTime: string;
   endTime: string;
   durationMs: number;
+  /** Ausente em execuções anteriores a este campo. */
+  skuSource?: SkuSource;
   summary: {
     total: number;
     passed: number;
@@ -65,6 +70,7 @@ export interface ReportIndexEntry {
   startTime: string;
   endTime: string;
   durationMs: number;
+  skuSource?: SkuSource;
   summary: {
     total: number;
     passed: number;

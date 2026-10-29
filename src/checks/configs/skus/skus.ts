@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import type { FeatureKey, SkuConfig } from '../../../types.js';
+import type { FeatureKey, SkuConfig, SkuSource } from '../../../types.js';
 
 interface RawSkuEntry {
   id: string;
@@ -36,18 +36,25 @@ async function loadFromFirestore(): Promise<SkuConfig[]> {
   return snapshot.docs.map((doc) => toSkuConfig({ id: doc.id, ...doc.data() } as RawSkuEntry));
 }
 
-/** Carrega SKUs do Firestore se configurado, ou do config/skus.json como fallback. */
-export async function loadSkus(): Promise<SkuConfig[]> {
+/**
+ * Carrega SKUs do Firestore se configurado, ou do config/skus.json como fallback. Devolve
+ * também de onde vieram, gravado no relatório para dar para ver quando o fallback entrou.
+ */
+export async function loadSkusWithSource(): Promise<{ skus: SkuConfig[]; source: SkuSource }> {
   if (!process.env.FIREBASE_PROJECT_ID) {
     console.log('ℹ️  FIREBASE_PROJECT_ID não definido — usando config/skus.json');
-    return loadFromJson();
+    return { skus: loadFromJson(), source: 'json' };
   }
   try {
     const skus = await loadFromFirestore();
     console.log(`✅ ${skus.length} SKUs carregados do Firestore`);
-    return skus;
+    return { skus, source: 'firestore' };
   } catch (err) {
     console.warn('⚠️  Falha ao carregar SKUs do Firestore, usando config/skus.json como fallback:', err);
-    return loadFromJson();
+    return { skus: loadFromJson(), source: 'json' };
   }
+}
+
+export async function loadSkus(): Promise<SkuConfig[]> {
+  return (await loadSkusWithSource()).skus;
 }

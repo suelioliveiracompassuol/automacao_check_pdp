@@ -75,11 +75,16 @@ export { RemoteConfigFlags, CommerceFeatureFlags };
 /**
  * Full monitoring report
  */
+/** Where the run's SKU list came from: Firestore, or the config/skus.json fallback. */
+export type SkuSource = "firestore" | "json";
+
 export interface MonitoringReport {
   runId: string;
   startTime: string;
   endTime: string;
   durationMs: number;
+  /** Absent in runs from before this field existed. */
+  skuSource?: SkuSource;
   summary: {
     total: number;
     passed: number;

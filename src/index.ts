@@ -53,7 +53,7 @@ import {
   RemoteConfigFlags,
   CommerceFeatureFlags,
 } from "./checks/remoteConfig.js";
-import { loadSkus } from "./checks/configs/skus/skus.js";
+import { loadSkusWithSource } from "./checks/configs/skus/skus.js";
 import { FEATURES } from "./checks/configs/features.js";
 import { PDP_ENDPOINT_RULES } from "./checks/configs/endpoints-rules.js";
 import { runWithConcurrency, jitter, parseConcurrency } from "./concurrency.js";
@@ -603,7 +603,7 @@ async function main() {
   fs.mkdirSync(path.join(outputDir, "screenshots"), { recursive: true });
 
   // Carrega SKUs do Firestore (ou JSON como fallback)
-  const SKUS = await loadSkus();
+  const { skus: SKUS, source: skuSource } = await loadSkusWithSource();
 
   // Parse optional env-based filters (set via workflow_dispatch inputs)
   let featuresFilter: Set<string> | null = process.env.FEATURES_FILTER?.trim()
@@ -801,6 +801,7 @@ async function main() {
     startTime: startTime.toISOString(),
     endTime: endTime.toISOString(),
     durationMs,
+    skuSource,
     summary: {
       total: results.length,
       passed: results.filter((r) => r.success).length,
@@ -829,6 +830,7 @@ async function main() {
       endTime: report.endTime,
       durationMs: report.durationMs,
       summary: report.summary,
+      skuSource: report.skuSource,
       // Path relative to the /docs root for the frontend
       jsonPath: path.join("reports", runId, "report.json").replace(/\\/g, "/"),
     });

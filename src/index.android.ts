@@ -13,7 +13,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import "./loadEnv.js";
 import { buildPdpUrl } from "./checks/configs/config.js";
-import { loadSkus } from "./checks/configs/skus/skus.js";
+import { loadSkusWithSource } from "./checks/configs/skus/skus.js";
 import {
   CheckResult,
   MonitoringReport,
@@ -440,7 +440,7 @@ async function main() {
 
   pruneOldAuthDebugScreenshots();
 
-  const allSkus = await loadSkus();
+  const { skus: allSkus, source: skuSource } = await loadSkusWithSource();
   // Which SKUs to check, in priority order:
   //   1. ANDROID_SKUS — comma-separated list, e.g. "NATBRA-70983,NATBRA-76420"
   //   2. ANDROID_SKU — single SKU (kept for backward compat with the original POC)
@@ -538,6 +538,7 @@ async function main() {
     startTime: new Date(startTime).toISOString(),
     endTime: new Date().toISOString(),
     durationMs: Date.now() - startTime,
+    skuSource,
     summary: {
       total: results.length,
       passed: results.filter((r) => r.success).length,
@@ -559,6 +560,7 @@ async function main() {
       endTime: report.endTime,
       durationMs: report.durationMs,
       summary: report.summary,
+      skuSource: report.skuSource,
       jsonPath: path.join("reports", runId, "report.json").replace(/\\/g, "/"),
       platform: "android",
     });

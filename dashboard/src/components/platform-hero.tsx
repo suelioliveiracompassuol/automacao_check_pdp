@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react';
-import { CalendarClock, Hash, Timer } from 'lucide-react';
+import { CalendarClock, Database, Hash, Timer } from 'lucide-react';
 import { PLATFORM_META } from '@/lib/platforms';
 import { BetaBadge } from '@/components/beta-badge';
-import type { MonitoringReport, Platform } from '@/lib/types';
+import type { MonitoringReport, Platform, SkuSource } from '@/lib/types';
 import { formatDate, formatDuration } from '@/lib/format';
 
 interface PlatformHeroProps {
@@ -32,6 +32,14 @@ function MetaPill({
     </span>
   );
 }
+
+const SKU_SOURCE_LABEL: Record<SkuSource, { label: string; title: string }> = {
+  firestore: { label: 'SKUs: Firestore', title: 'Lista de SKUs carregada do Firestore' },
+  json: {
+    label: 'SKUs: skus.json',
+    title: 'Firestore indisponível nesta execução — lista de SKUs veio do config/skus.json',
+  },
+};
 
 /** Page header shared by /web and /android (latest run and run detail routes). */
 export function PlatformHero({ platform, title, description, report, action }: PlatformHeroProps) {
@@ -73,6 +81,13 @@ export function PlatformHero({ platform, title, description, report, action }: P
           <MetaPill icon={<Hash className="h-3.5 w-3.5 text-primary-darkest" />} mono>
             {report.runId}
           </MetaPill>
+          {report.skuSource && (
+            <span title={SKU_SOURCE_LABEL[report.skuSource].title}>
+              <MetaPill icon={<Database className="h-3.5 w-3.5 text-primary-darkest" />}>
+                {SKU_SOURCE_LABEL[report.skuSource].label}
+              </MetaPill>
+            </span>
+          )}
         </div>
       </div>
     </section>

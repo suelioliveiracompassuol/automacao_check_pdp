@@ -2,15 +2,10 @@
 
 import { Search } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import { OperationGroupHeader } from '@/components/operation-group-header';
 import { fieldControlClass } from '@/components/ui/form-field';
-import {
-  CHANNEL_INFO,
-  CHANNELS,
-  COUNTRIES,
-  COUNTRY_INFO,
-  VENDOR_INFO,
-  VENDORS,
-} from '@/lib/constants';
+import { CHANNEL_INFO, CHANNELS, COUNTRIES, VENDOR_INFO, VENDORS } from '@/lib/constants';
+import { groupByOperation } from '@/lib/operation-groups';
 import type { Channel, Country, SkuEntry, Vendor } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { SkuCard } from './sku-card';
@@ -21,31 +16,6 @@ interface SkuListProps {
   onDelete: (id: string) => void;
   disabled?: boolean;
 }
-
-interface SkuGroup {
-  key: string;
-  label: string;
-  match: (s: SkuEntry) => boolean;
-}
-
-function operationGroup(vendor: Vendor, country: Country): SkuGroup {
-  return {
-    key: `${vendor}-${country.toLowerCase()}`,
-    label: `${VENDOR_INFO[vendor].label} ${COUNTRY_INFO[country].label}`,
-    match: (s) => s.vendor === vendor && s.country === country && s.channel === 'ecommerce',
-  };
-}
-
-/** Ordem de exibição dos grupos; o que não casar com nenhum vai para "Outros". */
-const SKU_GROUPS: SkuGroup[] = [
-  ...(['BR', 'AR', 'CL', 'CO', 'MX', 'PE'] as const).map((c) => operationGroup('natura', c)),
-  {
-    key: 'social-br',
-    label: 'Social Commerce — Minha Loja (BR) Avon/Natura',
-    match: (s) => s.channel === 'socialcommerce' && s.country === 'BR',
-  },
-  ...(['BR', 'AR', 'MX'] as const).map((c) => operationGroup('avon', c)),
-];
 
 const ALL_OPTION = 'all';
 
@@ -69,27 +39,7 @@ export function SkuList({ skus, onEdit, onDelete, disabled }: SkuListProps) {
       return true;
     });
 
-    const assigned = new Set<string>();
-    const result = SKU_GROUPS.map((group) => {
-      const entries = filtered.filter((s) => {
-        if (group.match(s)) {
-          assigned.add(s.id);
-          return true;
-        }
-        return false;
-      });
-      return { group, entries };
-    }).filter(({ entries }) => entries.length > 0);
-
-    const others = filtered.filter((s) => !assigned.has(s.id));
-    if (others.length > 0) {
-      result.push({
-        group: { key: 'outros', label: 'Outros', match: () => false },
-        entries: others,
-      });
-    }
-
-    return { groups: result, totalFiltered: filtered.length };
+    return { groups: groupByOperation(filtered, (s) => s), totalFiltered: filtered.length };
   }, [skus, search, vendor, country, channel]);
 
   return (
@@ -159,22 +109,16 @@ export function SkuList({ skus, onEdit, onDelete, disabled }: SkuListProps) {
         </div>
       ) : (
         <div className="flex flex-col gap-8">
-          {groups.map(({ group, entries }) => (
+          {groups.map((group) => (
             <section key={group.key} aria-labelledby={`group-${group.key}`}>
-              <div className="mb-3 flex items-center gap-3">
-                <h2
-                  id={`group-${group.key}`}
-                  className="text-xs font-semibold uppercase tracking-widest text-low-emphasis"
-                >
-                  {group.label}
-                </h2>
-                <span className="rounded-full bg-neutral-75 px-2 py-0.5 text-[11px] font-medium text-medium-emphasis">
-                  {entries.length}
-                </span>
-                <div className="h-px flex-1 bg-neutral-75" aria-hidden="true" />
-              </div>
+              <OperationGroupHeader
+                groupKey={group.key}
+                label={group.label}
+                count={group.items.length}
+                as="h2"
+              />
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {entries.map((entry) => (
+                {group.items.map((entry) => (
                   <SkuCard
                     key={entry.id}
                     entry={entry}
