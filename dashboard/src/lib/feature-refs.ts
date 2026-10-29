@@ -13,7 +13,7 @@ export type FeatureRefIndex = Record<string, string[]>;
 /** Natura CO/CL/PE/MX share one layout and the same (neutral) Spanish copy. */
 const NATURA_LATAM = new Set(['CO', 'CL', 'PE', 'MX']);
 
-/** Keep in sync with `refGroupOf` in the monitor's src/featureRefs.ts. */
+/** Same grouping as the monitor's src/featureRefGroups.ts (checked by the feature-refs test). */
 export function refGroupOf(result: Pick<PdpCheckResult, 'vendor' | 'country' | 'channel'>): string {
   if (result.channel === 'socialcommerce') {
     return `minha-loja-${result.vendor}`;

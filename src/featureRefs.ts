@@ -4,27 +4,14 @@
  * or dropped in manually (e.g. when the WAF blocks the capture) at
  * `dashboard/public/feature-refs/<group>/<featureKey>.png`.
  *
- * Keep the grouping in sync with `refGroupOf` in dashboard/src/lib/feature-refs.ts.
+ * The grouping lives in featureRefGroups.ts (the dashboard test checks its copy against it).
  */
 
 import { Locator, Page } from "@playwright/test";
-import { FeatureKey, SkuConfig } from "./types.js";
+import { FeatureKey } from "./types.js";
 import { SELECTORS } from "./checks/configs/config.js";
 
-/** Natura CO/CL/PE/MX share one layout and the same (neutral) Spanish copy. */
-const NATURA_LATAM = new Set(["CO", "CL", "PE", "MX"]);
-
-export function refGroupOf(
-  sku: Pick<SkuConfig, "vendor" | "country" | "channel">,
-): string {
-  if (sku.channel === "socialcommerce") {
-    return `minha-loja-${sku.vendor}`;
-  }
-  if (sku.vendor === "natura" && NATURA_LATAM.has(sku.country)) {
-    return "natura-latam";
-  }
-  return `${sku.vendor}-${sku.country.toLowerCase()}`;
-}
+export { refGroupOf } from "./featureRefGroups.js";
 
 export interface FeatureRefTarget {
   /** Element that frames the feature on the PDP */

@@ -28,7 +28,6 @@ export const DOMAINS: DomainConfig[] = [
       "productVariations",
       "contentBanners",
       "coupons",
-
       "giftModule",
     ],
   },

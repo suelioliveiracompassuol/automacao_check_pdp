@@ -177,6 +177,13 @@ test.describe("Feature: Coupons", () => {
         "es-AR",
       ).enable_coupons_pdp,
     ).toBe(false);
+    // Sem o locale da operação não herda o valor do Brasil (fica não capturado)
+    expect(
+      parseRemoteConfigEntries(
+        { enable_coupons_pdp: '{"pt-BR":true}' },
+        "es-AR",
+      ).enable_coupons_pdp,
+    ).toBeUndefined();
   });
 
   test("gate do Remote Config: true roda, false desabilita, ausente não roda", () => {
@@ -201,12 +208,20 @@ test.describe("Feature: Coupons", () => {
       enabled: false,
       flagValue: undefined,
       flagKey: "enable_coupons_pdp",
+      notCaptured: true,
     });
     expect(isFeatureEnabledByRemoteConfig("coupons", null).enabled).toBe(false);
     // Demais features mantêm o comportamento antigo (flag não capturada = roda)
     expect(isFeatureEnabledByRemoteConfig("shopTheSet", null).enabled).toBe(
       true,
     );
+    // ...e caminho aninhado ausente continua "disabled", não N/A
+    const reviewFilter = isFeatureEnabledByRemoteConfig("reviewFilter", {
+      ...base,
+      product_reviews: {} as never,
+    });
+    expect(reviewFilter.enabled).toBe(false);
+    expect(reviewFilter.notCaptured).toBeUndefined();
   });
 
   test("gate do Commerce: só couponCenter=false desabilita", () => {
@@ -303,6 +318,10 @@ test.describe("Feature: Gift module", () => {
     expect(
       parseRemoteConfigEntries(entries, "es-AR").gift_module_pdp?.enabled,
     ).toBe(false);
+    // Locale ausente não cai no pt-BR
+    expect(
+      parseRemoteConfigEntries(entries, "es-CO").gift_module_pdp,
+    ).toBeUndefined();
   });
 
   test("gate: enabled + ao menos uma opção web", () => {
@@ -329,14 +348,28 @@ test.describe("Feature: Gift module", () => {
     );
     expect(noOptions.enabled).toBe(false);
     expect(noOptions.flagKey).toContain("enable_module_gift_web");
-    // Opções não capturadas: decide só pelo gift_module_pdp
-    expect(run({ enabled: true }).enabled).toBe(true);
+    // Opções web não capturadas: não dá para saber se o módulo aparece (N/A no runner)
+    expect(run({ enabled: true })).toMatchObject({
+      enabled: false,
+      notCaptured: true,
+    });
     // gift_module_pdp não capturado: não roda (vira N/A no runner)
     expect(
       isFeatureEnabledByRemoteConfig("giftModule", {
         capturedAt: "",
         locale: "pt-BR",
       }),
-    ).toMatchObject({ enabled: false, flagValue: undefined });
+    ).toMatchObject({ enabled: false, flagValue: undefined, notCaptured: true });
+  });
+
+  test("sem aria-expanded e sem opções em tela vira warning", async ({
+    page,
+  }) => {
+    await loadWithContent(
+      page,
+      `<button data-testid="accordion-component"><div><i data-icon-name="outlined-content-gift"></i></div><span>presente?</span></button>`,
+    );
+    const result = await checkGiftModule(page);
+    expect(result.status).toBe("warning");
   });
 });

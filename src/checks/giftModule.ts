@@ -7,6 +7,27 @@ const FEATURE = "Módulo de presente";
 /** Wait for the gift options after expanding the accordion (ms). */
 const OPTIONS_TIMEOUT = 5000;
 
+/** Delivery options visible on the page (labels for the report). */
+async function visibleOptions(page: Page, timeout: number): Promise<string[]> {
+  const cardMessage = page
+    .locator(SELECTORS.giftModule.cardMessageOption)
+    .first();
+  const searchBag = page.locator(SELECTORS.giftModule.searchBagOption).first();
+  // timeout 0 means "no limit" to Playwright, so 0 here skips the wait instead
+  if (timeout > 0) {
+    await cardMessage
+      .or(searchBag)
+      .first()
+      .waitFor({ state: "visible", timeout })
+      .catch(() => {});
+  }
+
+  return [
+    (await cardMessage.isVisible()) && '"a gente entrega"',
+    (await searchBag.isVisible()) && '"você entrega"',
+  ].filter((o): o is string => Boolean(o));
+}
+
 /**
  * Módulo "esse pedido é para presente?" da PDP. Só é verificado quando o Remote Config o habilita
  * (gift_module_pdp.enabled + uma opção web em enable_module_gift_cart) — o gate fica no runner;
@@ -36,13 +57,24 @@ export async function checkGiftModule(page: Page): Promise<CheckResult> {
     // Desktop: acordeão (aria-expanded). Mobile abre um bottom sheet — não é aberto aqui.
     const expanded = await trigger.getAttribute("aria-expanded");
     if (expanded === null) {
+      // Sem estado de acordeão: só dá para conferir opções que já estejam em tela
+      const shown = await visibleOptions(page, 0);
+      if (shown.length > 0) {
+        return {
+          feature: FEATURE,
+          featureKey: "giftModule",
+          passed: true,
+          status: "pass",
+          message: `Módulo de presente exibido com ${shown.length} opção(ões): ${shown.join(", ")}`,
+        };
+      }
       return {
         feature: FEATURE,
         featureKey: "giftModule",
         passed: true,
-        status: "pass",
+        status: "warning",
         message:
-          "Módulo de presente exibido (flag gift_module_pdp.enabled ativa)",
+          "Módulo de presente em tela, mas sem aria-expanded — opções de entrega não verificadas",
       };
     }
 
@@ -50,22 +82,7 @@ export async function checkGiftModule(page: Page): Promise<CheckResult> {
       await trigger.click();
     }
 
-    const cardMessage = page
-      .locator(SELECTORS.giftModule.cardMessageOption)
-      .first();
-    const searchBag = page
-      .locator(SELECTORS.giftModule.searchBagOption)
-      .first();
-    await cardMessage
-      .or(searchBag)
-      .first()
-      .waitFor({ state: "visible", timeout: OPTIONS_TIMEOUT })
-      .catch(() => {});
-
-    const options = [
-      (await cardMessage.isVisible()) && '"a gente entrega"',
-      (await searchBag.isVisible()) && '"você entrega"',
-    ].filter(Boolean);
+    const options = await visibleOptions(page, OPTIONS_TIMEOUT);
 
     // Restore the accordion so the page (and the failure screenshot) stays as loaded
     if (expanded === "false") {

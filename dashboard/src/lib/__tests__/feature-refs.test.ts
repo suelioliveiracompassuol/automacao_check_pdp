@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { featureRefUrls, refGroupOf } from '../feature-refs';
+// The monitor's copy, which names the folders the capture script writes to
+import { refGroupOf as monitorRefGroupOf } from '../../../../src/featureRefGroups';
 
 describe('refGroupOf', () => {
   it.each([
@@ -16,6 +18,19 @@ describe('refGroupOf', () => {
     [{ vendor: 'avon', country: 'BR', channel: 'socialcommerce' }, 'minha-loja-avon'],
   ])('%o → %s', (result, group) => {
     expect(refGroupOf(result)).toBe(group);
+  });
+});
+
+describe('refGroupOf × monitor', () => {
+  const vendors = ['natura', 'avon'];
+  const countries = ['BR', 'AR', 'CL', 'CO', 'PE', 'MX'];
+  const channels = [undefined, 'ecommerce', 'socialcommerce'] as const;
+  const cases = vendors.flatMap((vendor) =>
+    countries.flatMap((country) => channels.map((channel) => ({ vendor, country, channel }))),
+  );
+
+  it.each(cases)('%o gives the same group as the monitor', (result) => {
+    expect(refGroupOf(result)).toBe(monitorRefGroupOf(result));
   });
 });
 

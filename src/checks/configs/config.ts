@@ -274,6 +274,13 @@ export const TIMING = {
    */
   remoteConfigWait: 20000,
   /**
+   * Wait used instead of {@link remoteConfigWait} when no RC-gated feature will run or the
+   * operation already timed out once in this run (ms).
+   */
+  remoteConfigShortWait: 500,
+  /** Extra time after the first Remote Config response for follow-up responses (ms). */
+  remoteConfigGrace: 500,
+  /**
    * Max wait for the coupons banner (ms). It only renders after the client-side Remote Config
    * fetch, which lands 9–20 s after navigation; the banner shows 3–10 s later (measured).
    */

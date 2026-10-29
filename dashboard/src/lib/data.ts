@@ -100,7 +100,7 @@ export const getFeatureRefIndex = cache((): FeatureRefIndex => {
         fs
           .readdirSync(path.join(FEATURE_REFS_DIR, entry.name))
           .filter((fileName) => fileName.endsWith('.png'))
-          .map((fileName) => fileName.replace(/.png$/, '')),
+          .map((fileName) => fileName.replace(/\.png$/, '')),
       ]),
   );
 });

@@ -181,38 +181,7 @@ export async function getCommerceFeatureFlagsFromPage(
     }
 
     // Normalize the found flags object into the CommerceFeatureFlags structure
-    return {
-      capturedAt: new Date().toISOString(),
-      _raw: flags,
-      businessModel: flags.businessModel as string | undefined,
-      businessModelB2B2C: flags.businessModelB2B2C as boolean | undefined,
-      businessModelB2C: flags.businessModelB2C as boolean | undefined,
-      businessModelB2C_B2B2C: flags.businessModelB2C_B2B2C as
-        boolean | undefined,
-      displayStockOnProductDetailPage: flags.displayStockOnProductDetailPage as
-        boolean | undefined,
-      newExperiencePdpEnable: flags.newExperiencePdpEnable as
-        boolean | undefined,
-      enablePdpFreightCalculation: flags.enablePdpFreightCalculation as
-        boolean | undefined,
-      enableDisplayFreeShippingPdp: flags.enableDisplayFreeShippingPdp as
-        boolean | undefined,
-      freeShippingValue: flags.freeShippingValue as number | undefined,
-      nePagesPdV2: flags.nePagesPdV2 as boolean | undefined,
-      newExperienceEnableGiftPdp: flags.newExperienceEnableGiftPdp as
-        boolean | undefined,
-      giftPackaging: flags.giftPackaging as boolean | undefined,
-      enableGiftOnSite: flags.enableGiftOnSite as boolean | undefined,
-      giftSku: flags.giftSku as string | undefined,
-
-      productRecommendation: flags.productRecommendation as boolean | undefined,
-      location: flags.location as boolean | undefined,
-      newExperienceEnable: flags.newExperienceEnable as boolean | undefined,
-      socialCommerce: flags.socialCommerce as boolean | undefined,
-      socialCommerceMinhaLoja: flags.socialCommerceMinhaLoja as
-        boolean | undefined,
-      couponCenter: flags.couponCenter as boolean | undefined,
-    };
+    return parseCommerceFeatureFlags(flags);
   } catch (error) {
     console.log(
       `      ⚠️ Error during DOM extraction of feature flags: ${error instanceof Error ? error.message : String(error)}`,
@@ -418,6 +387,20 @@ const COMMERCE_FLAG_DATA_KEYS: (keyof CommerceFeatureFlags)[] = [
   "couponCenter",
 ];
 
+/** Non-boolean entries of {@link COMMERCE_FLAG_DATA_KEYS}. */
+const COMMERCE_NON_BOOLEAN_KEYS = new Set<keyof CommerceFeatureFlags>([
+  "businessModel",
+  "freeShippingValue",
+  "giftSku",
+]);
+
+/** Boolean flags scraped from the HTML when no feature-flag object is found (extras stay in `_raw`). */
+const COMMERCE_HTML_BOOLEAN_FLAGS: string[] = [
+  ...COMMERCE_FLAG_DATA_KEYS.filter((k) => !COMMERCE_NON_BOOLEAN_KEYS.has(k)),
+  "cnBlockSelfBuy",
+  "cnRecommendation",
+];
+
 /**
  * Merges network-captured commerce flags with DOM-extracted flags.
  * Prefer defined values from `primary` (typically /feature-flag), then `secondary`.
@@ -462,11 +445,15 @@ export interface RemoteConfigMapping {
   configKey: string;
   /** Path within the config object (e.g., "filter" or "recommendation.enabled") */
   configPath?: string;
-  /** Only check the feature when the flag was captured as true (absent = not checked). */
+  /**
+   * Only check the feature when the flag was captured as true (absent = N/A). Its keys are
+   * read for the page's own locale only, without the pt-BR fallback.
+   */
   requireCaptured?: boolean;
   /**
    * Further Remote Config paths of which at least one must also be true (e.g. the gift module
-   * needs a web gift option). Ignored when none of them was captured.
+   * needs a web gift option). When none of them was captured: N/A with `requireCaptured`,
+   * otherwise ignored.
    */
   requiresAnyOf?: { configKey: string; configPath?: string }[];
 }
@@ -509,6 +496,30 @@ export const FEATURE_REMOTE_CONFIG_MAP: Partial<
   },
 };
 
+/**
+ * Remote Config keys behind `requireCaptured` features: read only for the page's locale, so a
+ * LATAM operation doesn't inherit Brazil's value and check a module that isn't there.
+ */
+const STRICT_LOCALE_KEYS = new Set(
+  Object.values(FEATURE_REMOTE_CONFIG_MAP)
+    .filter((m) => m?.requireCaptured)
+    .flatMap((m) => [
+      m!.configKey,
+      ...(m!.requiresAnyOf ?? []).map((d) => d.configKey),
+    ]),
+);
+
+/** Value of a locale-keyed Remote Config object (pt-BR fallback unless the key is strict). */
+function localeValue(
+  parsed: Record<string, unknown>,
+  key: string,
+  locale: string,
+): unknown {
+  return STRICT_LOCALE_KEYS.has(key)
+    ? parsed[locale]
+    : (parsed[locale] ?? parsed["pt-BR"]);
+}
+
 // =============================================================================
 // LOCALE MAPPING
 // =============================================================================
@@ -535,23 +546,49 @@ export const COUNTRY_TO_LOCALE: Record<string, string> = {
  *
  * @param page - Playwright page instance
  * @param locale - Locale string (e.g., "pt-BR", "es-AR")
- * @returns Function that when called returns captured flags
+ * @returns Function that when called returns captured flags, waiting up to `maxWaitMs`
+ *   for the first Remote Config response
  */
 export function setupRemoteConfigCapture(
   page: Page,
   locale: string,
-): () => Promise<RemoteConfigFlags | null> {
+): (maxWaitMs?: number) => Promise<RemoteConfigFlags | null> {
   const capturedFlags: RemoteConfigFlags = {
     capturedAt: new Date().toISOString(),
     locale,
   };
   let captured = false;
+  const pending = new Set<Promise<void>>();
   let markCaptured: () => void = () => {};
   const capturedSignal = new Promise<void>((resolve) => {
     markCaptured = resolve;
   });
 
-  const responseHandler = async (response: {
+  const processRemoteConfigJson = async (response: {
+    json: () => Promise<unknown>;
+  }) => {
+    try {
+      const body = (await response.json()) as {
+        entries?: Record<string, string>;
+      };
+
+      if (body.entries) {
+        // Several responses (templates / refetches) are merged
+        const flags = parseRemoteConfigEntries(body.entries, locale);
+        Object.assign(capturedFlags, flags);
+        capturedFlags._raw = {
+          ...capturedFlags._raw,
+          ...(body.entries as unknown as Record<string, unknown>),
+        };
+        captured = true;
+        markCaptured();
+      }
+    } catch {
+      // Response not JSON or parsing failed - continue
+    }
+  };
+
+  const responseHandler = (response: {
     url: () => string;
     status: () => number;
     json: () => Promise<unknown>;
@@ -560,41 +597,33 @@ export function setupRemoteConfigCapture(
 
     // Check for Firebase Remote Config responses
     if (url.includes("firebaseremoteconfig") || url.includes("remoteconfig")) {
-      try {
-        const body = (await response.json()) as {
-          entries?: Record<string, string>;
-        };
-
-        if (body.entries) {
-          const flags = parseRemoteConfigEntries(body.entries, locale);
-          Object.assign(capturedFlags, flags);
-          capturedFlags._raw = body.entries as unknown as Record<
-            string,
-            unknown
-          >;
-          captured = true;
-          markCaptured();
-        }
-      } catch {
-        // Response not JSON or parsing failed - continue
-      }
+      const p = processRemoteConfigJson(response);
+      pending.add(p);
+      void p.finally(() => pending.delete(p));
     }
   };
 
   page.on("response", responseHandler);
 
   // Return collector function
-  return async (): Promise<RemoteConfigFlags | null> => {
+  return async (
+    maxWaitMs: number = TIMING.remoteConfigWait,
+  ): Promise<RemoteConfigFlags | null> => {
     // Some sites (e.g. Natura AR) only fetch Remote Config ~12 s after navigation,
     // after the scroll pass is over — wait for it instead of a fixed short delay
     let timer: NodeJS.Timeout | undefined;
     await Promise.race([
       capturedSignal,
       new Promise((resolve) => {
-        timer = setTimeout(resolve, TIMING.remoteConfigWait);
+        timer = setTimeout(resolve, maxWaitMs);
       }),
     ]);
     clearTimeout(timer);
+    // Short grace for follow-up responses (a second template or a refetch) and in-flight json()
+    await new Promise((resolve) =>
+      setTimeout(resolve, TIMING.remoteConfigGrace),
+    );
+    await Promise.allSettled([...pending]);
     page.off("response", responseHandler);
 
     if (captured && Object.keys(capturedFlags).length > 2) {
@@ -608,38 +637,16 @@ export function setupRemoteConfigCapture(
 export function parseCommerceFeatureFlags(
   body: Record<string, unknown>,
 ): CommerceFeatureFlags {
-  return {
+  const flags: CommerceFeatureFlags = {
     capturedAt: new Date().toISOString(),
     _raw: body,
-    // Business Model
-    businessModel: body.businessModel as string | undefined,
-    businessModelB2B2C: body.businessModelB2B2C as boolean | undefined,
-    businessModelB2C: body.businessModelB2C as boolean | undefined,
-    businessModelB2C_B2B2C: body.businessModelB2C_B2B2C as boolean | undefined,
-    // PDP Features
-    displayStockOnProductDetailPage: body.displayStockOnProductDetailPage as
-      boolean | undefined,
-    newExperiencePdpEnable: body.newExperiencePdpEnable as boolean | undefined,
-    enablePdpFreightCalculation: body.enablePdpFreightCalculation as
-      boolean | undefined,
-    enableDisplayFreeShippingPdp: body.enableDisplayFreeShippingPdp as
-      boolean | undefined,
-    freeShippingValue: body.freeShippingValue as number | undefined,
-    nePagesPdV2: body.nePagesPdV2 as boolean | undefined,
-    newExperienceEnableGiftPdp: body.newExperienceEnableGiftPdp as
-      boolean | undefined,
-    // Gift & Packaging
-    giftPackaging: body.giftPackaging as boolean | undefined,
-    enableGiftOnSite: body.enableGiftOnSite as boolean | undefined,
-    giftSku: body.giftSku as string | undefined,
-    productRecommendation: body.productRecommendation as boolean | undefined,
-    location: body.location as boolean | undefined,
-    newExperienceEnable: body.newExperienceEnable as boolean | undefined,
-    socialCommerce: body.socialCommerce as boolean | undefined,
-    socialCommerceMinhaLoja: body.socialCommerceMinhaLoja as
-      boolean | undefined,
-    couponCenter: body.couponCenter as boolean | undefined,
   };
+  for (const k of COMMERCE_FLAG_DATA_KEYS) {
+    if (body[k] !== undefined) {
+      (flags as unknown as Record<string, unknown>)[k] = body[k];
+    }
+  }
+  return flags;
 }
 
 /** True if URL is likely the commerce BFF feature-flag JSON (not Firebase). */
@@ -712,7 +719,7 @@ export function setupCommerceFeatureFlagCapture(
     // Try to extract feature flags from the page content
     // The flags might be embedded in __NEXT_DATA__, RSC payload, or React context
     try {
-      const pageFlags = await page.evaluate(() => {
+      const pageFlags = await page.evaluate((booleanFlags) => {
         // 1. Try __NEXT_DATA__ script tag (Next.js pages router)
         const nextDataScript = document.getElementById("__NEXT_DATA__");
         if (nextDataScript) {
@@ -831,17 +838,6 @@ export function setupCommerceFeatureFlagCapture(
           // Try to build a partial flags object from HTML
           const partialFlags: Record<string, unknown> = {};
 
-          const booleanFlags = [
-            "newExperiencePdpEnable",
-            "displayStockOnProductDetailPage",
-            "giftPackaging",
-            "enableGiftOnSite",
-            "cnBlockSelfBuy",
-            "cnRecommendation",
-            "productRecommendation",
-            "newExperienceEnable",
-            "couponCenter",
-          ];
 
           for (const flag of booleanFlags) {
             const regex = new RegExp(`"${flag}"\\s*:\\s*(true|false)`);
@@ -861,40 +857,10 @@ export function setupCommerceFeatureFlagCapture(
         }
 
         return null;
-      });
+      }, COMMERCE_HTML_BOOLEAN_FLAGS);
 
       if (pageFlags && typeof pageFlags === "object") {
-        const body = pageFlags as Record<string, unknown>;
-        return {
-          capturedAt: new Date().toISOString(),
-          _raw: body,
-          businessModel: body.businessModel as string | undefined,
-          businessModelB2B2C: body.businessModelB2B2C as boolean | undefined,
-          businessModelB2C: body.businessModelB2C as boolean | undefined,
-          businessModelB2C_B2B2C: body.businessModelB2C_B2B2C as
-            boolean | undefined,
-          displayStockOnProductDetailPage:
-            body.displayStockOnProductDetailPage as boolean | undefined,
-          newExperiencePdpEnable: body.newExperiencePdpEnable as
-            boolean | undefined,
-          enablePdpFreightCalculation: body.enablePdpFreightCalculation as
-            boolean | undefined,
-          enableDisplayFreeShippingPdp: body.enableDisplayFreeShippingPdp as
-            boolean | undefined,
-          freeShippingValue: body.freeShippingValue as number | undefined,
-          nePagesPdV2: body.nePagesPdV2 as boolean | undefined,
-          newExperienceEnableGiftPdp: body.newExperienceEnableGiftPdp as
-            boolean | undefined,
-          giftPackaging: body.giftPackaging as boolean | undefined,
-          enableGiftOnSite: body.enableGiftOnSite as boolean | undefined,
-          giftSku: body.giftSku as string | undefined,
-
-          productRecommendation: body.productRecommendation as
-            boolean | undefined,
-          location: body.location as boolean | undefined,
-          newExperienceEnable: body.newExperienceEnable as boolean | undefined,
-          couponCenter: body.couponCenter as boolean | undefined,
-        };
+        return parseCommerceFeatureFlags(pageFlags as Record<string, unknown>);
       }
     } catch {
       // Page evaluation failed
@@ -1075,55 +1041,24 @@ export function parseRemoteConfigEntries(
 ): Partial<RemoteConfigFlags> {
   const flags: Partial<RemoteConfigFlags> = {};
 
-  // Parse product_reviews
-  if (entries.product_reviews) {
-    try {
-      const parsed = JSON.parse(entries.product_reviews);
-      const localeValue = parsed[locale] || parsed["pt-BR"]; // fallback to pt-BR
-      if (localeValue) {
-        flags.product_reviews = localeValue;
-      }
-    } catch {
-      // Invalid JSON
-    }
-  }
+  // Parse locale-keyed config objects
+  const objectFlags = [
+    "product_reviews",
+    "gift_search_category_cart",
+    "gift_module_pdp",
+    "enable_module_gift_cart",
+  ] as const;
 
-  // Parse gift_search_category_cart
-  if (entries.gift_search_category_cart) {
-    try {
-      const parsed = JSON.parse(entries.gift_search_category_cart);
-      const localeValue = parsed[locale] || parsed["pt-BR"];
-      if (localeValue) {
-        flags.gift_search_category_cart = localeValue;
+  for (const key of objectFlags) {
+    if (entries[key]) {
+      try {
+        const value = localeValue(JSON.parse(entries[key]), key, locale);
+        if (value) {
+          (flags as Record<string, unknown>)[key] = value;
+        }
+      } catch {
+        // Invalid JSON
       }
-    } catch {
-      // Invalid JSON
-    }
-  }
-
-  // Parse gift_module_pdp
-  if (entries.gift_module_pdp) {
-    try {
-      const parsed = JSON.parse(entries.gift_module_pdp);
-      const localeValue = parsed[locale] || parsed["pt-BR"];
-      if (localeValue) {
-        flags.gift_module_pdp = localeValue;
-      }
-    } catch {
-      // Invalid JSON
-    }
-  }
-
-  // Parse enable_module_gift_cart
-  if (entries.enable_module_gift_cart) {
-    try {
-      const parsed = JSON.parse(entries.enable_module_gift_cart);
-      const localeValue = parsed[locale] || parsed["pt-BR"];
-      if (localeValue) {
-        flags.enable_module_gift_cart = localeValue;
-      }
-    } catch {
-      // Invalid JSON
     }
   }
 
@@ -1156,7 +1091,10 @@ export function parseRemoteConfigEntries(
         if (typeof parsed === "boolean") {
           flags[key] = parsed;
         } else if (typeof parsed === "object" && parsed !== null) {
-          flags[key] = parsed[locale] ?? parsed["pt-BR"] ?? false;
+          const value = localeValue(parsed, key, locale);
+          if (value !== undefined || !STRICT_LOCALE_KEYS.has(key)) {
+            flags[key] = (value ?? false) as boolean;
+          }
         }
       } catch {
         // Try direct boolean
@@ -1172,6 +1110,15 @@ export function parseRemoteConfigEntries(
 // HELPER FUNCTIONS
 // =============================================================================
 
+/** Outcome of a feature flag gate. */
+export interface FlagGateResult {
+  enabled: boolean;
+  flagValue: unknown;
+  flagKey?: string;
+  /** The feature only exists behind a flag that wasn't captured — report N/A, not disabled. */
+  notCaptured?: boolean;
+}
+
 /**
  * Checks if a feature is enabled according to Remote Config flags
  *
@@ -1182,7 +1129,7 @@ export function parseRemoteConfigEntries(
 export function isFeatureEnabledByRemoteConfig(
   featureKey: FeatureKey,
   flags: RemoteConfigFlags | null,
-): { enabled: boolean; flagValue: unknown; flagKey?: string } {
+): FlagGateResult {
   const mapping = FEATURE_REMOTE_CONFIG_MAP[featureKey];
   if (!mapping) {
     // No mapping for this feature - assume enabled
@@ -1194,15 +1141,17 @@ export function isFeatureEnabledByRemoteConfig(
     return { enabled: true, flagValue: undefined };
   }
 
+  const flagKey = mapping.configPath
+    ? `${mapping.configKey}.${mapping.configPath}`
+    : mapping.configKey;
+
   const configValue = flags?.[mapping.configKey as keyof RemoteConfigFlags];
   if (configValue === undefined) {
     // Flag not captured - assume enabled (don't break existing behavior),
     // unless the feature only exists behind the flag
-    return {
-      enabled: !mapping.requireCaptured,
-      flagValue: undefined,
-      flagKey: mapping.configKey,
-    };
+    return mapping.requireCaptured
+      ? { enabled: false, flagValue: undefined, flagKey, notCaptured: true }
+      : { enabled: true, flagValue: undefined, flagKey: mapping.configKey };
   }
 
   // If there's a path, get nested value
@@ -1213,10 +1162,11 @@ export function isFeatureEnabledByRemoteConfig(
     value = configValue;
   }
 
+  if (value === undefined && mapping.requireCaptured) {
+    return { enabled: false, flagValue: undefined, flagKey, notCaptured: true };
+  }
+
   const enabled = value === true;
-  const flagKey = mapping.configPath
-    ? `${mapping.configKey}.${mapping.configPath}`
-    : mapping.configKey;
 
   if (enabled && mapping.requiresAnyOf && flags) {
     const deps = mapping.requiresAnyOf.map((dep) => {
@@ -1231,6 +1181,14 @@ export function isFeatureEnabledByRemoteConfig(
       };
     });
     const captured = deps.filter((d) => d.value !== undefined);
+    if (captured.length === 0 && mapping.requireCaptured) {
+      return {
+        enabled: false,
+        flagValue: undefined,
+        flagKey: deps.map((d) => d.key).join(" | "),
+        notCaptured: true,
+      };
+    }
     if (captured.length > 0 && !captured.some((d) => d.value === true)) {
       return {
         enabled: false,
@@ -1259,7 +1217,7 @@ export const FEATURE_COMMERCE_FLAG_MAP: Partial<
 export function isFeatureEnabledByCommerceFlags(
   featureKey: FeatureKey,
   flags: CommerceFeatureFlags | null,
-): { enabled: boolean; flagValue: unknown; flagKey?: string } {
+): FlagGateResult {
   const flagKey = FEATURE_COMMERCE_FLAG_MAP[featureKey];
   if (!flagKey) {
     return { enabled: true, flagValue: undefined };

@@ -51,7 +51,7 @@ export function FeatureTable({ features, runId, pageScreenshot, featureRefs }: F
           )}
         >
           <div
-            className="h-full rounded-full bg-gradient-to-r from-success-light to-success transition-all duration-500"
+            className="h-full rounded-full bg-linear-to-r from-success-light to-success transition-all duration-500"
             style={{ width: `${percentage}%` }}
             role="progressbar"
             aria-valuenow={percentage}

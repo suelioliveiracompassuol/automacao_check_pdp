@@ -67,6 +67,9 @@ export const FEATURE_CHECKERS: Record<
   giftModule: checkGiftModule,
 };
 
+/** Checkers that click on the page — run after the parallel read-only phase, one at a time. */
+export const INTERACTIVE_FEATURES: ReadonlySet<string> = new Set(["giftModule"]);
+
 // ---------------------------------------------------------------------------
 // Grouping metadata
 // ---------------------------------------------------------------------------
