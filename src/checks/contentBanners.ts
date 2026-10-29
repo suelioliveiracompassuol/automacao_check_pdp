@@ -1,6 +1,6 @@
 import { Page } from "@playwright/test";
 import { CheckResult } from "../types.js";
-import { SELECTORS } from "./configs/config.js";
+import { SELECTORS, TIMING } from "./configs/config.js";
 
 /**
  * Check if content banners (widepic / product content type) are present on the PDP
@@ -61,29 +61,54 @@ export async function checkContentBanners(page: Page): Promise<CheckResult> {
         totalBanners++;
 
         try {
-          const result = await img.evaluate((el: HTMLImageElement) => {
-            const rect = el.getBoundingClientRect();
-            const style = window.getComputedStyle(el);
-            const isRendered =
-              rect.width > 0 &&
-              rect.height > 0 &&
-              style.display !== "none" &&
-              style.visibility !== "hidden";
+          const result = await img.evaluate(
+            async (el: HTMLImageElement, timeoutMs: number) => {
+              // Lazy images are usually still downloading right after the scroll:
+              // wait for load/error instead of reading `complete` too early.
+              if (!el.complete) {
+                await new Promise<void>((resolve) => {
+                  const done = () => resolve();
+                  el.addEventListener("load", done, { once: true });
+                  el.addEventListener("error", done, { once: true });
+                  setTimeout(done, timeoutMs);
+                });
+              }
 
-            return {
-              loaded: el.complete && el.naturalWidth > 0,
-              isRendered,
-              src: el.src || el.getAttribute("data-src") || "",
-              naturalWidth: el.naturalWidth,
-              naturalHeight: el.naturalHeight,
-            };
-          });
+              const rect = el.getBoundingClientRect();
+              const style = window.getComputedStyle(el);
+              const isRendered =
+                rect.width > 0 &&
+                rect.height > 0 &&
+                style.display !== "none" &&
+                style.visibility !== "hidden";
+
+              return {
+                loaded: el.complete && el.naturalWidth > 0,
+                pending: !el.complete,
+                isRendered,
+                src: el.currentSrc || el.src || el.getAttribute("data-src") || "",
+                naturalWidth: el.naturalWidth,
+                naturalHeight: el.naturalHeight,
+              };
+            },
+            TIMING.bannerImageLoadTimeout,
+          );
 
           if (!result.isRendered) {
             continue;
           }
 
-          if (result.loaded && result.naturalWidth > 0) {
+          // Still downloading after the timeout (slow, not broken): confirm via HTTP
+          // so a heavy image isn't reported as broken.
+          const loadedViaHttp =
+            result.pending &&
+            !!result.src &&
+            (await page.request
+              .get(result.src, { timeout: TIMING.bannerImageLoadTimeout })
+              .then((res) => res.ok())
+              .catch(() => false));
+
+          if ((result.loaded && result.naturalWidth > 0) || loadedViaHttp) {
             loadedCount++;
           } else {
             brokenCount++;

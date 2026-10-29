@@ -292,4 +292,10 @@ export const TIMING = {
    * client-only chunks that can land well after #reviews itself (seen past 8 s on Natura PE).
    */
   reviewHeaderTimeout: 20000,
+  /**
+   * Max wait for each content banner image to finish loading after scrolling to it (ms). They're
+   * `loading="lazy"` and some are heavy (1500px JPGs on Natura PE), so they're often still
+   * downloading right after the scroll.
+   */
+  bannerImageLoadTimeout: 10000,
 };
