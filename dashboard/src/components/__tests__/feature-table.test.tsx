@@ -58,6 +58,16 @@ describe('FeatureTable', () => {
     expect(screen.getByText('Price not found')).toBeInTheDocument();
   });
 
+  it('groups rows by catalog category with a per-group summary', () => {
+    render(<FeatureTable features={mockFeatures} runId="run_123" />);
+    const headers = screen.getAllByRole('columnheader').filter((h) => h.getAttribute('scope'));
+    // reviews está no catálogo; o resto (chaves desconhecidas) vai para "Técnico"
+    expect(headers.map((h) => h.textContent)).toEqual([
+      'Avaliações & Nota1 · 0 ok · 1 N/A',
+      'Técnico3 · 2 ok · 1 falha',
+    ]);
+  });
+
   it('returns null when features array is empty', () => {
     const { container } = render(<FeatureTable features={[]} runId="run_123" />);
     expect(container.innerHTML).toBe('');
@@ -204,7 +214,10 @@ describe('FeatureTable', () => {
     expect(screen.getByText('Imagem de referência')).toBeInTheDocument();
     // Details stay visible and the reference column comes last
     expect(screen.getByText('Price not found')).toBeInTheDocument();
-    const headers = screen.getAllByRole('columnheader').map((th) => th.textContent);
+    const headers = screen
+      .getAllByRole('columnheader')
+      .filter((th) => !th.getAttribute('scope'))
+      .map((th) => th.textContent);
     expect(headers).toEqual(['Status', 'Feature', 'Detalhes', 'Imagem de referência']);
     // Features without an image get a placeholder
     expect(screen.getAllByLabelText('Sem imagem de referência')).toHaveLength(3);

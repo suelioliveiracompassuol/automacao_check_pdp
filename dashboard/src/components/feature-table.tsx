@@ -2,6 +2,7 @@
 
 import type { CheckResult } from '@/lib/types';
 import { StatusBadge } from './status-badge';
+import { groupFeaturesByCategory } from '@/lib/feature-groups';
 import { summarizeFeatures } from '@/lib/report';
 import { cn, getScreenshotUrl } from '@/lib/utils';
 import { Image as ImageIcon } from 'lucide-react';
@@ -14,6 +15,24 @@ interface FeatureTableProps {
   pageScreenshot?: string;
   /** featureKey → reference image URL; when set, the table gets an "Imagem de referência" column */
   featureRefs?: Record<string, string>;
+}
+
+/** Resumo discreto ao lado do título da categoria; falhas em vermelho para achar o problema rápido. */
+function GroupCounts({ features }: { features: CheckResult[] }) {
+  const { passed, failed } = summarizeFeatures(features);
+  const na = features.filter((f) => f.status === 'na').length;
+  return (
+    <span className="ml-2 text-[11px] font-normal text-low-emphasis">
+      {features.length} · {passed} ok
+      {failed > 0 && (
+        <span className="font-semibold text-alert-dark">
+          {' '}
+          · {failed} {failed === 1 ? 'falha' : 'falhas'}
+        </span>
+      )}
+      {na > 0 && ` · ${na} N/A`}
+    </span>
+  );
 }
 
 export function FeatureTable({ features, runId, pageScreenshot, featureRefs }: FeatureTableProps) {
@@ -89,51 +108,65 @@ export function FeatureTable({ features, runId, pageScreenshot, featureRefs }: F
               )}
             </tr>
           </thead>
-          <tbody>
-            {features.map((f, i) => (
-              <tr key={`${f.featureKey}-${i}`} className={cn(style(f))}>
-                <td className="py-2 px-3">
-                  <StatusBadge status={f.status} />
-                </td>
-                <td className="py-2 px-3 font-medium text-high-emphasis text-xs">{f.feature}</td>
-                <td className="py-2 px-3 text-medium-emphasis max-w-md text-xs leading-relaxed">
-                  {f.message}
-                </td>
-                {featureRefs && (
-                  <td className="py-1.5 px-3">
-                    {featureRefs[f.featureKey] ? (
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setSelectedScreenshot({
-                            src: featureRefs[f.featureKey],
-                            title: `Imagem de referência — ${f.feature}`,
-                          })
-                        }
-                        className="block rounded border border-neutral-75 bg-white p-0.5 hover:border-primary transition-colors cursor-zoom-in"
-                        aria-label={`Ver imagem de referência: ${f.feature}`}
-                      >
-                        {/* eslint-disable-next-line @next/next/no-img-element -- static export, no image optimizer */}
-                        <img
-                          src={featureRefs[f.featureKey]}
-                          alt=""
-                          loading="lazy"
-                          className="h-8 max-w-28 object-contain"
-                        />
-                      </button>
-                    ) : (
-                      <span
-                        className="text-low-emphasis text-xs"
-                        aria-label="Sem imagem de referência"
-                      >
-                        —
-                      </span>
-                    )}
-                  </td>
-                )}
+          {groupFeaturesByCategory(features).map((group) => (
+            <tbody key={group.title}>
+              <tr className="border-t border-neutral-75 bg-neutral-50/50">
+                <th
+                  scope="colgroup"
+                  colSpan={featureRefs ? 4 : 3}
+                  className="py-1.5 px-3 text-left"
+                >
+                  <span className="text-[11px] font-semibold uppercase tracking-widest text-low-emphasis">
+                    {group.title}
+                  </span>
+                  <GroupCounts features={group.features} />
+                </th>
               </tr>
-            ))}
-          </tbody>
+              {group.features.map((f, i) => (
+                <tr key={`${f.featureKey}-${i}`} className={cn(style(f))}>
+                  <td className="py-2 px-3">
+                    <StatusBadge status={f.status} />
+                  </td>
+                  <td className="py-2 px-3 font-medium text-high-emphasis text-xs">{f.feature}</td>
+                  <td className="py-2 px-3 text-medium-emphasis max-w-md text-xs leading-relaxed">
+                    {f.message}
+                  </td>
+                  {featureRefs && (
+                    <td className="py-1.5 px-3">
+                      {featureRefs[f.featureKey] ? (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setSelectedScreenshot({
+                              src: featureRefs[f.featureKey],
+                              title: `Imagem de referência — ${f.feature}`,
+                            })
+                          }
+                          className="block rounded border border-neutral-75 bg-white p-0.5 hover:border-primary transition-colors cursor-zoom-in"
+                          aria-label={`Ver imagem de referência: ${f.feature}`}
+                        >
+                          {/* eslint-disable-next-line @next/next/no-img-element -- static export, no image optimizer */}
+                          <img
+                            src={featureRefs[f.featureKey]}
+                            alt=""
+                            loading="lazy"
+                            className="h-8 max-w-28 object-contain"
+                          />
+                        </button>
+                      ) : (
+                        <span
+                          className="text-low-emphasis text-xs"
+                          aria-label="Sem imagem de referência"
+                        >
+                          —
+                        </span>
+                      )}
+                    </td>
+                  )}
+                </tr>
+              ))}
+            </tbody>
+          ))}
         </table>
       </div>
 
