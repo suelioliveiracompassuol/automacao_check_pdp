@@ -75,6 +75,13 @@ export const CHECKS_CATALOG: ChecklistCategory[] = [
         desc: 'Nota da tela bate com a API de reviews',
         bg: 'bg-alert-lightest/50',
       },
+      {
+        key: 'topRatedBadge',
+        emoji: '🏅',
+        name: 'Selo "melhor avaliado"',
+        desc: 'Exibido só quando a API do produto retorna isTopRated: true',
+        bg: 'bg-info-lightest/50',
+      },
     ],
   },
   {
@@ -106,20 +113,6 @@ export const CHECKS_CATALOG: ChecklistCategory[] = [
   {
     title: 'Compra',
     items: [
-      //   {
-      //     key: 'pricing',
-      //     emoji: '💲',
-      //     name: 'Preço e desconto',
-      //     desc: 'Preço de venda/lista exibidos corretamente',
-      //     bg: 'bg-alert-lightest/50',
-      //   },
-      //   {
-      //     key: 'shipping',
-      //     emoji: '🚚',
-      //     name: 'Frete',
-      //     desc: 'Simulação de frete por CEP funcional',
-      //     bg: 'bg-neutral-50',
-      //   },
       {
         key: 'addToCart',
         emoji: '🛒',

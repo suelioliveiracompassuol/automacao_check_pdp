@@ -17,8 +17,6 @@ export {
 } from "./showcases.js";
 export { checkShopTheSet } from "./shopTheSet.js";
 export { checkImages } from "./media.js";
-export { checkPricing } from "./pricing.js";
-export { checkShipping } from "./shipping.js";
 export {
   checkRatingConsistency,
   setupRatingConsistencyCapture,
@@ -34,3 +32,7 @@ export {
 export { checkContentBanners } from "./contentBanners.js";
 export { checkCoupons } from "./coupons.js";
 export { checkGiftModule } from "./giftModule.js";
+export {
+  checkTopRatedBadge,
+  setupTopRatedCapture,
+} from "./topRatedBadge.js";

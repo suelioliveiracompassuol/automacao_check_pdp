@@ -37,6 +37,7 @@ import {
   captureRatingFromDOM,
 } from "./checks/ratingConsistency.js";
 import { setupProductVariationsCapture } from "./checks/productVariations.js";
+import { setupTopRatedCapture } from "./checks/topRatedBadge.js";
 
 import {
   setupRemoteConfigCapture,
@@ -154,6 +155,9 @@ async function checkPdp(params: CheckPdpParams): Promise<PdpCheckResult> {
 
   // Setup product variations capture BEFORE navigation (intercepts BFF API + SSR)
   setupProductVariationsCapture(page);
+
+  // Setup isTopRated capture BEFORE navigation (SSR product payload + BFF product API)
+  setupTopRatedCapture(page, sku.sku);
 
   const traceMode = getPlaywrightTraceMode();
   const traceZipPath = path.join(
@@ -652,7 +656,7 @@ async function main() {
   // =========================================================================
   // MODE=smoke — quick healthcheck: 1 SKU per domain, subset of features
   // =========================================================================
-  const SMOKE_FEATURES = ["images", "addToCart", "pricing"];
+  const SMOKE_FEATURES = ["images", "addToCart"];
   const isSmokeMode = process.env.MODE === "smoke";
 
   if (isSmokeMode) {

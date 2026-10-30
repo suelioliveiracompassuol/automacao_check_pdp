@@ -110,4 +110,5 @@ export const FEATURE_REF_TARGETS: Partial<
   },
   coupons: { locate: (p) => p.locator(SELECTORS.coupons.banner) },
   giftModule: { locate: (p) => p.locator(SELECTORS.giftModule.trigger) },
+  topRatedBadge: { locate: (p) => p.locator(SELECTORS.topRatedBadge.badge) },
 };

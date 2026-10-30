@@ -25,8 +25,6 @@ import {
   checkRecommendationShowcase,
   checkShopTheSet,
   checkImages,
-  checkPricing,
-  checkShipping,
   checkRating,
   checkRatingConsistency,
   checkAddToCart,
@@ -35,6 +33,7 @@ import {
   checkContentBanners,
   checkCoupons,
   checkGiftModule,
+  checkTopRatedBadge,
 } from "./index.js";
 
 // ---------------------------------------------------------------------------
@@ -55,8 +54,6 @@ export const FEATURE_CHECKERS: Record<
   recommendationShowcase: checkRecommendationShowcase,
   shopTheSet: checkShopTheSet,
   images: checkImages,
-  pricing: checkPricing,
-  shipping: checkShipping,
   rating: checkRating,
   ratingConsistency: checkRatingConsistency,
   addToCart: checkAddToCart,
@@ -65,6 +62,7 @@ export const FEATURE_CHECKERS: Record<
   contentBanners: checkContentBanners,
   coupons: checkCoupons,
   giftModule: checkGiftModule,
+  topRatedBadge: checkTopRatedBadge,
 };
 
 /** Checkers that click on the page — run after the parallel read-only phase, one at a time. */
@@ -83,6 +81,7 @@ export const REVIEW_RATING_KEYS = new Set([
   "aiReviewSummary",
   "rating",
   "ratingConsistency",
+  "topRatedBadge",
 ]);
 
 // ---------------------------------------------------------------------------

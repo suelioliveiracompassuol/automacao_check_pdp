@@ -5,8 +5,6 @@ import { countryLabel, vendorInfo } from '@/lib/constants';
 import type { MonitoringReport } from '@/lib/types';
 import { ALL_CHECKLIST_ITEMS } from '@/lib/checks-catalog';
 
-const EXCLUDED_CHECKS = new Set(['pricing', 'shipping']);
-
 interface MatrixRow {
   checkKey: string;
   checkLabel: string;
@@ -25,9 +23,6 @@ function computeErrorMatrix(reports: MonitoringReport[]): MatrixRow[] {
   reports.forEach((report, runIndex) => {
     report.results.forEach((pdp) => {
       pdp.features.forEach((feature) => {
-        if (EXCLUDED_CHECKS.has(feature.featureKey)) {
-          return;
-        }
         if (feature.status !== 'fail' && feature.status !== 'error') {
           return;
         }

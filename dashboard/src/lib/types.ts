@@ -103,8 +103,6 @@ export type FeatureKey =
   | 'recommendationShowcase'
   | 'shopTheSet'
   | 'images'
-  | 'pricing'
-  | 'shipping'
   | 'ratingConsistency'
   | 'rating'
   | 'addToCart'
@@ -112,7 +110,8 @@ export type FeatureKey =
   | 'productVariations'
   | 'contentBanners'
   | 'coupons'
-  | 'giftModule';
+  | 'giftModule'
+  | 'topRatedBadge';
 
 export interface SkuEntry {
   id: string;

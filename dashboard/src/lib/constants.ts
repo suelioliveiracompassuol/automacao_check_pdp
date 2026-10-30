@@ -64,8 +64,6 @@ export const ALL_FEATURE_KEYS: FeatureKey[] = [
   'recommendationShowcase',
   'shopTheSet',
   'images',
-  'pricing',
-  'shipping',
   'ratingConsistency',
   'rating',
   'addToCart',
@@ -74,4 +72,5 @@ export const ALL_FEATURE_KEYS: FeatureKey[] = [
   'contentBanners',
   'coupons',
   'giftModule',
+  'topRatedBadge',
 ];

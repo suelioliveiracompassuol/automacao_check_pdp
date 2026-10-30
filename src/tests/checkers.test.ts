@@ -7,10 +7,13 @@
 
 import { test, expect, type Page } from "@playwright/test";
 import * as path from "node:path";
-import { checkPricing } from "../checks/pricing.js";
-import { checkShipping } from "../checks/shipping.js";
 import { checkCoupons } from "../checks/coupons.js";
 import { checkGiftModule } from "../checks/giftModule.js";
+import {
+  checkTopRatedBadge,
+  parseTopRatedFromHtml,
+  topRatedCache,
+} from "../checks/topRatedBadge.js";
 import {
   isFeatureEnabledByCommerceFlags,
   isFeatureEnabledByRemoteConfig,
@@ -25,109 +28,6 @@ async function loadWithContent(page: Page, html: string): Promise<void> {
     document.body.innerHTML = body;
   }, html);
 }
-
-// ---------------------------------------------------------------------------
-// checkPricing
-// ---------------------------------------------------------------------------
-
-test.describe("Feature: Pricing", () => {
-  test("deve passar quando seção de preço com R$ está presente", async ({
-    page,
-  }) => {
-    await loadWithContent(
-      page,
-      `<div data-testid="product-pricing"><span>R$ 59,90</span></div>`,
-    );
-    const result = await checkPricing(page);
-    expect(result.passed).toBe(true);
-    expect(result.status).toBe("pass");
-  });
-
-  test("deve passar com padrão de preço $ (LATAM)", async ({ page }) => {
-    await loadWithContent(
-      page,
-      `<div data-testid="sku-split-price"><span>$ 1.299,00</span></div>`,
-    );
-    const result = await checkPricing(page);
-    expect(result.passed).toBe(true);
-  });
-
-  test("deve passar com padrão de preço S/ (Peru)", async ({ page }) => {
-    await loadWithContent(
-      page,
-      `<div data-testid="product-pricing"><span>S/ 45,90</span></div>`,
-    );
-    const result = await checkPricing(page);
-    expect(result.passed).toBe(true);
-  });
-
-  test("deve falhar quando nenhuma seção de preço ou valor reconhecível é encontrado", async ({
-    page,
-  }) => {
-    await loadWithContent(
-      page,
-      `<div class="page"><p>Produto sem preço definido</p></div>`,
-    );
-    const result = await checkPricing(page);
-    expect(result.passed).toBe(false);
-  });
-
-  test("não deve capturar preço de frete como preço do produto", async ({
-    page,
-  }) => {
-    await loadWithContent(
-      page,
-      `<div data-testid="product-pricing"><span>Frete grátis a partir de R$ 100,00</span></div>`,
-    );
-    const result = await checkPricing(page);
-    // Linha com "frete" deve ser ignorada; sem preço válido → falha
-    expect(result.passed).toBe(false);
-  });
-});
-
-// ---------------------------------------------------------------------------
-// checkShipping
-// ---------------------------------------------------------------------------
-
-test.describe("Feature: Shipping", () => {
-  test("deve passar quando o elemento shipping-indicator está visível", async ({
-    page,
-  }) => {
-    await loadWithContent(
-      page,
-      `<div data-testid="shipping-indicator" style="display:block">
-         <input data-testid="postalCode" placeholder="CEP" />
-       </div>`,
-    );
-    const result = await checkShipping(page);
-    expect(result.passed).toBe(true);
-    expect(result.status).toBe("pass");
-  });
-
-  test("deve passar quando o input de CEP (postalCode) está visível", async ({
-    page,
-  }) => {
-    await loadWithContent(
-      page,
-      `<div class="shipping-area">
-         <input data-testid="postalCode" placeholder="Digite seu CEP" style="display:block" />
-       </div>`,
-    );
-    const result = await checkShipping(page);
-    expect(result.passed).toBe(true);
-  });
-
-  test("deve falhar quando não há seção de frete nem input de CEP", async ({
-    page,
-  }) => {
-    await loadWithContent(
-      page,
-      `<div class="page"><p>Produto sem frete</p></div>`,
-    );
-    const result = await checkShipping(page);
-    expect(result.passed).toBe(false);
-  });
-});
 
 // ---------------------------------------------------------------------------
 // checkCoupons + gate por flags (enable_coupons_pdp / couponCenter)
@@ -370,6 +270,80 @@ test.describe("Feature: Gift module", () => {
       `<button data-testid="accordion-component"><div><i data-icon-name="outlined-content-gift"></i></div><span>presente?</span></button>`,
     );
     const result = await checkGiftModule(page);
+    expect(result.status).toBe("warning");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// checkTopRatedBadge
+// ---------------------------------------------------------------------------
+
+const TOP_RATED_TAG = `<div role="listitem" data-testid="tag-product" aria-label="melhor avaliado"><i data-icon-name="outlined-action-rating"></i><span>melhor avaliado</span></div>`;
+const OTHER_TAG = `<div role="listitem" data-testid="tag-product" aria-label="lançamento"><span>lançamento</span></div>`;
+
+test.describe("Feature: Top rated badge", () => {
+  test("lê isTopRated do payload RSC escapado no HTML", () => {
+    const html = (fields: string) =>
+      `<script>self.__next_f.push([1,"{\\"productId\\":\\"NATBRA-1\\"${fields}}"])</script>`;
+    expect(parseTopRatedFromHtml(html(',\\"isTopRated\\":true'), "NATBRA-1")).toBe(true);
+    // A BFF omite o campo quando o produto não é top rated
+    expect(parseTopRatedFromHtml(html(""), "NATBRA-1")).toBe(false);
+    expect(parseTopRatedFromHtml(html(""), "NATBRA-2")).toBeUndefined();
+  });
+
+  test("deve passar quando isTopRated é true e o selo está visível", async ({
+    page,
+  }) => {
+    await loadWithContent(page, TOP_RATED_TAG);
+    topRatedCache.set(page, { isTopRated: true, source: "api" });
+    const result = await checkTopRatedBadge(page);
+    expect(result.passed).toBe(true);
+    expect(result.status).toBe("pass");
+  });
+
+  test("deve falhar quando isTopRated é true e o selo não aparece", async ({
+    page,
+  }) => {
+    await loadWithContent(page, OTHER_TAG);
+    topRatedCache.set(page, { isTopRated: true, source: "api" });
+    const result = await checkTopRatedBadge(page);
+    expect(result.passed).toBe(false);
+    expect(result.status).toBe("fail");
+  });
+
+  test("deve falhar quando isTopRated é false e o selo aparece", async ({
+    page,
+  }) => {
+    await loadWithContent(page, TOP_RATED_TAG);
+    topRatedCache.set(page, { isTopRated: false, source: "api" });
+    const result = await checkTopRatedBadge(page);
+    expect(result.passed).toBe(false);
+    expect(result.status).toBe("fail");
+  });
+
+  test("deve passar quando isTopRated é false e o selo não aparece", async ({
+    page,
+  }) => {
+    await loadWithContent(page, OTHER_TAG);
+    topRatedCache.set(page, { isTopRated: false, source: "api" });
+    const result = await checkTopRatedBadge(page);
+    expect(result.passed).toBe(true);
+    expect(result.status).toBe("pass");
+  });
+
+  test("deve ser N/A quando isTopRated não foi capturado e não há selo", async ({
+    page,
+  }) => {
+    await loadWithContent(page, OTHER_TAG);
+    const result = await checkTopRatedBadge(page);
+    expect(result.status).toBe("na");
+  });
+
+  test("deve ser warning quando o selo aparece sem isTopRated capturado", async ({
+    page,
+  }) => {
+    await loadWithContent(page, TOP_RATED_TAG);
+    const result = await checkTopRatedBadge(page);
     expect(result.status).toBe("warning");
   });
 });

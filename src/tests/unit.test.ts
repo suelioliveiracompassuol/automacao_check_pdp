@@ -136,12 +136,14 @@ test.describe("getApplicableFeatures", () => {
   });
 
   test("excludes features not in domain availableFeatures", () => {
-    // natura-BR has pricing and shipping commented out in availableFeatures
-    const result = getApplicableFeatures(naturaBR);
+    // natura-BR doesn't list aiReviewSummary in availableFeatures
+    const result = getApplicableFeatures({
+      ...naturaBR,
+      expectedFeatures: ["aiReviewSummary"],
+    });
     const keys = result.map((f) => f.key);
 
-    expect(keys).not.toContain("pricing");
-    expect(keys).not.toContain("shipping");
+    expect(keys).not.toContain("aiReviewSummary");
   });
 
   test("returns empty array for unknown vendor/country", () => {

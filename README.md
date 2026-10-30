@@ -177,8 +177,6 @@ Configurar em Settings → Secrets and variables → Actions:
 │   │   ├── rating.ts
 │   │   ├── ratingConsistency.ts
 │   │   ├── media.ts
-│   │   ├── pricing.ts
-│   │   ├── shipping.ts
 │   │   ├── addToCart.ts
 │   │   ├── favoriteButton.ts
 │   │   ├── productVariations.ts

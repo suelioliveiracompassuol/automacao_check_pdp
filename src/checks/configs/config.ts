@@ -140,22 +140,6 @@ export const SELECTORS = {
       '[data-testid="product-image"], img[alt*="produto"], img[alt*="product"]',
   },
 
-  // Pricing
-  pricing: {
-    section: '[data-testid="product-pricing"], [data-testid="sku-split-price"]',
-    salePrice:
-      '[data-testid="product-card-bag-product-pricing-sale-price"], [data-testid="price-line"]',
-    listPrice: '[data-testid="product-card-bag-product-pricing-list-price"]',
-    discount: '[data-testid="discount-badge"]',
-  },
-
-  // Shipping simulation
-  shipping: {
-    section: '[data-testid="shipping-indicator"], [data-testid="bag-shipping"]',
-    cepInput:
-      '[data-testid="shipping-indicator-form"], [data-testid="postalCode"]',
-  },
-
   // Rating (top of page)
   rating: {
     stars:
@@ -173,6 +157,11 @@ export const SELECTORS = {
   // Product Variations selector — color/shade swatches on PDP
   productVariations: {
     selector: '[data-testid="color-option"]',
+  },
+
+  // "Melhor avaliado" product tag — identified by its rating icon (language-agnostic)
+  topRatedBadge: {
+    badge: '[data-testid="tag-product"]:has([data-icon-name="outlined-action-rating"])',
   },
 
   // Favorite Button — escopado no card principal do produto (section.bg-white)
@@ -298,4 +287,6 @@ export const TIMING = {
    * downloading right after the scroll.
    */
   bannerImageLoadTimeout: 10000,
+  /** Max wait for the "melhor avaliado" tag when the product API returned isTopRated: true (ms). */
+  topRatedBadgeWait: 10000,
 };
