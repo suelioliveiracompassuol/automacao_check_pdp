@@ -2,8 +2,13 @@
  * Captures the dashboard's reference images (see featureRefs.ts): opens one SKU per operation
  * group and screenshots just the element each check looks for.
  *
- * Env: REFS_GROUPS (e.g. `natura-br,minha-loja-avon`), SKU_FILTER, REFS_OVERWRITE=true to replace
- * existing images (default keeps them, so manual screenshots are never overwritten), HEADLESS=false.
+ * The dashboard falls back to natura-br's image when a group has none of its own, so other groups
+ * only capture features natura-br doesn't have yet; an image that differs per operation is kept
+ * per group by adding it by hand (or with REFS_OVERWRITE=true).
+ *
+ * Env: REFS_GROUPS (e.g. `natura-br,minha-loja-avon`), SKU_FILTER, REFS_OVERWRITE=true to capture
+ * and replace every image (default keeps them, so manual screenshots are never overwritten),
+ * HEADLESS=false.
  */
 
 import * as fs from "node:fs";
@@ -29,6 +34,8 @@ const OUTPUT_DIR = path.join(
   "public",
   "feature-refs",
 );
+/** Same fallback group as the dashboard's FALLBACK_REF_GROUP (dashboard/src/lib/feature-refs.ts). */
+const FALLBACK_REF_GROUP = "natura-br";
 /** Groups captured from a single operation; Natura LATAM is captured from Colombia. */
 const GROUP_SOURCE_COUNTRY: Record<string, string> = { "natura-latam": "CO" };
 /** Late client-only components (coupons, gift module) take up to ~30 s to show. */
@@ -145,14 +152,19 @@ async function captureGroup(
   ).filter((key): key is FeatureKey => key in FEATURE_REF_TARGETS);
   const dir = path.join(OUTPUT_DIR, group);
   const overwrite = process.env.REFS_OVERWRITE === "true";
+  const hasImage = (g: string, key: string) =>
+    fs.existsSync(path.join(OUTPUT_DIR, g, `${key}.png`));
   const pending = features.filter(
-    (key) => overwrite || !fs.existsSync(path.join(dir, `${key}.png`)),
+    (key) =>
+      overwrite ||
+      (!hasImage(group, key) &&
+        (group === FALLBACK_REF_GROUP || !hasImage(FALLBACK_REF_GROUP, key))),
   );
 
   console.log(`\n📸 ${group} — ${sku.sku} (${url})`);
   if (pending.length === 0) {
     console.log(
-      "   ⏭️  Todas as imagens já existem (REFS_OVERWRITE=true para substituir)",
+      `   ⏭️  Todas as imagens já existem no grupo ou em ${FALLBACK_REF_GROUP} (REFS_OVERWRITE=true para substituir)`,
     );
     return;
   }

@@ -36,14 +36,29 @@ describe('refGroupOf × monitor', () => {
 
 describe('featureRefUrls', () => {
   it('maps the group images to their public URLs', () => {
-    const index = { 'natura-latam': ['coupons', 'reviews'], 'natura-br': ['images'] };
+    const index = { 'natura-latam': ['coupons', 'reviews'] };
     expect(featureRefUrls(index, { vendor: 'natura', country: 'PE' })).toEqual({
       coupons: '/feature-refs/natura-latam/coupons.png',
       reviews: '/feature-refs/natura-latam/reviews.png',
     });
   });
 
-  it('is empty for a group without images', () => {
+  it('falls back to natura-br for features the group has no image for', () => {
+    const index = { 'natura-latam': ['coupons'], 'natura-br': ['coupons', 'images'] };
+    expect(featureRefUrls(index, { vendor: 'natura', country: 'PE' })).toEqual({
+      coupons: '/feature-refs/natura-latam/coupons.png',
+      images: '/feature-refs/natura-br/images.png',
+    });
+  });
+
+  it('uses natura-br images for a group without images of its own', () => {
+    const index = { 'natura-br': ['images'] };
+    expect(featureRefUrls(index, { vendor: 'avon', country: 'MX' })).toEqual({
+      images: '/feature-refs/natura-br/images.png',
+    });
+  });
+
+  it('is empty when no group has images', () => {
     expect(featureRefUrls({}, { vendor: 'avon', country: 'MX' })).toEqual({});
   });
 });

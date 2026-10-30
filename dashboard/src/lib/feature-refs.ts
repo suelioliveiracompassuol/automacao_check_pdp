@@ -24,13 +24,20 @@ export function refGroupOf(result: Pick<PdpCheckResult, 'vendor' | 'country' | '
   return `${result.vendor}-${result.country.toLowerCase()}`;
 }
 
-/** featureKey → image URL for the result's operation group. */
+/** Group whose images stand in for features a group has no image of its own for. */
+export const FALLBACK_REF_GROUP = 'natura-br';
+
+/**
+ * featureKey → image URL for the result's operation group, falling back to
+ * {@link FALLBACK_REF_GROUP} for features the group has no image of its own for, so images
+ * that look the same everywhere only need to exist once.
+ */
 export function featureRefUrls(
   index: FeatureRefIndex,
   result: Pick<PdpCheckResult, 'vendor' | 'country' | 'channel'>,
 ): Record<string, string> {
   const group = refGroupOf(result);
-  return Object.fromEntries(
-    (index[group] ?? []).map((key) => [key, `${basePath}/feature-refs/${group}/${key}.png`]),
-  );
+  const urlsOf = (g: string) =>
+    (index[g] ?? []).map((key) => [key, `${basePath}/feature-refs/${g}/${key}.png`]);
+  return Object.fromEntries([...urlsOf(FALLBACK_REF_GROUP), ...urlsOf(group)]);
 }
