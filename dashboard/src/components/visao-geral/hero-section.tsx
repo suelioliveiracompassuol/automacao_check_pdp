@@ -3,7 +3,7 @@ import { ArrowUpRight, CalendarClock, Globe2, ListChecks, Package, PlayCircle } 
 import type { ReactNode } from 'react';
 import { BetaBadge } from '@/components/beta-badge';
 import type { PlatformMeta } from '@/lib/platforms';
-import { countryLabel } from '@/lib/constants';
+import { countryLabel, formatRunsCount, RUNS_COUNT_HINT } from '@/lib/constants';
 import { formatDate } from '@/lib/format';
 import { cn } from '@/lib/utils';
 
@@ -125,8 +125,8 @@ function PlatformCard({ meta, passRate, runsCount, lastRunAt, trend }: PlatformS
             />
           </div>
           <div className="mt-4 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 border-t border-neutral-75 pt-3 text-xs text-medium-emphasis">
-            <span className="whitespace-nowrap">
-              {runsCount} execuç{runsCount === 1 ? 'ão' : 'ões'}
+            <span className="whitespace-nowrap" title={RUNS_COUNT_HINT}>
+              {formatRunsCount(runsCount)} execuç{runsCount === 1 ? 'ão' : 'ões'}
             </span>
             {lastRunAt && (
               <span className="whitespace-nowrap">Última: {formatDate(lastRunAt)}</span>
@@ -144,9 +144,19 @@ function PlatformCard({ meta, passRate, runsCount, lastRunAt, trend }: PlatformS
   );
 }
 
-function Kpi({ icon, label, value }: { icon: ReactNode; label: string; value: ReactNode }) {
+function Kpi({
+  icon,
+  label,
+  value,
+  title,
+}: {
+  icon: ReactNode;
+  label: string;
+  value: ReactNode;
+  title?: string;
+}) {
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-3" title={title}>
       <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface text-primary-darkest shadow-tiny">
         {icon}
       </span>
@@ -190,7 +200,12 @@ function PlatformKpiRow({
         <span className="text-xs text-medium-emphasis">{meta.channel}</span>
       </div>
       <div className="mt-4 grid grid-cols-2 gap-5 @3xl:grid-cols-5">
-        <Kpi icon={<PlayCircle className="h-4 w-4" />} label="Execuções" value={runsCount} />
+        <Kpi
+          icon={<PlayCircle className="h-4 w-4" />}
+          label="Execuções"
+          value={formatRunsCount(runsCount)}
+          title={RUNS_COUNT_HINT}
+        />
         <Kpi
           icon={<Globe2 className="h-4 w-4" />}
           label={countries.length === 1 ? 'País' : 'Países'}

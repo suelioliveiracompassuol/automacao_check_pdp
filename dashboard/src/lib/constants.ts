@@ -4,6 +4,17 @@ import type { Channel, Country, FeatureKey, Vendor } from './types';
 
 export const VENDORS: Vendor[] = ['natura', 'avon'];
 
+/** Runs kept in each report index (MAX_ENTRIES in the monitor's src/reportIndex.ts). */
+export const REPORT_INDEX_MAX_ENTRIES = 100;
+
+/** Run count for display: a full index only holds the latest runs, so it shows as "100+". */
+export function formatRunsCount(count: number): string {
+  return count >= REPORT_INDEX_MAX_ENTRIES ? `${count}+` : String(count);
+}
+
+/** Tooltip for run counts, which come from the report index and not GitHub's run number. */
+export const RUNS_COUNT_HINT = `Execuções com relatório no histórico (guarda as últimas ${REPORT_INDEX_MAX_ENTRIES}). O número do e-mail é o contador do GitHub Actions, que inclui execuções sem relatório.`;
+
 export const CHANNELS: Channel[] = ['ecommerce', 'socialcommerce'];
 
 /** Fonte única dos rótulos de país; a ordem define a ordem de exibição. */

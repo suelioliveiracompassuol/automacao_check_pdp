@@ -80,6 +80,10 @@ jobs:
         timeout-minutes: 15
         run: npx playwright install-deps chromium firefox
 
+      - name: ⏱️ Mark run start
+        id: start
+        run: echo "ms=$(date +%s%3N)" >> $GITHUB_OUTPUT
+
       - name: 🔍 Run PDP checks (Web)
         id: checks
         run: npm run check
@@ -96,13 +100,21 @@ jobs:
         run: |
           # Web writes to docs/reports/run_<timestamp>/ (Android runs live in their own workflow)
           REPORT_DIR=$(ls -d docs/reports/run_[0-9]* 2>/dev/null | sort -t_ -k2 -n | tail -1)
-          echo "report_dir=$REPORT_DIR" >> $GITHUB_OUTPUT
-          if [ -f "$REPORT_DIR/report.json" ]; then
+          # Only a report written by this run counts: when the monitor dies before the checks
+          # (build error, crash) the newest dir is an older run, whose summary would be misleading.
+          TS=${REPORT_DIR##*run_}
+          if [ -f "$REPORT_DIR/report.json" ] && [ "$TS" -ge "${{ steps.start.outputs.ms }}" ]; then
+            echo "fresh=true" >> $GITHUB_OUTPUT
+            echo "report_dir=$REPORT_DIR" >> $GITHUB_OUTPUT
             SUMMARY=$(cat "$REPORT_DIR/report.json" | jq -r '"Total: \(.summary.total), Passed: \(.summary.passed), Failed: \(.summary.failed), Errors: \(.summary.errors)"')
             echo "summary=$SUMMARY" >> $GITHUB_OUTPUT
+          else
+            echo "fresh=false" >> $GITHUB_OUTPUT
+            echo "⚠️  Esta execução não gerou relatório (o monitor falhou antes dos checks)"
           fi
 
       - name: 📤 Upload report artifact (Web)
+        if: steps.find_report.outputs.fresh == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: pdp-monitor-report-${{ github.run_number }}
@@ -171,15 +183,15 @@ jobs:
           server_port: ${{ secrets.SMTP_PORT }}
           username: ${{ secrets.SMTP_USERNAME }}
           password: ${{ secrets.SMTP_PASSWORD }}
-          subject: "🔴 PDP Monitor Alert - Features fora do ar"
+          subject: ${{ steps.find_report.outputs.fresh == 'true' && '🔴 PDP Monitor Alert - Features fora do ar' || '🔴 PDP Monitor Alert - Execução falhou antes dos checks' }}
           to: ${{ secrets.ALERT_EMAIL_TO }}
           from: ${{ secrets.ALERT_EMAIL_FROM }}
           body: |
-            ⚠️ O monitoramento de PDPs detectou problemas!
+            ${{ steps.find_report.outputs.fresh == 'true' && '⚠️ O monitoramento de PDPs detectou problemas!' || '⚠️ O monitor não chegou a rodar os checks (erro de build ou de execução) — veja o log do workflow. Nenhum relatório novo foi gerado.' }}
 
-            🌐 Resumo (Web): ${{ steps.find_report.outputs.summary }}
+            🌐 Resumo (Web): ${{ steps.find_report.outputs.summary || 'sem relatório nesta execução' }}
 
-            📅 Execução: ${{ github.run_number }}
+            📅 Execução do workflow: #${{ github.run_number }}
             🔗 Workflow: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
             Acesse o report no site: https://sites.google.com/natura.net/checagem-features-pdp
