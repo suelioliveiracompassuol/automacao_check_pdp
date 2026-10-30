@@ -73,4 +73,5 @@ export const ALL_FEATURE_KEYS: FeatureKey[] = [
   'coupons',
   'giftModule',
   'topRatedBadge',
+  'minStockBadge',
 ];

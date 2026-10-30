@@ -34,5 +34,6 @@ export { checkCoupons } from "./coupons.js";
 export { checkGiftModule } from "./giftModule.js";
 export {
   checkTopRatedBadge,
-  setupTopRatedCapture,
-} from "./topRatedBadge.js";
+  checkMinStockBadge,
+  setupProductBadgesCapture,
+} from "./productBadges.js";

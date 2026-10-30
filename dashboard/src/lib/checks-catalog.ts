@@ -128,6 +128,13 @@ export const CHECKS_CATALOG: ChecklistCategory[] = [
         bg: 'bg-pink-50',
       },
       {
+        key: 'minStockBadge',
+        emoji: '⏳',
+        name: 'Selo "últimas unidades"',
+        desc: 'Exibido só quando a API do produto retorna minStockBadge (minStockAlert)',
+        bg: 'bg-primary-wash',
+      },
+      {
         key: 'productVariations',
         emoji: '🎨',
         name: 'Variações',

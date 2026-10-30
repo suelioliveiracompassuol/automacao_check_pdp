@@ -34,6 +34,7 @@ import {
   checkCoupons,
   checkGiftModule,
   checkTopRatedBadge,
+  checkMinStockBadge,
 } from "./index.js";
 
 // ---------------------------------------------------------------------------
@@ -63,6 +64,7 @@ export const FEATURE_CHECKERS: Record<
   coupons: checkCoupons,
   giftModule: checkGiftModule,
   topRatedBadge: checkTopRatedBadge,
+  minStockBadge: checkMinStockBadge,
 };
 
 /** Checkers that click on the page — run after the parallel read-only phase, one at a time. */

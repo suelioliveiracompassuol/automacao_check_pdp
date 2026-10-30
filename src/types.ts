@@ -122,7 +122,8 @@ export type FeatureKey =
   | "contentBanners"
   | "coupons"
   | "giftModule"
-  | "topRatedBadge";
+  | "topRatedBadge"
+  | "minStockBadge";
 
 export interface SkuConfig {
   sku: string;

@@ -34,6 +34,7 @@ export const FEATURES: FeatureConfig[] = [
   { key: "topRatedBadge", name: 'Selo "Melhor avaliado"' },
   { key: "addToCart", name: "Botão Adicionar à Sacola" },
   { key: "favoriteButton", name: "Botão de Favoritos" },
+  { key: "minStockBadge", name: 'Selo "Últimas unidades"' },
   { key: "productVariations", name: "Seletor de Variações do Produto" },
   { key: "contentBanners", name: "Banners de conteúdo do produto" },
   { key: "coupons", name: "Card de cupons" },

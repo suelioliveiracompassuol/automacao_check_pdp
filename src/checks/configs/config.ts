@@ -159,9 +159,15 @@ export const SELECTORS = {
     selector: '[data-testid="color-option"]',
   },
 
-  // "Melhor avaliado" product tag — identified by its rating icon (language-agnostic)
-  topRatedBadge: {
-    badge: '[data-testid="tag-product"]:has([data-icon-name="outlined-action-rating"])',
+  // Product tags on the main product card (showcase cards reuse data-testid="tag-product"),
+  // identified by icon so they're language-agnostic
+  productBadges: {
+    mainProductCard: 'section.bg-white',
+    anyMainProductTag: 'section.bg-white [data-testid="tag-product"]',
+    topRated:
+      'section.bg-white [data-testid="tag-product"]:has([data-icon-name="outlined-action-rating"])',
+    minStock:
+      'section.bg-white [data-testid="tag-product"]:has(img[src*="runningclock"])',
   },
 
   // Favorite Button — escopado no card principal do produto (section.bg-white)
@@ -287,6 +293,6 @@ export const TIMING = {
    * downloading right after the scroll.
    */
   bannerImageLoadTimeout: 10000,
-  /** Max wait for the "melhor avaliado" tag when the product API returned isTopRated: true (ms). */
-  topRatedBadgeWait: 10000,
+  /** Max wait for a product tag ("melhor avaliado", "últimas unidades") the product API says applies (ms). */
+  productBadgeWait: 10000,
 };

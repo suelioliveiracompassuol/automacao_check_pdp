@@ -10,10 +10,12 @@ import * as path from "node:path";
 import { checkCoupons } from "../checks/coupons.js";
 import { checkGiftModule } from "../checks/giftModule.js";
 import {
+  checkMinStockBadge,
   checkTopRatedBadge,
-  parseTopRatedFromHtml,
-  topRatedCache,
-} from "../checks/topRatedBadge.js";
+  parseProductBadgesFromApi,
+  parseProductBadgesFromHtml,
+  productBadgesCache,
+} from "../checks/productBadges.js";
 import {
   isFeatureEnabledByCommerceFlags,
   isFeatureEnabledByRemoteConfig,
@@ -275,27 +277,109 @@ test.describe("Feature: Gift module", () => {
 });
 
 // ---------------------------------------------------------------------------
-// checkTopRatedBadge
+// checkTopRatedBadge / checkMinStockBadge
 // ---------------------------------------------------------------------------
 
 const TOP_RATED_TAG = `<div role="listitem" data-testid="tag-product" aria-label="melhor avaliado"><i data-icon-name="outlined-action-rating"></i><span>melhor avaliado</span></div>`;
+const MIN_STOCK_TAG = `<div role="listitem" data-testid="tag-product" aria-label="últimas unidades"><span>últimas unidades</span><img alt="últimas unidades" src="https://example.com/badgeIcons/outlined-action-runningclock.png"></div>`;
 const OTHER_TAG = `<div role="listitem" data-testid="tag-product" aria-label="lançamento"><span>lançamento</span></div>`;
 
-test.describe("Feature: Top rated badge", () => {
-  test("lê isTopRated do payload RSC escapado no HTML", () => {
-    const html = (fields: string) =>
-      `<script>self.__next_f.push([1,"{\\"productId\\":\\"NATBRA-1\\"${fields}}"])</script>`;
-    expect(parseTopRatedFromHtml(html(',\\"isTopRated\\":true'), "NATBRA-1")).toBe(true);
-    // A BFF omite o campo quando o produto não é top rated
-    expect(parseTopRatedFromHtml(html(""), "NATBRA-1")).toBe(false);
-    expect(parseTopRatedFromHtml(html(""), "NATBRA-2")).toBeUndefined();
+/** Card do produto principal (section.bg-white) com os selos e o código exibido. */
+const mainProduct = (tags: string, code = "NATBRA-1") =>
+  `<section class="bg-white"><div role="list">${tags}</div><p>cod. ${code}</p></section>`;
+/** Card de vitrine, que reutiliza data-testid="tag-product". */
+const showcaseCard = (tags: string) =>
+  `<section class="bg-background"><article id="product-card-NATBRA-9"><div role="list">${tags}</div></article></section>`;
+
+const MIN_STOCK_ALERT = {
+  type: "minStockAlert",
+  text: "últimas unidades",
+  color: "#68408A",
+  background: "#F3EEFA",
+};
+
+/** Dados capturados de um produto sem variações (NATBRA-1). */
+const badgeData = (
+  isTopRated: boolean,
+  minStock?: typeof MIN_STOCK_ALERT,
+  source: "api" | "ssr" = "api",
+) => ({
+  sku: "NATBRA-1",
+  isTopRated,
+  minStockByProductId: { "NATBRA-1": minStock },
+  source,
+});
+
+test.describe("Product badges: parse do payload", () => {
+  // Payload RSC como vem no HTML: JSON com aspas escapadas
+  const html = (json: string) =>
+    `<script>self.__next_f.push([1,"${json.replace(/"/g, '\\"')}"])</script>`;
+  const badge = JSON.stringify(MIN_STOCK_ALERT);
+
+  test("lê isTopRated e minStockBadge do produto principal", () => {
+    const data = parseProductBadgesFromHtml(
+      html(`{"productId":"NATBRA-1","isTopRated":true,"minStockBadge":${badge}}`),
+      "NATBRA-1",
+    );
+    expect(data?.isTopRated).toBe(true);
+    expect(data?.minStockByProductId["NATBRA-1"]?.type).toBe("minStockAlert");
+    expect(data?.minStockByProductId["NATBRA-1"]?.text).toBe("últimas unidades");
   });
 
+  test("campos omitidos pela BFF valem como ausentes", () => {
+    const data = parseProductBadgesFromHtml(
+      html(`{"productId":"NATBRA-1","name":"x"}`),
+      "NATBRA-1",
+    );
+    expect(data).toEqual({
+      isTopRated: false,
+      minStockByProductId: { "NATBRA-1": undefined },
+    });
+  });
+
+  test("separa os selos de cada variação e de produtos aninhados", () => {
+    const data = parseProductBadgesFromHtml(
+      html(
+        `{"productId":"NATARG-00068","variations":[{"productId":"NATARG-110181","minStockBadge":${badge}},{"productId":"NATARG-110200"}],"productComponents":[{"productId":"NATARG-2","isTopRated":true}]}`,
+      ),
+      "NATARG-00068",
+    );
+    expect(data?.isTopRated).toBe(false);
+    expect(data?.minStockByProductId["NATARG-00068"]).toBeUndefined();
+    expect(data?.minStockByProductId["NATARG-110181"]?.type).toBe("minStockAlert");
+    expect(data?.minStockByProductId["NATARG-110200"]).toBeUndefined();
+  });
+
+  test("lê as variações da API JSON", () => {
+    const data = parseProductBadgesFromApi({
+      productId: "NATARG-00068",
+      isTopRated: true,
+      variations: [
+        { productId: "NATARG-110181", minStockBadge: MIN_STOCK_ALERT },
+        { productId: "NATARG-110200" },
+      ],
+    });
+    expect(data.isTopRated).toBe(true);
+    expect(data.minStockByProductId).toEqual({
+      "NATARG-00068": undefined,
+      "NATARG-110181": MIN_STOCK_ALERT,
+      "NATARG-110200": undefined,
+    });
+  });
+
+  test("retorna undefined quando o produto não está no HTML", () => {
+    expect(
+      parseProductBadgesFromHtml(html(`{"productId":"NATBRA-1"}`), "NATBRA-2"),
+    ).toBeUndefined();
+  });
+});
+
+test.describe("Feature: Top rated badge", () => {
   test("deve passar quando isTopRated é true e o selo está visível", async ({
     page,
   }) => {
-    await loadWithContent(page, TOP_RATED_TAG);
-    topRatedCache.set(page, { isTopRated: true, source: "api" });
+    await loadWithContent(page, mainProduct(TOP_RATED_TAG));
+    productBadgesCache.set(page, badgeData(true));
     const result = await checkTopRatedBadge(page);
     expect(result.passed).toBe(true);
     expect(result.status).toBe("pass");
@@ -304,8 +388,8 @@ test.describe("Feature: Top rated badge", () => {
   test("deve falhar quando isTopRated é true e o selo não aparece", async ({
     page,
   }) => {
-    await loadWithContent(page, OTHER_TAG);
-    topRatedCache.set(page, { isTopRated: true, source: "api" });
+    await loadWithContent(page, mainProduct(OTHER_TAG));
+    productBadgesCache.set(page, badgeData(true));
     const result = await checkTopRatedBadge(page);
     expect(result.passed).toBe(false);
     expect(result.status).toBe("fail");
@@ -314,8 +398,8 @@ test.describe("Feature: Top rated badge", () => {
   test("deve falhar quando isTopRated é false e o selo aparece", async ({
     page,
   }) => {
-    await loadWithContent(page, TOP_RATED_TAG);
-    topRatedCache.set(page, { isTopRated: false, source: "api" });
+    await loadWithContent(page, mainProduct(TOP_RATED_TAG));
+    productBadgesCache.set(page, badgeData(false));
     const result = await checkTopRatedBadge(page);
     expect(result.passed).toBe(false);
     expect(result.status).toBe("fail");
@@ -324,26 +408,135 @@ test.describe("Feature: Top rated badge", () => {
   test("deve passar quando isTopRated é false e o selo não aparece", async ({
     page,
   }) => {
-    await loadWithContent(page, OTHER_TAG);
-    topRatedCache.set(page, { isTopRated: false, source: "api" });
+    await loadWithContent(page, mainProduct(OTHER_TAG));
+    productBadgesCache.set(page, badgeData(false));
     const result = await checkTopRatedBadge(page);
     expect(result.passed).toBe(true);
     expect(result.status).toBe("pass");
   });
 
-  test("deve ser N/A quando isTopRated não foi capturado e não há selo", async ({
+  test("ignora o selo em cards de vitrine", async ({ page }) => {
+    await loadWithContent(
+      page,
+      mainProduct(OTHER_TAG) + showcaseCard(TOP_RATED_TAG),
+    );
+    productBadgesCache.set(page, badgeData(false, undefined, "ssr"));
+    const result = await checkTopRatedBadge(page);
+    expect(result.status).toBe("pass");
+  });
+
+  test("deve ser N/A quando os dados do produto não foram capturados e não há selo", async ({
     page,
   }) => {
-    await loadWithContent(page, OTHER_TAG);
+    await loadWithContent(page, mainProduct(OTHER_TAG));
     const result = await checkTopRatedBadge(page);
     expect(result.status).toBe("na");
   });
 
-  test("deve ser warning quando o selo aparece sem isTopRated capturado", async ({
+  test("deve ser warning quando o selo aparece sem dados do produto", async ({
     page,
   }) => {
-    await loadWithContent(page, TOP_RATED_TAG);
+    await loadWithContent(page, mainProduct(TOP_RATED_TAG));
     const result = await checkTopRatedBadge(page);
     expect(result.status).toBe("warning");
+  });
+});
+
+test.describe("Feature: Min stock badge", () => {
+  test("deve passar quando a API retorna minStockAlert e o selo está visível", async ({
+    page,
+  }) => {
+    await loadWithContent(page, mainProduct(TOP_RATED_TAG + MIN_STOCK_TAG));
+    productBadgesCache.set(page, badgeData(true, MIN_STOCK_ALERT, "ssr"));
+    const result = await checkMinStockBadge(page);
+    expect(result.passed).toBe(true);
+    expect(result.status).toBe("pass");
+  });
+
+  test("encontra o selo pelo texto da API quando o ícone muda", async ({
+    page,
+  }) => {
+    await loadWithContent(
+      page,
+      mainProduct(
+        `<div role="listitem" data-testid="tag-product" aria-label="últimas unidades"><span>últimas unidades</span></div>`,
+      ),
+    );
+    productBadgesCache.set(page, badgeData(false, MIN_STOCK_ALERT));
+    const result = await checkMinStockBadge(page);
+    expect(result.status).toBe("pass");
+  });
+
+  test("deve falhar quando a API retorna minStockAlert e o selo não aparece", async ({
+    page,
+  }) => {
+    await loadWithContent(page, mainProduct(OTHER_TAG));
+    productBadgesCache.set(page, badgeData(false, MIN_STOCK_ALERT));
+    const result = await checkMinStockBadge(page);
+    expect(result.passed).toBe(false);
+    expect(result.status).toBe("fail");
+  });
+
+  test("deve falhar quando a API não retorna minStockBadge e o selo aparece", async ({
+    page,
+  }) => {
+    await loadWithContent(page, mainProduct(MIN_STOCK_TAG));
+    productBadgesCache.set(page, badgeData(false, undefined, "ssr"));
+    const result = await checkMinStockBadge(page);
+    expect(result.passed).toBe(false);
+    expect(result.status).toBe("fail");
+  });
+
+  test("deve passar quando não há minStockBadge, ignorando o selo em vitrines", async ({
+    page,
+  }) => {
+    await loadWithContent(
+      page,
+      mainProduct(OTHER_TAG) + showcaseCard(MIN_STOCK_TAG),
+    );
+    productBadgesCache.set(page, badgeData(false, undefined, "ssr"));
+    const result = await checkMinStockBadge(page);
+    expect(result.passed).toBe(true);
+    expect(result.status).toBe("pass");
+  });
+
+  test.describe("produto com variações", () => {
+    const withVariations = {
+      sku: "NATARG-00068",
+      isTopRated: false,
+      minStockByProductId: {
+        "NATARG-00068": undefined,
+        "NATARG-110181": MIN_STOCK_ALERT,
+        "NATARG-110200": undefined,
+      },
+      source: "ssr" as const,
+    };
+
+    test("usa o minStockBadge da variação exibida", async ({ page }) => {
+      await loadWithContent(page, mainProduct(MIN_STOCK_TAG, "NATARG-110181"));
+      productBadgesCache.set(page, withVariations);
+      const result = await checkMinStockBadge(page);
+      expect(result.status).toBe("pass");
+      expect(result.details?.displayedProductId).toBe("NATARG-110181");
+    });
+
+    test("falha se a variação exibida tem o selo na API e ele não aparece", async ({
+      page,
+    }) => {
+      await loadWithContent(page, mainProduct(OTHER_TAG, "NATARG-110181"));
+      productBadgesCache.set(page, withVariations);
+      const result = await checkMinStockBadge(page);
+      expect(result.status).toBe("fail");
+    });
+
+    test("falha se a variação exibida não tem o selo na API e ele aparece", async ({
+      page,
+    }) => {
+      await loadWithContent(page, mainProduct(MIN_STOCK_TAG, "NATARG-110200"));
+      productBadgesCache.set(page, withVariations);
+      const result = await checkMinStockBadge(page);
+      expect(result.status).toBe("fail");
+      expect(result.details?.displayedProductId).toBe("NATARG-110200");
+    });
   });
 });

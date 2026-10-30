@@ -37,7 +37,7 @@ import {
   captureRatingFromDOM,
 } from "./checks/ratingConsistency.js";
 import { setupProductVariationsCapture } from "./checks/productVariations.js";
-import { setupTopRatedCapture } from "./checks/topRatedBadge.js";
+import { setupProductBadgesCapture } from "./checks/productBadges.js";
 
 import {
   setupRemoteConfigCapture,
@@ -156,8 +156,8 @@ async function checkPdp(params: CheckPdpParams): Promise<PdpCheckResult> {
   // Setup product variations capture BEFORE navigation (intercepts BFF API + SSR)
   setupProductVariationsCapture(page);
 
-  // Setup isTopRated capture BEFORE navigation (SSR product payload + BFF product API)
-  setupTopRatedCapture(page, sku.sku);
+  // Setup product badge capture BEFORE navigation (isTopRated/minStockBadge from SSR payload + BFF API)
+  setupProductBadgesCapture(page, sku.sku);
 
   const traceMode = getPlaywrightTraceMode();
   const traceZipPath = path.join(

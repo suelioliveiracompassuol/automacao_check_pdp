@@ -110,5 +110,6 @@ export const FEATURE_REF_TARGETS: Partial<
   },
   coupons: { locate: (p) => p.locator(SELECTORS.coupons.banner) },
   giftModule: { locate: (p) => p.locator(SELECTORS.giftModule.trigger) },
-  topRatedBadge: { locate: (p) => p.locator(SELECTORS.topRatedBadge.badge) },
+  topRatedBadge: { locate: (p) => p.locator(SELECTORS.productBadges.topRated) },
+  minStockBadge: { locate: (p) => p.locator(SELECTORS.productBadges.minStock) },
 };
