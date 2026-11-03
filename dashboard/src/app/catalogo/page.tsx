@@ -1,4 +1,5 @@
 import { Info, PackageSearch } from 'lucide-react';
+import { CatalogNav } from '@/components/catalog/catalog-nav';
 import { CatalogTable } from '@/components/catalog/catalog-table';
 import { EmptyState } from '@/components/empty-state';
 import { Card } from '@/components/ui/card';
@@ -62,6 +63,10 @@ export default function CatalogPage() {
               {formatDateTime(snapshot.fetchedAt)}
             </p>
           </div>
+        </div>
+
+        <div className="mt-4">
+          <CatalogNav active="products" />
         </div>
 
         <div className="mt-4 flex items-start gap-2.5 rounded-lg border border-neutral-75 bg-surface p-3 text-xs text-medium-emphasis shadow-tiny">

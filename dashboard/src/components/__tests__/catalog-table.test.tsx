@@ -20,6 +20,30 @@ function makeSnapshot(products: CatalogSnapshot['products']): CatalogSnapshot {
 const rows = () => within(screen.getByRole('table')).getAllByRole('row').slice(1);
 
 describe('CatalogTable', () => {
+  it('miniatura pede ao SFCC a imagem já no tamanho exibido; só as primeiras linhas sem lazy', () => {
+    const products = Array.from({ length: 6 }, (_, i) =>
+      makeCatalogProduct({
+        sku: `NATBRA-${100 - i}`,
+        image: `https://production.na01.natura.com/on/demandware.static/-/Sites-natura-br-storefront-catalog/default/x/Produtos/NATBRA-${100 - i}_1.jpg`,
+      }),
+    );
+    const { container } = render(<CatalogTable snapshot={makeSnapshot(products)} />);
+    const imgs = [...container.querySelectorAll('img')];
+    const [first] = imgs;
+    expect(first).toHaveAttribute('width', '48');
+    expect(first.getAttribute('src')).toContain('/dw/image/v2/BFKR_PRD/on/demandware.static/');
+    expect(first.getAttribute('src')).toContain('sw=96');
+    expect(first.getAttribute('srcset')).toMatch(/sw=48&q=75 1x, .*sw=96&q=75 2x/);
+    expect(imgs.map((img) => img.getAttribute('loading'))).toEqual([
+      null,
+      null,
+      null,
+      null,
+      'lazy',
+      'lazy',
+    ]);
+  });
+
   it('lista os PDPs com link, preço e status, marcando os novos', () => {
     render(
       <CatalogTable

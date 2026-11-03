@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import Image from 'next/image';
 import { ExternalLink, Search, Sparkles, X } from 'lucide-react';
 import { ToggleButton, ToggleGroup } from '@/components/ui/toggle-group';
 import {
@@ -13,6 +14,7 @@ import {
   type CatalogKind,
 } from '@/lib/catalog';
 import { formatShortDate } from '@/lib/format';
+import imageLoader from '@/lib/image-loader';
 import type { CatalogProduct, CatalogSnapshot } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
@@ -32,7 +34,18 @@ const KINDS: { key: CatalogKind; label: string }[] = [
   { key: 'variant', label: 'Variações' },
 ];
 
-function ProductRow({ product, isNew }: { product: CatalogProduct; isNew: boolean }) {
+/** Linhas visíveis sem rolar: a miniatura delas é o LCP, então carrega com prioridade. */
+const PRIORITY_ROWS = 4;
+
+function ProductRow({
+  product,
+  isNew,
+  priority,
+}: {
+  product: CatalogProduct;
+  isNew: boolean;
+  priority: boolean;
+}) {
   const onSale =
     product.salePrice !== null &&
     product.regularPrice !== null &&
@@ -41,11 +54,14 @@ function ProductRow({ product, isNew }: { product: CatalogProduct; isNew: boolea
     <tr className="border-t border-neutral-75 align-middle">
       <td className="py-2 pr-3">
         {product.image ? (
-          // eslint-disable-next-line @next/next/no-img-element -- imagem externa, export estático
-          <img
+          // O loader pede ao SFCC a miniatura em 48/96 px em vez da foto original (~70 KB).
+          <Image
+            loader={imageLoader}
             src={product.image}
             alt=""
-            loading="lazy"
+            width={48}
+            height={48}
+            priority={priority}
             className="h-12 w-12 rounded-md bg-neutral-50 object-contain"
           />
         ) : (
@@ -202,7 +218,8 @@ export function CatalogTable({ snapshot }: { snapshot: CatalogSnapshot }) {
           <table className="w-full text-left text-sm">
             <thead className="text-xs text-low-emphasis uppercase">
               <tr>
-                <th scope="col" className="w-14 py-2 pr-3">
+                {/* 48 px da miniatura + 12 px de pr-3; com menos a imagem era espremida. */}
+                <th scope="col" className="w-15 py-2 pr-3">
                   <span className="sr-only">Imagem</span>
                 </th>
                 <th scope="col" className="py-2 pr-3">
@@ -223,11 +240,12 @@ export function CatalogTable({ snapshot }: { snapshot: CatalogSnapshot }) {
               </tr>
             </thead>
             <tbody>
-              {products.slice(0, visible).map((product) => (
+              {products.slice(0, visible).map((product, i) => (
                 <ProductRow
                   key={product.sku}
                   product={product}
                   isNew={isNewProduct(product, snapshot.baselineAt)}
+                  priority={i < PRIORITY_ROWS}
                 />
               ))}
             </tbody>

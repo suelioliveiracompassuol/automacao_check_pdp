@@ -41,3 +41,46 @@ export interface CatalogSnapshot {
   };
   products: CatalogProduct[];
 }
+
+/** Rules of the catalog-only validation (`quality.ts`); the dashboard reads them from the report. */
+export type CatalogRuleKey =
+  | "typeConcentration"
+  | "nameType"
+  | "nameVolume"
+  | "priceDiscount"
+  | "missingPrice"
+  | "missingImage"
+  | "missingDescription"
+  | "noteTypo"
+  | "pdpLink";
+
+export type CatalogIssueSeverity = "error" | "warning";
+
+export interface CatalogRule {
+  key: CatalogRuleKey;
+  label: string;
+  description: string;
+}
+
+/** One problem found in one SKU's row of the export. */
+export interface CatalogIssue {
+  sku: string;
+  name: string;
+  url: string;
+  available: boolean;
+  rule: CatalogRuleKey;
+  severity: CatalogIssueSeverity;
+  /** Columns of the export involved, e.g. ["Type of Product", "Concentration"]. */
+  fields: string[];
+  message: string;
+}
+
+export interface CatalogQualityReport {
+  operation: string;
+  fetchedAt: string;
+  source: CatalogSnapshot["source"];
+  /** PDPs checked (one per SKU, master rows excluded). */
+  checked: number;
+  rules: CatalogRule[];
+  issues: CatalogIssue[];
+}

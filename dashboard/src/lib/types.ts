@@ -237,3 +237,34 @@ export interface CatalogSnapshot {
   source: { file: string; lastModified?: string; rows: number };
   products: CatalogProduct[];
 }
+
+/** Validação do catálogo só com o arquivo (`<operação>.quality.json`, gerado por `npm run catalog`). */
+export type CatalogIssueSeverity = 'error' | 'warning';
+
+export interface CatalogRule {
+  /** Ex.: typeConcentration, nameVolume. As regras vêm do monitor, junto com o relatório. */
+  key: string;
+  label: string;
+  description: string;
+}
+
+export interface CatalogIssue {
+  sku: string;
+  name: string;
+  url: string;
+  available: boolean;
+  rule: string;
+  severity: CatalogIssueSeverity;
+  /** Colunas do arquivo envolvidas, ex.: ["Type of Product", "Concentration"]. */
+  fields: string[];
+  message: string;
+}
+
+export interface CatalogQualityReport {
+  operation: string;
+  fetchedAt: string;
+  source: CatalogSnapshot['source'];
+  checked: number;
+  rules: CatalogRule[];
+  issues: CatalogIssue[];
+}

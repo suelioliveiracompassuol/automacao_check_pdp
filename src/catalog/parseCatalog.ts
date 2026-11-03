@@ -22,7 +22,7 @@ const COLUMNS = {
   rating: "AverageRating",
 } as const;
 
-function toNumber(value: string | undefined): number | null {
+export function toNumber(value: string | undefined): number | null {
   if (!value) {
     return null;
   }
@@ -35,53 +35,64 @@ export function slugFromPdpUrl(url: string): string {
   return url.match(/\/p\/([^/]+)\/[^/]+\/?$/)?.[1] ?? "";
 }
 
+/** One row of the export keyed by column name (every column, trimmed). */
+export type CatalogRow = Record<string, string>;
+
 /**
- * Parses the catalog export into one entry per PDP. Master rows (NATBRA-PAI…) are only
- * groupers of variations and have no page of their own, so they are skipped; each
- * variation keeps its master in `productId`.
+ * One row per PDP, with every column of the export. Master rows (NATBRA-PAI…) are only
+ * groupers of variations and have no page of their own, so they are skipped; the feed also
+ * repeats rows, and only the first one of each SKU is kept.
  */
-export function parseCatalogPsv(text: string): ParsedCatalogProduct[] {
+export function parseCatalogRows(text: string): CatalogRow[] {
   const lines = text.split(/\r?\n/).filter((line) => line.trim() !== "");
   if (lines.length === 0) {
     return [];
   }
-  const header = lines[0].split("|");
-  const index = Object.fromEntries(
-    Object.entries(COLUMNS).map(([key, column]) => [key, header.indexOf(column)]),
-  ) as Record<keyof typeof COLUMNS, number>;
-  if (index.sku < 0 || index.url < 0) {
+  const header = lines[0].split("|").map((column) => column.trim());
+  if (!header.includes(COLUMNS.sku) || !header.includes(COLUMNS.url)) {
     throw new Error(`Cabeçalho inesperado no catálogo: ${lines[0].slice(0, 200)}`);
   }
 
-  const bySku = new Map<string, ParsedCatalogProduct>();
+  const bySku = new Map<string, CatalogRow>();
   for (const line of lines.slice(1)) {
     const cells = line.split("|");
-    const get = (key: keyof typeof COLUMNS) => (index[key] >= 0 ? (cells[index[key]] ?? "").trim() : "");
-    const sku = get("sku");
-    if (!sku || get("isMaster") === "Y" || bySku.has(sku)) {
+    const row = Object.fromEntries(header.map((column, i) => [column, (cells[i] ?? "").trim()]));
+    const sku = row[COLUMNS.sku];
+    if (!sku || row[COLUMNS.isMaster] === "Y" || bySku.has(sku)) {
       continue;
     }
-    const url = get("url");
-    bySku.set(sku, {
-      sku,
-      productId: get("productId") || sku,
-      name: get("name"),
-      slug: slugFromPdpUrl(url),
-      url,
-      image: get("image") || undefined,
-      brand: get("brand") || undefined,
-      category: get("category") || undefined,
-      productType: get("productType") || undefined,
-      isVariant: get("isVariant") === "Y",
-      isBundle: get("isBundle") === "true",
-      available: get("available") === "true",
-      stock: toNumber(get("stock")),
-      regularPrice: toNumber(get("regularPrice")),
-      salePrice: toNumber(get("salePrice")),
-      rating: toNumber(get("rating")),
-    });
+    bySku.set(sku, row);
   }
   return [...bySku.values()];
+}
+
+/** Parses the catalog export into one entry per PDP; each variation keeps its master in `productId`. */
+export function parseCatalogPsv(text: string): ParsedCatalogProduct[] {
+  return parseCatalogRows(text).map(toProduct);
+}
+
+export function toProduct(row: CatalogRow): ParsedCatalogProduct {
+  const get = (key: keyof typeof COLUMNS) => row[COLUMNS[key]] ?? "";
+  const sku = get("sku");
+  const url = get("url");
+  return {
+    sku,
+    productId: get("productId") || sku,
+    name: get("name"),
+    slug: slugFromPdpUrl(url),
+    url,
+    image: get("image") || undefined,
+    brand: get("brand") || undefined,
+    category: get("category") || undefined,
+    productType: get("productType") || undefined,
+    isVariant: get("isVariant") === "Y",
+    isBundle: get("isBundle") === "true",
+    available: get("available") === "true",
+    stock: toNumber(get("stock")),
+    regularPrice: toNumber(get("regularPrice")),
+    salePrice: toNumber(get("salePrice")),
+    rating: toNumber(get("rating")),
+  };
 }
 
 /** Numeric part of the code (NATBRA-294522 → 294522); newer products get higher codes. */
