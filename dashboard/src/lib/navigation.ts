@@ -1,4 +1,4 @@
-import { BarChart3, Database, Gauge } from 'lucide-react';
+import { BarChart3, Database, Gauge, PackageSearch } from 'lucide-react';
 import { PLATFORMS, type PlatformMeta } from './platforms';
 
 export interface NavItem {
@@ -22,7 +22,10 @@ export const PLATFORM_NAV: NavItem[] = PLATFORMS.map(({ href, label, icon, upcom
   badge: upcoming ? 'em breve' : beta ? 'beta' : undefined,
 }));
 
-export const ADMIN_NAV: NavItem[] = [{ href: '/skus', label: 'SKUs', icon: Database }];
+export const ADMIN_NAV: NavItem[] = [
+  { href: '/skus', label: 'SKUs', icon: Database },
+  { href: '/catalogo', label: 'Catálogo', icon: PackageSearch, badge: 'beta' },
+];
 
 export const ALL_NAV: NavItem[] = [...MAIN_NAV, ...PLATFORM_NAV, ...ADMIN_NAV];
 

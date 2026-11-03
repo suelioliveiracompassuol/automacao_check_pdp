@@ -60,6 +60,7 @@ describe('navigation', () => {
       '/android',
       '/ios',
       '/skus',
+      '/catalogo',
     ]);
   });
 

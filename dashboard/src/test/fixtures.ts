@@ -1,4 +1,5 @@
 import type {
+  CatalogProduct,
   CheckResult,
   MonitoringReport,
   PdpCheckResult,
@@ -137,6 +138,26 @@ export function makePerfIndexEntry(overrides: Partial<PerfIndexEntry> = {}): Per
         metrics: makeMetrics(),
       },
     ],
+    ...overrides,
+  };
+}
+
+export function makeCatalogProduct(overrides: Partial<CatalogProduct> = {}): CatalogProduct {
+  const sku = overrides.sku ?? 'NATBRA-1';
+  return {
+    sku,
+    productId: sku,
+    name: 'Produto',
+    slug: 'produto',
+    url: `https://www.natura.com.br/p/produto/${sku}`,
+    isVariant: false,
+    isBundle: false,
+    available: true,
+    stock: 10,
+    regularPrice: 100,
+    salePrice: 80,
+    rating: 4.5,
+    firstSeenAt: '2026-10-30T10:00:00.000Z',
     ...overrides,
   };
 }
