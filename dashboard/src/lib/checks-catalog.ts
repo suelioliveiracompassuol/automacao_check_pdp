@@ -30,7 +30,7 @@ export const CHECKS_CATALOG: ChecklistCategory[] = [
         key: 'aiReviewSummary',
         emoji: '🤖',
         name: 'Resumo por IA',
-        desc: 'Resumo gerado por IA das avaliações',
+        desc: 'Resumo da API de avaliações exibido igual na PDP',
         bg: 'bg-info-lightest/50',
       },
       {

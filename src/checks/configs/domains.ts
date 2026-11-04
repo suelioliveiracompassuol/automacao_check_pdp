@@ -13,6 +13,7 @@ export const DOMAINS: DomainConfig[] = [
     locale: "pt-br",
     availableFeatures: [
       "reviews",
+      "aiReviewSummary",
       "reviewFilter",
       "reviewSort",
       "reviewPhotos",
@@ -40,6 +41,7 @@ export const DOMAINS: DomainConfig[] = [
     locale: "es-ar",
     availableFeatures: [
       "reviews",
+      "aiReviewSummary",
       "reviewFilter",
       "reviewSort",
       "reviewPhotos",
@@ -66,6 +68,7 @@ export const DOMAINS: DomainConfig[] = [
     locale: "es-cl",
     availableFeatures: [
       "reviews",
+      "aiReviewSummary",
       "reviewFilter",
       "reviewSort",
       "reviewPhotos",
@@ -92,6 +95,7 @@ export const DOMAINS: DomainConfig[] = [
     locale: "es-co",
     availableFeatures: [
       "reviews",
+      "aiReviewSummary",
       "reviewFilter",
       "reviewSort",
       "reviewPhotos",
@@ -118,6 +122,7 @@ export const DOMAINS: DomainConfig[] = [
     locale: "es-mx",
     availableFeatures: [
       "reviews",
+      "aiReviewSummary",
       "reviewFilter",
       "reviewSort",
       "reviewPhotos",
@@ -144,6 +149,7 @@ export const DOMAINS: DomainConfig[] = [
     locale: "es-pe",
     availableFeatures: [
       "reviews",
+      "aiReviewSummary",
       "reviewFilter",
       "reviewSort",
       "reviewPhotos",
@@ -173,6 +179,7 @@ export const DOMAINS: DomainConfig[] = [
     queryParams: "consultoria=naieli&marca=natura",
     availableFeatures: [
       "reviews",
+      "aiReviewSummary",
       "reviewFilter",
       "reviewSort",
       "reviewPhotos",
@@ -202,6 +209,7 @@ export const DOMAINS: DomainConfig[] = [
     queryParams: "consultoria=naieli&marca=avon",
     availableFeatures: [
       "reviews",
+      "aiReviewSummary",
       "reviewFilter",
       "reviewSort",
       "reviewPhotos",
@@ -230,6 +238,7 @@ export const DOMAINS: DomainConfig[] = [
     locale: "pt-br",
     availableFeatures: [
       "reviews",
+      "aiReviewSummary",
       "reviewFilter",
       "reviewSort",
       "reviewPhotos",

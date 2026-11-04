@@ -123,7 +123,11 @@ test.describe("getApplicableFeatures", () => {
     const keys = result.map((f) => f.key);
 
     expect(keys).not.toContain("shopTheSet");
-    expect(keys).not.toContain("aiReviewSummary");
+  });
+
+  test("includes aiReviewSummary (non-optional) on operations with reviews", () => {
+    const keys = getApplicableFeatures(naturaBR).map((f) => f.key);
+    expect(keys).toContain("aiReviewSummary");
   });
 
   test("includes optional feature when present in sku.expectedFeatures", () => {
@@ -136,13 +140,16 @@ test.describe("getApplicableFeatures", () => {
   });
 
   test("excludes features not in domain availableFeatures", () => {
-    // natura-BR doesn't list aiReviewSummary in availableFeatures
+    // avon-AR has no reviews, so it doesn't list aiReviewSummary in availableFeatures
     const result = getApplicableFeatures({
       ...naturaBR,
+      vendor: "avon",
+      country: "AR",
       expectedFeatures: ["aiReviewSummary"],
     });
     const keys = result.map((f) => f.key);
 
+    expect(keys).toContain("images");
     expect(keys).not.toContain("aiReviewSummary");
   });
 

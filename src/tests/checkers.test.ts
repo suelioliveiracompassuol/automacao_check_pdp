@@ -7,6 +7,11 @@
 
 import { test, expect, type Page } from "@playwright/test";
 import * as path from "node:path";
+import {
+  aiSummaryCache,
+  checkAiReviewSummary,
+  formatAiSummaryTopics,
+} from "../checks/aiReviewSummary.js";
 import { checkCoupons } from "../checks/coupons.js";
 import { checkGiftModule } from "../checks/giftModule.js";
 import {
@@ -538,5 +543,76 @@ test.describe("Feature: Min stock badge", () => {
       expect(result.status).toBe("fail");
       expect(result.details?.displayedProductId).toBe("NATARG-110200");
     });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// checkAiReviewSummary (aiSummary de /reviews/v2/details × card em #reviews)
+// ---------------------------------------------------------------------------
+
+const AI_SUMMARY = {
+  processedDate: "2026-11-03T00:33:34.542Z",
+  text: "Os clientes elogiam o cheiro marcante e agradável do perfume.",
+  topics: { "cheiro e textura": "positive", preço: "negative" },
+};
+const AI_API_URL = "https://bff/reviews/v2/details?productId=NATBRA-1";
+
+const aiCard = (text: string) =>
+  `<div id="reviews"><div class="w-full p-4 rounded-lg bg-info-lightest" role="group"><p class="text-body-1">${text}</p><div><i data-icon-name="outlined-content-generativeai"></i><p class="text-caption">Resumo gerado por IA</p></div></div></div>`;
+const reviewsWithoutCard = `<div id="reviews"><p>avaliações</p></div>`;
+
+test.describe("Feature: AI review summary", () => {
+  test("formata os tópicos com o sentimento em português", () => {
+    expect(formatAiSummaryTopics(AI_SUMMARY.topics)).toBe(
+      "cheiro e textura (positivo), preço (negativo)",
+    );
+  });
+
+  test("deve passar quando o card exibe o texto da API", async ({ page }) => {
+    await loadWithContent(page, aiCard(AI_SUMMARY.text));
+    aiSummaryCache.set(page, { calls: 1, status: 200, aiSummary: AI_SUMMARY, apiUrl: AI_API_URL });
+    const result = await checkAiReviewSummary(page);
+    expect(result.status).toBe("pass");
+    expect(result.message).toContain("processado em 03/11/2026");
+    expect(result.message).toContain("cheiro e textura (positivo)");
+    expect(result.message).toContain(AI_SUMMARY.text);
+    expect(result.details?.aiSummary).toEqual(AI_SUMMARY);
+  });
+
+  test("deve ser warning quando o texto do card difere da API", async ({ page }) => {
+    await loadWithContent(page, aiCard("Outro resumo"));
+    aiSummaryCache.set(page, { calls: 1, status: 200, aiSummary: AI_SUMMARY });
+    const result = await checkAiReviewSummary(page);
+    expect(result.status).toBe("warning");
+  });
+
+  test("deve falhar quando a API tem resumo e o card não aparece", async ({ page }) => {
+    test.setTimeout(60_000);
+    await loadWithContent(page, reviewsWithoutCard);
+    aiSummaryCache.set(page, { calls: 1, status: 200, aiSummary: AI_SUMMARY });
+    const result = await checkAiReviewSummary(page);
+    expect(result.status).toBe("fail");
+    expect(result.passed).toBe(false);
+  });
+
+  test("deve ser N/A quando a API não traz resumo", async ({ page }) => {
+    await loadWithContent(page, reviewsWithoutCard);
+    aiSummaryCache.set(page, { calls: 1, status: 200 });
+    const result = await checkAiReviewSummary(page);
+    expect(result.status).toBe("na");
+  });
+
+  test("deve falhar quando a API de avaliações responde erro", async ({ page }) => {
+    await loadWithContent(page, reviewsWithoutCard);
+    aiSummaryCache.set(page, { calls: 1, status: 500 });
+    const result = await checkAiReviewSummary(page);
+    expect(result.status).toBe("fail");
+  });
+
+  test("deve ser warning quando a API não foi capturada", async ({ page }) => {
+    test.setTimeout(30_000);
+    await loadWithContent(page, reviewsWithoutCard);
+    const result = await checkAiReviewSummary(page);
+    expect(result.status).toBe("warning");
   });
 });

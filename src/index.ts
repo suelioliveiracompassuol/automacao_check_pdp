@@ -44,6 +44,7 @@ import {
 } from "./checks/ratingConsistency.js";
 import { setupProductVariationsCapture } from "./checks/productVariations.js";
 import { setupProductBadgesCapture } from "./checks/productBadges.js";
+import { setupAiReviewSummaryCapture } from "./checks/aiReviewSummary.js";
 
 import {
   setupRemoteConfigCapture,
@@ -164,6 +165,9 @@ async function checkPdp(params: CheckPdpParams): Promise<PdpCheckResult> {
 
   // Setup product badge capture BEFORE navigation (isTopRated/minStockBadge from SSR payload + BFF API)
   setupProductBadgesCapture(page, sku.sku);
+
+  // Setup AI review summary capture BEFORE navigation (aiSummary from /reviews/v2/details)
+  setupAiReviewSummaryCapture(page, sku.sku);
 
   const traceMode = getPlaywrightTraceMode();
   const traceZipPath = path.join(
