@@ -21,8 +21,13 @@ const MAX_RUNS = 200;
 const OUTPUT = resolve(process.cwd(), '..', 'docs', 'reports', 'index.firestore.json');
 
 async function main() {
-  if (!process.env.FIREBASE_PROJECT_ID || !process.env.FIREBASE_PRIVATE_KEY) {
-    console.log('ℹ️  Credenciais do Firebase Admin ausentes: histórico só de docs/reports');
+  const missing = ['FIREBASE_PROJECT_ID', 'FIREBASE_CLIENT_EMAIL', 'FIREBASE_PRIVATE_KEY'].filter(
+    (name) => !process.env[name],
+  );
+  if (missing.length > 0) {
+    console.log(
+      `ℹ️  Credenciais do Firebase Admin ausentes (${missing.join(', ')}): histórico só de docs/reports`,
+    );
     return;
   }
   const { cert, getApps, initializeApp } = await import('firebase-admin/app');
@@ -33,7 +38,7 @@ async function main() {
       credential: cert({
         projectId: process.env.FIREBASE_PROJECT_ID,
         clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-        privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+        privateKey: (process.env.FIREBASE_PRIVATE_KEY ?? '').replace(/\\n/g, '\n'),
       }),
     });
   const snapshot = await getFirestore(app)
