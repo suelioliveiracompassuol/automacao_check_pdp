@@ -26,6 +26,7 @@ interface ToggleButtonProps {
   onClick: () => void;
   size?: 'sm' | 'md';
   ariaLabel?: string;
+  className?: string;
   children: ReactNode;
 }
 
@@ -34,6 +35,7 @@ export function ToggleButton({
   onClick,
   size = 'md',
   ariaLabel,
+  className,
   children,
 }: ToggleButtonProps) {
   return (
@@ -48,6 +50,7 @@ export function ToggleButton({
         pressed
           ? 'bg-white text-highlight shadow-sm'
           : 'text-medium-emphasis hover:text-high-emphasis',
+        className,
       )}
     >
       {children}

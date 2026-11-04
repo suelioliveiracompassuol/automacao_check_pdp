@@ -426,6 +426,112 @@ export function findPdpApiContentBanners(
 }
 
 /**
+ * What the app received about the product's reviews: its reviews API calls
+ * (BFF reviews/v2/details?productId=<SKU>, NewProductReviewsDataSourceImpl) and the rating /
+ * "top rated" fields of its PDP API (ProductDetailsResponse.rating, isTopRated,
+ * badgeTopRatedLabel).
+ */
+export interface AppReviewsApi {
+  /** Every reviews/v2/details call for the SKU, in capture order. */
+  calls: { status?: number; url: string }[];
+  /** Last successful reviews body: aggregatedRating, reviewsCount, recommendedPercentage... */
+  reviews?: {
+    aggregatedRating?: number;
+    reviewsCount?: number;
+    recommendedPercentage?: number;
+    /** Reviews of the first page with at least one picture (pictures[].url). */
+    reviewsWithPictures: number;
+    pictureCount: number;
+  };
+  /** PDP API product fields; absent when the PDP API body wasn't captured. */
+  product?: {
+    rating?: number;
+    isTopRated?: boolean;
+    badgeTopRatedLabel?: string;
+  };
+}
+
+const num = (v: unknown) => (typeof v === "number" && Number.isFinite(v) ? v : undefined);
+
+/** reviews/v2/details call of `sku` (productId query param, which the app sends unencoded or encoded). */
+export function isReviewsDetailsCall(url: string, sku: string): boolean {
+  if (!url.includes("/reviews/v2/details")) {
+    return false;
+  }
+  try {
+    return new URL(url).searchParams.get("productId") === sku;
+  } catch {
+    return url.includes(`productId=${sku}`);
+  }
+}
+
+export function extractReviewsSummary(
+  body: Record<string, unknown>,
+): NonNullable<AppReviewsApi["reviews"]> {
+  const data = "reviews" in body || "aggregatedRating" in body ? body : (asRecord(body.data) ?? body);
+  const reviews = (Array.isArray(data.reviews) ? data.reviews : []).map(asRecord);
+  const pictures = reviews.map((r) =>
+    (Array.isArray(r?.pictures) ? r.pictures : []).filter(
+      (p) => typeof asRecord(p)?.url === "string" && (asRecord(p)!.url as string).length > 0,
+    ).length,
+  );
+  return {
+    aggregatedRating: num(data.aggregatedRating),
+    reviewsCount: num(data.reviewsCount),
+    recommendedPercentage: num(data.recommendedPercentage),
+    reviewsWithPictures: pictures.filter((n) => n > 0).length,
+    pictureCount: pictures.reduce((a, b) => a + b, 0),
+  };
+}
+
+export function extractPdpRatingFields(
+  body: Record<string, unknown>,
+): NonNullable<AppReviewsApi["product"]> {
+  const product =
+    "rating" in body || "isTopRated" in body ? body : (asRecord(body.data) ?? body);
+  return {
+    rating: num(product.rating),
+    isTopRated: typeof product.isTopRated === "boolean" ? product.isTopRated : undefined,
+    badgeTopRatedLabel:
+      typeof product.badgeTopRatedLabel === "string" && product.badgeTopRatedLabel
+        ? product.badgeTopRatedLabel
+        : undefined,
+  };
+}
+
+/**
+ * Per SKU, the reviews API calls the app made and the review-related fields of its PDP API.
+ * SKUs with neither in the capture are left out.
+ */
+export function findAppReviewsApi(
+  payload: unknown,
+  skuCodes: readonly string[],
+): Record<string, AppReviewsApi> {
+  const entries = extractNetworkEntries(payload);
+  const result: Record<string, AppReviewsApi> = {};
+  for (const sku of skuCodes) {
+    const matches = (url: string) => isReviewsDetailsCall(url, sku);
+    const calls = entries
+      .filter((e) => matches(e.url))
+      .map((e) => ({ status: e.status, url: e.url }));
+    // The first page as the screen shows it: no media filter, default sort
+    const reviewsBody =
+      findLastJsonBody(entries, (url) => matches(url) && !url.includes("filterMedia")).body ??
+      findLastJsonBody(entries, matches).body;
+    const pdpBody = findPdpApiBody(entries, sku);
+    if (calls.length === 0 && !pdpBody) {
+      continue;
+    }
+    result[sku] = {
+      calls,
+      ...(reviewsBody ? { reviews: extractReviewsSummary(reviewsBody) } : {}),
+      ...(pdpBody ? { product: extractPdpRatingFields(pdpBody) } : {}),
+    };
+  }
+  return result;
+}
+
+/**
  * LambdaTest answers 200 with a partial log while it's still processing a session that just
  * closed (seen on a short session that ended while another was still running: no flags at all).
  * The app always calls the PDP API when a PDP opens, so a log without the last SKU's call is
@@ -447,6 +553,7 @@ export interface AppSessionFlags {
   pdpApiErrors: Record<string, PdpApiError>;
   pdpApiImages: Record<string, PdpApiImages>;
   pdpApiContentBanners: Record<string, PdpApiContentBanners>;
+  reviewsApi: Record<string, AppReviewsApi>;
 }
 
 /**
@@ -496,5 +603,6 @@ export async function readAppSessionFlags(
     pdpApiErrors: findPdpApiErrors(log, skuCodes),
     pdpApiImages: findPdpApiImages(log, skuCodes),
     pdpApiContentBanners: findPdpApiContentBanners(log, skuCodes),
+    reviewsApi: findAppReviewsApi(log, skuCodes),
   };
 }

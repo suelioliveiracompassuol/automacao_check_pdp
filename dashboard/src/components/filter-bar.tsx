@@ -94,8 +94,10 @@ export function FilterBar({
               key={tab.key}
               pressed={selectedStatus === tab.key}
               onClick={() => onStatusChange(tab.key)}
+              // Celular: as três abas dividem a largura em vez de estourar a caixa
+              className="max-sm:min-w-0 max-sm:flex-1 max-sm:px-1.5 max-sm:text-xs"
             >
-              <span className="flex items-center gap-1.5">
+              <span className="flex items-center gap-1.5 max-sm:justify-center max-sm:gap-1">
                 <tab.icon className={cn('h-4 w-4', tab.tone)} aria-hidden="true" />
                 {tab.label}
               </span>

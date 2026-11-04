@@ -81,6 +81,34 @@ describe('ImageZoomDialog', () => {
     expect(stage().style.cursor).toBe('grab');
   });
 
+  it('no carrossel, o swipe troca a imagem e um gesto cancelado não', () => {
+    const onIndexChange = vi.fn();
+    const items = [
+      { src: '/a.png', title: 'A' },
+      { src: '/b.png', title: 'B' },
+    ];
+    render(
+      <ImageZoomDialog
+        src="/a.png"
+        title="A"
+        onClose={vi.fn()}
+        gallery={{ items, index: 0, onIndexChange }}
+      />,
+    );
+    const stage = screen.getByRole('group', { name: /imagem ampliável/i });
+    expect(stage.style.touchAction).toBe('pan-y');
+
+    // O navegador assumiu o gesto (rolagem): pointercancel com coordenada sem sentido
+    fireEvent.pointerDown(stage, { clientX: 300, pointerId: 1 });
+    fireEvent.pointerCancel(stage, { clientX: 0, pointerId: 1 });
+    fireEvent.pointerUp(stage, { clientX: 0, pointerId: 1 });
+    expect(onIndexChange).not.toHaveBeenCalled();
+
+    fireEvent.pointerDown(stage, { clientX: 300, pointerId: 1 });
+    fireEvent.pointerUp(stage, { clientX: 200, pointerId: 1 });
+    expect(onIndexChange).toHaveBeenCalledWith(1);
+  });
+
   it('fecha pelo botão Fechar', async () => {
     const { onClose } = renderDialog();
     await userEvent.click(screen.getByRole('button', { name: 'Fechar' }));

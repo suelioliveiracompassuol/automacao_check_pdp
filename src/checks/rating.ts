@@ -1,7 +1,10 @@
 import { Page } from "@playwright/test";
 import { CheckResult } from "../types.js";
 import { SELECTORS } from "./configs/config.js";
-import { captureCache } from "./ratingConsistency.js";
+import {
+  captureCache,
+  PRODUCT_API_RATING_SOURCES,
+} from "./ratingConsistency.js";
 
 /**
  * Check if product rating/stars are displayed
@@ -133,19 +136,53 @@ export async function checkRating(page: Page): Promise<CheckResult> {
       };
     }
 
+    // The header must show the product API's own rating (SFCC)
+    const productApiRating =
+      cachedData?.productRatingSource &&
+      PRODUCT_API_RATING_SOURCES.includes(cachedData.productRatingSource)
+        ? cachedRating
+        : undefined;
+    // Only the header's rating: the reviews section (reviews-summary, matched first by
+    // SELECTORS.rating.value) shows Konfidency's, whose divergence is ratingConsistency's job
+    const headerRating =
+      productApiRating !== undefined ? await readHeaderRating(page) : null;
+    if (
+      headerRating !== null &&
+      productApiRating !== undefined &&
+      Math.round(headerRating * 10) !== Math.round(productApiRating * 10)
+    ) {
+      return {
+        feature,
+        featureKey,
+        passed: false,
+        status: "fail",
+        message: `Nota exibida ${headerRating.toFixed(1)} diferente da nota da API do produto (${productApiRating})`,
+        details: {
+          ratingValue: headerRating,
+          productRating: productApiRating,
+          ratingText: ratingText.trim(),
+          source: "dom",
+        },
+      };
+    }
+
     return {
       feature,
       featureKey,
       passed: true,
       status: "pass",
-      message: ratingValue
-        ? `Nota ${ratingValue.toFixed(1)} exibida`
-        : `Indicador de rating presente${starCount > 0 ? ` (${starCount} estrelas)` : ""}`,
+      message:
+        headerRating !== null
+          ? `Nota ${headerRating.toFixed(1)} exibida (igual à API do produto)`
+          : ratingValue
+            ? `Nota ${ratingValue.toFixed(1)} exibida`
+            : `Indicador de rating presente${starCount > 0 ? ` (${starCount} estrelas)` : ""}`,
       details: {
-        ratingValue,
+        ratingValue: headerRating ?? ratingValue,
         starCount,
         ratingText: ratingText.trim(),
         source: "dom",
+        productRating: productApiRating,
       },
     };
   } catch (error) {
@@ -157,4 +194,17 @@ export async function checkRating(page: Page): Promise<CheckResult> {
       message: `Erro ao verificar rating: ${error instanceof Error ? error.message : String(error)}`,
     };
   }
+}
+
+/** The product header's rating, next to the go-to-reviews button (null when not rendered). */
+async function readHeaderRating(page: Page): Promise<number | null> {
+  const text =
+    (await page
+      .locator('div:has(> [data-testid="go-to-reviews-button"])')
+      .first()
+      .textContent({ timeout: 3000 })
+      .catch(() => "")) || "";
+  const match = text.match(/(\d+[,.]\d+)/);
+  const value = match ? parseFloat(match[1].replace(",", ".")) : NaN;
+  return value >= 0 && value <= 5 ? value : null;
 }

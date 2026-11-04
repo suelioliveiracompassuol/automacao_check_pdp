@@ -54,8 +54,9 @@ describe('FeatureTable', () => {
 
   it('shows feature messages', () => {
     render(<FeatureTable features={mockFeatures} runId="run_123" />);
-    expect(screen.getByText('Title is visible')).toBeInTheDocument();
-    expect(screen.getByText('Price not found')).toBeInTheDocument();
+    // Uma cópia na coluna Detalhes (desktop) e outra sob o nome da feature (celular)
+    expect(screen.getAllByText('Title is visible')).toHaveLength(2);
+    expect(screen.getAllByText('Price not found')).toHaveLength(2);
   });
 
   it('groups rows by catalog category with a per-group summary', () => {
@@ -213,7 +214,7 @@ describe('FeatureTable', () => {
     );
     expect(screen.getByText('Imagem de referência')).toBeInTheDocument();
     // Details stay visible and the reference column comes last
-    expect(screen.getByText('Price not found')).toBeInTheDocument();
+    expect(screen.getAllByText('Price not found')).toHaveLength(2);
     const headers = screen
       .getAllByRole('columnheader')
       .filter((th) => !th.getAttribute('scope'))

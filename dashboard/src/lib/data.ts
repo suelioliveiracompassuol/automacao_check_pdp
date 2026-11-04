@@ -2,6 +2,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { cache } from 'react';
 import type { FeatureRefIndex } from './feature-refs';
+import {
+  indexEntryOf,
+  reportFromSummary,
+  type FirestoreRunsFile,
+  type FirestoreRunSummary,
+} from './firestore-runs';
 import { runsWithinDays } from './perf-history';
 import { platformOf } from './report';
 import type {
@@ -58,12 +64,21 @@ export const getLastReport = cache((): MonitoringReport => readJson('last-report
 export const getReportIndex = cache((): ReportIndex => {
   const web = readJson<ReportIndex>('reports', 'index.json').reports;
   const android = readOptionalJson<ReportIndex>('reports', 'index.android.json')?.reports ?? [];
-  if (android.length === 0) {
+  // Sem o report.json do run (só o resumo do Firestore), jsonPath fica vazio: não há arquivo
+  const firestore = getFirestoreRuns()
+    .map(indexEntryOf)
+    .map((entry) =>
+      fs.existsSync(path.join(DOCS_DIR, 'reports', entry.runId, 'report.json'))
+        ? entry
+        : { ...entry, jsonPath: '' },
+    );
+  if (android.length === 0 && firestore.length === 0) {
     return { reports: web };
   }
 
+  // Os arquivos vêm primeiro: a entrada deles vence a do Firestore no mesmo runId
   const byRunId = new Map<string, ReportIndexEntry>();
-  for (const entry of [...android, ...web]) {
+  for (const entry of [...android, ...web, ...firestore]) {
     if (!byRunId.has(entry.runId)) {
       byRunId.set(entry.runId, entry);
     }
@@ -74,9 +89,26 @@ export const getReportIndex = cache((): ReportIndex => {
   return { reports };
 });
 
-export const getReportById = cache((runId: string): MonitoringReport | null =>
-  readOptionalJson('reports', runId, 'report.json'),
+/**
+ * Resumos de run do Firestore baixados no build (docs/reports/index.firestore.json, ver
+ * scripts/fetch-firestore-history.ts). Vazio quando o arquivo não existe (sem credenciais).
+ */
+const getFirestoreRuns = cache(
+  (): FirestoreRunSummary[] =>
+    readOptionalJson<FirestoreRunsFile>('reports', 'index.firestore.json')?.reports?.filter(
+      (r) => typeof r?.runId === 'string',
+    ) ?? [],
 );
+
+/** O report.json do run; sem ele, o resumo do Firestore (status e mensagem curta por feature). */
+export const getReportById = cache((runId: string): MonitoringReport | null => {
+  const report = readOptionalJson<MonitoringReport>('reports', runId, 'report.json');
+  if (report) {
+    return report;
+  }
+  const summary = getFirestoreRuns().find((r) => r.runId === runId);
+  return summary ? reportFromSummary(summary) : null;
+});
 
 /** Index entries for `platform`, most recent first. Entries with no `platform` field
  * (legacy reports, predating multi-platform support) are treated as 'web'. */

@@ -19,7 +19,6 @@ import {
   MonitoringReport,
   PdpCheckResult,
   SkuConfig,
-  StepScreenshot,
 } from "./types.js";
 import { StepScreenshotRecorder } from "./checks-android/stepScreenshots.js";
 import { waitForPdpLoaded } from "./checks-android/pdpScreen.js";
@@ -27,11 +26,23 @@ import { toSafeFileName } from "./utils.js";
 import { generateJsonReport } from "./reporter.js";
 import { upsertReportIndexEntry } from "./reportIndex.js";
 import {
-  AndroidSessionPlan,
+  currentRatingStates,
+  gradeRatingDivergence,
+  preloadRatingStates,
+} from "./ratingDivergence.js";
+import { recordRunInFirestore } from "./firestoreHistory.js";
+import {
+  AndroidSessionGroup,
   parseAndroidConcurrency,
-  planAndroidSessions,
+  planAndroidSessionGroups,
 } from "./androidConcurrency.js";
 import { runWithConcurrency } from "./concurrency.js";
+import {
+  fetchDeviceFarmCapacity,
+  freeSlots,
+  parseSlotWaitMs,
+  waitForDeviceFarmSlot,
+} from "./deviceFarmCapacity.js";
 import {
   isOperationSelected,
   parseAndroidOperations,
@@ -59,6 +70,10 @@ import {
   checkBrandShowcaseAndroid,
   checkRecommendationShowcaseAndroid,
 } from "./checks-android/showcases.js";
+import {
+  applyAppReviewsApi,
+  checkReviewsGroupAndroid,
+} from "./checks-android/reviews.js";
 import { buildRemoteConfigFlags } from "./checks-android/remoteConfig.js";
 import {
   describePdpApiError,
@@ -138,19 +153,24 @@ async function loginOnceOnDriver(
   }
 }
 
+/** A checked PDP and its screenshots, still in memory (see saveEvidenceOfFailures). */
+interface CheckedPdp {
+  result: PdpCheckResult;
+  evidence?: StepScreenshotRecorder;
+}
+
 /** Checks a single PDP on an already-open, already-logged-in driver (no session create/close here). */
 async function checkPdpOnDriver(
   driver: WebdriverIO.Browser,
   sku: SkuConfig,
   outputDir: string,
-): Promise<PdpCheckResult> {
+): Promise<CheckedPdp> {
   const url = buildPdpUrl(sku);
   const deepLinkUrl = applyDeepLinkHostOverride(url);
   const timestamp = new Date().toISOString();
   const features: CheckResult[] = [];
   let loadTime: number | undefined;
   let error: string | undefined;
-  let pageScreenshot: string | undefined;
 
   console.log(`\n📱 Checking (Android): ${sku.name} (${sku.sku})`);
   console.log(`   Deep link: ${deepLinkUrl}`);
@@ -184,6 +204,9 @@ async function checkPdpOnDriver(
     await steps.capture("Vitrine mais produtos da marca");
     features.push(await checkRecommendationShowcaseAndroid(driver));
     await steps.capture("Vitrine achamos que você vai gostar");
+
+    features.push(...(await checkReviewsGroupAndroid(driver)));
+    await steps.capture("Avaliações & Nota");
   } catch (e) {
     error = e instanceof Error ? e.message : String(e);
     console.log(`   ❌ Erro: ${error}`);
@@ -241,51 +264,56 @@ async function checkPdpOnDriver(
     }
   }
 
-  const success = isSuccessful(features, error);
-  // Final screen only on failure, like the Web monitor (docs/reports is committed by CI)
-  if (!success) {
-    try {
-      const screenshotsDir = path.join(outputDir, "screenshots");
-      fs.mkdirSync(screenshotsDir, { recursive: true });
-      const screenshotPath = path.join(
-        screenshotsDir,
-        `${toSafeFileName(sku.sku)}_${Date.now()}.png`,
-      );
-      await driver.saveScreenshot(screenshotPath);
-      pageScreenshot = path.relative(outputDir, screenshotPath);
-    } catch (screenshotError) {
-      console.log(
-        `   ⚠️  Falha ao capturar screenshot: ${screenshotError instanceof Error ? screenshotError.message : String(screenshotError)}`,
-      );
-    }
-  }
-  let stepScreenshots: StepScreenshot[] | undefined;
-  if (!success) {
-    try {
-      stepScreenshots = steps.save(outputDir, sku.sku);
-    } catch (e) {
-      console.log(
-        `   ⚠️  Falha ao salvar screenshots das etapas: ${e instanceof Error ? e.message : String(e)}`,
-      );
-    }
-  }
+  // The final screen is kept in memory with the steps: whether the SKU failed is only known
+  // after the session closes (see saveEvidenceOfFailures)
+  await steps.captureFinal();
 
   return {
-    sku: sku.sku,
-    name: sku.name,
-    url,
-    vendor: sku.vendor,
-    country: sku.country,
-    channel: sku.channel,
-    platform: "android",
-    timestamp,
-    success,
-    loadTime,
-    features,
-    error,
-    pageScreenshot,
-    stepScreenshots,
+    result: {
+      sku: sku.sku,
+      name: sku.name,
+      url,
+      vendor: sku.vendor,
+      country: sku.country,
+      channel: sku.channel,
+      platform: "android",
+      timestamp,
+      success: isSuccessful(features, error),
+      loadTime,
+      features,
+      error,
+    },
+    evidence: steps,
   };
+}
+
+/**
+ * Writes the final screen and the step screenshots of the SKUs that failed, once their verdicts
+ * are final: the app's traffic (read after the session closes) and the rating divergence grace
+ * can turn an on-screen failure into a pass, whose screenshots must not be committed.
+ */
+function saveEvidenceOfFailures(
+  checked: CheckedPdp[],
+  outputDir: string,
+): void {
+  for (const { result, evidence } of checked) {
+    if (result.success || !evidence) {
+      continue;
+    }
+    try {
+      result.stepScreenshots = evidence.save(outputDir, result.sku);
+      // The steps already show the path to the failure; the final screen only when there are none
+      // (e.g. the deep link failed before the first step)
+      if (result.stepScreenshots.length === 0) {
+        result.stepScreenshots = undefined;
+        result.pageScreenshot = evidence.saveFinal(outputDir, result.sku);
+      }
+    } catch (e) {
+      console.log(
+        `   ⚠️  Falha ao salvar screenshots de ${result.sku}: ${e instanceof Error ? e.message : String(e)}`,
+      );
+    }
+  }
 }
 
 /** Builds a failed PdpCheckResult for a SKU that never got a real check attempt (e.g. the
@@ -309,8 +337,7 @@ function buildErrorResult(sku: SkuConfig, error: string): PdpCheckResult {
 
 function isSuccessful(features: CheckResult[], error?: string): boolean {
   return (
-    !error &&
-    features.every((f) => f.status !== "fail" && f.status !== "error")
+    !error && features.every((f) => f.status !== "fail" && f.status !== "error")
   );
 }
 
@@ -369,12 +396,20 @@ async function attachAppSessionFlags(
         );
         r.success = isSuccessful(r.features, r.error);
       }
+      // Reviews API / PDP API rating fields, and Remote Config product_reviews gating
+      r.features = applyAppReviewsApi(
+        r.features,
+        flags.reviewsApi[r.sku],
+        r.remoteConfigFlags,
+      );
+      r.success = isSuccessful(r.features, r.error);
     }
     console.log(
       `   ✓ Flags do app capturadas do tráfego da sessão ${sessionId}: ` +
         `commerce ${flags.commerce ? "ok" : "não encontradas"}, ` +
         `Remote Config ${flags.remoteConfigEntries ? "ok" : "não encontrado"}, ` +
-        `imagens da API em ${Object.keys(flags.pdpApiImages).length}/${results.length} SKU(s)`,
+        `imagens da API em ${Object.keys(flags.pdpApiImages).length}/${results.length} SKU(s), ` +
+        `avaliações da API em ${Object.values(flags.reviewsApi).filter((a) => a.calls.length > 0).length}/${results.length} SKU(s)`,
     );
   } catch (e) {
     console.log(
@@ -383,35 +418,67 @@ async function attachAppSessionFlags(
   }
 }
 
-/** Opens one device session (one app, device set to one country), logs in once, then checks every
- * SKU of the plan sequentially before closing it.
- * Each SKU check is isolated: if checkPdpOnDriver throws (outside its own internal error handling,
- * e.g. buildPdpUrl failing), the SKU is recorded as a failure instead of aborting the rest of the
- * session's SKUs. */
+/**
+ * One device session of a group (one app, device set to one country): waits for a free slot on
+ * the farm, opens the session, logs in once and checks SKUs taken from the group's queue until
+ * it's empty. A session the farm doesn't open throws SessionStartError before taking any SKU, so
+ * its share stays with the group's other sessions (or the retry). A SKU check that throws is
+ * recorded as a failure and the session moves on; if the login itself fails, only the SKU in hand
+ * is lost, the rest stays queued.
+ */
 async function runSession(
-  plan: AndroidSessionPlan,
+  group: AndroidSessionGroup,
+  label: string,
   outputDir: string,
 ): Promise<PdpCheckResult[]> {
-  const { skus } = plan;
-  const driver = await createAndroidSession(plan);
-  const results: PdpCheckResult[] = [];
+  const { queue } = group;
+  await waitForDeviceFarmSlot({
+    label,
+    maxWaitMs: parseSlotWaitMs(),
+    shouldStop: () => queue.size() === 0,
+  });
+  if (queue.size() === 0) {
+    return [];
+  }
+  const driver = await createAndroidSession(group);
+  const checked: CheckedPdp[] = [];
+  let sku = queue.take();
   try {
-    await loginOnceOnDriver(driver, skus[0]);
-    for (const sku of skus) {
-      try {
-        results.push(await checkPdpOnDriver(driver, sku, outputDir));
-      } catch (e) {
-        const error = e instanceof Error ? e.message : String(e);
-        console.error(
-          `   ❌ Falha inesperada em ${sku.sku}, pulando para o próximo SKU da sessão: ${error}`,
-        );
-        results.push(buildErrorResult(sku, error));
+    if (sku) {
+      await loginOnceOnDriver(driver, sku);
+      for (; sku; sku = queue.take()) {
+        try {
+          checked.push(await checkPdpOnDriver(driver, sku, outputDir));
+        } catch (e) {
+          const error = e instanceof Error ? e.message : String(e);
+          console.error(
+            `   ❌ Falha inesperada em ${sku.sku}, pulando para o próximo SKU da sessão: ${error}`,
+          );
+          checked.push({ result: buildErrorResult(sku, error) });
+        }
       }
+    }
+  } catch (e) {
+    const error = e instanceof Error ? e.message : String(e);
+    console.error(`❌ ${label}: a sessão falhou (${error})`);
+    if (sku) {
+      checked.push({ result: buildErrorResult(sku, error) });
     }
   } finally {
     await closeAndroidSession(driver);
   }
+  const results = checked.map((c) => c.result);
+  if (results.length === 0) {
+    return results;
+  }
   await attachAppSessionFlags(driver.sessionId, results);
+  // Product rating vs Konfidency: a divergence up to a day old is only a warning (same as Web)
+  for (const r of results) {
+    r.features = gradeRatingDivergence(r.features, r, "android");
+    r.success = isSuccessful(r.features, r.error);
+  }
+  // Only now are the verdicts final: keep the screenshots of the SKUs that failed
+  saveEvidenceOfFailures(checked, outputDir);
   return results;
 }
 
@@ -441,6 +508,8 @@ async function main() {
   pruneOldAuthDebugScreenshots();
 
   const { skus: allSkus, source: skuSource } = await loadSkusWithSource();
+  // Since when each SKU's rating diverges (Firestore, falling back to docs/reports)
+  await preloadRatingStates("android");
   // Which SKUs to check, in priority order:
   //   1. ANDROID_SKUS — comma-separated list, e.g. "NATBRA-70983,NATBRA-76420"
   //   2. ANDROID_SKU — single SKU (kept for backward compat with the original POC)
@@ -474,8 +543,22 @@ async function main() {
     console.log(`   - ${s.sku} (${s.vendor}-${s.country}) ${s.name}`),
   );
 
-  const concurrency = parseAndroidConcurrency(targetSkus.length);
-  const { plans, unsupported } = planAndroidSessions(targetSkus, concurrency);
+  // The farm's concurrency is shared with the whole LambdaTest organization: open only the
+  // sessions that fit in the free slots (at least one, which waits for a slot)
+  const requested = parseAndroidConcurrency(targetSkus.length);
+  const capacity = await fetchDeviceFarmCapacity();
+  const concurrency = capacity
+    ? Math.max(1, Math.min(requested, freeSlots(capacity)))
+    : requested;
+  if (capacity) {
+    console.log(
+      `📶 Device farm: ${capacity.running}/${capacity.max} sessões da organização em uso, ${capacity.queued} na fila → ${concurrency} sessão(ões) em paralelo (pedido: ${requested})`,
+    );
+  }
+  const { groups, unsupported } = planAndroidSessionGroups(
+    targetSkus,
+    concurrency,
+  );
   const results: PdpCheckResult[] = unsupported.map((sku) =>
     buildErrorResult(
       sku,
@@ -483,55 +566,80 @@ async function main() {
     ),
   );
   console.log(
-    `🧵 Sessões: ${plans.length} (${plans.map((p) => `${p.app.key}/${p.country}`).join(", ")}), ` +
-      `até ${concurrency} em paralelo (login 1x por sessão, PDPs em sequência dentro dela)`,
+    `🧵 Sessões: ${groups.map((g) => `${g.sessions}× ${g.app.key}/${g.country}`).join(", ")}, ` +
+      `até ${concurrency} em paralelo (login 1x por sessão; cada sessão pega o próximo SKU da fila do app + país)`,
   );
 
-  // A session that fails outright (e.g. the app's APK id isn't configured) must not discard the
-  // results of the other sessions: its SKUs are recorded as failures so they stay in the report.
-  const failSession = (plan: AndroidSessionPlan, i: number, e: unknown) => {
-    const error = e instanceof Error ? e.message : String(e);
-    console.error(
-      `❌ Sessão ${i + 1} (${plan.app.key}/${plan.country}) falhou por completo (SKUs perdidos: ${plan.skus.map((s) => s.sku).join(", ")}):`,
-      e,
-    );
-    return plan.skus.map((sku) => buildErrorResult(sku, error));
+  // Why each group's leftover SKUs weren't checked: the farm didn't open a session (retried once
+  // below) or the session can't be created at all (e.g. the app's APK id isn't configured)
+  const notStarted = new Map<AndroidSessionGroup, string>();
+  const cannotStart = new Map<AndroidSessionGroup, string>();
+  const runGroupSession = async (group: AndroidSessionGroup, label: string) => {
+    try {
+      return await runSession(group, label, outputDir);
+    } catch (e) {
+      const error = e instanceof Error ? e.message : String(e);
+      if (e instanceof SessionStartError) {
+        console.warn(
+          `⏳ ${label} não abriu no device farm (${error}); os SKUs dela ficam na fila para as outras sessões`,
+        );
+        notStarted.set(group, error);
+      } else {
+        console.error(`❌ ${label} não pôde ser criada:`, e);
+        cannotStart.set(group, error);
+      }
+      return [];
+    }
   };
 
-  // Sessions the farm didn't open (no device allocated in time, often because the parallel ones
-  // hold the devices) are retried once, one at a time, after the others have released theirs.
-  const notStarted: number[] = [];
   const sessionResults = await runWithConcurrency(
-    plans.map((plan, i) => async () => {
-      try {
-        return await runSession(plan, outputDir);
-      } catch (e) {
-        if (e instanceof SessionStartError) {
-          console.warn(
-            `⏳ Sessão ${i + 1} (${plan.app.key}/${plan.country}) não abriu no device farm (${e.message}) — nova tentativa ao fim das demais`,
-          );
-          notStarted.push(i);
-          return [];
-        }
-        return failSession(plan, i, e);
-      }
-    }),
+    groups.flatMap((group) =>
+      Array.from(
+        { length: group.sessions },
+        (_, i) => () =>
+          runGroupSession(
+            group,
+            `Sessão ${i + 1} (${group.app.key}/${group.country})`,
+          ),
+      ),
+    ),
     concurrency,
   );
   results.push(...sessionResults.flat());
 
-  for (const i of notStarted) {
-    const plan = plans[i];
+  // Groups none of whose sessions opened still have SKUs queued: one more session each, one at a
+  // time, after the others released their slots (it also waits for a free slot)
+  for (const group of groups) {
+    if (group.queue.size() === 0 || cannotStart.has(group)) {
+      continue;
+    }
     console.log(
-      `
-🔁 Nova tentativa da sessão ${i + 1} (${plan.app.key}/${plan.country})`,
+      `\n🔁 Nova tentativa: ${group.queue.size()} SKU(s) de ${group.app.key}/${group.country} ainda sem sessão`,
     );
-    try {
-      results.push(...(await runSession(plan, outputDir)));
-    } catch (e) {
-      results.push(...failSession(plan, i, e));
+    results.push(
+      ...(await runGroupSession(
+        group,
+        `Sessão extra (${group.app.key}/${group.country})`,
+      )),
+    );
+  }
+
+  // Whatever is still queued was never checked
+  for (const group of groups) {
+    const reason =
+      cannotStart.get(group) ??
+      notStarted.get(group) ??
+      "Nenhuma sessão do device farm checou este SKU";
+    for (let sku = group.queue.take(); sku; sku = group.queue.take()) {
+      console.error(`❌ ${sku.sku} não foi checado: ${reason}`);
+      results.push(buildErrorResult(sku, reason));
     }
   }
+  // Report in the SKUs' order (sessions finish in any order)
+  const skuOrder = new Map(targetSkus.map((sku, i) => [sku.sku, i]));
+  results.sort(
+    (a, b) => (skuOrder.get(a.sku) ?? 0) - (skuOrder.get(b.sku) ?? 0),
+  );
 
   const report: MonitoringReport = {
     runId,
@@ -553,21 +661,30 @@ async function main() {
   console.log(`\n✅ Relatório salvo em ${jsonPath}`);
 
   // Register in docs/reports/index.android.json (platform: "android") so the dashboard finds this run
+  const indexEntry = {
+    runId: report.runId,
+    startTime: report.startTime,
+    endTime: report.endTime,
+    durationMs: report.durationMs,
+    summary: report.summary,
+    skuSource: report.skuSource,
+    jsonPath: path.join("reports", runId, "report.json").replace(/\\/g, "/"),
+    platform: "android" as const,
+  };
   try {
-    await upsertReportIndexEntry({
-      runId: report.runId,
-      startTime: report.startTime,
-      endTime: report.endTime,
-      durationMs: report.durationMs,
-      summary: report.summary,
-      skuSource: report.skuSource,
-      jsonPath: path.join("reports", runId, "report.json").replace(/\\/g, "/"),
-      platform: "android",
-    });
+    await upsertReportIndexEntry(indexEntry);
     console.log(`✅ Índice de relatórios atualizado`);
   } catch (e) {
     console.error("❌ Erro ao atualizar o histórico de relatórios:", e);
   }
+
+  // Rating states and run summary in Firestore (best effort, see firestoreHistory.ts)
+  await recordRunInFirestore(
+    report,
+    indexEntry,
+    "android",
+    currentRatingStates(report.results, "android"),
+  );
 
   if (results.some((r) => !r.success)) {
     process.exitCode = 1;

@@ -29,6 +29,12 @@ import {
 } from "./checks/featureRunner.js";
 import { generateJsonReport } from "./reporter.js";
 import { upsertReportIndexEntry } from "./reportIndex.js";
+import {
+  currentRatingStates,
+  gradeRatingDivergence,
+  preloadRatingStates,
+} from "./ratingDivergence.js";
+import { recordRunInFirestore } from "./firestoreHistory.js";
 import { setupEndpointMonitor } from "./checks/endpointResponse.js";
 import { checkI18nKeys } from "./checks/i18n.js";
 import { setupEinsteinShowcaseCapture } from "./checks/showcases.js";
@@ -102,7 +108,7 @@ async function checkPdp(params: CheckPdpParams): Promise<PdpCheckResult> {
 
   const url = buildPdpUrl(sku);
   const timestamp = new Date().toISOString();
-  const features: CheckResult[] = [];
+  let features: CheckResult[] = [];
   let pageScreenshot: string | undefined;
   let loadTime: number | undefined;
   let remoteConfigFlags: RemoteConfigFlags | null = cachedRemoteConfig ?? null;
@@ -463,6 +469,9 @@ async function checkPdp(params: CheckPdpParams): Promise<PdpCheckResult> {
       features.push(endpointResult);
     }
 
+    // Product rating vs Konfidency: a divergence up to a day old is only a warning
+    features = gradeRatingDivergence(features, sku);
+
     // Log all features in grouped order (same as HTML report)
     logFeaturesGrouped(features);
 
@@ -608,6 +617,8 @@ async function main() {
 
   // Carrega SKUs do Firestore (ou JSON como fallback)
   const { skus: SKUS, source: skuSource } = await loadSkusWithSource();
+  // Since when each SKU's rating diverges (Firestore, falling back to docs/reports)
+  await preloadRatingStates("web");
 
   // Parse optional env-based filters (set via workflow_dispatch inputs)
   let featuresFilter: Set<string> | null = process.env.FEATURES_FILTER?.trim()
@@ -819,6 +830,17 @@ async function main() {
   const jsonPath = path.join(outputDir, "report.json");
   fs.writeFileSync(jsonPath, generateJsonReport(report));
 
+  const indexEntry = {
+    runId: report.runId,
+    startTime: report.startTime,
+    endTime: report.endTime,
+    durationMs: report.durationMs,
+    summary: report.summary,
+    skuSource: report.skuSource,
+    // Path relative to the /docs root for the frontend
+    jsonPath: path.join("reports", runId, "report.json").replace(/\\/g, "/"),
+  };
+
   // Copy to last-report files and update index
   try {
     const docsDir = path.join(process.cwd(), "docs");
@@ -828,20 +850,14 @@ async function main() {
 
     // Update index.json (upsert by runId, lock-protected against concurrent writers —
     // see reportIndex.ts, shared with the Android orchestrator)
-    await upsertReportIndexEntry({
-      runId: report.runId,
-      startTime: report.startTime,
-      endTime: report.endTime,
-      durationMs: report.durationMs,
-      summary: report.summary,
-      skuSource: report.skuSource,
-      // Path relative to the /docs root for the frontend
-      jsonPath: path.join("reports", runId, "report.json").replace(/\\/g, "/"),
-    });
+    await upsertReportIndexEntry(indexEntry);
     console.log(`\n✅  Índice de relatórios atualizado`);
   } catch (e) {
     console.error("\n❌ Erro ao atualizar o histórico de relatórios:", e);
   }
+
+  // Rating states and run summary in Firestore (best effort, see firestoreHistory.ts)
+  await recordRunInFirestore(report, indexEntry, "web", currentRatingStates(report.results, "web"));
 
   // Print summary
   console.log("\n" + "=".repeat(60));
