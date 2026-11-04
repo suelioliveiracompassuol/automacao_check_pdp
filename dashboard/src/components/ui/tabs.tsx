@@ -33,6 +33,10 @@ interface TabsTriggerProps {
   className?: string;
   /** Distinct per Tabs group so indicators of different groups on one page don't animate into each other. */
   indicatorId?: string;
+  /** Classe do indicador ativo (padrão: bg-highlight). */
+  indicatorClassName?: string;
+  /** Escopo de cor da plataforma (tokens platform-*). */
+  platform?: string;
 }
 
 /** Radix trigger with a shared-layout indicator (`layoutId`) that slides between tabs instead of
@@ -43,10 +47,13 @@ export function TabsTrigger({
   children,
   className,
   indicatorId = 'tabs-active-indicator',
+  indicatorClassName = 'bg-highlight',
+  platform,
 }: TabsTriggerProps) {
   return (
     <RadixTabs.Trigger
       value={value}
+      data-platform={platform}
       className={cn(
         'relative z-0 flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition-colors cursor-pointer outline-none',
         isActive ? 'font-bold text-white' : 'text-medium-emphasis hover:text-high-emphasis',
@@ -56,7 +63,7 @@ export function TabsTrigger({
       {isActive && (
         <m.span
           layoutId={indicatorId}
-          className="absolute inset-0 -z-10 rounded-full bg-highlight"
+          className={cn('absolute inset-0 -z-10 rounded-full', indicatorClassName)}
           transition={{ type: 'spring', stiffness: 500, damping: 35 }}
         />
       )}

@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   filterResults,
+  MINHA_LOJA,
   groupByCountry,
   NO_FILTERS,
   passRate,
@@ -123,6 +124,21 @@ describe('filterResults', () => {
     expect(skus(filterResults(results, { ...NO_FILTERS, search: 'avn' }))).toEqual(['AVN-1']);
     expect(skus(filterResults(results, { ...NO_FILTERS, search: ' PERFUME ' }))).toEqual(['NAT-2']);
     expect(skus(filterResults(results, { ...NO_FILTERS, search: 'x/creme' }))).toEqual(['NAT-1']);
+  });
+
+  it('Minha Loja é uma marca à parte: Avon e Natura ficam só com o site', () => {
+    const withMinhaLoja = [
+      ...results,
+      { ...results[2], sku: 'ML-AVN', channel: 'socialcommerce' },
+      { ...results[0], sku: 'ML-NAT', channel: 'socialcommerce' },
+    ] as PdpCheckResult[];
+    expect(skus(filterResults(withMinhaLoja, { ...NO_FILTERS, vendor: 'avon' }))).toEqual([
+      'AVN-1',
+    ]);
+    expect(skus(filterResults(withMinhaLoja, { ...NO_FILTERS, vendor: MINHA_LOJA }))).toEqual([
+      'ML-AVN',
+      'ML-NAT',
+    ]);
   });
 });
 

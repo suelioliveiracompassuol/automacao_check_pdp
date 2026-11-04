@@ -8,28 +8,36 @@ import { ChevronDown } from 'lucide-react';
 import { ADMIN_NAV, MAIN_NAV, PLATFORM_NAV, isNavActive, type NavItem } from '@/lib/navigation';
 import { cn } from '@/lib/utils';
 
-function NavLink({ href, label, icon: Icon, badge, active }: NavItem & { active: boolean }) {
+function NavLink({
+  href,
+  label,
+  icon: Icon,
+  badge,
+  platform,
+  active,
+}: NavItem & { active: boolean }) {
   return (
     <Link
       href={href}
       title={badge ? `${label} (${badge})` : label}
       aria-label={badge ? `${label} (${badge})` : label}
       aria-current={active ? 'page' : undefined}
+      data-platform={platform}
       className={cn(
         'relative mx-auto flex h-10 w-10 items-center justify-center gap-3 rounded-full text-sm font-medium transition-colors',
         'lg:mx-0 lg:h-auto lg:w-auto lg:justify-start lg:px-4 lg:py-2.5',
         active
-          ? 'bg-primary-wash font-bold text-primary-darkest'
+          ? 'bg-platform-wash font-bold text-platform-strong'
           : 'text-medium-emphasis hover:bg-neutral-50 hover:text-highlight',
       )}
     >
       {active && (
         <span
           aria-hidden="true"
-          className="absolute top-1/2 -left-3 h-6 w-1 -translate-y-1/2 rounded-r-full bg-brand"
+          className="absolute top-1/2 -left-3 h-6 w-1 -translate-y-1/2 rounded-r-full bg-platform"
         />
       )}
-      <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
+      <Icon className={cn('h-4 w-4 shrink-0', platform && 'text-platform')} aria-hidden="true" />
       <span className="hidden flex-1 whitespace-nowrap lg:inline">{label}</span>
       {badge && (
         <>

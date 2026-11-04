@@ -80,7 +80,7 @@ describe('HomePage', () => {
     expect(within(hero).getAllByText('Beta').length).toBeGreaterThan(0);
 
     const coverage = screen.getByRole('region', { name: 'Cobertura' });
-    expect(within(coverage).getByText('Minha Loja')).toBeInTheDocument();
+    expect(within(coverage).getByRole('img', { name: 'Minha Loja' })).toBeInTheDocument();
     expect(within(coverage).getAllByText('Natura')).toHaveLength(2);
     expect(within(coverage).getByText('Avon')).toBeInTheDocument();
     expect(

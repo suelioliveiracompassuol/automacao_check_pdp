@@ -1,5 +1,6 @@
 import { BarChart3, Database, Gauge } from 'lucide-react';
 import { PLATFORMS, type PlatformMeta } from './platforms';
+import type { Platform } from './types';
 
 export interface NavItem {
   href: string;
@@ -7,6 +8,8 @@ export interface NavItem {
   icon: PlatformMeta['icon'];
   /** "em breve" (ainda não lançada) ou "beta" (em validação). */
   badge?: string;
+  /** Rotas de plataforma: o item usa a cor da plataforma (data-platform). */
+  platform?: Platform;
 }
 
 /** Rotas do app — fonte única para a Sidebar (desktop) e a MobileBottomNav. */
@@ -15,12 +18,15 @@ export const MAIN_NAV: NavItem[] = [
   { href: '/performance', label: 'Performance', icon: Gauge },
 ];
 
-export const PLATFORM_NAV: NavItem[] = PLATFORMS.map(({ href, label, icon, upcoming, beta }) => ({
-  href,
-  label,
-  icon,
-  badge: upcoming ? 'em breve' : beta ? 'beta' : undefined,
-}));
+export const PLATFORM_NAV: NavItem[] = PLATFORMS.map(
+  ({ platform, href, label, icon, upcoming, beta }) => ({
+    platform,
+    href,
+    label,
+    icon,
+    badge: upcoming ? 'em breve' : beta ? 'beta' : undefined,
+  }),
+);
 
 export const ADMIN_NAV: NavItem[] = [{ href: '/skus', label: 'SKUs', icon: Database }];
 

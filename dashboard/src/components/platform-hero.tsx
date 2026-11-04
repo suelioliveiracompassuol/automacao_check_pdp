@@ -47,22 +47,30 @@ export function PlatformHero({ platform, title, description, report, action }: P
   const Icon = meta.icon;
 
   return (
-    <section className="relative overflow-hidden rounded-card border border-primary-lightest/60 bg-primary-wash px-6 py-7 sm:px-8">
+    <section
+      data-platform={platform}
+      // Sem overflow-hidden aqui: o menu do Histórico precisa abrir por cima dos cards abaixo.
+      // Quem recorta as decorações é a camada interna.
+      className="relative z-10 rounded-card border border-platform-soft/60 bg-platform-wash px-6 py-7 sm:px-8"
+    >
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -top-24 -right-16 h-64 w-64 rounded-full bg-secondary-lightest/50 blur-3xl"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -bottom-28 right-40 h-56 w-56 rounded-full bg-primary-lightest/50 blur-3xl"
-      />
+        className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]"
+      >
+        {/* Faixa no topo + ícone grande ao fundo: identificam a plataforma além da cor */}
+        <div className="absolute inset-x-0 top-0 h-1 bg-platform" />
+        <div className="absolute -top-24 -right-16 h-64 w-64 rounded-full bg-platform-glow/50 blur-3xl" />
+        <div className="absolute right-40 -bottom-28 h-56 w-56 rounded-full bg-platform-soft/50 blur-3xl" />
+        <Icon className="absolute -right-6 -bottom-10 h-48 w-48 text-platform opacity-[0.08] max-sm:h-32 max-sm:w-32" />
+      </div>
       <div className="relative">
         <div className="mb-3 flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-2 rounded-full bg-surface px-3 py-1 text-xs font-bold text-primary-darkest shadow-tiny">
-              <Icon className="h-3.5 w-3.5 text-brand" />
-              {meta.channel}
+            <span className="inline-flex items-center gap-2 rounded-full bg-platform-strong px-3 py-1 text-xs font-bold text-white shadow-tiny">
+              <Icon className="h-3.5 w-3.5" aria-hidden="true" />
+              {meta.label}
             </span>
+            <span className="text-xs font-medium text-platform-strong">{meta.channel}</span>
             {meta.beta && <BetaBadge />}
           </div>
           {action}
@@ -72,18 +80,18 @@ export function PlatformHero({ platform, title, description, report, action }: P
           <p className="mt-2 max-w-2xl text-sm text-medium-emphasis">{description}</p>
         )}
         <div className="mt-5 flex flex-wrap items-center gap-2">
-          <MetaPill icon={<CalendarClock className="h-3.5 w-3.5 text-primary-darkest" />}>
+          <MetaPill icon={<CalendarClock className="h-3.5 w-3.5 text-platform-strong" />}>
             {formatDate(report.startTime)}
           </MetaPill>
-          <MetaPill icon={<Timer className="h-3.5 w-3.5 text-primary-darkest" />}>
+          <MetaPill icon={<Timer className="h-3.5 w-3.5 text-platform-strong" />}>
             {formatDuration(report.durationMs)}
           </MetaPill>
-          <MetaPill icon={<Hash className="h-3.5 w-3.5 text-primary-darkest" />} mono>
+          <MetaPill icon={<Hash className="h-3.5 w-3.5 text-platform-strong" />} mono>
             {report.runId}
           </MetaPill>
           {report.skuSource && (
             <span title={SKU_SOURCE_LABEL[report.skuSource].title}>
-              <MetaPill icon={<Database className="h-3.5 w-3.5 text-primary-darkest" />}>
+              <MetaPill icon={<Database className="h-3.5 w-3.5 text-platform-strong" />}>
                 {SKU_SOURCE_LABEL[report.skuSource].label}
               </MetaPill>
             </span>

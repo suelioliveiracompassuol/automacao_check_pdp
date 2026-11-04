@@ -43,7 +43,7 @@ describe('SkuCard', () => {
     expect(screen.getByText('avon').className).toContain('pink');
   });
 
-  it('aplica estilo info para canal socialcommerce', () => {
+  it('mostra o logo do Minha Loja para o canal socialcommerce', () => {
     render(
       <SkuCard
         entry={{ ...entry, channel: 'socialcommerce' }}
@@ -51,6 +51,6 @@ describe('SkuCard', () => {
         onDelete={vi.fn()}
       />,
     );
-    expect(screen.getByText('Social').className).toContain('info');
+    expect(screen.getByRole('img', { name: 'Minha Loja' })).toBeInTheDocument();
   });
 });

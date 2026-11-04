@@ -1,6 +1,7 @@
 'use client';
 
 import { Edit2, Trash2 } from 'lucide-react';
+import { VendorLogo } from '@/components/vendor-logo';
 import { CHANNEL_INFO, vendorInfo } from '@/lib/constants';
 import type { SkuEntry } from '@/lib/types';
 import { cn } from '@/lib/utils';
@@ -59,9 +60,15 @@ export function SkuCard({ entry, onEdit, onDelete, disabled }: SkuCardProps) {
         <span className={cn(tagClass, 'bg-neutral-75 uppercase text-medium-emphasis')}>
           {entry.country}
         </span>
-        <span className={cn(tagClass, channel?.className ?? 'bg-neutral-75 text-medium-emphasis')}>
-          {channel?.shortLabel ?? entry.channel}
-        </span>
+        {entry.channel === 'socialcommerce' ? (
+          <VendorLogo vendor="minhaloja" size="sm" />
+        ) : (
+          <span
+            className={cn(tagClass, channel?.className ?? 'bg-neutral-75 text-medium-emphasis')}
+          >
+            {channel?.shortLabel ?? entry.channel}
+          </span>
+        )}
       </div>
       {entry.expectedFeatures.length > 0 && (
         <div className="flex flex-wrap gap-1">

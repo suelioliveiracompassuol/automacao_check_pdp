@@ -73,19 +73,25 @@ function PlatformCard({ meta, passRate, runsCount, lastRunAt, trend }: PlatformS
   return (
     <Link
       href={meta.href}
+      data-platform={meta.platform}
       className={cn(
-        'group relative flex flex-col rounded-card border bg-surface p-5 transition-all duration-200',
+        'group relative flex flex-col overflow-hidden rounded-card border bg-surface p-5 transition-all duration-200',
         live
-          ? 'border-neutral-75 shadow-soft hover:-translate-y-0.5 hover:border-primary-lightest hover:shadow-lift @lg:col-span-2 @4xl:col-span-1'
-          : 'border-dashed border-neutral-100 hover:border-primary-lightest',
+          ? 'bg-platform-tint border-neutral-75 shadow-soft hover:-translate-y-0.5 hover:border-platform-soft hover:shadow-lift @lg:col-span-2 @4xl:col-span-1'
+          : 'bg-platform-tint border-dashed border-neutral-100 hover:border-platform-soft',
       )}
     >
+      {/* Faixa da plataforma no topo do card */}
+      <span
+        aria-hidden="true"
+        className={cn('absolute inset-x-0 top-0 h-1', live ? 'bg-platform' : 'bg-platform-soft')}
+      />
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
           <span
             className={cn(
               'flex h-10 w-10 shrink-0 items-center justify-center rounded-full',
-              live ? 'bg-primary-wash text-brand' : 'bg-neutral-50 text-low-emphasis',
+              live ? 'bg-platform-wash text-platform' : 'bg-platform-wash/60 text-platform/70',
             )}
           >
             <Icon className="h-5 w-5" />
@@ -99,7 +105,7 @@ function PlatformCard({ meta, passRate, runsCount, lastRunAt, trend }: PlatformS
           </div>
         </div>
         {live ? (
-          <ArrowUpRight className="h-4 w-4 shrink-0 text-low-emphasis transition-colors group-hover:text-primary-darkest" />
+          <ArrowUpRight className="h-4 w-4 shrink-0 text-low-emphasis transition-colors group-hover:text-platform-strong" />
         ) : (
           <span className="shrink-0 rounded-full bg-secondary-lightest/60 px-2.5 py-0.5 text-[11px] font-bold tracking-widest whitespace-nowrap text-secondary-darkest uppercase">
             {meta.upcoming ? 'Em breve' : 'Sem dados'}
@@ -190,9 +196,9 @@ function PlatformKpiRow({
 }: PlatformKpi) {
   const Icon = meta.icon;
   return (
-    <div>
+    <div data-platform={meta.platform}>
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-surface px-3 py-1 text-xs font-bold text-primary-dark shadow-tiny">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-platform-strong px-3 py-1 text-xs font-bold text-white shadow-tiny">
           <Icon className="h-3.5 w-3.5" aria-hidden="true" />
           {meta.label}
         </span>

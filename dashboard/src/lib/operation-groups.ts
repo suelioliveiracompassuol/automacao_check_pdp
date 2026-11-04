@@ -9,15 +9,23 @@ export interface OperationKey {
   channel?: string;
 }
 
+/** Logo exibido no título no lugar do nome (ex.: Minha Loja), seguido de `text`. */
+export interface GroupLogo {
+  vendor: string;
+  text: string;
+}
+
 interface GroupDef {
   key: string;
   label: string;
+  logo?: GroupLogo;
   match: (op: Required<OperationKey>) => boolean;
 }
 
 export interface OperationGroup<T> {
   key: string;
   label: string;
+  logo?: GroupLogo;
   items: T[];
 }
 
@@ -34,7 +42,8 @@ const GROUPS: GroupDef[] = [
   ...(['BR', 'AR', 'CL', 'CO', 'MX', 'PE'] as const).map((c) => operationGroup('natura', c)),
   {
     key: 'social-br',
-    label: 'Social Commerce — Minha Loja (BR) Avon/Natura',
+    label: 'Minha Loja Brasil · Avon e Natura',
+    logo: { vendor: 'minhaloja', text: 'Brasil · Avon e Natura' },
     match: (op) => op.channel === 'socialcommerce' && op.country === 'BR',
   },
   ...(['BR', 'AR', 'MX'] as const).map((c) => operationGroup('avon', c)),
@@ -66,6 +75,7 @@ export function groupByOperation<T>(
   const result: OperationGroup<T>[] = GROUPS.filter((g) => buckets.has(g.key)).map((g) => ({
     key: g.key,
     label: g.label,
+    logo: g.logo,
     items: buckets.get(g.key)!,
   }));
   if (others.length > 0) {

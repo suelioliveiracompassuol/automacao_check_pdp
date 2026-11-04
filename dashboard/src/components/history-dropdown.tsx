@@ -106,7 +106,7 @@ export function HistoryDropdown({
                     aria-current={isCurrent ? 'page' : undefined}
                     className={`flex items-center justify-between px-3 py-2.5 text-sm transition-colors ${
                       isCurrent
-                        ? 'bg-primary-wash text-primary-darkest'
+                        ? 'bg-platform-wash text-platform-strong'
                         : 'text-high-emphasis hover:bg-neutral-50'
                     }`}
                   >
@@ -131,7 +131,7 @@ export function HistoryDropdown({
                         <span className="sr-only"> reprovados</span>
                       </span>
                       {isCurrent && (
-                        <Check className="w-4 h-4 text-primary-darkest" aria-hidden="true" />
+                        <Check className="w-4 h-4 text-platform-strong" aria-hidden="true" />
                       )}
                     </div>
                   </Link>

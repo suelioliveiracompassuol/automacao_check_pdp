@@ -71,8 +71,8 @@ export function EvolutionChart({ data }: EvolutionChartProps) {
         >
           <defs>
             <linearGradient id="evolutionAreaGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" style={{ stopColor: 'var(--color-primary)', stopOpacity: 0.25 }} />
-              <stop offset="100%" style={{ stopColor: 'var(--color-primary)', stopOpacity: 0 }} />
+              <stop offset="0%" style={{ stopColor: 'var(--color-platform)', stopOpacity: 0.25 }} />
+              <stop offset="100%" style={{ stopColor: 'var(--color-platform)', stopOpacity: 0 }} />
             </linearGradient>
           </defs>
 
@@ -93,7 +93,7 @@ export function EvolutionChart({ data }: EvolutionChartProps) {
           <path
             d={linePath}
             fill="none"
-            style={{ stroke: 'var(--color-primary-dark)' }}
+            style={{ stroke: 'var(--color-platform)' }}
             strokeWidth={2.5}
             strokeLinejoin="round"
             vectorEffect="non-scaling-stroke"
@@ -105,7 +105,7 @@ export function EvolutionChart({ data }: EvolutionChartProps) {
               cx={p.x}
               cy={p.y}
               r={4}
-              style={{ fill: 'var(--color-surface)', stroke: 'var(--color-primary-dark)' }}
+              style={{ fill: 'var(--color-surface)', stroke: 'var(--color-platform)' }}
               strokeWidth={2}
             >
               <title>{`${p.label}: ${p.passRate}%`}</title>

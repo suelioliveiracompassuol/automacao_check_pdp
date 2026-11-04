@@ -6,6 +6,7 @@ import { BetaBadge } from '@/components/beta-badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PLATFORM_META } from '@/lib/platforms';
 import type { Platform } from '@/lib/types';
+import { cn } from '@/lib/utils';
 import { CoverageSection, type PlatformCoverageData } from './coverage-section';
 import { PlatformBreakdownSection, type PlatformBreakdownData } from './platform-breakdown-section';
 
@@ -61,9 +62,14 @@ export function PlatformTabs({ data }: { data: PlatformSectionData[] }) {
                 key={d.platform}
                 value={d.platform}
                 isActive={active === d.platform}
+                platform={d.platform}
+                indicatorClassName="bg-platform-strong"
                 className={hasRuns(d) || active === d.platform ? undefined : 'opacity-60'}
               >
-                <Icon className="h-3.5 w-3.5" aria-hidden="true" />
+                <Icon
+                  className={cn('h-3.5 w-3.5', active !== d.platform && 'text-platform')}
+                  aria-hidden="true"
+                />
                 {meta.label}
                 {meta.beta && <BetaBadge />}
               </TabsTrigger>
@@ -73,7 +79,12 @@ export function PlatformTabs({ data }: { data: PlatformSectionData[] }) {
       </div>
 
       {data.map((d) => (
-        <TabsContent key={d.platform} value={d.platform} className="space-y-16 outline-none">
+        <TabsContent
+          key={d.platform}
+          value={d.platform}
+          data-platform={d.platform}
+          className="space-y-16 outline-none"
+        >
           {hasRuns(d) ? (
             <>
               <div id="coverage" className="scroll-mt-40">

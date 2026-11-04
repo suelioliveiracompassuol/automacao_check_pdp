@@ -26,6 +26,10 @@ interface ToggleButtonProps {
   onClick: () => void;
   size?: 'sm' | 'md';
   ariaLabel?: string;
+  /** Tooltip nativo (ex.: nome completo do país). */
+  title?: string;
+  /** Opção sem resultados para os outros filtros: visível, mas não clicável. */
+  disabled?: boolean;
   className?: string;
   children: ReactNode;
 }
@@ -35,6 +39,8 @@ export function ToggleButton({
   onClick,
   size = 'md',
   ariaLabel,
+  title,
+  disabled,
   className,
   children,
 }: ToggleButtonProps) {
@@ -43,13 +49,15 @@ export function ToggleButton({
       type="button"
       aria-pressed={pressed}
       aria-label={ariaLabel}
+      title={title}
+      disabled={disabled}
       onClick={onClick}
       className={cn(
-        'cursor-pointer rounded-md font-medium transition-all',
+        'cursor-pointer rounded-md font-medium transition-all disabled:cursor-not-allowed disabled:opacity-40',
         size === 'sm' ? 'px-2.5 py-1.5 text-xs' : 'px-3 py-1.5 text-sm',
         pressed
           ? 'bg-white text-highlight shadow-sm'
-          : 'text-medium-emphasis hover:text-high-emphasis',
+          : 'text-medium-emphasis enabled:hover:text-high-emphasis',
         className,
       )}
     >

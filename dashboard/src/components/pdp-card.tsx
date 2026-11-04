@@ -36,7 +36,7 @@ export function PdpCard({ result, runId, screenshots, featureRefs }: PdpCardProp
 
   return (
     <Card
-      className={`border-l-4 overflow-hidden transition-all duration-200 hover:shadow-md ${
+      className={`bg-platform-tint-subtle border-l-4 overflow-hidden transition-all duration-200 hover:shadow-md ${
         result.success
           ? 'border-l-success hover:border-l-success'
           : 'border-l-alert hover:border-l-alert'
@@ -88,15 +88,14 @@ export function PdpCard({ result, runId, screenshots, featureRefs }: PdpCardProp
 
             <div className="flex items-center gap-2 shrink-0 max-sm:w-full max-sm:pl-13">
               {result.platform === 'android' && (
-                <Badge className="flex items-center gap-1 bg-success-lightest/50 text-success-dark border border-success-light/60 font-semibold">
+                <Badge
+                  // cores herdadas do data-platform da página (PlatformReportView)
+                  className="flex items-center gap-1 bg-platform-wash text-platform-strong border border-platform-soft font-semibold"
+                >
                   <FaAndroid className="w-3 h-3" /> Android
                 </Badge>
               )}
-              {result.channel === 'socialcommerce' && (
-                <Badge className="bg-info-lightest/50 text-info-dark border border-info-light/60 font-semibold">
-                  Minha Loja
-                </Badge>
-              )}
+              {result.channel === 'socialcommerce' && <VendorLogo vendor="minhaloja" />}
               <VendorLogo vendor={result.vendor} />
               <Badge className="bg-neutral-50 text-high-emphasis border border-neutral-100">
                 <CountryFlag code={result.country} width={16} height={12} className="mr-1" />

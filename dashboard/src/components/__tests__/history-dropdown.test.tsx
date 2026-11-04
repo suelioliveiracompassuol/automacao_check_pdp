@@ -80,7 +80,7 @@ describe('HistoryDropdown', () => {
 
     const links = screen.getAllByRole('link');
 
-    expect(links[0]).toHaveClass('bg-primary-wash');
+    expect(links[0]).toHaveClass('bg-platform-wash');
   });
 
   it('first entry links to home (/)', () => {

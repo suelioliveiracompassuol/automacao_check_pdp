@@ -8,7 +8,7 @@ const op = (vendor: string, country: string, channel?: string): OperationKey => 
 });
 
 describe('groupByOperation', () => {
-  it('agrupa na ordem fixa: Natura, Social Commerce, Avon', () => {
+  it('agrupa na ordem fixa: Natura, Minha Loja, Avon', () => {
     const groups = groupByOperation(
       [
         op('avon', 'BR'),
@@ -21,7 +21,7 @@ describe('groupByOperation', () => {
     expect(groups.map((g) => g.label)).toEqual([
       'Natura Brasil',
       'Natura Peru',
-      'Social Commerce — Minha Loja (BR) Avon/Natura',
+      'Minha Loja Brasil · Avon e Natura',
       'Avon Brasil',
     ]);
   });

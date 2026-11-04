@@ -1,5 +1,6 @@
 import { SectionHeader } from '@/components/ui/card';
 import { CountryFlag } from '@/components/ui/country-flag';
+import { VendorLogo } from '@/components/vendor-logo';
 import { cn } from '@/lib/utils';
 import { COUNTRY_INFO, VENDOR_INFO } from '@/lib/constants';
 import type { Platform, Vendor } from '@/lib/types';
@@ -28,7 +29,7 @@ function CountryGrid({
           className={cn(
             'flex flex-col items-center rounded-2xl border p-4 text-center',
             countries.includes(code)
-              ? 'border-primary-lightest bg-primary-wash'
+              ? 'border-platform-soft bg-platform-wash'
               : 'border-neutral-75 bg-surface opacity-60',
           )}
         >
@@ -56,9 +57,7 @@ function CountryGrid({
               );
             })}
             {channelsByCountry[code]?.includes('socialcommerce') && (
-              <span className="rounded-full bg-info-lightest px-2 py-0.5 text-[11px] font-bold text-info-dark">
-                Minha Loja
-              </span>
+              <VendorLogo vendor="minhaloja" size="sm" />
             )}
           </div>
         </div>

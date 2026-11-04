@@ -119,6 +119,7 @@ export function SkuList({ skus, onEdit, onDelete, disabled }: SkuListProps) {
               <OperationGroupHeader
                 groupKey={group.key}
                 label={group.label}
+                logo={group.logo}
                 count={group.items.length}
                 as="h2"
               />
