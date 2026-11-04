@@ -92,17 +92,18 @@ export function FeatureTable({ features, runId, pageScreenshot, featureRefs }: F
         <table className="w-full text-sm">
           <thead>
             <tr className="bg-neutral-50/80 text-left">
-              <th className="py-2.5 px-3 font-semibold text-medium-emphasis text-xs uppercase tracking-wide w-24">
+              <th className="py-2.5 px-3 font-semibold text-medium-emphasis text-xs uppercase tracking-wide w-24 max-sm:w-auto max-sm:px-2">
                 Status
               </th>
               <th className="py-2.5 px-3 font-semibold text-medium-emphasis text-xs uppercase tracking-wide">
                 Feature
               </th>
-              <th className="py-2.5 px-3 font-semibold text-medium-emphasis text-xs uppercase tracking-wide">
+              {/* Celular: os detalhes vão para baixo do nome da feature */}
+              <th className="py-2.5 px-3 font-semibold text-medium-emphasis text-xs uppercase tracking-wide max-sm:hidden">
                 Detalhes
               </th>
               {featureRefs && (
-                <th className="py-2.5 px-3 font-semibold text-medium-emphasis text-xs uppercase tracking-wide w-32">
+                <th className="py-2.5 px-3 font-semibold text-medium-emphasis text-xs uppercase tracking-wide w-32 max-sm:w-[4.5rem] max-sm:px-1.5 max-sm:text-[10px] max-sm:tracking-normal">
                   Imagem de referência
                 </th>
               )}
@@ -124,15 +125,20 @@ export function FeatureTable({ features, runId, pageScreenshot, featureRefs }: F
               </tr>
               {group.features.map((f, i) => (
                 <tr key={`${f.featureKey}-${i}`} className={cn(style(f))}>
-                  <td className="py-2 px-3">
+                  <td className="py-2 px-3 max-sm:px-2">
                     <StatusBadge status={f.status} />
                   </td>
-                  <td className="py-2 px-3 font-medium text-high-emphasis text-xs">{f.feature}</td>
-                  <td className="py-2 px-3 text-medium-emphasis max-w-md text-xs leading-relaxed">
+                  <td className="py-2 px-3 font-medium text-high-emphasis text-xs">
+                    {f.feature}
+                    <span className="mt-1 block font-normal text-medium-emphasis leading-relaxed [overflow-wrap:anywhere] sm:hidden">
+                      {f.message}
+                    </span>
+                  </td>
+                  <td className="py-2 px-3 text-medium-emphasis max-w-md text-xs leading-relaxed max-sm:hidden">
                     {f.message}
                   </td>
                   {featureRefs && (
-                    <td className="py-1.5 px-3">
+                    <td className="py-1.5 px-3 max-sm:px-1.5">
                       {featureRefs[f.featureKey] ? (
                         <button
                           type="button"
@@ -150,7 +156,7 @@ export function FeatureTable({ features, runId, pageScreenshot, featureRefs }: F
                             src={featureRefs[f.featureKey]}
                             alt=""
                             loading="lazy"
-                            className="h-8 max-w-28 object-contain"
+                            className="h-8 max-w-28 object-contain max-sm:max-w-full"
                           />
                         </button>
                       ) : (

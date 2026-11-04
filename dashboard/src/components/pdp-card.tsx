@@ -30,6 +30,10 @@ export function PdpCard({ result, runId, screenshots, featureRefs }: PdpCardProp
 
   const { percentage: passPercentage } = summarizeFeatures(result.features);
 
+  // Android: as etapas do check já mostram o caminho até a falha, então a tela final não ganha
+  // botão próprio (relatórios antigos ainda trazem as duas)
+  const showsSteps = result.platform === 'android' && (result.stepScreenshots?.length ?? 0) > 0;
+
   return (
     <Card
       className={`border-l-4 overflow-hidden transition-all duration-200 hover:shadow-md ${
@@ -47,8 +51,9 @@ export function PdpCard({ result, runId, screenshots, featureRefs }: PdpCardProp
           aria-controls={panelId}
           className="w-full text-left cursor-pointer rounded-lg"
         >
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex items-center gap-3 min-w-0">
+          {/* Celular: os selos descem para uma linha própria, abaixo do nome */}
+          <div className="flex items-start justify-between gap-3 max-sm:flex-wrap max-sm:gap-y-2">
+            <div className="flex items-center gap-3 min-w-0 max-sm:basis-full">
               <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
                   result.success ? 'bg-success-lightest' : 'bg-alert-lightest'
@@ -61,25 +66,27 @@ export function PdpCard({ result, runId, screenshots, featureRefs }: PdpCardProp
                 )}
               </div>
               <div className="min-w-0">
-                <span className="block font-semibold text-highlight truncate text-sm">
+                <span className="block font-semibold text-highlight truncate text-sm max-sm:line-clamp-2 max-sm:whitespace-normal">
                   {result.name}
                 </span>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="text-xs text-medium-emphasis font-mono bg-neutral-50 px-1.5 py-0.5 rounded">
+                <div className="flex items-center gap-2 mt-1 max-sm:flex-wrap max-sm:gap-y-1">
+                  <span className="text-xs text-medium-emphasis font-mono bg-neutral-50 px-1.5 py-0.5 rounded max-sm:whitespace-nowrap">
                     {result.sku}
                   </span>
                   {result.loadTime && (
-                    <span className="flex items-center gap-0.5 text-xs text-low-emphasis">
+                    <span className="flex items-center gap-0.5 text-xs text-low-emphasis max-sm:whitespace-nowrap">
                       <Clock className="w-3 h-3" aria-hidden="true" />
                       {result.loadTime}ms
                     </span>
                   )}
-                  <span className="text-xs text-low-emphasis">{passPercentage}% features ok</span>
+                  <span className="text-xs text-low-emphasis max-sm:whitespace-nowrap">
+                    {passPercentage}% features ok
+                  </span>
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center gap-2 shrink-0">
+            <div className="flex items-center gap-2 shrink-0 max-sm:w-full max-sm:pl-13">
               {result.platform === 'android' && (
                 <Badge className="flex items-center gap-1 bg-success-lightest/50 text-success-dark border border-success-light/60 font-semibold">
                   <FaAndroid className="w-3 h-3" /> Android
@@ -97,7 +104,7 @@ export function PdpCard({ result, runId, screenshots, featureRefs }: PdpCardProp
               </Badge>
               <ChevronDown
                 aria-hidden="true"
-                className={`w-4 h-4 text-low-emphasis transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`}
+                className={`w-4 h-4 text-low-emphasis transition-transform duration-200 max-sm:ml-auto ${expanded ? 'rotate-180' : ''}`}
               />
             </div>
           </div>
@@ -116,7 +123,15 @@ export function PdpCard({ result, runId, screenshots, featureRefs }: PdpCardProp
           >
             <div className="mt-4 pt-4 border-t border-neutral-75 space-y-3">
               <div className="flex items-center gap-2 text-xs text-medium-emphasis">
-                <ExternalLink className="w-3 h-3" aria-hidden="true" />
+                <ExternalLink className="w-3 h-3 shrink-0" aria-hidden="true" />
+                {result.platform === 'android' && (
+                  <span
+                    className="shrink-0 font-medium text-high-emphasis"
+                    title="O app abriu esta PDP por deep link (link da PDP web que o app intercepta)"
+                  >
+                    Deep link:
+                  </span>
+                )}
                 <a
                   href={result.url}
                   target="_blank"
@@ -137,7 +152,7 @@ export function PdpCard({ result, runId, screenshots, featureRefs }: PdpCardProp
               <FeatureTable
                 features={result.features}
                 runId={runId}
-                pageScreenshot={result.pageScreenshot}
+                pageScreenshot={showsSteps ? undefined : result.pageScreenshot}
                 featureRefs={featureRefs && featureRefUrls(featureRefs, result)}
               />
 

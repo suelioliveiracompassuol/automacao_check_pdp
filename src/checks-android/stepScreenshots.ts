@@ -7,13 +7,39 @@ import { toSafeFileName } from "../utils.js";
  * Step-by-step screenshots of an Android PDP check (deep link → each checker), so a failure
  * shows the whole path instead of only the final screen.
  *
- * Captures are kept in memory and written only when the SKU failed (docs/reports is committed
- * by CI). Files: screenshots/<SKU>/NN-<slug>.png.
+ * Captures (the steps and the final screen) are kept in memory and written only when the SKU
+ * failed (docs/reports is committed by CI). Whether it failed is only known after the session
+ * closes (the app's traffic and the rating divergence grace can change verdicts), so runSession
+ * decides and saves then. Files: screenshots/<SKU>/NN-<slug>.png and screenshots/<SKU>_<ts>.png.
  */
 export class StepScreenshotRecorder {
   private readonly captures: { label: string; base64: string }[] = [];
+  private finalScreen: string | undefined;
 
   constructor(private readonly driver: WebdriverIO.Browser) {}
+
+  /** The screen as the check left it (best effort). */
+  async captureFinal(): Promise<void> {
+    try {
+      this.finalScreen = await this.driver.takeScreenshot();
+    } catch (e) {
+      console.log(
+        `   ⚠️  Falha ao capturar screenshot: ${e instanceof Error ? e.message : String(e)}`,
+      );
+    }
+  }
+
+  /** Writes the final screen under outputDir; its path relative to outputDir, if captured. */
+  saveFinal(outputDir: string, sku: string): string | undefined {
+    if (!this.finalScreen) {
+      return undefined;
+    }
+    const dir = path.join(outputDir, "screenshots");
+    fs.mkdirSync(dir, { recursive: true });
+    const filePath = path.join(dir, `${toSafeFileName(sku)}_${Date.now()}.png`);
+    fs.writeFileSync(filePath, Buffer.from(this.finalScreen, "base64"));
+    return path.relative(outputDir, filePath).split(path.sep).join("/");
+  }
 
   /** Best effort: a failed capture never fails the check. */
   async capture(label: string): Promise<void> {

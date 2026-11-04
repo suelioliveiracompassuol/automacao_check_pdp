@@ -48,6 +48,17 @@ jobs:
           cd dashboard
           npm ci
 
+      # Runs whose report.json wasn't committed still show up, from the summaries the monitors
+      # write to Firestore. Without the secrets it does nothing; a Firestore error doesn't fail
+      - name: 📚 Fetch run history from Firestore
+        run: |
+          cd dashboard
+          npm run history:fetch
+        env:
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+          FIREBASE_CLIENT_EMAIL: ${{ secrets.FIREBASE_CLIENT_EMAIL }}
+          FIREBASE_PRIVATE_KEY: ${{ secrets.FIREBASE_PRIVATE_KEY }}
+
       - name: 🏗️ Build React dashboard
         run: |
           cd dashboard

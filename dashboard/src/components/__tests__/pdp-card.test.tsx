@@ -5,7 +5,11 @@ import type { PdpCheckResult } from '@/lib/types';
 
 // Mock sub-components to simplify
 vi.mock('../feature-table', () => ({
-  FeatureTable: () => <div data-testid="feature-table">FeatureTable</div>,
+  FeatureTable: ({ pageScreenshot }: { pageScreenshot?: string }) => (
+    <div data-testid="feature-table" data-page-screenshot={pageScreenshot ?? ''}>
+      FeatureTable
+    </div>
+  ),
 }));
 vi.mock('../screenshot-viewer', () => ({
   ScreenshotViewer: () => <div data-testid="screenshot-viewer">ScreenshotViewer</div>,
@@ -87,6 +91,52 @@ describe('PdpCard', () => {
     expect(button).toHaveAttribute('aria-expanded', 'true');
     // After click, feature table should be visible (expanded)
     expect(screen.getByTestId('feature-table')).toBeInTheDocument();
+  });
+
+  it('labels the URL as the deep link on Android only', () => {
+    const { unmount } = render(
+      <PdpCard
+        result={{ ...failedResult, platform: 'android' }}
+        runId="run_123"
+        screenshots={[]}
+      />,
+    );
+    expect(screen.getByText('Deep link:')).toBeInTheDocument();
+    unmount();
+    render(<PdpCard result={failedResult} runId="run_123" screenshots={[]} />);
+    expect(screen.queryByText('Deep link:')).not.toBeInTheDocument();
+  });
+
+  it('no Android com etapas do check, não oferece a tela final (as etapas já mostram)', () => {
+    const failed = { ...failedResult, pageScreenshot: 'screenshots/SKU-123_1.png' };
+    const { unmount } = render(
+      <PdpCard
+        result={{
+          ...failed,
+          platform: 'android',
+          stepScreenshots: [{ label: 'PDP aberta', path: 'screenshots/SKU-123/01-pdp-aberta.png' }],
+        }}
+        runId="run_123"
+        screenshots={[]}
+      />,
+    );
+    expect(screen.getByTestId('feature-table')).toHaveAttribute('data-page-screenshot', '');
+    unmount();
+    // Sem etapas (ex.: o deep link falhou antes da primeira), a tela final continua
+    const { unmount: unmount2 } = render(
+      <PdpCard result={{ ...failed, platform: 'android' }} runId="run_123" screenshots={[]} />,
+    );
+    expect(screen.getByTestId('feature-table')).toHaveAttribute(
+      'data-page-screenshot',
+      'screenshots/SKU-123_1.png',
+    );
+    unmount2();
+    // Web não muda
+    render(<PdpCard result={failed} runId="run_123" screenshots={[]} />);
+    expect(screen.getByTestId('feature-table')).toHaveAttribute(
+      'data-page-screenshot',
+      'screenshots/SKU-123_1.png',
+    );
   });
 
   it('shows features percentage', () => {

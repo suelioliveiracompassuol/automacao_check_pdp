@@ -63,6 +63,30 @@ export const ANDROID_SELECTORS = {
     banner: 'new UiSelector().resourceIdMatches(".*:id/bannerImage")',
     widepic: 'new UiSelector().resourceIdMatches(".*:id/ivWidepicImage")',
   },
+  /**
+   * Reviews, confirmed against ncf-whitelabel-cf-android (product-details/ui), all shown only
+   * when Remote Config product_reviews.enabled:
+   * - Header (top of the PDP, item_product_base_information_ne.xml): rating_section =
+   *   item_header_rating_ne.xml (ProductBaseInformationViewHolder.setUpRating): tv_rt_value is the
+   *   rating ("%.1f", device locale → "4,5"), tv_see_rating "(19) avaliações" when there are
+   *   reviews, tv_review_product "avalie este produto" when there are none. Stamps
+   *   (rvStampSection → item_stamp.xml tv_tag_text) carry the "top rated" badge
+   *   (badgeTopRatedLabel, only when the API sends isTopRated). recommendation_percentage_section
+   *   (recommendationPercentageTextView) exists in the layout but no code shows it.
+   * - Section at the bottom (footContainer → NewProductReviewsSectionFragment,
+   *   fragment_new_product_reviews_ne.xml): header_new_product_reviews_ne.xml (titleReviewGeneral,
+   *   ratingReviewConstraint with ratingTextView "4.5" and tvTotalNumberReview "19 avaliações",
+   *   or noReviewsTextView), filter/sort row include_new_product_reviews_filter_sort_content.xml
+   *   (tvSortBy only with product_reviews.sort, btFilterBy only with product_reviews.filter),
+   *   rvReviews of item_new_product_review_ne.xml (rvImagesReview → item_new_image_review.xml
+   *   imageReview, shown when the review has pictures) and item_ai_summary_review.xml.
+   */
+  reviews: {
+    section:
+      'new UiSelector().resourceIdMatches(".*:id/(titleReviewGeneral|ratingReviewConstraint|noReviewsTextView|tvTitleReviews)")',
+    header:
+      'new UiSelector().resourceIdMatches(".*:id/(tv_rt_value|tv_see_rating|tv_review_product)")',
+  },
   pdp: {
     /**
      * Loading state of the PDP's main block (item_product_base_information_ne.xml): until the

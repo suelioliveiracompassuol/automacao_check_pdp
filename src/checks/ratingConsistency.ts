@@ -1,10 +1,23 @@
 import { Page } from "@playwright/test";
 import { CheckResult } from "../types.js";
 import { getReviewCount, sleepMs } from "../utils.js";
+import { findSsrProductRating } from "./ssrProduct.js";
+
+/**
+ * Where productRating came from. Only "api" and "ssr" are the product API's own `rating` (what
+ * the PDP header shows, kept in SFCC). The JSON-LD aggregateRating is built from the reviews
+ * (Konfidency) side, so it can't reveal SFCC lagging behind Konfidency; "dom" is the visible
+ * header (Avon fallback).
+ */
+export type ProductRatingSource = "api" | "ssr" | "json-ld" | "dom";
+
+/** Sources that are the product API's own rating. */
+export const PRODUCT_API_RATING_SOURCES: ProductRatingSource[] = ["api", "ssr"];
 
 interface CapturedRatingData {
   /** rating field from /pages/v2/product/:id */
   productRating?: number;
+  productRatingSource?: ProductRatingSource;
   /** aggregatedRating field from /reviews/v2/details */
   aggregatedRating?: number;
   /** reviewsCount from /reviews/v2/details */
@@ -61,7 +74,11 @@ export async function captureRatingFromDOM(page: Page): Promise<void> {
         if (!isNaN(parsed)) {
           const current = captureCache.get(page) ?? {};
           if (current.productRating === undefined) {
-            captureCache.set(page, { ...current, productRating: parsed });
+            captureCache.set(page, {
+              ...current,
+              productRating: parsed,
+              productRatingSource: "dom",
+            });
           }
           return; // Found it for Avon, we're done.
         }
@@ -100,7 +117,11 @@ export async function captureRatingFromDOM(page: Page): Promise<void> {
       // Re-read the cache to avoid race conditions with other listeners.
       const current = captureCache.get(page) ?? {};
       if (current.productRating === undefined) {
-        captureCache.set(page, { ...current, productRating: rating });
+        captureCache.set(page, {
+          ...current,
+          productRating: rating,
+          productRatingSource: "json-ld",
+        });
       }
     }
   } catch {
@@ -134,7 +155,23 @@ export function setupRatingConsistencyCapture(
       try {
         const html = await response.text();
 
-        // 1) Try JSON-LD first (reliable when present)
+        // 1) The product API response baked into the SSR payload (RSC on App Router sites,
+        //    __NEXT_DATA__ on Pages Router ones, matched by SKU): the product's own rating, the
+        //    one the header shows
+        if (expectedProductId) {
+          const ssrRating = findSsrProductRating(html, expectedProductId);
+          const existing = captureCache.get(page) ?? {};
+          if (ssrRating !== undefined && existing.productRatingSource !== "api") {
+            captureCache.set(page, {
+              ...existing,
+              productRating: ssrRating,
+              productRatingSource: "ssr",
+            });
+            return;
+          }
+        }
+
+        // 2) JSON-LD as a last resort (mirrors the reviews' rating, see ProductRatingSource)
         const jsonLdPattern =
           /type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
         let match: RegExpExecArray | null;
@@ -152,6 +189,7 @@ export function setupRatingConsistencyCapture(
                   captureCache.set(page, {
                     ...existing,
                     productRating: parsed,
+                    productRatingSource: "json-ld",
                   });
                 }
                 break;
@@ -159,36 +197,6 @@ export function setupRatingConsistencyCapture(
             }
           } catch {
             // ignore malformed JSON-LD
-          }
-        }
-
-        // 2) Fallback: extract from __NEXT_DATA__ (available for all Next.js SSR domains)
-        //    The product API data is baked into the SSR HTML and is impossible to be
-        //    absent (the page cannot render without it). This covers natura.com.co and
-        //    other international domains where the product API is not called client-side.
-        const existing = captureCache.get(page) ?? {};
-        if (existing.productRating === undefined) {
-          const nextDataMatch = html.match(
-            /<script id=["']__NEXT_DATA__["'][^>]*>([\s\S]*?)<\/script>/i,
-          );
-          if (nextDataMatch) {
-            try {
-              const nextData = JSON.parse(nextDataMatch[1]) as Record<
-                string,
-                unknown
-              >;
-              // Walk through the nested structure to find a rating value
-              // associated with the current product (productId present at same level)
-              const ratingValue = findRatingInNextData(nextData);
-              if (ratingValue !== undefined) {
-                captureCache.set(page, {
-                  ...existing,
-                  productRating: ratingValue,
-                });
-              }
-            } catch {
-              // ignore malformed __NEXT_DATA__
-            }
           }
         }
       } catch {
@@ -238,6 +246,7 @@ export function setupRatingConsistencyCapture(
           captureCache.set(page, {
             ...existing,
             productRating: json.rating as number,
+            productRatingSource: "api",
             productApiUrl: url,
           });
         }
@@ -248,29 +257,73 @@ export function setupRatingConsistencyCapture(
   });
 }
 
+const SOURCE_LABEL: Record<ProductRatingSource, string> = {
+  api: "API do produto",
+  ssr: "API do produto (SSR)",
+  "json-ld": "JSON-LD",
+  dom: "nota exibida",
+};
+
 /**
- * Recursively searches a __NEXT_DATA__ object for an object that has both
- * a numeric `rating` field and a string `productId` field (matching the
- * shape of the /pages/v2/product/ API response baked into SSR HTML).
+ * The product's rating (product API, kept in SFCC, shown in the PDP header) against the
+ * reviews' aggregatedRating (Konfidency, /reviews/v2/details). They must match once SFCC picks
+ * up Konfidency's rating; a divergence is returned as a fail with `details.divergent`, and the
+ * orchestrator turns it into a warning while it's younger than a day (see
+ * applyRatingDivergenceGrace). Shared by the Web and Android monitors.
  */
-function findRatingInNextData(obj: unknown, depth = 0): number | undefined {
-  if (depth > 10 || obj === null || typeof obj !== "object") {
-    return undefined;
+export function compareProductAndReviewsRating(opts: {
+  productRating: number;
+  aggregatedRating: number;
+  productRatingSource?: ProductRatingSource;
+  details?: Record<string, unknown>;
+}): CheckResult {
+  const feature = "Consistência da Nota (Rating)";
+  const featureKey = "ratingConsistency";
+  const { productRating, aggregatedRating, productRatingSource: source } = opts;
+  // The product API's rating has one decimal place
+  const roundedAggregatedRating = Math.round(aggregatedRating * 10) / 10;
+  const details = {
+    productRating,
+    productRatingSource: source,
+    aggregatedRating,
+    roundedAggregatedRating,
+    ...opts.details,
+  };
+  const sourceNote = source ? ` (${SOURCE_LABEL[source]})` : "";
+
+  if (source && !PRODUCT_API_RATING_SOURCES.includes(source)) {
+    // JSON-LD/DOM aren't the product API: equal values prove nothing about SFCC
+    return {
+      feature,
+      featureKey,
+      passed: true,
+      status: "warning",
+      message: `Nota do produto (API /product) não capturada; comparado com ${SOURCE_LABEL[source]}: ${productRating} | reviews=${aggregatedRating}.`,
+      details,
+    };
   }
-  const record = obj as Record<string, unknown>;
-  if (
-    typeof record.productId === "string" &&
-    typeof record.rating === "number"
-  ) {
-    return record.rating;
+
+  if (productRating === roundedAggregatedRating) {
+    return {
+      feature,
+      featureKey,
+      passed: true,
+      status: "pass",
+      message: `Notas consistentes: produto=${productRating}${sourceNote} | reviews=${aggregatedRating}.`,
+      details,
+    };
   }
-  for (const value of Object.values(record)) {
-    const found = findRatingInNextData(value, depth + 1);
-    if (found !== undefined) {
-      return found;
-    }
-  }
-  return undefined;
+
+  return {
+    feature,
+    featureKey,
+    passed: false,
+    status: "fail",
+    message:
+      `Nota do produto (SFCC) diferente da Konfidency: produto=${productRating}${sourceNote} vs ` +
+      `reviews=${roundedAggregatedRating}${roundedAggregatedRating !== aggregatedRating ? ` (original=${aggregatedRating})` : ""}.`,
+    details: { ...details, divergent: true },
+  };
 }
 
 export async function checkRatingConsistency(page: Page): Promise<CheckResult> {
@@ -367,37 +420,16 @@ export async function checkRatingConsistency(page: Page): Promise<CheckResult> {
       };
     }
 
-    // Rating in products API is rounded to one decimal place.
-    const roundedAggregatedRating = Math.round(aggregatedRating * 10) / 10;
-    const areConsistent = productRating === roundedAggregatedRating;
-
-    const details = {
+    const source = captured?.productRatingSource;
+    return compareProductAndReviewsRating({
       productRating,
       aggregatedRating,
-      roundedAggregatedRating,
-      productApiUrl: captured?.productApiUrl,
-      reviewsApiUrl: captured?.reviewsApiUrl,
-    };
-
-    if (areConsistent) {
-      return {
-        feature,
-        featureKey,
-        passed: true,
-        status: "pass",
-        message: `Notas consistentes: produto=${productRating} | reviews=${aggregatedRating}.`,
-        details,
-      };
-    }
-
-    return {
-      feature,
-      featureKey,
-      passed: false,
-      status: "fail",
-      message: `Inconsistência: produto=${productRating} vs reviews arredondado=${roundedAggregatedRating} (original=${aggregatedRating}).`,
-      details,
-    };
+      productRatingSource: source,
+      details: {
+        productApiUrl: captured?.productApiUrl,
+        reviewsApiUrl: captured?.reviewsApiUrl,
+      },
+    });
   } catch (error) {
     return {
       feature,

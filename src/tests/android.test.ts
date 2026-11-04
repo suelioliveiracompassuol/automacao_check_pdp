@@ -18,10 +18,18 @@ import {
   checkRecommendationShowcaseAndroid,
 } from "../checks-android/showcases.js";
 import {
+  createSkuQueue,
   distributeIntoChunks,
   parseAndroidConcurrency,
+  planAndroidSessionGroups,
   planAndroidSessions,
 } from "../androidConcurrency.js";
+import {
+  fetchDeviceFarmCapacity,
+  freeSlots,
+  parseSlotWaitMs,
+  waitForDeviceFarmSlot,
+} from "../deviceFarmCapacity.js";
 import {
   deviceLocaleFor,
   findAndroidApp,
@@ -56,6 +64,16 @@ import {
   checkContentBannersAndroid,
 } from "../checks-android/contentBanners.js";
 import { contentRatio, decodePng } from "../checks-android/pngImage.js";
+import {
+  applyAppReviewsApi,
+  evaluateReviewsScreen,
+  parseUiNodes,
+  ReviewsScreen,
+} from "../checks-android/reviews.js";
+import {
+  AppReviewsApi,
+  findAppReviewsApi,
+} from "../checks-android/appNetworkFlags.js";
 import * as zlib from "node:zlib";
 import * as fs from "node:fs";
 import * as os from "node:os";
@@ -1154,6 +1172,305 @@ test.describe("Android Unit Tests", () => {
     });
   });
 
+  test.describe("Reviews (Avaliações & Nota)", () => {
+    const node = (id: string, text = "", desc = "") => ({ id, text, desc });
+    /** PDP with 19 reviews, rating 4.5, filter, sort and one review with photos. */
+    const fullScreen = (over: Partial<ReviewsScreen> = {}): ReviewsScreen => ({
+      sectionFound: true,
+      headerFound: true,
+      header: [
+        node("tv_rt_value", "4,5"),
+        node("tv_see_rating", "(19) avaliações"),
+        node("tv_tag_text", "novo"),
+      ],
+      section: [
+        node("titleReviewGeneral", "avaliações"),
+        node("ratingTextView", "4.5"),
+        node("tvTotalNumberReview", "19 avaliações"),
+        node("tvSortBy", "mais úteis"),
+        node("btFilterBy", "filtrar"),
+        node("main_container", "", "avaliação 1 de 19"),
+        node("imageReview"),
+      ],
+      photosOnScreen: 2,
+      ...over,
+    });
+    type Result = ReturnType<typeof evaluateReviewsScreen>[number];
+    const byKey = (results: Result[]): Record<string, Result> =>
+      Object.fromEntries(results.map((r) => [r.featureKey, r]));
+    const emptyScreen = (over: Partial<ReviewsScreen> = {}): ReviewsScreen => ({
+      sectionFound: false,
+      headerFound: false,
+      header: [],
+      section: [],
+      photosOnScreen: 0,
+      ...over,
+    });
+
+    test("parseUiNodes reads resource-ids and skips hidden nodes", () => {
+      const source =
+        '<node resource-id="com.natura:id/tv_rt_value" text="4,5" content-desc="" displayed="true"/>' +
+        '<node resource-id="com.natura:id/btFilterBy" text="filtrar" displayed="false"/>' +
+        '<node class="android.view.View" text="sem id"/>';
+      expect(parseUiNodes(source)).toEqual([
+        { id: "tv_rt_value", text: "4,5", desc: "" },
+      ]);
+    });
+
+    test("a complete section passes every row, like the Web", () => {
+      const r = byKey(evaluateReviewsScreen(fullScreen()));
+      expect(r.reviews.status).toBe("pass");
+      expect(r.reviews.message).toBe(
+        "Seção de avaliações presente com 19 reviews",
+      );
+      expect(r.reviewFilter.status).toBe("pass");
+      expect(r.reviewSort.status).toBe("pass");
+      expect(r.reviewPhotos.status).toBe("pass");
+      expect(r.reviewRecommendation.status).toBe("na");
+      expect(r.rating.message).toBe("Nota 4.5 exibida");
+      expect(r.ratingConsistency.status).toBe("pass");
+      expect(r.topRatedBadge.status).toBe("na");
+    });
+
+    test("missing filter/sort fail; no photo on screen is a warning", () => {
+      const screen = fullScreen({ photosOnScreen: 0 });
+      screen.section = screen.section.filter(
+        (n) => !["btFilterBy", "tvSortBy", "imageReview"].includes(n.id),
+      );
+      const r = byKey(evaluateReviewsScreen(screen));
+      expect(r.reviewFilter.status).toBe("fail");
+      expect(r.reviewSort.status).toBe("fail");
+      expect(r.reviewPhotos.status).toBe("warning");
+    });
+
+    test("a product without reviews: section passes, dependent rows N/A", () => {
+      const r = byKey(
+        evaluateReviewsScreen(
+          emptyScreen({
+            sectionFound: true,
+            headerFound: true,
+            header: [node("tv_review_product", "avalie este produto")],
+            section: [
+              node("titleReviewGeneral", "avaliações"),
+              node("noReviewsTextView", "sem avaliações"),
+            ],
+          }),
+        ),
+      );
+      expect(r.reviews.status).toBe("pass");
+      for (const key of [
+        "reviewFilter",
+        "reviewSort",
+        "reviewPhotos",
+        "rating",
+        "ratingConsistency",
+      ]) {
+        expect(r[key].status).toBe("na");
+      }
+    });
+
+    test("no section on the page fails the section rows", () => {
+      const r = byKey(evaluateReviewsScreen(emptyScreen()));
+      expect(r.reviews.status).toBe("fail");
+      expect(r.reviewFilter.status).toBe("fail");
+      expect(r.rating.status).toBe("fail");
+    });
+
+    test("divergent header and section ratings fail the consistency", () => {
+      const screen = fullScreen();
+      screen.header = [
+        node("tv_rt_value", "4,2"),
+        node("tv_see_rating", "(19) avaliações"),
+      ];
+      expect(
+        byKey(evaluateReviewsScreen(screen)).ratingConsistency.status,
+      ).toBe("fail");
+    });
+
+    const BFF = "https://bff-app-natura-brazil.prd.naturacloud.com";
+    const har = (entries: { url: string; status?: number; body?: unknown }[]) => ({
+      log: {
+        entries: entries.map((e) => ({
+          request: { url: e.url },
+          response: {
+            status: e.status ?? 200,
+            content: { text: e.body === undefined ? "" : JSON.stringify(e.body) },
+          },
+        })),
+      },
+    });
+    const reviewsBody = {
+      productId: "NATBRA-1",
+      aggregatedRating: 4.47,
+      reviewsCount: 19,
+      recommendedPercentage: 100,
+      reviews: [
+        {
+          id: "1",
+          rating: 5,
+          pictures: [
+            { id: "a", url: "https://img/a.jpg" },
+            { id: "b", url: "https://img/b.jpg" },
+          ],
+        },
+        { id: "2", rating: 4, pictures: [] },
+      ],
+    };
+
+    test("findAppReviewsApi reads the SKU's reviews calls and the PDP API rating fields", () => {
+      const api = findAppReviewsApi(
+        har([
+          {
+            url: `${BFF}/pages/v2/product/NATBRA-1`,
+            body: {
+              productId: "NATBRA-1",
+              rating: 4.5,
+              isTopRated: true,
+              badgeTopRatedLabel: "melhor avaliado",
+            },
+          },
+          {
+            url: `${BFF}/reviews/v2/details?productId=NATBRA-1&sortField=helpfulScore&page=1`,
+            body: reviewsBody,
+          },
+          {
+            url: `${BFF}/reviews/v2/details?productId=NATBRA-1&filterMedia=pictures`,
+            body: { ...reviewsBody, reviews: [] },
+          },
+          { url: `${BFF}/reviews/v2/details?productId=NATBRA-2`, status: 500 },
+        ]),
+        ["NATBRA-1", "NATBRA-3"],
+      );
+      expect(Object.keys(api)).toEqual(["NATBRA-1"]);
+      expect(api["NATBRA-1"].calls).toHaveLength(2);
+      expect(api["NATBRA-1"].reviews).toEqual({
+        aggregatedRating: 4.47,
+        reviewsCount: 19,
+        recommendedPercentage: 100,
+        reviewsWithPictures: 1,
+        pictureCount: 2,
+      });
+      expect(api["NATBRA-1"].product).toEqual({
+        rating: 4.5,
+        isTopRated: true,
+        badgeTopRatedLabel: "melhor avaliado",
+      });
+    });
+
+    const api = (over: Partial<AppReviewsApi> = {}): AppReviewsApi => ({
+      calls: [{ status: 200, url: `${BFF}/reviews/v2/details?productId=NATBRA-1` }],
+      reviews: {
+        aggregatedRating: 4.47,
+        reviewsCount: 19,
+        recommendedPercentage: 100,
+        reviewsWithPictures: 1,
+        pictureCount: 2,
+      },
+      product: { rating: 4.5, isTopRated: false },
+      ...over,
+    });
+
+    test("the app's traffic adds the API row and completes consistency, recommendation and badge", () => {
+      const out = applyAppReviewsApi(
+        evaluateReviewsScreen(fullScreen()),
+        api(),
+        null,
+      );
+      const r = byKey(out);
+      expect(r.endpoint_reviews.status).toBe("pass");
+      expect(r.endpoint_reviews.message).toBe("1 chamada(s) ok (status 200)");
+      expect(r.ratingConsistency.status).toBe("pass");
+      expect(r.ratingConsistency.message).toContain(
+        "produto=4.5 (API do produto) | reviews=4.47",
+      );
+      expect(r.rating.message).toContain("igual à API do produto");
+      expect(r.reviewRecommendation.message).toContain("API informa 100%");
+      expect(r.topRatedBadge.status).toBe("pass");
+      expect(out.findIndex((f) => f.featureKey === "endpoint_reviews")).toBe(
+        out.findIndex((f) => f.featureKey === "topRatedBadge") + 1,
+      );
+    });
+
+    test("API photos the app doesn't show fail; a failed reviews call fails the API row", () => {
+      const screen = fullScreen({ photosOnScreen: 0 });
+      screen.section = screen.section.filter((n) => n.id !== "imageReview");
+      const r = byKey(
+        applyAppReviewsApi(
+          evaluateReviewsScreen(screen),
+          api({
+            calls: [
+              { status: 503, url: `${BFF}/reviews/v2/details?productId=NATBRA-1` },
+            ],
+          }),
+          null,
+        ),
+      );
+      expect(r.reviewPhotos.status).toBe("fail");
+      expect(r.endpoint_reviews.status).toBe("fail");
+    });
+
+    test("top rated: the API's badge must be on screen, and only then", () => {
+      const product = {
+        rating: 4.5,
+        isTopRated: true,
+        badgeTopRatedLabel: "Melhor avaliado",
+      };
+      const badgeOf = (screen: ReviewsScreen, a: AppReviewsApi) =>
+        byKey(applyAppReviewsApi(evaluateReviewsScreen(screen), a, null))
+          .topRatedBadge.status;
+      expect(badgeOf(fullScreen(), api({ product }))).toBe("fail");
+      const withBadge = fullScreen();
+      withBadge.header = [
+        ...withBadge.header,
+        node("tv_tag_text", "melhor avaliado"),
+      ];
+      expect(badgeOf(withBadge, api({ product }))).toBe("pass");
+      expect(badgeOf(withBadge, api())).toBe("fail");
+    });
+
+    test("Remote Config product_reviews turns the rows the app hides into disabled", () => {
+      const screen = fullScreen();
+      screen.section = screen.section.filter((n) => n.id !== "btFilterBy");
+      const flags = {
+        capturedAt: "",
+        locale: "pt-BR",
+        product_reviews: { enabled: true, filter: false, sort: true },
+      } as never;
+      const r = byKey(applyAppReviewsApi(evaluateReviewsScreen(screen), api(), flags));
+      expect(r.reviewFilter.status).toBe("disabled");
+      expect(r.reviewFilter.passed).toBe(true);
+      expect(r.reviewSort.status).toBe("pass");
+
+      const off = {
+        capturedAt: "",
+        locale: "pt-BR",
+        product_reviews: { enabled: false },
+      } as never;
+      const none = byKey(
+        applyAppReviewsApi(
+          evaluateReviewsScreen(emptyScreen({ headerFound: true })),
+          api({ calls: [] }),
+          off,
+        ),
+      );
+      for (const key of [
+        "reviews",
+        "reviewFilter",
+        "reviewSort",
+        "reviewPhotos",
+        "rating",
+        "endpoint_reviews",
+      ]) {
+        expect(none[key].status).toBe("disabled");
+      }
+    });
+
+    test("without a capture for the SKU the screen results stand", () => {
+      const results = evaluateReviewsScreen(fullScreen());
+      expect(applyAppReviewsApi(results, undefined, null)).toEqual(results);
+    });
+  });
+
   test.describe("waitForPdpLoaded", () => {
     /** PDP whose skeleton goes away after `loadedAfterPolls` polls, then shows "Cód. 2830". */
     const loadingDriver = (loadedAfterPolls: number) => {
@@ -1230,7 +1547,23 @@ test.describe("Android Unit Tests", () => {
         },
       } as unknown as WebdriverIO.Browser);
       await recorder.capture("Erro");
+      await recorder.captureFinal();
       expect(recorder.save(os.tmpdir(), "NATBRA-1")).toEqual([]);
+      expect(recorder.saveFinal(os.tmpdir(), "NATBRA-1")).toBeUndefined();
+    });
+
+    test("the final screen stays in memory until saveFinal (written only for failed SKUs)", async () => {
+      const outputDir = fs.mkdtempSync(path.join(os.tmpdir(), "steps-"));
+      const recorder = new StepScreenshotRecorder({
+        takeScreenshot: async () => Buffer.from("final").toString("base64"),
+      } as unknown as WebdriverIO.Browser);
+      await recorder.captureFinal();
+      // Nothing written while the verdict isn't final
+      expect(fs.existsSync(path.join(outputDir, "screenshots"))).toBe(false);
+      const file = recorder.saveFinal(outputDir, "NATBRA-1");
+      expect(file).toMatch(/^screenshots\/NATBRA-1_\d+\.png$/);
+      expect(fs.readFileSync(path.join(outputDir, file!), "utf8")).toBe("final");
+      fs.rmSync(outputDir, { recursive: true, force: true });
     });
   });
 
@@ -1299,6 +1632,128 @@ test.describe("Android Unit Tests", () => {
         ["1", "3"],
         ["2"],
       ]);
+    });
+
+    test("groups share one SKU queue per app + country, in the input order", () => {
+      const { groups, unsupported } = planAndroidSessionGroups(
+        [
+          sku("BR1", "natura", "BR"),
+          sku("BR2", "natura", "BR"),
+          sku("AR1", "natura", "AR"),
+          sku("BR3", "natura", "BR"),
+          sku("CL1", "avon", "CL"),
+        ],
+        3,
+      );
+      expect(
+        groups.map((g) => [g.app.key, g.country, g.sessions, g.skus.map((s) => s.sku)]),
+      ).toEqual([
+        ["natura-br", "BR", 1, ["BR1", "BR2", "BR3"]],
+        ["natura-latam", "AR", 1, ["AR1"]],
+      ]);
+      expect(unsupported.map((s) => s.sku)).toEqual(["CL1"]);
+
+      const single = planAndroidSessionGroups(
+        ["1", "2", "3", "4"].map((c) => sku(c, "natura", "BR")),
+        2,
+      ).groups;
+      expect(single).toHaveLength(1);
+      expect(single[0].sessions).toBe(2);
+      expect(single[0].skus.map((s) => s.sku)).toEqual(["1", "2", "3", "4"]);
+    });
+
+    test("a session that never opens leaves its SKUs in the queue for the others", async () => {
+      const queue = createSkuQueue(["1", "2", "3", "4"].map((c) => sku(c, "natura", "BR")));
+      const taken: string[] = [];
+      const openedSession = async () => {
+        for (let s = queue.take(); s; s = queue.take()) {
+          taken.push(s.sku);
+          await new Promise((r) => setTimeout(r, 1));
+        }
+      };
+      // Fails to open before taking anything, like createAndroidSession's SessionStartError
+      const sessionNotOpened = async () => {
+        throw new Error("farm did not open the session");
+      };
+      await Promise.allSettled([openedSession(), sessionNotOpened()]);
+      expect(taken).toEqual(["1", "2", "3", "4"]);
+      expect(queue.size()).toBe(0);
+    });
+  });
+
+  test.describe("Device farm capacity (LambdaTest)", () => {
+    const capacityResponse = (data: unknown, ok = true) =>
+      (async () => ({ ok, json: async () => ({ data, status: "success" }) })) as unknown as typeof fetch;
+    const env = { LAMBDATEST_USERNAME: "u", LAMBDATEST_ACCESS_KEY: "k" };
+
+    test("reads the organization's mobile concurrency and counts the free slots", async () => {
+      const capacity = await fetchDeviceFarmCapacity(
+        env,
+        capacityResponse({ max_concurrency: 3, max_queue: 150, queued: 0, running: 2 }),
+      );
+      expect(capacity).toEqual({ max: 3, running: 2, queued: 0 });
+      expect(freeSlots(capacity!)).toBe(1);
+      // Queued requests take the slots first
+      expect(freeSlots({ max: 3, running: 2, queued: 4 })).toBe(0);
+    });
+
+    test("unknown capacity (other provider, no credentials, API error) is null", async () => {
+      const fetchOk = capacityResponse({ max_concurrency: 3, running: 0 });
+      expect(await fetchDeviceFarmCapacity({ ...env, DEVICE_FARM_PROVIDER: "browserstack" }, fetchOk)).toBeNull();
+      expect(await fetchDeviceFarmCapacity({}, fetchOk)).toBeNull();
+      expect(await fetchDeviceFarmCapacity(env, capacityResponse({}, false))).toBeNull();
+      expect(await fetchDeviceFarmCapacity(env, capacityResponse({ running: 1 }))).toBeNull();
+      const throwing = (async () => {
+        throw new Error("network");
+      }) as unknown as typeof fetch;
+      expect(await fetchDeviceFarmCapacity(env, throwing)).toBeNull();
+    });
+
+    test("waits for a free slot, bounded, and stops when the slot isn't needed", async () => {
+      let clock = 0;
+      const sleep = async (ms: number) => {
+        clock += ms;
+      };
+      const now = () => clock;
+      const sequence = (...running: number[]) => {
+        let i = 0;
+        return async () => ({ max: 3, running: running[Math.min(i++, running.length - 1)], queued: 0 });
+      };
+
+      // Full for two polls, then a slot frees
+      expect(
+        await waitForDeviceFarmSlot({ label: "S1", maxWaitMs: 600_000, pollMs: 30_000, getCapacity: sequence(3, 3, 2), sleep, now }),
+      ).toBe("free");
+      expect(clock).toBe(60_000);
+
+      // Always full: gives up at the deadline (and the session tries anyway)
+      clock = 0;
+      expect(
+        await waitForDeviceFarmSlot({ label: "S1", maxWaitMs: 90_000, pollMs: 30_000, getCapacity: sequence(3), sleep, now }),
+      ).toBe("timeout");
+      expect(clock).toBe(90_000);
+
+      // The other sessions took every SKU meanwhile
+      let polls = 0;
+      expect(
+        await waitForDeviceFarmSlot({
+          label: "S2",
+          maxWaitMs: 600_000,
+          getCapacity: sequence(3),
+          shouldStop: () => ++polls > 2,
+          sleep,
+          now,
+        }),
+      ).toBe("stopped");
+
+      // Unknown capacity: don't wait
+      expect(await waitForDeviceFarmSlot({ label: "S1", maxWaitMs: 600_000, getCapacity: async () => null, sleep, now })).toBe("unknown");
+    });
+
+    test("ANDROID_SLOT_WAIT_MINUTES sets the wait (default 10 min)", () => {
+      expect(parseSlotWaitMs({})).toBe(600_000);
+      expect(parseSlotWaitMs({ ANDROID_SLOT_WAIT_MINUTES: "2.5" })).toBe(150_000);
+      expect(parseSlotWaitMs({ ANDROID_SLOT_WAIT_MINUTES: "abc" })).toBe(600_000);
     });
   });
 

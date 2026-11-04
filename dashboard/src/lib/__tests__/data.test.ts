@@ -123,6 +123,62 @@ describe('data.ts', () => {
     });
   });
 
+  describe('histórico do Firestore (index.firestore.json)', () => {
+    const summary = {
+      ...mockIndex.reports[0],
+      runId: 'run_fs',
+      startTime: '2024-01-05T00:00:00Z',
+      platform: 'android',
+      results: [
+        {
+          sku: 'NATBRA-1',
+          name: 'Produto',
+          url: 'https://x/p/a/NATBRA-1',
+          vendor: 'natura',
+          country: 'BR',
+          timestamp: '2024-01-05T00:01:00Z',
+          success: true,
+          features: [{ featureKey: 'rating', feature: 'Nota', status: 'pass', passed: true }],
+        },
+      ],
+    };
+    const files: Record<string, unknown> = {
+      'index.json': mockIndex,
+      'index.firestore.json': {
+        reports: [summary, { ...summary, runId: 'run_123', startTime: '2023-01-01T00:00:00Z' }],
+      },
+    };
+    const fileFor = (p: unknown) =>
+      Object.keys(files).find((name) => String(p).replace(/\\/g, '/').endsWith(`/${name}`));
+
+    beforeEach(() => {
+      vi.mocked(fs.existsSync).mockImplementation((p) => fileFor(p) !== undefined);
+      vi.mocked(fs.readFileSync).mockImplementation((p) => JSON.stringify(files[fileFor(p)!]));
+    });
+
+    it('junta os runs do Firestore ao índice; o arquivo vence no mesmo runId', () => {
+      const reports = getReportIndex().reports;
+      expect(reports.map((r) => r.runId)).toEqual(['run_fs', 'run_123']);
+      expect(reports[0]).not.toHaveProperty('results');
+      // Sem report.json (só o resumo do Firestore): nada de caminho para um arquivo que não existe
+      expect(reports[0].jsonPath).toBe('');
+      expect(reports[1].startTime).toBe(mockIndex.reports[0].startTime);
+      expect(getReportsByPlatform('android').map((r) => r.runId)).toEqual(['run_fs']);
+    });
+
+    it('sem report.json, monta o relatório do resumo do Firestore', () => {
+      const report = getReportById('run_fs');
+      expect(report?.results[0].features[0]).toEqual({
+        featureKey: 'rating',
+        feature: 'Nota',
+        status: 'pass',
+        passed: true,
+        message: '',
+      });
+      expect(getReportById('run_outro')).toBeNull();
+    });
+  });
+
   describe('getScreenshotsForRun', () => {
     it('returns only full-page and error screenshots', () => {
       vi.mocked(fs.existsSync).mockReturnValue(true);

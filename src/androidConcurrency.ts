@@ -67,3 +67,65 @@ export function planAndroidSessions(
   );
   return { plans, unsupported };
 }
+
+/** SKUs of one app + country, taken one at a time by the sessions that manage to open. */
+export interface SkuQueue {
+  take(): SkuConfig | undefined;
+  size(): number;
+}
+
+export function createSkuQueue(skus: SkuConfig[]): SkuQueue {
+  const pending = [...skus];
+  return {
+    take: () => pending.shift(),
+    size: () => pending.length,
+  };
+}
+
+/** One app + country: its SKU queue and how many sessions may work on it in parallel. */
+export interface AndroidSessionGroup extends AndroidSessionTarget {
+  queue: SkuQueue;
+  skus: SkuConfig[];
+  sessions: number;
+}
+
+/**
+ * Groups SKUs by app + country (one session can't mix them) and gives each group a share of the
+ * `concurrency` budget, never more sessions than SKUs. Unlike fixed chunks, the sessions of a
+ * group share its queue: one the farm doesn't open leaves its SKUs to the others, and a faster
+ * one takes more.
+ */
+export function planAndroidSessionGroups(
+  skus: SkuConfig[],
+  concurrency: number,
+): { groups: AndroidSessionGroup[]; unsupported: SkuConfig[] } {
+  const { plans, unsupported } = planAndroidSessions(skus, concurrency);
+  const groups = new Map<string, AndroidSessionGroup>();
+  for (const plan of plans) {
+    const key = `${plan.app.key}|${plan.country}`;
+    const group = groups.get(key);
+    if (group) {
+      group.skus.push(...plan.skus);
+      group.sessions += 1;
+    } else {
+      groups.set(key, {
+        app: plan.app,
+        country: plan.country,
+        skus: [...plan.skus],
+        sessions: 1,
+        queue: createSkuQueue([]),
+      });
+    }
+  }
+  // Keep the input order (the chunks were filled round-robin)
+  const order = new Map(skus.map((sku, i) => [sku, i]));
+  return {
+    groups: [...groups.values()].map((g) => {
+      const ordered = [...g.skus].sort(
+        (a, b) => (order.get(a) ?? 0) - (order.get(b) ?? 0),
+      );
+      return { ...g, skus: ordered, queue: createSkuQueue(ordered) };
+    }),
+    unsupported,
+  };
+}

@@ -225,8 +225,10 @@ export function summarizeShowcases(source: string): ShowcasePageSummary {
 export async function scrollPdpUntilVisible(
   driver: WebdriverIO.Browser,
   el: ChainablePromiseElement,
+  /** `upOnly`: only searches upwards (the element is known to be above, e.g. the PDP header). */
+  opts: { upOnly?: boolean } = {},
 ): Promise<{ visibleHeight: number; pageSummary?: ShowcasePageSummary }> {
-  let direction: "down" | "up" = "down";
+  let direction: "down" | "up" = opts.upOnly ? "up" : "down";
   const moved = { down: 0, up: 0 };
   // Every screen seen on the way, so a miss reports what the whole page had
   const sources: string[] = [];

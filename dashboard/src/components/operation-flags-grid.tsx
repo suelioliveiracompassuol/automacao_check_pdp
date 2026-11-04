@@ -246,10 +246,12 @@ export function OperationFlagsGrid({ results }: OperationFlagsGridProps) {
     <Collapsible.Root open={open} onOpenChange={setOpen}>
       <Collapsible.Trigger className="flex items-center gap-2 w-full text-left py-3 px-4 rounded-xl bg-white border border-neutral-75 shadow-sm hover:bg-neutral-50 transition-colors cursor-pointer">
         <ChevronDown
-          className={`w-4 h-4 text-medium-emphasis transition-transform ${open ? 'rotate-0' : '-rotate-90'}`}
+          className={`w-4 h-4 text-medium-emphasis transition-transform max-sm:shrink-0 ${open ? 'rotate-0' : '-rotate-90'}`}
         />
-        <h2 className="text-lg font-semibold text-highlight">Feature Flags por Operação</h2>
-        <span className="text-xs text-medium-emphasis bg-neutral-75 px-2 py-0.5 rounded-full">
+        <h2 className="text-lg font-semibold text-highlight max-sm:text-base max-sm:leading-tight">
+          Feature Flags por Operação
+        </h2>
+        <span className="text-xs text-medium-emphasis bg-neutral-75 px-2 py-0.5 rounded-full max-sm:ml-auto max-sm:shrink-0 max-sm:whitespace-nowrap">
           {operations.length} {operations.length === 1 ? 'operação' : 'operações'}
         </span>
       </Collapsible.Trigger>

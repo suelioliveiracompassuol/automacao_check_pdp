@@ -10,6 +10,7 @@ dist/
 # local `npm run check:android` runs stay out of the repo
 /docs/reports/run_android_*/
 /docs/reports/index.android.json
+/docs/reports/index.firestore.json
 
 # Local scratch/debug artifacts (may contain auth debug screenshots — never commit)
 .tmp/

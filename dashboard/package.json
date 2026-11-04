@@ -14,7 +14,8 @@
     "test": "vitest",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "seed": "tsx scripts/seed-skus.ts"
+    "seed": "tsx scripts/seed-skus.ts",
+    "history:fetch": "tsx scripts/fetch-firestore-history.ts"
   },
   "dependencies": {
     "@radix-ui/react-collapsible": "^1.1.3",

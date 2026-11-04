@@ -40,4 +40,29 @@ describe('StepScreenshots', () => {
     fireEvent.click(screen.getByText('2. Vitrine mais produtos da marca'));
     expect(screen.getAllByText('2. Vitrine mais produtos da marca').length).toBeGreaterThan(1);
   });
+
+  it('the opened dialog is a carousel over every step', () => {
+    render(<StepScreenshots steps={steps} runId="run_123" />);
+    fireEvent.click(screen.getByText('1. PDP aberta'));
+    expect(screen.getByText('1 / 2')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Imagem anterior' })).toBeDisabled();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Próxima imagem' }));
+    expect(screen.getByText('2 / 2')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Próxima imagem' })).toBeDisabled();
+
+    // Unzoomed, the left arrow goes back
+    fireEvent.keyDown(screen.getByText('2 / 2'), { key: 'ArrowLeft' });
+    expect(screen.getByText('1 / 2')).toBeInTheDocument();
+
+    // Thumbnails jump straight to a step
+    fireEvent.click(screen.getByRole('button', { name: '2. Vitrine mais produtos da marca' }));
+    expect(screen.getByText('2 / 2')).toBeInTheDocument();
+  });
+
+  it('a single step opens without carousel controls', () => {
+    render(<StepScreenshots steps={steps.slice(0, 1)} runId="run_123" />);
+    fireEvent.click(screen.getByText('1. PDP aberta'));
+    expect(screen.queryByRole('button', { name: 'Próxima imagem' })).not.toBeInTheDocument();
+  });
 });

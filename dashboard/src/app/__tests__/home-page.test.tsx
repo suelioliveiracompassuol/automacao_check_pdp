@@ -125,6 +125,8 @@ describe('HomePage', () => {
     const coverage = screen.getAllByRole('region', { name: 'Cobertura' }).at(-1)!;
     expect(within(coverage).getByText('Adicionar à sacola')).toBeInTheDocument();
     expect(within(coverage).getByText('Banners de conteúdo')).toBeInTheDocument();
-    expect(within(coverage).queryByText('Avaliações')).not.toBeInTheDocument();
+    expect(within(coverage).getByText('Avaliações')).toBeInTheDocument();
+    // Só Web: o app não tem resumo por IA no monitor Android
+    expect(within(coverage).queryByText('Resumo por IA')).not.toBeInTheDocument();
   });
 });

@@ -79,6 +79,7 @@ export interface ReportIndexEntry {
   };
   /** Present for web runs (static report.html); Android runs are JSON-only. */
   htmlPath?: string;
+  /** Caminho do report.json; vazio para runs que só existem como resumo no Firestore. */
   jsonPath: string;
   /** Defaults to 'web' when omitted (legacy reports). */
   platform?: Platform;
