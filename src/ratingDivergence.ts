@@ -5,14 +5,13 @@
  * runs' reports in docs/reports (committed by CI), carried forward in
  * ratingConsistency.details.divergentSince.
  */
-import * as fs from "node:fs";
 import * as path from "node:path";
 import {
   loadRatingStatesFromFirestore,
   ratingStatesOf,
   type StoredRatingState,
 } from "./firestoreHistory.js";
-import { reportIndexFileName } from "./reportIndex.js";
+import { readPreviousRuns, resultKey } from "./reportHistory.js";
 import type { CheckResult, PdpCheckResult, Platform } from "./types.js";
 
 export const RATING_DIVERGENCE_GRACE_MS = 24 * 60 * 60 * 1000;
@@ -23,14 +22,9 @@ export const RATING_DIVERGENCE_GRACE_MS = 24 * 60 * 60 * 1000;
  * day.
  */
 export const RATING_DIVERGENCE_FAIL_AFTER_MS = 20 * 60 * 60 * 1000;
-/** How many previous runs to look through for a SKU (filtered runs don't have every SKU). */
-const MAX_RUNS_LOOKBACK = 15;
-
 type ResultKey = Pick<PdpCheckResult, "sku" | "vendor" | "country" | "channel">;
 
-export function ratingResultKey(r: ResultKey): string {
-  return `${r.vendor}|${r.country}|${r.channel ?? "ecommerce"}|${r.sku}`;
-}
+export const ratingResultKey = resultKey;
 
 /** The SKU's ratingConsistency in its latest previous run. */
 export interface PreviousRatingState {
@@ -70,33 +64,8 @@ export function loadPreviousRatingStates(
   excludeRunId?: string,
 ): Map<string, PreviousRatingState> {
   const states = new Map<string, PreviousRatingState>();
-  type IndexEntry = { runId: string; startTime?: string };
-  let index: IndexEntry[];
-  try {
-    const parsed = JSON.parse(
-      fs.readFileSync(path.join(reportsDir, reportIndexFileName(platform)), "utf-8"),
-    ) as { reports?: IndexEntry[] } | IndexEntry[];
-    // The index is { generatedAt, reports: [...] }; a bare array is accepted too
-    index = (Array.isArray(parsed) ? parsed : parsed?.reports ?? []).filter(
-      (e): e is IndexEntry => typeof e?.runId === "string",
-    );
-  } catch {
-    return states;
-  }
-  const runs = index
-    .filter((e) => e.runId !== excludeRunId)
-    .sort((a, b) => String(b.startTime ?? "").localeCompare(String(a.startTime ?? "")))
-    .slice(0, MAX_RUNS_LOOKBACK);
-  for (const run of runs) {
-    let report: { results?: PdpCheckResult[] };
-    try {
-      report = JSON.parse(
-        fs.readFileSync(path.join(reportsDir, run.runId, "report.json"), "utf-8"),
-      ) as { results?: PdpCheckResult[] };
-    } catch {
-      continue;
-    }
-    for (const result of report.results ?? []) {
+  for (const run of readPreviousRuns(platform, reportsDir, excludeRunId)) {
+    for (const result of run.results) {
       const key = ratingResultKey(result);
       const feature = result.features?.find((f) => f.featureKey === "ratingConsistency");
       if (states.has(key) || !feature || !isRatingComparison(feature)) {

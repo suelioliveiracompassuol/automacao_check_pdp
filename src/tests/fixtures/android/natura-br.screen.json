@@ -1,0 +1,81 @@
+{
+  "source": {
+    "runId": "run_android_1793817186144",
+    "sessionId": "5b6c2b16-835f-445b-94b4-c15ec660900b",
+    "capturedAt": "2026-11-04T19:48:02.943Z"
+  },
+  "skus": {
+    "NATBRA-110181": {
+      "name": "Base Sérum Nude Me Una 30ml",
+      "vendor": "natura",
+      "country": "BR",
+      "reviewCount": 19,
+      "headerRating": 4.5,
+      "sectionRating": 4.5,
+      "imageCount": 5
+    },
+    "NATBRA-122112": {
+      "name": "Corretivo Cobertura Extrema 24h Una",
+      "vendor": "natura",
+      "country": "BR",
+      "reviewCount": 124,
+      "headerRating": 4.3,
+      "sectionRating": 4.4,
+      "imageCount": 6
+    },
+    "NATBRA-169786": {
+      "name": "Kaiak Ultra Masculino 100ml",
+      "vendor": "natura",
+      "country": "BR",
+      "reviewCount": 675,
+      "headerRating": 4.7,
+      "sectionRating": 4.7,
+      "imageCount": 3
+    },
+    "NATBRA-172407": {
+      "name": "Óleo em Creme Tododia Jambo Rosa e Flor de Caju",
+      "vendor": "natura",
+      "country": "BR",
+      "reviewCount": 116,
+      "headerRating": 4.9,
+      "sectionRating": 4.9,
+      "imageCount": 5
+    },
+    "NATBRA-2830": {
+      "name": "Sabonete em Barra Puro Vegetal Tododia Algodão 5 un de 90g cada",
+      "vendor": "natura",
+      "country": "BR",
+      "reviewCount": 1234,
+      "headerRating": 4.9,
+      "sectionRating": 4.9,
+      "imageCount": 3
+    },
+    "NATBRA-70983": {
+      "name": "Creme Hidratante para as Mãos Ekos Castanha 75g",
+      "vendor": "natura",
+      "country": "BR",
+      "reviewCount": 444,
+      "headerRating": 5,
+      "sectionRating": 5,
+      "imageCount": 4
+    },
+    "NATBRA-76420": {
+      "name": "Desodorante Perfume Essencial Masculino 100ml",
+      "vendor": "natura",
+      "country": "BR",
+      "reviewCount": 1065,
+      "headerRating": 4,
+      "sectionRating": 4,
+      "imageCount": 3
+    },
+    "NATBRA-92786": {
+      "name": "Mamãe e Bebê Água de Colônia 100ml",
+      "vendor": "natura",
+      "country": "BR",
+      "reviewCount": 1064,
+      "headerRating": 3.9,
+      "sectionRating": 3.9,
+      "imageCount": 3
+    }
+  }
+}

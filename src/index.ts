@@ -34,6 +34,7 @@ import {
   gradeRatingDivergence,
   preloadRatingStates,
 } from "./ratingDivergence.js";
+import { markNewFailuresFromReports } from "./reportHistory.js";
 import { recordRunInFirestore } from "./firestoreHistory.js";
 import { setupEndpointMonitor } from "./checks/endpointResponse.js";
 import { checkI18nKeys } from "./checks/i18n.js";
@@ -814,6 +815,9 @@ async function main() {
   const endTime = new Date();
   const durationMs = endTime.getTime() - startTime.getTime();
 
+  // Failures that didn't happen in the SKU's previous run: the ones most worth a human look
+  const newFailures = markNewFailuresFromReports(results, "web", runId);
+
   // Generate report
   const report: MonitoringReport = {
     runId,
@@ -826,6 +830,7 @@ async function main() {
       passed: results.filter((r) => r.success).length,
       failed: results.filter((r) => !r.success && !r.error).length,
       errors: results.filter((r) => r.error).length,
+      newFailures,
     },
     results,
   };

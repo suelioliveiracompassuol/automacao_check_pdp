@@ -284,6 +284,8 @@ export function applyPdpApiImages(
       imageCount: api.urls.length,
       downloadedCount: api.downloadedCount,
       ...(api.failed.length ? { failed: api.failed } : {}),
+      ...(api.variationCount ? { variationCount: api.variationCount } : {}),
+      ...(api.openedVariation ? { openedVariation: api.openedVariation } : {}),
     },
   };
   if (api.urls.length === 0) {
