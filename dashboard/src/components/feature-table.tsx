@@ -139,7 +139,7 @@ export function FeatureTable({ features, runId, pageScreenshot, featureRefs }: F
                 Detalhes
               </th>
               {featureRefs && (
-                <th className="py-2.5 px-3 font-semibold text-medium-emphasis text-xs uppercase tracking-wide w-32 max-sm:w-[4.5rem] max-sm:px-1.5 max-sm:text-[10px] max-sm:tracking-normal">
+                <th className="py-2.5 px-3 font-semibold text-medium-emphasis text-xs uppercase tracking-wide w-32 max-sm:w-18 max-sm:px-1.5 max-sm:text-[10px] max-sm:tracking-normal">
                   Imagem de referência
                 </th>
               )}
@@ -167,7 +167,7 @@ export function FeatureTable({ features, runId, pageScreenshot, featureRefs }: F
                   </td>
                   <td className="py-2 px-3 font-medium text-high-emphasis text-xs">
                     {f.feature}
-                    <span className="mt-1 block font-normal text-medium-emphasis leading-relaxed [overflow-wrap:anywhere] sm:hidden">
+                    <span className="mt-1 block font-normal text-medium-emphasis leading-relaxed wrap-anywhere sm:hidden">
                       {f.message}
                     </span>
                   </td>
