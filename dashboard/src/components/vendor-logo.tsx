@@ -18,6 +18,8 @@ export function VendorLogo({
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         className="inline-block align-middle"
+        role="img"
+        aria-label="Natura"
       >
         <path
           fill="#EB6619"
@@ -60,6 +62,8 @@ export function VendorLogo({
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         className="inline-block align-middle"
+        role="img"
+        aria-label="Avon"
       >
         <path
           fill="#FF2469"

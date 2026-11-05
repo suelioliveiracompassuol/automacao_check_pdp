@@ -41,21 +41,12 @@ function CountryGrid({
             className="mb-1 h-5 w-7"
           />
           <span className="text-sm font-bold text-high-emphasis">{label}</span>
-          <div className="mt-2 flex flex-wrap justify-center gap-1">
-            {(vendorsByCountry[code] ?? []).map((vendor) => {
-              const info = VENDOR_INFO[vendor as Vendor];
-              if (!info) {
-                return null;
-              }
-              return (
-                <span
-                  key={vendor}
-                  className={cn('rounded-full px-2 py-0.5 text-[11px] font-bold', info.className)}
-                >
-                  {info.label}
-                </span>
-              );
-            })}
+          <div className="mt-2 flex flex-wrap items-center justify-center gap-x-2 gap-y-1">
+            {(vendorsByCountry[code] ?? [])
+              .filter((vendor) => VENDOR_INFO[vendor as Vendor])
+              .map((vendor) => (
+                <VendorLogo key={vendor} vendor={vendor} size="sm" />
+              ))}
             {channelsByCountry[code]?.includes('socialcommerce') && (
               <VendorLogo vendor="minhaloja" size="sm" />
             )}
