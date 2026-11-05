@@ -17,7 +17,7 @@ export function PlatformReportView({ platform, report, description }: PlatformRe
   const screenshots = getScreenshotsForRun(report.runId);
 
   return (
-    <div className="space-y-6 animate-fade-in-up">
+    <div data-platform={platform} className="space-y-6 animate-fade-in-up">
       <PlatformHero
         platform={platform}
         title={`PDP Feature Monitor — ${PLATFORM_META[platform].label}`}

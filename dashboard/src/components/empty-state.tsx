@@ -1,18 +1,27 @@
 import type { ReactNode } from 'react';
+import type { Platform } from '@/lib/types';
 
 interface EmptyStateProps {
   icon: ReactNode;
   title: string;
   badge?: string;
   description?: ReactNode;
+  /** Página de plataforma: usa a cor dela no lugar da faixa laranja→amarela. */
+  platform?: Platform;
 }
 
 /** Estado vazio de página inteira (plataforma sem dados, nenhuma execução ainda). */
-export function EmptyState({ icon, title, badge, description }: EmptyStateProps) {
+export function EmptyState({ icon, title, badge, description, platform }: EmptyStateProps) {
   return (
-    <div className="relative mx-auto mt-6 max-w-2xl overflow-hidden rounded-card border border-neutral-75 bg-surface px-8 py-16 text-center shadow-soft">
-      <div className="bg-brand-gradient absolute inset-x-0 top-0 h-1" aria-hidden="true" />
-      <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-primary-wash text-3xl text-brand">
+    <div
+      data-platform={platform}
+      className="relative mx-auto mt-6 max-w-2xl overflow-hidden rounded-card border border-neutral-75 bg-surface px-8 py-16 text-center shadow-soft"
+    >
+      <div
+        className={`absolute inset-x-0 top-0 h-1 ${platform ? 'bg-platform' : 'bg-brand-gradient'}`}
+        aria-hidden="true"
+      />
+      <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-platform-wash text-3xl text-platform">
         {icon}
       </div>
       {badge && (

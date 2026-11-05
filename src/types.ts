@@ -28,6 +28,14 @@ export interface CheckResult {
   flagKey?: string;
   /** Current value of the Remote Config flag */
   flagValue?: unknown;
+  /**
+   * Failing checks only (fail/error): true when the SKU's previous run didn't fail this check
+   * (or never ran it), the failures most worth a human look; false when it was already failing.
+   * See reportHistory.ts.
+   */
+  newFailure?: boolean;
+  /** When an ongoing failure started (as far back as the run history goes). */
+  failingSince?: string;
 }
 
 /** Screenshot of one step of a check (path relative to the run folder) */
@@ -90,6 +98,8 @@ export interface MonitoringReport {
     passed: number;
     failed: number;
     errors: number;
+    /** Failing checks that didn't fail in the SKU's previous run (see reportHistory.ts). */
+    newFailures?: number;
   };
   results: PdpCheckResult[];
 }

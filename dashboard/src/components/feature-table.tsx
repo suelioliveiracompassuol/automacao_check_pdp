@@ -35,6 +35,42 @@ function GroupCounts({ features }: { features: CheckResult[] }) {
   );
 }
 
+/**
+ * Falha nova (não falhava no run anterior do SKU) ou desde quando persiste. As novas são as que
+ * mais merecem olhar humano: regressão do produto ou check quebrado.
+ */
+export function FailureAge({ feature }: { feature: CheckResult }) {
+  if (feature.newFailure) {
+    return (
+      <span
+        className="mt-1 block w-fit rounded-full bg-alert-dark px-1.5 py-px text-[10px] font-bold uppercase tracking-wide text-white"
+        title="Não falhava no run anterior deste SKU: vale conferir"
+      >
+        Nova
+      </span>
+    );
+  }
+  if (feature.newFailure === false && feature.failingSince) {
+    const since = new Date(feature.failingSince);
+    if (!Number.isNaN(since.getTime())) {
+      return (
+        <span
+          className="mt-1 block whitespace-nowrap text-[10px] text-low-emphasis"
+          title="Falhando desde"
+        >
+          desde{' '}
+          {since.toLocaleDateString('pt-BR', {
+            day: '2-digit',
+            month: '2-digit',
+            timeZone: 'America/Sao_Paulo',
+          })}
+        </span>
+      );
+    }
+  }
+  return null;
+}
+
 export function FeatureTable({ features, runId, pageScreenshot, featureRefs }: FeatureTableProps) {
   const [selectedScreenshot, setSelectedScreenshot] = useState<{
     src: string;
@@ -127,6 +163,7 @@ export function FeatureTable({ features, runId, pageScreenshot, featureRefs }: F
                 <tr key={`${f.featureKey}-${i}`} className={cn(style(f))}>
                   <td className="py-2 px-3 max-sm:px-2">
                     <StatusBadge status={f.status} />
+                    <FailureAge feature={f} />
                   </td>
                   <td className="py-2 px-3 font-medium text-high-emphasis text-xs">
                     {f.feature}

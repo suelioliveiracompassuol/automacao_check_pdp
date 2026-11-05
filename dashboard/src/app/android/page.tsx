@@ -9,6 +9,7 @@ export default function AndroidPage() {
   if (!report) {
     return (
       <EmptyState
+        platform="android"
         icon={<FaAndroid />}
         title="Nenhuma execução Android ainda"
         description={

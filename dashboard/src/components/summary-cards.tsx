@@ -18,7 +18,7 @@ const items = [
     key: 'total',
     label: 'Total de PDPs',
     icon: BarChart3,
-    tone: 'text-primary-darkest bg-primary-wash',
+    tone: 'text-platform-strong bg-platform-wash',
   },
   {
     key: 'passed',
@@ -46,11 +46,11 @@ export function SummaryCards({ total, passed, failed, errors }: SummaryCardsProp
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.4 }}
       >
-        <Card className="relative h-full overflow-hidden">
-          <div className="bg-brand-gradient absolute inset-x-0 top-0 h-1" aria-hidden="true" />
+        <Card className="bg-platform-tint relative h-full overflow-hidden">
+          <div className="bg-platform-ribbon absolute inset-x-0 top-0 h-1" aria-hidden="true" />
           <div className="flex h-full items-center justify-between gap-4">
             <div>
-              <p className="text-[11px] font-bold tracking-widest text-primary-darkest uppercase">
+              <p className="text-[11px] font-bold tracking-widest text-platform-strong uppercase">
                 Taxa de aprovação
               </p>
               <p className="mt-1 text-5xl font-bold tracking-tight text-highlight">{passRate}%</p>
@@ -58,7 +58,7 @@ export function SummaryCards({ total, passed, failed, errors }: SummaryCardsProp
                 {passed} de {total} PDPs passaram em todas as verificações
               </p>
             </div>
-            <RingGauge percent={passRate} size={88} strokeWidth={6} color="var(--color-primary)">
+            <RingGauge percent={passRate} size={88} strokeWidth={6} color="var(--color-platform)">
               <span className="text-sm font-bold text-high-emphasis">
                 {passed}/{total}
               </span>
@@ -77,7 +77,7 @@ export function SummaryCards({ total, passed, failed, errors }: SummaryCardsProp
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.15 + i * 0.06 }}
             >
-              <Card className="flex h-full items-center gap-4 py-4">
+              <Card className="bg-platform-tint flex h-full items-center gap-4 py-4">
                 <span
                   className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full ${item.tone}`}
                 >

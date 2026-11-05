@@ -1,5 +1,6 @@
 import { SectionHeader } from '@/components/ui/card';
 import { CountryFlag } from '@/components/ui/country-flag';
+import { VendorLogo } from '@/components/vendor-logo';
 import { cn } from '@/lib/utils';
 import { COUNTRY_INFO, VENDOR_INFO } from '@/lib/constants';
 import type { Platform, Vendor } from '@/lib/types';
@@ -28,7 +29,7 @@ function CountryGrid({
           className={cn(
             'flex flex-col items-center rounded-2xl border p-4 text-center',
             countries.includes(code)
-              ? 'border-primary-lightest bg-primary-wash'
+              ? 'border-platform-soft bg-platform-wash'
               : 'border-neutral-75 bg-surface opacity-60',
           )}
         >
@@ -40,25 +41,14 @@ function CountryGrid({
             className="mb-1 h-5 w-7"
           />
           <span className="text-sm font-bold text-high-emphasis">{label}</span>
-          <div className="mt-2 flex flex-wrap justify-center gap-1">
-            {(vendorsByCountry[code] ?? []).map((vendor) => {
-              const info = VENDOR_INFO[vendor as Vendor];
-              if (!info) {
-                return null;
-              }
-              return (
-                <span
-                  key={vendor}
-                  className={cn('rounded-full px-2 py-0.5 text-[11px] font-bold', info.className)}
-                >
-                  {info.label}
-                </span>
-              );
-            })}
+          <div className="mt-2 flex flex-wrap items-center justify-center gap-x-2 gap-y-1">
+            {(vendorsByCountry[code] ?? [])
+              .filter((vendor) => VENDOR_INFO[vendor as Vendor])
+              .map((vendor) => (
+                <VendorLogo key={vendor} vendor={vendor} size="sm" />
+              ))}
             {channelsByCountry[code]?.includes('socialcommerce') && (
-              <span className="rounded-full bg-info-lightest px-2 py-0.5 text-[11px] font-bold text-info-dark">
-                Minha Loja
-              </span>
+              <VendorLogo vendor="minhaloja" size="sm" />
             )}
           </div>
         </div>

@@ -57,8 +57,8 @@ export const CHANNEL_INFO: Record<
     className: 'bg-primary-lightest text-primary-darkest',
   },
   socialcommerce: {
-    label: 'Social Commerce',
-    shortLabel: 'Social',
+    label: 'Minha Loja (social commerce)',
+    shortLabel: 'Minha Loja',
     className: 'bg-info-lightest text-info-dark',
   },
 };

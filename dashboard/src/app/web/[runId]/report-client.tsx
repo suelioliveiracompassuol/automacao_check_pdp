@@ -70,6 +70,7 @@ export function ReportClient({ results, runId, screenshots, featureRefs }: Repor
             <OperationGroupHeader
               groupKey={group.key}
               label={group.label}
+              logo={group.logo}
               count={group.items.length}
             />
             <div className="space-y-3">

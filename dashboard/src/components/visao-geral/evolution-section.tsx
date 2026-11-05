@@ -20,7 +20,7 @@ function EvolutionRow({ run, isLatest }: EvolutionRowProps) {
     <div
       className={cn(
         'grid grid-cols-[3.5rem_1fr_5.5rem_3rem] items-center gap-2 rounded-full px-3 py-1.5 text-sm',
-        isLatest && 'bg-primary-wash',
+        isLatest && 'bg-platform-wash',
       )}
     >
       <span className="font-mono text-xs text-low-emphasis">{formatShortDate(run.startTime)}</span>
@@ -51,7 +51,7 @@ function EvolutionRow({ run, isLatest }: EvolutionRowProps) {
       </span>
       <span>
         {isLatest && (
-          <span className="rounded bg-primary-lightest px-1.5 py-0.5 text-[11px] font-bold text-primary-darkest">
+          <span className="rounded bg-platform-soft px-1.5 py-0.5 text-[11px] font-bold text-platform-strong">
             atual
           </span>
         )}

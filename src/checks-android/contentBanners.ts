@@ -245,7 +245,7 @@ export function applyPdpApiContentBanners(
       passed: false,
       status: "fail",
       message: `API da PDP enviou ${api.components.length} banner(s) de conteúdo, mas nenhum apareceu na tela`,
-      details,
+      details: { ...details, notOnScreen: true },
     };
   }
   return { ...result, message: `${result.message} · ${apiNote}`, details };

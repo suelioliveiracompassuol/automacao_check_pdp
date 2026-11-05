@@ -17,6 +17,10 @@ export interface CheckResult {
   details?: Record<string, unknown>;
   flagKey?: string;
   flagValue?: unknown;
+  /** Só em checks com falha: true quando não falhava no run anterior do SKU. */
+  newFailure?: boolean;
+  /** Desde quando a falha persiste (até onde o histórico alcança). */
+  failingSince?: string;
 }
 
 export interface PdpCheckResult {
@@ -61,6 +65,8 @@ export interface MonitoringReport {
     passed: number;
     failed: number;
     errors: number;
+    /** Checks com falha que não falhavam no run anterior do SKU. */
+    newFailures?: number;
   };
   results: PdpCheckResult[];
 }
@@ -76,6 +82,8 @@ export interface ReportIndexEntry {
     passed: number;
     failed: number;
     errors: number;
+    /** Checks com falha que não falhavam no run anterior do SKU. */
+    newFailures?: number;
   };
   /** Present for web runs (static report.html); Android runs are JSON-only. */
   htmlPath?: string;

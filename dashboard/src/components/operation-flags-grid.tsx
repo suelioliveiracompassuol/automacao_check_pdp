@@ -158,11 +158,7 @@ function FlagsTable({
                     <div className="flex flex-col items-center gap-0.5">
                       <VendorLogo vendor={op.vendor} size="sm" />
                       <CountryFlag code={op.country} alt={op.country} width={14} height={10} />
-                      {isSocial && (
-                        <span className="text-[11px] font-bold px-1 py-0.5 bg-success-lightest text-success-dark rounded uppercase">
-                          ML
-                        </span>
-                      )}
+                      {isSocial && <VendorLogo vendor="minhaloja" size="sm" />}
                       {flagsKey === 'remoteConfigFlags' && locale && (
                         <span className="text-[11px] text-low-emphasis font-mono font-normal">
                           {locale}

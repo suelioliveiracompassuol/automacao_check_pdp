@@ -1,11 +1,21 @@
 'use client';
 
 import { useMemo } from 'react';
-import { Search, X, Globe, ListChecks, CheckCircle2, XCircle, type LucideIcon } from 'lucide-react';
+import {
+  Search,
+  X,
+  Globe,
+  Tag,
+  ListChecks,
+  CheckCircle2,
+  XCircle,
+  type LucideIcon,
+} from 'lucide-react';
 import { CountryFlag } from './ui/country-flag';
 import { ToggleButton, ToggleGroup } from './ui/toggle-group';
 import { VendorLogo } from './vendor-logo';
-import type { StatusFilter } from '@/lib/report';
+import { countryLabel } from '@/lib/constants';
+import { brandKeyOf, filterResults, MINHA_LOJA, type StatusFilter } from '@/lib/report';
 import type { PdpCheckResult } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
@@ -38,29 +48,51 @@ export function FilterBar({
   onOperationChange,
   onStatusChange,
 }: FilterBarProps) {
-  const vendors = useMemo(() => {
-    const set = new Set<string>();
-    for (const r of results) {
-      set.add(r.vendor.charAt(0).toUpperCase() + r.vendor.slice(1).toLowerCase());
-    }
-    return [...set].sort();
-  }, [results]);
+  // Contagens de cada opção respeitando os outros filtros (busca, status e a outra dimensão),
+  // para a pessoa saber quantos PDPs vai ver antes de clicar.
+  const vendorOptions = useMemo(() => {
+    const scope = filterResults(results, {
+      search: searchQuery,
+      vendor: 'all',
+      country: selectedOperation,
+      status: selectedStatus,
+    });
+    return countOptions(
+      results.map(brandKeyOf),
+      scope.map((r) => ({ key: brandKeyOf(r), failed: !r.success })),
+      // Minha Loja por último, depois das marcas
+      (a, b) => Number(a === MINHA_LOJA) - Number(b === MINHA_LOJA) || a.localeCompare(b),
+    );
+  }, [results, searchQuery, selectedOperation, selectedStatus]);
 
-  // Countries available for current vendor selection
-  const countries = useMemo(() => {
-    const set = new Set<string>();
-    for (const r of results) {
-      if (selectedVendor === 'all' || r.vendor.toLowerCase() === selectedVendor) {
-        set.add(r.country.toUpperCase());
-      }
-    }
-    return [...set].sort();
-  }, [results, selectedVendor]);
+  const countryOptions = useMemo(() => {
+    const scope = filterResults(results, {
+      search: searchQuery,
+      vendor: selectedVendor,
+      country: 'all',
+      status: selectedStatus,
+    });
+    return countOptions(
+      results.map((r) => r.country.toUpperCase()),
+      scope.map((r) => ({ key: r.country.toUpperCase(), failed: !r.success })),
+    );
+  }, [results, searchQuery, selectedVendor, selectedStatus]);
 
-  // Trocar a marca zera o país, pois a lista de países depende da marca.
+  // Hierarquia Marca → País: a marca é sempre clicável (mesmo com 0 PDPs no país atual) e só
+  // zera o país quando ele não existe para a nova marca (ex.: Avon não tem Chile). Já os países
+  // sem PDPs para a marca ficam desabilitados.
+  // Trocar a marca só zera o país quando ele não existe para a nova marca (ex.: Avon não tem Chile).
   const selectVendor = (vendor: string) => {
     onVendorChange(vendor);
-    onOperationChange('all');
+    if (
+      selectedOperation !== 'all' &&
+      vendor !== 'all' &&
+      !results.some(
+        (r) => brandKeyOf(r) === vendor && r.country.toUpperCase() === selectedOperation,
+      )
+    ) {
+      onOperationChange('all');
+    }
   };
 
   const hasActiveFilters =
@@ -115,7 +147,7 @@ export function FilterBar({
               onOperationChange('all');
               onStatusChange('all');
             }}
-            className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-alert-dark hover:text-alert-dark hover:bg-alert-lightest/50 rounded-lg transition-all cursor-pointer"
+            className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-medium-emphasis hover:text-highlight hover:bg-neutral-75 rounded-lg transition-all cursor-pointer"
           >
             <X className="w-3.5 h-3.5" aria-hidden="true" />
             Limpar
@@ -123,62 +155,126 @@ export function FilterBar({
         )}
       </div>
 
-      {/* Row 2: Vendor + Operations */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-        {/* Vendor */}
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-medium text-medium-emphasis uppercase tracking-wide whitespace-nowrap">
-            Marca
-          </span>
-          <ToggleGroup label="Filtrar por marca">
-            <ToggleButton pressed={selectedVendor === 'all'} onClick={() => selectVendor('all')}>
-              Todos
-            </ToggleButton>
-            {vendors.map((vendor) => (
-              <ToggleButton
-                key={vendor}
-                ariaLabel={vendor}
-                pressed={vendor.toLowerCase() === selectedVendor}
-                onClick={() => selectVendor(vendor.toLowerCase())}
-              >
-                <span className="flex items-center gap-1.5">
-                  <VendorLogo vendor={vendor} size="sm" />
-                </span>
-              </ToggleButton>
-            ))}
-          </ToggleGroup>
-        </div>
+      {/* Row 2: Marca + País — cada grupo só aparece quando há o que escolher */}
+      {(vendorOptions.length > 1 || countryOptions.length > 1) && (
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-5">
+          {vendorOptions.length > 1 && (
+            <div className="flex items-center gap-2">
+              <GroupLabel icon={Tag}>Marca</GroupLabel>
+              <ToggleGroup label="Filtrar por marca" className="flex-wrap">
+                <ToggleButton
+                  pressed={selectedVendor === 'all'}
+                  onClick={() => selectVendor('all')}
+                  className={OPTION}
+                >
+                  Todas
+                </ToggleButton>
+                {vendorOptions.map((o) => (
+                  <ToggleButton
+                    key={o.key}
+                    ariaLabel={optionLabel(brandName(o.key), o)}
+                    title={optionLabel(brandName(o.key), o)}
+                    pressed={selectedVendor === o.key}
+                    onClick={() => selectVendor(o.key)}
+                    className={OPTION}
+                  >
+                    <VendorLogo vendor={o.key} size="compact" />
+                    <OptionCount option={o} />
+                  </ToggleButton>
+                ))}
+              </ToggleGroup>
+            </div>
+          )}
 
-        {/* Operations */}
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-medium text-medium-emphasis uppercase tracking-wide whitespace-nowrap">
-            <Globe className="w-3.5 h-3.5 inline -mt-0.5 mr-0.5" aria-hidden="true" />
-            País
-          </span>
-          <ToggleGroup label="Filtrar por país" className="flex-wrap">
-            <ToggleButton
-              size="sm"
-              pressed={selectedOperation === 'all'}
-              onClick={() => onOperationChange('all')}
-            >
-              Todas
-            </ToggleButton>
-            {countries.map((country) => (
-              <ToggleButton
-                key={country}
-                size="sm"
-                pressed={selectedOperation === country}
-                onClick={() => onOperationChange(country)}
-              >
-                <span className="flex items-center gap-1">
-                  <CountryFlag code={country} width={20} height={14} className="h-3.5 w-5" />
-                  {country}
-                </span>
-              </ToggleButton>
-            ))}
-          </ToggleGroup>
+          {countryOptions.length > 1 && (
+            <div className="flex items-center gap-2">
+              <GroupLabel icon={Globe}>País</GroupLabel>
+              <ToggleGroup label="Filtrar por país" className="flex-wrap">
+                <ToggleButton
+                  pressed={selectedOperation === 'all'}
+                  onClick={() => onOperationChange('all')}
+                  className={OPTION}
+                >
+                  Todos
+                </ToggleButton>
+                {countryOptions.map((o) => (
+                  <ToggleButton
+                    key={o.key}
+                    ariaLabel={optionLabel(countryLabel(o.key), o)}
+                    title={optionLabel(countryLabel(o.key), o)}
+                    pressed={selectedOperation === o.key}
+                    disabled={o.total === 0 && selectedOperation !== o.key}
+                    onClick={() => onOperationChange(o.key)}
+                    className={OPTION}
+                  >
+                    <CountryFlag code={o.key} width={20} height={14} className="h-3.5 w-5" />
+                    {o.key}
+                    <OptionCount option={o} />
+                  </ToggleButton>
+                ))}
+              </ToggleGroup>
+            </div>
+          )}
         </div>
-      </div>
+      )}
     </div>
+  );
+}
+
+/** Mesma altura e alinhamento para as opções de Marca e País. */
+const OPTION = 'flex h-8 items-center gap-1.5 text-sm';
+
+interface FilterOption {
+  key: string;
+  /** PDPs com os outros filtros aplicados */
+  total: number;
+  failed: number;
+}
+
+/** Todas as opções do relatório em ordem alfabética, com as contagens do escopo atual. */
+function countOptions(
+  allKeys: string[],
+  scoped: { key: string; failed: boolean }[],
+  compare?: (a: string, b: string) => number,
+): FilterOption[] {
+  return [...new Set(allKeys)].sort(compare).map((key) => {
+    const items = scoped.filter((s) => s.key === key);
+    return { key, total: items.length, failed: items.filter((s) => s.failed).length };
+  });
+}
+
+const brandName = (key: string) =>
+  key === MINHA_LOJA ? 'Minha Loja' : key.charAt(0).toUpperCase() + key.slice(1);
+
+function optionLabel(name: string, o: FilterOption): string {
+  const pdps = `${o.total} ${o.total === 1 ? 'PDP' : 'PDPs'}`;
+  return o.failed > 0 ? `${name}: ${pdps}, ${o.failed} com falha` : `${name}: ${pdps}`;
+}
+
+function OptionCount({ option }: { option: FilterOption }) {
+  return (
+    // "(4)" ou, com falhas, "(4 · ✗1)"
+    <span aria-hidden="true" className="flex items-center text-xs text-low-emphasis tabular-nums">
+      ({option.total}
+      {option.failed > 0 && (
+        <>
+          <span className="mx-1">·</span>
+          <span className="flex items-center gap-0.5 font-semibold text-alert-dark">
+            <XCircle className="h-3 w-3" />
+            {option.failed}
+          </span>
+        </>
+      )}
+      )
+    </span>
+  );
+}
+
+function GroupLabel({ icon: Icon, children }: { icon: LucideIcon; children: string }) {
+  return (
+    <span className="flex items-center gap-1 text-xs font-medium tracking-wide whitespace-nowrap text-medium-emphasis uppercase">
+      <Icon className="h-3.5 w-3.5" aria-hidden="true" />
+      {children}
+    </span>
   );
 }

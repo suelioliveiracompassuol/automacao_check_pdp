@@ -1,0 +1,36 @@
+{
+  "source": {
+    "runId": "run_android_1793817186144",
+    "sessionId": "7726e92d-5cff-40e5-9bef-a7c0d0261a6d",
+    "capturedAt": "2026-11-04T19:47:42.112Z"
+  },
+  "skus": {
+    "NATARG-00068": {
+      "name": "Base serum nude me",
+      "vendor": "natura",
+      "country": "AR",
+      "reviewCount": 12,
+      "headerRating": 4.7,
+      "sectionRating": 4.3,
+      "imageCount": 1
+    },
+    "NATARG-81950": {
+      "name": "Homem Potence EDP 100ml",
+      "vendor": "natura",
+      "country": "AR",
+      "reviewCount": 99,
+      "headerRating": 4.9,
+      "sectionRating": 4.9,
+      "imageCount": 4
+    },
+    "NATARG-83323": {
+      "name": "Kriska Shock EDT Femenino 100ml",
+      "vendor": "natura",
+      "country": "AR",
+      "reviewCount": 206,
+      "headerRating": 4.7,
+      "sectionRating": 4.7,
+      "imageCount": 4
+    }
+  }
+}

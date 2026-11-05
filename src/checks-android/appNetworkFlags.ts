@@ -166,7 +166,7 @@ function isTimeout(e: unknown): boolean {
   return e instanceof Error && (e.name === "TimeoutError" || e.name === "AbortError");
 }
 
-async function fetchLambdaTestNetworkLog(sessionId: string): Promise<unknown> {
+export async function fetchLambdaTestNetworkLog(sessionId: string): Promise<unknown> {
   const user = process.env.LAMBDATEST_USERNAME;
   const key = process.env.LAMBDATEST_ACCESS_KEY;
   if (!user || !key) {
@@ -268,6 +268,10 @@ export interface PdpApiImages {
   failed: { url: string; status: number }[];
   /** URLs with a successful download in the session's capture. */
   downloadedCount: number;
+  /** Number of variations (shades, sizes) in the PDP API; absent without variations. */
+  variationCount?: number;
+  /** The variation the app opens when the SKU is a master (not one of its own variations). */
+  openedVariation?: string;
 }
 
 function stringList(v: unknown): string[] {
@@ -284,7 +288,7 @@ function stringList(v: unknown): string[] {
 export function extractPdpImageUrls(
   body: Record<string, unknown>,
   sku: string,
-): Pick<PdpApiImages, "source" | "urls"> {
+): Pick<PdpApiImages, "source" | "urls" | "variationCount" | "openedVariation"> {
   const product =
     "variations" in body || "images" in body
       ? body
@@ -295,9 +299,15 @@ export function extractPdpImageUrls(
     .map(asRecord)
     .filter((v): v is Record<string, unknown> => v !== undefined);
   if (variations.length > 0) {
-    const variant =
-      variations.find((v) => v.productId === sku) ?? variations[0];
-    return { source: "variations", urls: stringList(variant.bannerCollection) };
+    const own = variations.find((v) => v.productId === sku);
+    const variant = own ?? variations[0];
+    return {
+      source: "variations",
+      urls: stringList(variant.bannerCollection),
+      variationCount: variations.length,
+      // A master SKU opens on another product id (the reviews call carries that id, too)
+      ...(!own && typeof variant.productId === "string" ? { openedVariation: variant.productId } : {}),
+    };
   }
   const images = asRecord(product.images);
   const list = Array.isArray(images?.large) ? images.large : images?.medium;
@@ -359,8 +369,8 @@ export function findPdpApiImages(
     if (!body) {
       continue;
     }
-    const { source, urls } = extractPdpImageUrls(body, sku);
-    result[sku] = { source, urls, ...crossWithDownloads(entries, urls) };
+    const extracted = extractPdpImageUrls(body, sku);
+    result[sku] = { ...extracted, ...crossWithDownloads(entries, extracted.urls) };
   }
   return result;
 }
@@ -434,6 +444,13 @@ export function findPdpApiContentBanners(
 export interface AppReviewsApi {
   /** Every reviews/v2/details call for the SKU, in capture order. */
   calls: { status?: number; url: string }[];
+  /** productIds a reviews call had to carry to count for the SKU (the SKU, then its variations). */
+  matchedIds?: string[];
+  /**
+   * The session's other reviews/v2/details calls (productId + status, up to 10): when `calls` is
+   * empty they show what the app did ask for, so a wrong match is visible in the report.
+   */
+  otherSessionCalls?: { productId: string; status?: number }[];
   /** Last successful reviews body: aggregatedRating, reviewsCount, recommendedPercentage... */
   reviews?: {
     aggregatedRating?: number;
@@ -453,16 +470,18 @@ export interface AppReviewsApi {
 
 const num = (v: unknown) => (typeof v === "number" && Number.isFinite(v) ? v : undefined);
 
-/** reviews/v2/details call of `sku` (productId query param, which the app sends unencoded or encoded). */
-export function isReviewsDetailsCall(url: string, sku: string): boolean {
-  if (!url.includes("/reviews/v2/details")) {
-    return false;
-  }
+/** productId query param of a reviews call (sent unencoded or encoded); "?" when unreadable. */
+export function reviewsProductIdOf(url: string): string {
   try {
-    return new URL(url).searchParams.get("productId") === sku;
+    return new URL(url).searchParams.get("productId") ?? "?";
   } catch {
-    return url.includes(`productId=${sku}`);
+    return /productId=([^&]+)/.exec(url)?.[1] ?? "?";
   }
+}
+
+/** reviews/v2/details call of `sku`. */
+export function isReviewsDetailsCall(url: string, sku: string): boolean {
+  return url.includes("/reviews/v2/details") && reviewsProductIdOf(url) === sku;
 }
 
 export function extractReviewsSummary(
@@ -499,8 +518,19 @@ export function extractPdpRatingFields(
   };
 }
 
+/** productId of each variation in a PDP API body. */
+function variationProductIds(body: Record<string, unknown>): string[] {
+  const product = "variations" in body ? body : (asRecord(body.data) ?? body);
+  return (Array.isArray(product.variations) ? product.variations : [])
+    .map((v) => asRecord(v)?.productId)
+    .filter((id): id is string => typeof id === "string" && id.length > 0);
+}
+
 /**
  * Per SKU, the reviews API calls the app made and the review-related fields of its PDP API.
+ * A master SKU with variants (e.g. a foundation with shades, NATARG-00068) opens on one of its
+ * variations, and the app asks for that variation's reviews (productId=NATARG-110181), so
+ * when there's no call for the SKU itself, calls for its PDP API variations count.
  * SKUs with neither in the capture are left out.
  */
 export function findAppReviewsApi(
@@ -508,9 +538,13 @@ export function findAppReviewsApi(
   skuCodes: readonly string[],
 ): Record<string, AppReviewsApi> {
   const entries = extractNetworkEntries(payload);
+  const sessionReviewCalls = entries.filter((e) => e.url.includes("/reviews/v2/details"));
   const result: Record<string, AppReviewsApi> = {};
   for (const sku of skuCodes) {
-    const matches = (url: string) => isReviewsDetailsCall(url, sku);
+    const pdpBody = findPdpApiBody(entries, sku);
+    const ownCall = entries.some((e) => isReviewsDetailsCall(e.url, sku));
+    const ids = ownCall || !pdpBody ? [sku] : [sku, ...variationProductIds(pdpBody)];
+    const matches = (url: string) => ids.some((id) => isReviewsDetailsCall(url, id));
     const calls = entries
       .filter((e) => matches(e.url))
       .map((e) => ({ status: e.status, url: e.url }));
@@ -518,12 +552,16 @@ export function findAppReviewsApi(
     const reviewsBody =
       findLastJsonBody(entries, (url) => matches(url) && !url.includes("filterMedia")).body ??
       findLastJsonBody(entries, matches).body;
-    const pdpBody = findPdpApiBody(entries, sku);
     if (calls.length === 0 && !pdpBody) {
       continue;
     }
     result[sku] = {
       calls,
+      matchedIds: ids,
+      otherSessionCalls: sessionReviewCalls
+        .filter((e) => !matches(e.url))
+        .slice(0, 10)
+        .map((e) => ({ productId: reviewsProductIdOf(e.url), status: e.status })),
       ...(reviewsBody ? { reviews: extractReviewsSummary(reviewsBody) } : {}),
       ...(pdpBody ? { product: extractPdpRatingFields(pdpBody) } : {}),
     };

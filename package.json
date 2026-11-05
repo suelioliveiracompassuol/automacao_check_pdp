@@ -13,6 +13,8 @@
     "perf:local": "tsc && cross-env PERF_OUTPUT_DIR=reports/perf node dist/perf/index.js",
     "perf:ci": "tsc && cross-env PERF_OUTPUT_DIR=docs/perf node dist/perf/index.js",
     "refs:capture": "tsc && node dist/captureFeatureRefs.js",
+    "fixtures:android": "tsc && node dist/captureNetworkFixture.js",
+    "skus:coverage": "tsc && node dist/skuCoverage.js",
     "test": "npx playwright test",
     "test:unit": "npx playwright test src/tests/",
     "lint": "eslint src/",

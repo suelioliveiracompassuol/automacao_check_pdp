@@ -850,16 +850,17 @@ test.describe("Android Unit Tests", () => {
           },
           "NATBRA-1",
         ),
-      ).toEqual({ source: "variations", urls: [`${IMG}a1.jpg`, `${IMG}a2.jpg`] });
+      ).toEqual({ source: "variations", urls: [`${IMG}a1.jpg`, `${IMG}a2.jpg`], variationCount: 2 });
     });
 
     test("extractPdpImageUrls falls back to the first variant, then to images.large/medium", () => {
+      // A master SKU (not among its variations) opens on the first one
       expect(
         extractPdpImageUrls(
           { variations: [{ productId: "X", bannerCollection: [`${IMG}x.jpg`] }] },
           "NATBRA-1",
-        ).urls,
-      ).toEqual([`${IMG}x.jpg`]);
+        ),
+      ).toEqual({ source: "variations", urls: [`${IMG}x.jpg`], variationCount: 1, openedVariation: "X" });
       expect(
         extractPdpImageUrls(
           { variations: [], images: { large: [{ absURL: `${IMG}l.jpg` }], medium: [{ absURL: `${IMG}m.jpg` }] } },
@@ -898,6 +899,7 @@ test.describe("Android Unit Tests", () => {
           urls: [`${IMG}1.jpg`, `${IMG}2.jpg?sw=800`, `${IMG}3.jpg`],
           failed: [{ url: `${IMG}3.jpg`, status: 404 }],
           downloadedCount: 2,
+          variationCount: 1,
         },
       });
     });
@@ -1355,6 +1357,34 @@ test.describe("Android Unit Tests", () => {
         isTopRated: true,
         badgeTopRatedLabel: "melhor avaliado",
       });
+    });
+
+    test("findAppReviewsApi takes the variation's reviews call for a master SKU (app opens a shade)", () => {
+      const api = findAppReviewsApi(
+        har([
+          {
+            url: `${BFF}/pages/v2/product/NATARG-00068`,
+            body: {
+              productId: "NATARG-00068",
+              rating: 4.7,
+              variations: [{ productId: "NATARG-110181" }, { productId: "NATARG-110182" }],
+            },
+          },
+          {
+            url: `${BFF}/reviews/v2/details?productId=NATARG-110181&sortField=helpfulScore&page=1`,
+            body: reviewsBody,
+          },
+          { url: `${BFF}/pages/v2/product/NATARG-110182`, body: { productId: "NATARG-110182" } },
+          { url: `${BFF}/reviews/v2/details?productId=NATARG-110182`, status: 500 },
+        ]),
+        ["NATARG-00068", "NATARG-110182"],
+      );
+      expect(api["NATARG-00068"].calls).toHaveLength(2);
+      expect(api["NATARG-00068"].reviews?.aggregatedRating).toBe(4.47);
+      // A SKU with its own call only counts that one
+      expect(api["NATARG-110182"].calls).toEqual([
+        { status: 500, url: `${BFF}/reviews/v2/details?productId=NATARG-110182` },
+      ]);
     });
 
     const api = (over: Partial<AppReviewsApi> = {}): AppReviewsApi => ({

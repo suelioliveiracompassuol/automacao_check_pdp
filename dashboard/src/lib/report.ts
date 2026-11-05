@@ -43,9 +43,17 @@ export function groupByCountry(
 
 export type StatusFilter = 'all' | 'pass' | 'fail';
 
+/** Opção "Minha Loja" do filtro de marca: os PDPs de social commerce das duas marcas. */
+export const MINHA_LOJA = 'minhaloja';
+
+/** Chave do filtro de marca: Minha Loja à parte, de modo que Avon e Natura contam só o site. */
+export function brandKeyOf(r: Pick<PdpCheckResult, 'vendor' | 'channel'>): string {
+  return r.channel === 'socialcommerce' ? MINHA_LOJA : r.vendor.toLowerCase();
+}
+
 export interface ResultFilters {
   search: string;
-  /** Vendor em minúsculas ou 'all'. */
+  /** Chave de marca ({@link brandKeyOf}: vendor em minúsculas ou MINHA_LOJA) ou 'all'. */
   vendor: string;
   /** Código do país em maiúsculas ou 'all'. */
   country: string;
@@ -64,7 +72,7 @@ export const NO_FILTERS: ResultFilters = {
 export function filterResults(results: PdpCheckResult[], filters: ResultFilters): PdpCheckResult[] {
   const query = filters.search.trim().toLowerCase();
   return results.filter((r) => {
-    if (filters.vendor !== 'all' && r.vendor.toLowerCase() !== filters.vendor) {
+    if (filters.vendor !== 'all' && brandKeyOf(r) !== filters.vendor) {
       return false;
     }
     if (filters.country !== 'all' && r.country.toUpperCase() !== filters.country) {

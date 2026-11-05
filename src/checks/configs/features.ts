@@ -12,7 +12,6 @@ export const FEATURES: FeatureConfig[] = [
   {
     key: "aiReviewSummary",
     name: "Resumo de avaliações por IA",
-    optional: true,
   },
   { key: "reviewFilter", name: "Filtro de avaliações" },
   { key: "reviewSort", name: "Ordenação de avaliações" },

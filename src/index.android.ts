@@ -30,6 +30,8 @@ import {
   gradeRatingDivergence,
   preloadRatingStates,
 } from "./ratingDivergence.js";
+import { flagContradictions } from "./contradictions.js";
+import { markNewFailuresFromReports } from "./reportHistory.js";
 import { recordRunInFirestore } from "./firestoreHistory.js";
 import {
   AndroidSessionGroup,
@@ -475,6 +477,11 @@ async function runSession(
   // Product rating vs Konfidency: a divergence up to a day old is only a warning (same as Web)
   for (const r of results) {
     r.features = gradeRatingDivergence(r.features, r, "android");
+    // Verdicts that contradict each other are an automation problem, not a product bug
+    r.features = flagContradictions(r.features);
+    for (const f of r.features.filter((x) => x.details?.inconclusive)) {
+      console.log(`   🔍 ${r.sku} · ${f.feature}: ${f.message}`);
+    }
     r.success = isSuccessful(r.features, r.error);
   }
   // Only now are the verdicts final: keep the screenshots of the SKUs that failed
@@ -641,6 +648,9 @@ async function main() {
     (a, b) => (skuOrder.get(a.sku) ?? 0) - (skuOrder.get(b.sku) ?? 0),
   );
 
+  // Failures that didn't happen in the SKU's previous run: the ones most worth a human look
+  const newFailures = markNewFailuresFromReports(results, "android", runId);
+
   const report: MonitoringReport = {
     runId,
     startTime: new Date(startTime).toISOString(),
@@ -652,6 +662,7 @@ async function main() {
       passed: results.filter((r) => r.success).length,
       failed: results.filter((r) => !r.success && !r.error).length,
       errors: results.filter((r) => r.error).length,
+      newFailures,
     },
     results,
   };

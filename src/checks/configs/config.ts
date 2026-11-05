@@ -295,4 +295,11 @@ export const TIMING = {
   bannerImageLoadTimeout: 10000,
   /** Max wait for a product tag ("melhor avaliado", "últimas unidades") the product API says applies (ms). */
   productBadgeWait: 10000,
+  /** Max wait for the reviews API (/reviews/v2/details) response of the SKU, read by the AI summary check (ms). */
+  aiSummaryApiWait: 10000,
+  /**
+   * Max wait for the AI review summary card (ms). It only renders after the client-side Remote
+   * Config fetch (`product_reviews.ai_summary`), like the coupons banner.
+   */
+  aiSummaryTimeout: 30000,
 };

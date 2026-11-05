@@ -406,7 +406,20 @@ function disabledByRemoteConfig(
 function endpointResult(api: AppReviewsApi): CheckResult {
   const { calls } = api;
   if (calls.length === 0) {
-    return result(ENDPOINT_NAME, ENDPOINT_KEY, "fail", "O app não chamou a API de avaliações (reviews/v2/details) deste produto", { match: "/reviews/v2/details" });
+    // Evidence: what was looked for and what the app did ask for in the session
+    const others = api.otherSessionCalls ?? [];
+    const ids = api.matchedIds ?? [];
+    const looked = ids.length > 3 ? `${ids.slice(0, 3).join(", ")} +${ids.length - 3}` : ids.join(", ");
+    const seen = others.length
+      ? `chamadas de avaliações na sessão: ${others.map((c) => `productId=${c.productId}${c.status ? ` (${c.status})` : ""}`).join(", ")}`
+      : "nenhuma chamada de avaliações na sessão";
+    return result(
+      ENDPOINT_NAME,
+      ENDPOINT_KEY,
+      "fail",
+      `O app não chamou a API de avaliações (reviews/v2/details) deste produto · procurado productId: ${looked || "?"} · ${seen}`,
+      { match: "/reviews/v2/details", notCalled: true, matchedIds: ids, otherSessionCalls: others },
+    );
   }
   const failed = calls.filter((c) => c.status !== undefined && c.status >= 400);
   if (failed.length > 0) {

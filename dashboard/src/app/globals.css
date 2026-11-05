@@ -73,6 +73,19 @@
   --color-medium-emphasis: #5e5e5e;
   --color-low-emphasis: #6b6b6b;
 
+  /*
+   * Platform accent — defaults to Web (Natura orange); [data-platform] below swaps it per
+   * platform. Kept clear of the status hues (green/red/yellow) so a platform never reads as
+   * "passed"/"failed": Android is teal, not Android green.
+   *   platform        icon / indicator      platform-strong  text on wash, active tab
+   *   platform-wash   tinted surface        platform-soft    borders, glows
+   */
+  --color-platform: #ff6b0b;
+  --color-platform-strong: #953c09;
+  --color-platform-wash: #fff4ec;
+  --color-platform-soft: #fac3a3;
+  --color-platform-glow: #ffe07a;
+
   /* natds elevation scale */
   --shadow-tiny: 0 2px 2px 0 rgba(0, 0, 0, 0.14);
   --shadow-small: 0 3px 4px 0 rgba(0, 0, 0, 0.14);
@@ -86,6 +99,8 @@
 :root {
   /* Natura's signature orange→yellow ribbon */
   --gradient-brand: linear-gradient(90deg, #ff6b0b 0%, #f48646 45%, #f6be00 100%);
+  /* Faixa no topo dos cards de resumo: a da marca na Web, a da plataforma nas demais */
+  --gradient-platform: var(--gradient-brand);
 }
 
 body {
@@ -94,6 +109,46 @@ body {
   color: var(--color-high-emphasis);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Platform accents (see --color-platform-* in @theme). Web keeps the defaults. */
+[data-platform='android'] {
+  --color-platform: #0d9488;
+  --color-platform-strong: #115e59;
+  --color-platform-wash: #edfaf7;
+  --color-platform-soft: #99e1d4;
+  --color-platform-glow: #b5ecf5;
+  --gradient-platform: linear-gradient(90deg, #115e59 0%, #0d9488 50%, #5fd3c4 100%);
+}
+[data-platform='ios'] {
+  --color-platform: #475569;
+  --color-platform-strong: #1e293b;
+  --color-platform-wash: #f2f4f7;
+  --color-platform-soft: #cbd5e1;
+  --color-platform-glow: #e2e8f0;
+  --gradient-platform: linear-gradient(90deg, #1e293b 0%, #475569 50%, #94a3b8 100%);
+}
+
+/* Fundo discreto no tom da plataforma: o wash some em branco até o meio do card */
+.bg-platform-tint {
+  background-image: linear-gradient(
+    150deg,
+    var(--color-platform-wash) 0%,
+    var(--color-surface) 65%
+  );
+}
+
+/* Versão bem mais leve, para cards grandes com tabela (PDP): só um toque no canto superior */
+.bg-platform-tint-subtle {
+  background-image: linear-gradient(
+    170deg,
+    var(--color-platform-wash) 0%,
+    var(--color-surface) 180px
+  );
+}
+
+.bg-platform-ribbon {
+  background-image: var(--gradient-platform);
 }
 
 .bg-brand-gradient {
