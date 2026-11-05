@@ -113,45 +113,11 @@ describe('AuthLogin', () => {
       });
     });
 
-    it('deve exibir email e status "Autenticado"', () => {
-      render(<AuthLogin />);
+    it('não mostra nada: quem está logado aparece na barra do topo', () => {
+      const { container } = render(<AuthLogin />);
 
-      expect(screen.getByText('usuario@example.com')).toBeDefined();
-      expect(screen.getByText('Autenticado')).toBeDefined();
-    });
-
-    it('deve não exibir botão "Fazer Login"', () => {
-      render(<AuthLogin />);
-
+      expect(container).toBeEmptyDOMElement();
       expect(screen.queryByText('Fazer Login')).toBeNull();
-    });
-
-    it('deve exibir botão de logout', () => {
-      render(<AuthLogin />);
-
-      const logoutButton = screen.getByTitle('Fazer logout');
-      expect(logoutButton).toBeDefined();
-    });
-
-    it('deve chamar logout ao clicar no botão de logout', async () => {
-      const user = userEvent.setup();
-      const mockLogout = vi.fn().mockResolvedValue(undefined);
-      mockUseAuth.mockReturnValue({
-        user: { email: 'usuario@example.com' },
-        loading: false,
-        login: vi.fn(),
-        logout: mockLogout,
-        error: null,
-      });
-
-      render(<AuthLogin />);
-
-      const logoutButton = screen.getByTitle('Fazer logout');
-      await user.click(logoutButton);
-
-      await waitFor(() => {
-        expect(mockLogout).toHaveBeenCalled();
-      });
     });
   });
 

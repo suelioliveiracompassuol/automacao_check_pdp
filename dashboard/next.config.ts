@@ -13,9 +13,11 @@ const nextConfig: NextConfig = {
     // Lint roda via `npm run lint` (eslint.config.mjs do dashboard); não repetimos no build.
     ignoreDuringBuilds: true,
   },
-  images: {
-    unoptimized: true,
-  },
+  // Sem loader global nem `unoptimized` global: o export estático não tem o otimizador do Next,
+  // então cada <Image> passa `loader` (imagens do SFCC, ver src/lib/image-loader.ts) ou
+  // `unoptimized`. `images.unoptimized: true` aqui anularia o loader; `loader: 'custom'` com
+  // `loaderFile` não é aplicado pelo `next dev --turbopack` do Next 15 e quebra as demais imagens.
+  // Um <Image> sem nenhum dos dois falha no `build:static`, de propósito.
 };
 
 export default nextConfig;

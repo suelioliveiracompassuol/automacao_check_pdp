@@ -1,11 +1,11 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import { LogIn, LogOut } from 'lucide-react';
+import { LogIn } from 'lucide-react';
 import { useAuth } from './auth-context';
 
 export function AuthLogin() {
-  const { user, login, logout, error } = useAuth();
+  const { user, login, error } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -29,33 +29,9 @@ export function AuthLogin() {
     [email, password, login],
   );
 
-  const handleLogout = useCallback(async () => {
-    setLoading(true);
-    try {
-      await logout();
-    } finally {
-      setLoading(false);
-    }
-  }, [logout]);
-
+  // Logado, quem é e o botão de sair ficam na barra do topo (HeaderUser), em todas as páginas.
   if (user) {
-    return (
-      <div className="flex items-center gap-3 rounded-lg border border-neutral-100 bg-neutral-50 px-3 py-2">
-        <div className="text-sm">
-          <p className="font-medium text-high-emphasis">{user.email}</p>
-          <p className="text-xs text-medium-emphasis">Autenticado</p>
-        </div>
-        <button
-          onClick={handleLogout}
-          disabled={loading}
-          className="rounded-lg p-2 text-medium-emphasis transition-colors hover:bg-neutral-100 disabled:opacity-50"
-          title="Fazer logout"
-          aria-label="Fazer logout"
-        >
-          <LogOut className="h-4 w-4" aria-hidden="true" />
-        </button>
-      </div>
-    );
+    return null;
   }
 
   return (

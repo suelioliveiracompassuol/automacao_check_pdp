@@ -45,7 +45,13 @@ function LastRunStatus({ platform, runId, startTime, failed, errors }: LastRunSu
   );
 }
 
-export function NavHeader({ lastRuns = [] }: { lastRuns?: LastRunSummary[] }) {
+interface NavHeaderProps {
+  lastRuns?: LastRunSummary[];
+  /** Conteúdo à direita, depois dos status (o layout passa quem está logado). */
+  actions?: React.ReactNode;
+}
+
+export function NavHeader({ lastRuns = [], actions }: NavHeaderProps) {
   return (
     <header id="app-nav-header" className="sticky top-0 z-40 bg-surface/90 backdrop-blur-lg">
       <div className="bg-brand-gradient h-1" aria-hidden="true" />
@@ -65,13 +71,16 @@ export function NavHeader({ lastRuns = [] }: { lastRuns?: LastRunSummary[] }) {
               </span>
             </span>
           </Link>
-          {lastRuns.length > 0 && (
-            <nav aria-label="Status das automações" className="flex items-center gap-2">
-              {lastRuns.map((run) => (
-                <LastRunStatus key={run.platform} {...run} />
-              ))}
-            </nav>
-          )}
+          <div className="flex items-center gap-2">
+            {lastRuns.length > 0 && (
+              <nav aria-label="Status das automações" className="flex items-center gap-2">
+                {lastRuns.map((run) => (
+                  <LastRunStatus key={run.platform} {...run} />
+                ))}
+              </nav>
+            )}
+            {actions}
+          </div>
         </div>
       </div>
     </header>

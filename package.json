@@ -15,6 +15,7 @@
     "refs:capture": "tsc && node dist/captureFeatureRefs.js",
     "fixtures:android": "tsc && node dist/captureNetworkFixture.js",
     "skus:coverage": "tsc && node dist/skuCoverage.js",
+    "catalog": "tsc && node dist/catalog/index.js",
     "test": "npx playwright test",
     "test:unit": "npx playwright test src/tests/",
     "lint": "eslint src/",
