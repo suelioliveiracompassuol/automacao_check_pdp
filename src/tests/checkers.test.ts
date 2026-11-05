@@ -586,6 +586,25 @@ test.describe("Feature: AI review summary", () => {
     expect(result.status).toBe("warning");
   });
 
+  test("deve falhar quando o card aparece sem texto", async ({ page }) => {
+    await loadWithContent(page, aiCard(""));
+    aiSummaryCache.set(page, { calls: 1, status: 200, aiSummary: AI_SUMMARY });
+    const result = await checkAiReviewSummary(page);
+    expect(result.status).toBe("fail");
+    expect(result.details?.emptyCard).toBe(true);
+  });
+
+  test("deve ser warning quando o parágrafo do texto não existe no card (seletor)", async ({ page }) => {
+    await loadWithContent(
+      page,
+      `<div id="reviews"><div class="bg-info-lightest" role="group"><span>${AI_SUMMARY.text}</span><i data-icon-name="outlined-content-generativeai"></i></div></div>`,
+    );
+    aiSummaryCache.set(page, { calls: 1, status: 200, aiSummary: AI_SUMMARY });
+    const result = await checkAiReviewSummary(page);
+    expect(result.status).toBe("warning");
+    expect(result.details?.textNotRead).toBe(true);
+  });
+
   test("deve falhar quando a API tem resumo e o card não aparece", async ({ page }) => {
     test.setTimeout(60_000);
     await loadWithContent(page, reviewsWithoutCard);

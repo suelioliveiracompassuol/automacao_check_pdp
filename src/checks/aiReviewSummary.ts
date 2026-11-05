@@ -12,7 +12,8 @@ import { TIMING } from "./configs/config.js";
  * card on the page:
  * - API without summary text → N/A (product has no summary yet)
  * - summary in the API and card shown with the same text → pass
- * - summary in the API but no card → fail
+ * - summary in the API but no card, or a card with an empty text → fail
+ * - card without the text paragraph (layout changed, text not read) → warning
  * The Remote Config flag itself is handled by the runner (`disabled`).
  */
 
@@ -212,13 +213,38 @@ export async function checkAiReviewSummary(page: Page): Promise<CheckResult> {
       };
     }
 
-    const pageText = normalize(
-      (await card.locator("p.text-body-1").first().textContent({ timeout: 2000 }).catch(() => "")) ??
-        "",
-    );
+    const paragraph = card.locator("p.text-body-1").first();
+    const hasParagraph = (await paragraph.count()) > 0;
+    const pageText = hasParagraph
+      ? normalize((await paragraph.textContent({ timeout: 2000 }).catch(() => "")) ?? "")
+      : "";
     const details = { ...apiDetails, pageText };
 
-    if (pageText && pageText !== apiText) {
+    if (!hasParagraph) {
+      // Layout changed (no text paragraph in the card): the automation couldn't read the text,
+      // which says nothing about the site, so neither pass nor fail
+      return {
+        feature,
+        featureKey,
+        passed: true,
+        status: "warning",
+        message: `Card de resumo por IA exibido, mas o texto não foi lido (p.text-body-1 não encontrado no card; verificar o seletor)${describeApiSummary(summary)}`,
+        details: { ...details, textNotRead: true },
+      };
+    }
+
+    if (!pageText) {
+      return {
+        feature,
+        featureKey,
+        passed: false,
+        status: "fail",
+        message: `A API retornou resumo por IA, mas o card foi exibido sem texto${describeApiSummary(summary)}`,
+        details: { ...details, emptyCard: true },
+      };
+    }
+
+    if (pageText !== apiText) {
       return {
         feature,
         featureKey,
