@@ -211,3 +211,69 @@ export interface PerfIndexEntry {
 export interface PerfIndex {
   runs: PerfIndexEntry[]; // mais recente primeiro, máx. 365
 }
+
+/**
+ * Catálogo do SFCC (`npm run catalog` no monitor): um PDP por SKU, com a data em que o SKU
+ * apareceu pela primeira vez num download. O feed não traz data de lançamento, então os
+ * produtos novos são os que surgem depois do primeiro download (`baselineAt`).
+ */
+export interface CatalogProduct {
+  sku: string;
+  /** Produto pai das variações (NATBRA-PAI…); nos demais, o próprio SKU. */
+  productId: string;
+  name: string;
+  slug: string;
+  url: string;
+  image?: string;
+  brand?: string;
+  category?: string;
+  productType?: string;
+  isVariant: boolean;
+  isBundle: boolean;
+  available: boolean;
+  stock: number | null;
+  regularPrice: number | null;
+  salePrice: number | null;
+  rating: number | null;
+  firstSeenAt: string;
+}
+
+export interface CatalogSnapshot {
+  /** vendor-COUNTRY, ex.: natura-BR. */
+  operation: string;
+  fetchedAt: string;
+  baselineAt: string;
+  source: { file: string; lastModified?: string; rows: number };
+  products: CatalogProduct[];
+}
+
+/** Validação do catálogo só com o arquivo (`<operação>.quality.json`, gerado por `npm run catalog`). */
+export type CatalogIssueSeverity = 'error' | 'warning';
+
+export interface CatalogRule {
+  /** Ex.: typeConcentration, nameVolume. As regras vêm do monitor, junto com o relatório. */
+  key: string;
+  label: string;
+  description: string;
+}
+
+export interface CatalogIssue {
+  sku: string;
+  name: string;
+  url: string;
+  available: boolean;
+  rule: string;
+  severity: CatalogIssueSeverity;
+  /** Colunas do arquivo envolvidas, ex.: ["Type of Product", "Concentration"]. */
+  fields: string[];
+  message: string;
+}
+
+export interface CatalogQualityReport {
+  operation: string;
+  fetchedAt: string;
+  source: CatalogSnapshot['source'];
+  checked: number;
+  rules: CatalogRule[];
+  issues: CatalogIssue[];
+}

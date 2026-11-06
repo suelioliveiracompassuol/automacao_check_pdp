@@ -11,6 +11,7 @@ import {
 import { runsWithinDays } from './perf-history';
 import { platformOf } from './report';
 import type {
+  CatalogSnapshot,
   MonitoringReport,
   PerfPageType,
   Platform,
@@ -30,6 +31,12 @@ const DOCS_DIR = path.join(process.cwd(), '..', 'docs');
 // existe; na máquina de quem desenvolve, o dashboard mostra as duas juntas sem configurar nada.
 const PUBLISHED_PERF_DIR = path.join(DOCS_DIR, 'perf');
 const PERF_DIRS = [PUBLISHED_PERF_DIR, path.join(process.cwd(), '..', 'reports', 'perf')];
+
+// Catálogo do SFCC: mesma divisão da performance (docs/catalog publicado, reports/catalog local).
+const CATALOG_DIRS = [
+  path.join(DOCS_DIR, 'catalog'),
+  path.join(process.cwd(), '..', 'reports', 'catalog'),
+];
 
 function readJson<T>(...segments: string[]): T {
   return JSON.parse(fs.readFileSync(path.join(DOCS_DIR, ...segments), 'utf-8'));
@@ -221,3 +228,15 @@ export function getPerfReportDownloads(days: number): PerfReportDownloads[] {
     }))
     .filter((run) => run.files.length > 0);
 }
+
+/** Snapshot mais recente do catálogo da operação (ex.: natura-BR) entre as duas pastas. */
+export const getCatalog = cache((operation: string): CatalogSnapshot | null => {
+  let latest: CatalogSnapshot | null = null;
+  for (const dir of CATALOG_DIRS) {
+    const snapshot = readJsonFile<CatalogSnapshot>(path.join(dir, `${operation}.json`));
+    if (snapshot && (!latest || snapshot.fetchedAt > latest.fetchedAt)) {
+      latest = snapshot;
+    }
+  }
+  return latest;
+});

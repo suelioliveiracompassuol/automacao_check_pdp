@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { Roboto, Roboto_Mono } from 'next/font/google';
 import './globals.css';
+import { AuthProvider } from '@/components/auth-context';
+import { HeaderUser } from '@/components/header-user';
 import { NavHeader } from '@/components/nav-header';
 import { Sidebar } from '@/components/sidebar';
 import { MobileBottomNav } from '@/components/mobile-bottom-nav';
@@ -57,19 +59,22 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Pular para o conteúdo
         </a>
         <MotionProvider>
-          <NavHeader lastRuns={getLastRuns()} />
-          {/* Altura mínima = tela menos o header (69px), para a sidebar ir até o fim em páginas curtas. */}
-          <div className="mx-auto flex min-h-[calc(100dvh-69px)] max-w-360 items-start">
-            <Sidebar />
-            <main
-              id="app-main"
-              tabIndex={-1}
-              className="@container min-w-0 flex-1 px-4 pt-6 pb-24 sm:px-6 md:pb-10 xl:px-10"
-            >
-              {children}
-            </main>
-          </div>
-          <MobileBottomNav />
+          {/* Um login para o app todo: a barra do topo mostra quem está logado em qualquer página. */}
+          <AuthProvider>
+            <NavHeader lastRuns={getLastRuns()} actions={<HeaderUser />} />
+            {/* Altura mínima = tela menos o header (69px), para a sidebar ir até o fim em páginas curtas. */}
+            <div className="mx-auto flex min-h-[calc(100dvh-69px)] max-w-360 items-start">
+              <Sidebar />
+              <main
+                id="app-main"
+                tabIndex={-1}
+                className="@container min-w-0 flex-1 px-4 pt-6 pb-24 sm:px-6 md:pb-10 xl:px-10"
+              >
+                {children}
+              </main>
+            </div>
+            <MobileBottomNav />
+          </AuthProvider>
         </MotionProvider>
       </body>
     </html>

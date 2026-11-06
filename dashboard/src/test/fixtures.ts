@@ -1,4 +1,7 @@
 import type {
+  CatalogIssue,
+  CatalogProduct,
+  CatalogQualityReport,
   CheckResult,
   MonitoringReport,
   PdpCheckResult,
@@ -136,6 +139,80 @@ export function makePerfIndexEntry(overrides: Partial<PerfIndexEntry> = {}): Per
         success: true,
         metrics: makeMetrics(),
       },
+    ],
+    ...overrides,
+  };
+}
+
+export function makeCatalogProduct(overrides: Partial<CatalogProduct> = {}): CatalogProduct {
+  const sku = overrides.sku ?? 'NATBRA-1';
+  return {
+    sku,
+    productId: sku,
+    name: 'Produto',
+    slug: 'produto',
+    url: `https://www.natura.com.br/p/produto/${sku}`,
+    isVariant: false,
+    isBundle: false,
+    available: true,
+    stock: 10,
+    regularPrice: 100,
+    salePrice: 80,
+    rating: 4.5,
+    firstSeenAt: '2026-10-30T10:00:00.000Z',
+    ...overrides,
+  };
+}
+
+export function makeCatalogIssue(overrides: Partial<CatalogIssue> = {}): CatalogIssue {
+  const sku = overrides.sku ?? 'NATBRA-226559';
+  return {
+    sku,
+    name: 'Eau de Parfum Aura Alba Dourada 75ml',
+    url: `https://www.natura.com.br/p/eau-de-parfum-aura-alba-dourada-75ml/${sku}`,
+    available: true,
+    rule: 'typeConcentration',
+    severity: 'error',
+    fields: ['Type of Product', 'Concentration'],
+    message: 'Tipo "eau de parfum", mas a concentração é "deo parfum".',
+    ...overrides,
+  };
+}
+
+export function makeCatalogQualityReport(
+  overrides: Partial<CatalogQualityReport> = {},
+): CatalogQualityReport {
+  return {
+    operation: 'natura-BR',
+    fetchedAt: '2026-11-03T10:00:00.000Z',
+    source: { file: '/Impex/mccfeeds/NatBrazil/catalog_export_retrofit.psv', rows: 10 },
+    checked: 8,
+    rules: [
+      {
+        key: 'typeConcentration',
+        label: 'Tipo × concentração',
+        description: 'Tipo e concentração diferentes.',
+      },
+      {
+        key: 'noteTypo',
+        label: 'Nota com possível erro de digitação',
+        description: 'Nota rara parecida com outra.',
+      },
+      { key: 'pdpLink', label: 'Link da PDP', description: 'Link sem o SKU.' },
+    ],
+    issues: [
+      makeCatalogIssue(),
+      makeCatalogIssue({
+        sku: 'NATBRA-204451',
+        name: 'Desodorante Colônia Luna Nuit 75 ml',
+        available: false,
+      }),
+      makeCatalogIssue({
+        rule: 'noteTypo',
+        severity: 'warning',
+        fields: ['Top Note'],
+        message: '"licha" (seria "lichia"?)',
+      }),
     ],
     ...overrides,
   };

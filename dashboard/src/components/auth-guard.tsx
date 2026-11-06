@@ -8,8 +8,8 @@ interface AuthGuardProps {
   fallback?: React.ReactNode;
 }
 
-/** Aviso exibido a quem não está logado. */
-export function AuthRequiredNotice() {
+/** Aviso exibido a quem não está logado; `action` completa "Você precisa estar logado para …". */
+export function AuthRequiredNotice({ action = 'gerenciar SKUs' }: { action?: string }) {
   return (
     <div className="rounded-lg border border-warning-light/60 bg-warning-lightest/50 p-4">
       <div className="flex items-start gap-3">
@@ -17,8 +17,8 @@ export function AuthRequiredNotice() {
         <div className="text-sm text-warning-darkest">
           <p className="font-medium">Acesso Restrito</p>
           <p className="mt-1">
-            Você precisa estar logado para gerenciar SKUs. Entre em contato com o administrador para
-            obter as credenciais de acesso.
+            Você precisa estar logado para {action}. Entre em contato com o administrador para obter
+            as credenciais de acesso.
           </p>
         </div>
       </div>
