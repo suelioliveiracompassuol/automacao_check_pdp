@@ -23,7 +23,7 @@ concurrency:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     environment:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
@@ -60,10 +60,10 @@ jobs:
           FIREBASE_PRIVATE_KEY: ${{ secrets.FIREBASE_PRIVATE_KEY }}
 
       - name: 🏗️ Build React dashboard
+        # The pages read ../docs at build time (src/lib/data.ts); docs/reports isn't copied into
+        # public/ (it went to out/ only to be replaced in the next step)
         run: |
           cd dashboard
-          mkdir -p public/reports
-          cp -r ../docs/reports/* public/reports/ 2>/dev/null || true
           npm run build
         env:
           NEXT_PUBLIC_BASE_PATH: "/${{ github.event.repository.name }}"
@@ -76,10 +76,14 @@ jobs:
           NEXT_PUBLIC_FIREBASE_APP_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID }}
 
       - name: 📁 Prepare GitHub Pages artifact
+        # The run pages are pre-rendered at build time, so the browser only loads the run's files
+        # (screenshots, traces). The report.json of every run since May add up to ~800 MB and made
+        # the Pages upload hit the job timeout; they stay in the repo and are left out here.
         run: |
           cp -r dashboard/out pages_output
           rm -rf pages_output/reports
-          cp -r docs/reports pages_output/reports
+          rsync -a --exclude='run_*/report.json' docs/reports/ pages_output/reports/
+          du -sh pages_output
           cp docs/last-report.json pages_output/last-report.json 2>/dev/null || true
           cp -r docs/perf pages_output/perf 2>/dev/null || true
 
