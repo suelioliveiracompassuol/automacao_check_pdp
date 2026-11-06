@@ -191,6 +191,30 @@ test.describe("Feature: Gift module", () => {
     );
   });
 
+  test("abre o acordeão mesmo com overlay de terceiro por cima (GoJiraf no PE)", async ({
+    page,
+  }) => {
+    await loadWithContent(
+      page,
+      giftAccordion(
+        `<button data-testid="search-bag-button">usted entrega</button>`,
+      ) +
+        `<div id="go-jiraf-floating-ecommerce"
+           style="position:fixed;inset:0;z-index:9999;background:transparent"></div>`,
+    );
+    const result = await checkGiftModule(page);
+    expect(result.status).toBe("pass");
+    expect(result.details).toEqual({
+      cardMessage: false,
+      searchBag: true,
+      clickFallback: true,
+    });
+    await expect(page.getByTestId("accordion-component")).toHaveAttribute(
+      "aria-expanded",
+      "false",
+    );
+  });
+
   test("deve falhar quando o acordeão abre sem opções de entrega", async ({
     page,
   }) => {

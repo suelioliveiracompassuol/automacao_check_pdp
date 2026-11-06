@@ -7,6 +7,27 @@ const FEATURE = "Módulo de presente";
 /** Wait for the gift options after expanding the accordion (ms). */
 const OPTIONS_TIMEOUT = 5000;
 
+/** Normal click attempt before falling back to a DOM click (ms). */
+const CLICK_TIMEOUT = 5000;
+
+/**
+ * Clica no trigger. Overlays de terceiros (ex.: iframe flutuante de live shopping da GoJiraf
+ * na PDP do Peru, header sticky) interceptam o clique por coordenada e o Playwright tenta até
+ * o timeout; nesse caso o clique é disparado direto no elemento (o handler do acordeão é o
+ * mesmo). Retorna true quando precisou do fallback.
+ */
+async function clickTrigger(
+  trigger: ReturnType<Page["locator"]>,
+): Promise<boolean> {
+  try {
+    await trigger.click({ timeout: CLICK_TIMEOUT });
+    return false;
+  } catch {
+    await trigger.evaluate((el) => (el as HTMLElement).click());
+    return true;
+  }
+}
+
 /** Delivery options visible on the page (labels for the report). */
 async function visibleOptions(page: Page, timeout: number): Promise<string[]> {
   const cardMessage = page
@@ -78,15 +99,14 @@ export async function checkGiftModule(page: Page): Promise<CheckResult> {
       };
     }
 
-    if (expanded === "false") {
-      await trigger.click();
-    }
+    const clickFallback =
+      expanded === "false" ? await clickTrigger(trigger) : false;
 
     const options = await visibleOptions(page, OPTIONS_TIMEOUT);
 
     // Restore the accordion so the page (and the failure screenshot) stays as loaded
     if (expanded === "false") {
-      await trigger.click().catch(() => {});
+      await clickTrigger(trigger).catch(() => {});
     }
 
     if (options.length === 0) {
@@ -97,6 +117,7 @@ export async function checkGiftModule(page: Page): Promise<CheckResult> {
         status: "fail",
         message:
           "Módulo de presente em tela, mas sem opções de entrega ao abrir",
+        ...(clickFallback && { details: { clickFallback } }),
       };
     }
 
@@ -109,6 +130,7 @@ export async function checkGiftModule(page: Page): Promise<CheckResult> {
       details: {
         cardMessage: options.includes('"a gente entrega"'),
         searchBag: options.includes('"você entrega"'),
+        ...(clickFallback && { clickFallback }),
       },
     };
   } catch (error) {
