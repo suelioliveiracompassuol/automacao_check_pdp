@@ -1,0 +1,69 @@
+{
+  "source": {
+    "sku": "NATARG-00068",
+    "vendor": "natura",
+    "country": "AR",
+    "channel": "ecommerce",
+    "url": "https://www.naturacosmeticos.com.ar/p/base-serum-nude-me/NATARG-00068",
+    "browser": "firefox",
+    "capturedAt": "2026-11-10T13:39:24.129Z"
+  },
+  "live": {
+    "productVariations": {
+      "status": "pass",
+      "message": "Seletor de variações visível na página (18 variações detectadas via dom)."
+    },
+    "reviewFilter": {
+      "status": "pass",
+      "message": "Botão de filtro de avaliações presente"
+    },
+    "reviewSort": {
+      "status": "pass",
+      "message": "Dropdown de ordenação de avaliações presente"
+    },
+    "reviewPhotos": {
+      "status": "warning",
+      "message": "Feature de fotos habilitada (filtro de mídia presente), mas nenhuma avaliação com foto na página atual"
+    },
+    "reviewRecommendation": {
+      "status": "pass",
+      "message": "100% de recomendação exibido"
+    },
+    "favoriteButton": {
+      "status": "pass",
+      "message": "Botão de favoritos encontrado na tela"
+    },
+    "coupons": {
+      "status": "pass",
+      "message": "Card de cupons exibido (flag enable_coupons_pdp ativa): \"ahorrá con cupones para vos\""
+    },
+    "topRatedBadge": {
+      "status": "pass",
+      "message": "API do produto não retorna isTopRated: true e o selo \"melhor avaliado\" corretamente não é exibido (via ssr)."
+    },
+    "minStockBadge": {
+      "status": "pass",
+      "message": "API do produto retorna minStockBadge do tipo minStockAlert para NATARG-110181 e o selo \"últimas unidades\" está visível (via ssr)."
+    },
+    "i18nKeys": {
+      "status": "pass",
+      "message": "Nenhuma chave de tradução exposta na página"
+    },
+    "endpoint_product_page": {
+      "status": "fail",
+      "message": "Nenhuma chamada capturada para endpoint contendo \"/pages/product/\""
+    },
+    "endpoint_product_page_v2": {
+      "status": "fail",
+      "message": "Nenhuma chamada capturada para endpoint contendo \"/pages/v2/product/\""
+    },
+    "endpoint_reviews": {
+      "status": "pass",
+      "message": "2 chamada(s) ok (status 200)"
+    },
+    "endpoint_ratings": {
+      "status": "fail",
+      "message": "Nenhuma chamada capturada para endpoint contendo \"/reviews/v2?productIds\""
+    }
+  }
+}

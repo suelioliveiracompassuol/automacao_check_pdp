@@ -1,613 +1,35 @@
 /**
- * PDP Feature Monitor - Main Orchestrator
+ * PDP Feature Monitor - Main Orchestrator (Web)
  *
- * This script checks all configured PDPs for required features
- * and generates a report of the results.
+ * Loads the SKUs, runs each PDP (src/web/checkPdp.ts) grouped by operation and writes the
+ * report + index. Pieces:
+ * - src/web/runOptions.ts: env filters, SKU selection, smoke mode, browser per SKU
+ * - src/web/checkPdp.ts: one PDP (captures → navigation → flags → checks → verdict)
+ * - src/web/featureGating.ts: which features run (vendor, Remote Config, Commerce flags)
+ * - src/web/pdpResults.ts: legacy endpoint check and the PDP verdict
  */
 
 import { chromium, firefox, Browser } from "@playwright/test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import {
-  TIMING,
-  buildPdpUrl,
-  isFeatureSupported,
-  getApplicableFeatures,
-} from "./checks/configs/config.js";
-import {
-  CheckResult,
-  PdpCheckResult,
-  MonitoringReport,
-  SkuConfig,
-} from "./types.js";
-import {
-  FEATURE_CHECKERS,
-  INTERACTIVE_FEATURES,
-  logFeaturesGrouped,
-  dismissCookieBanner,
-  scrollAndLoadContent,
-} from "./checks/featureRunner.js";
+import { MonitoringReport, PdpCheckResult } from "./types.js";
 import { generateJsonReport } from "./reporter.js";
 import { upsertReportIndexEntry } from "./reportIndex.js";
-import {
-  currentRatingStates,
-  gradeRatingDivergence,
-  preloadRatingStates,
-} from "./ratingDivergence.js";
+import { currentRatingStates, preloadRatingStates } from "./ratingDivergence.js";
 import { markNewFailuresFromReports } from "./reportHistory.js";
 import { recordRunInFirestore } from "./firestoreHistory.js";
-import { setupEndpointMonitor } from "./checks/endpointResponse.js";
-import { checkI18nKeys } from "./checks/i18n.js";
-import { setupEinsteinShowcaseCapture } from "./checks/showcases.js";
-import {
-  setupRatingConsistencyCapture,
-  captureRatingFromDOM,
-} from "./checks/ratingConsistency.js";
-import { setupProductVariationsCapture } from "./checks/productVariations.js";
-import { setupProductBadgesCapture } from "./checks/productBadges.js";
-import { setupAiReviewSummaryCapture } from "./checks/aiReviewSummary.js";
-
-import {
-  setupRemoteConfigCapture,
-  setupCommerceFeatureFlagCapture,
-  isFeatureEnabledByRemoteConfig,
-  isFeatureEnabledByCommerceFlags,
-  FEATURE_REMOTE_CONFIG_MAP,
-  formatFlagsForLog,
-  getFlagsByCategory,
-  countCapturedFlags,
-  getCommerceFlagsByCategory,
-  countCommerceFlags,
-  COUNTRY_TO_LOCALE,
-  RemoteConfigFlags,
-  CommerceFeatureFlags,
-} from "./checks/remoteConfig.js";
 import { loadSkusWithSource } from "./checks/configs/skus/skus.js";
-import { FEATURES } from "./checks/configs/features.js";
 import { PDP_ENDPOINT_RULES } from "./checks/configs/endpoints-rules.js";
 import { runWithConcurrency, jitter, parseConcurrency } from "./concurrency.js";
+import { describePlaywrightTraceMode, getPlaywrightTraceMode } from "./playwrightTrace.js";
+import { checkPdp } from "./web/checkPdp.js";
 import {
-  describePlaywrightTraceMode,
-  finalizeBrowserTrace,
-  getPlaywrightTraceMode,
-  startBrowserTraceIfEnabled,
-} from "./playwrightTrace.js";
-
-import { createStandardContext } from "./browserSetup.js";
-import { formatFlagLogValue, toSafeFileName } from "./utils.js";
-
-interface CheckPdpParams {
-  browser: Browser;
-  sku: SkuConfig;
-  outputDir: string;
-  featuresFilter: Set<string> | null;
-  endpointMatch: string | null;
-  monitorEndpoints: boolean;
-  cachedRemoteConfig?: RemoteConfigFlags | null;
-  cachedCommerceFlags?: CommerceFeatureFlags | null;
-}
-
-/**
- * Operations (vendor-country-channel) whose PDP didn't fetch Remote Config within the long wait
- * in this run — later SKUs of the same operation only wait briefly.
- */
-const operationsWithoutRemoteConfig = new Set<string>();
-
-/**
- * Check a single PDP for all applicable features
- */
-async function checkPdp(params: CheckPdpParams): Promise<PdpCheckResult> {
-  const {
-    browser,
-    sku,
-    outputDir,
-    featuresFilter,
-    endpointMatch,
-    monitorEndpoints,
-    cachedRemoteConfig,
-    cachedCommerceFlags,
-  } = params;
-
-  const url = buildPdpUrl(sku);
-  const timestamp = new Date().toISOString();
-  let features: CheckResult[] = [];
-  let pageScreenshot: string | undefined;
-  let loadTime: number | undefined;
-  let remoteConfigFlags: RemoteConfigFlags | null = cachedRemoteConfig ?? null;
-  let commerceFeatureFlags: CommerceFeatureFlags | null =
-    cachedCommerceFlags ?? null;
-
-  console.log(`\n📦 Checking: ${sku.name} (${sku.sku})`);
-  console.log(`   URL: ${url}`);
-
-  const context = await createStandardContext(browser, url);
-  const page = await context.newPage();
-
-  // Legacy single-pattern endpoint check
-  const endpointCalls: Array<{ url: string; method: string; status: number }> =
-    [];
-  if (endpointMatch) {
-    page.on("response", (response) => {
-      const url = response.url();
-      if (!url.includes(endpointMatch)) {
-        return;
-      }
-      endpointCalls.push({
-        url,
-        method: response.request().method(),
-        status: response.status(),
-      });
-    });
-  }
-
-  // Structured PDP endpoint monitor (validates status + body fields)
-  const collectEndpointResults = monitorEndpoints
-    ? setupEndpointMonitor(page, PDP_ENDPOINT_RULES)
-    : null;
-
-  // Setup Remote Config capture BEFORE navigation (if not already cached)
-  const locale = COUNTRY_TO_LOCALE[sku.country] || "pt-BR";
-  const collectRemoteConfig = cachedRemoteConfig
-    ? null
-    : setupRemoteConfigCapture(page, locale);
-
-  const collectCommerceFlags = cachedCommerceFlags
-    ? null
-    : setupCommerceFeatureFlagCapture(page);
-
-  // Setup Einstein showcase capture BEFORE navigation
-  setupEinsteinShowcaseCapture(page);
-
-  // Setup rating consistency capture BEFORE navigation (intercepts API responses)
-  setupRatingConsistencyCapture(page, sku.sku);
-
-  // Setup product variations capture BEFORE navigation (intercepts BFF API + SSR)
-  setupProductVariationsCapture(page);
-
-  // Setup product badge capture BEFORE navigation (isTopRated/minStockBadge from SSR payload + BFF API)
-  setupProductBadgesCapture(page, sku.sku);
-
-  // Setup AI review summary capture BEFORE navigation (aiSummary from /reviews/v2/details)
-  setupAiReviewSummaryCapture(page, sku.sku);
-
-  const traceMode = getPlaywrightTraceMode();
-  const traceZipPath = path.join(
-    outputDir,
-    "traces",
-    `${toSafeFileName(sku.sku)}_${Date.now()}.zip`,
-  );
-  let traceActive = await startBrowserTraceIfEnabled(context, traceMode);
-
-  try {
-    // Navigate to PDP (with retry on HTTP2 errors)
-    const startTime = Date.now();
-    let response;
-    let lastError;
-
-    for (let attempt = 1; attempt <= 2; attempt++) {
-      try {
-        response = await page.goto(url, {
-          timeout: TIMING.navigationTimeout,
-          waitUntil: "domcontentloaded",
-        });
-        lastError = null;
-        break;
-      } catch (e) {
-        lastError = e;
-        if (attempt < 2 && e instanceof Error && e.message.includes("HTTP2")) {
-          console.log(
-            `   ⚠️ HTTP2 error, retrying (attempt ${attempt + 1})...`,
-          );
-          await new Promise<void>((resolve) => setTimeout(resolve, 2000));
-        }
-      }
-    }
-
-    if (lastError) {
-      throw lastError;
-    }
-
-    loadTime = Date.now() - startTime;
-
-    if (!response || response.status() >= 400) {
-      throw new Error(
-        `HTTP ${response?.status() || "unknown"} - Page failed to load`,
-      );
-    }
-
-    console.log(`   ⏱️  Load time: ${loadTime}ms`);
-
-    // Wait for the page to fully load after domcontentloaded
-    await page
-      .waitForLoadState("load", { timeout: TIMING.pageLoadSettleTime })
-      .catch(() => {});
-
-    // Read product rating from JSON-LD immediately after load, before any DOM interactions
-    // that could cause React to re-render/clear the SSR script tags.
-    await captureRatingFromDOM(page);
-
-    // Dismiss cookie banner
-    await dismissCookieBanner(page);
-
-    // Scroll progressively down to load ALL lazy content, then back to top
-    await scrollAndLoadContent(page);
-
-    // Get applicable features for this SKU
-    let applicableFeatures = getApplicableFeatures(sku);
-
-    // Apply external features filter if provided via env (e.g. from workflow_dispatch input)
-    if (featuresFilter && featuresFilter.size > 0) {
-      applicableFeatures = applicableFeatures.filter((f) =>
-        featuresFilter.has(f.key),
-      );
-    }
-
-    // Capture remote config flags if not already cached
-    if (!remoteConfigFlags && collectRemoteConfig) {
-      // Only wait for a late Remote Config fetch when some feature to run depends on it
-      const operationKey = `${sku.vendor}-${sku.country}-${sku.channel ?? "ecommerce"}`;
-      const longWait =
-        applicableFeatures.some((f) => FEATURE_REMOTE_CONFIG_MAP[f.key]) &&
-        !operationsWithoutRemoteConfig.has(operationKey);
-      remoteConfigFlags = await collectRemoteConfig(
-        longWait ? TIMING.remoteConfigWait : TIMING.remoteConfigShortWait,
-      );
-      if (!remoteConfigFlags && longWait) {
-        operationsWithoutRemoteConfig.add(operationKey);
-      }
-      if (remoteConfigFlags) {
-        const totalFlags = countCapturedFlags(remoteConfigFlags);
-        console.log(
-          `   🔧 Remote Config capturado: ${totalFlags} flags (locale: ${remoteConfigFlags.locale})`,
-        );
-        console.log(`      ${formatFlagsForLog(remoteConfigFlags)}`);
-
-        // Log detailed flags by category
-        const categories = getFlagsByCategory(remoteConfigFlags);
-        for (const [category, flags] of Object.entries(categories)) {
-          const flagSummary = Object.entries(flags)
-            .map(([k, v]) => `${k}=${formatFlagLogValue(v)}`)
-            .join(", ");
-          console.log(`      ${category}: ${flagSummary}`);
-        }
-      }
-    }
-
-    // Commerce flags: intercept /feature-flag (setup before goto) and/or use DOM fallback
-    if (!cachedCommerceFlags && collectCommerceFlags) {
-      commerceFeatureFlags = await collectCommerceFlags();
-    }
-
-    // Log commerce feature flags if captured
-    if (commerceFeatureFlags) {
-      const totalFlags = countCommerceFlags(commerceFeatureFlags);
-      console.log(
-        `   🛒 Commerce Feature Flags capturado: ${totalFlags} flags`,
-      );
-
-      // Log detailed flags by category
-      const categories = getCommerceFlagsByCategory(commerceFeatureFlags);
-      for (const [category, flags] of Object.entries(categories)) {
-        const flagSummary = Object.entries(flags)
-          .map(([k, v]) => `${k}=${formatFlagLogValue(v)}`)
-          .join(", ");
-        console.log(`      ${category}: ${flagSummary}`);
-      }
-    }
-
-    // Run all feature checks — parallelized for performance.
-    // Since scrollAndLoadContent() has already triggered all lazy content,
-    // checks can safely run in parallel (they only read DOM state).
-
-    // Phase 1: Pre-filter features (vendor support, remote config)
-    interface RunnableCheck {
-      featureConfig: (typeof applicableFeatures)[number];
-      checker: (typeof FEATURE_CHECKERS)[string];
-      rcCheck: ReturnType<typeof isFeatureEnabledByRemoteConfig>;
-    }
-    const runnableChecks: RunnableCheck[] = [];
-
-    for (const featureConfig of applicableFeatures) {
-      const checker = FEATURE_CHECKERS[featureConfig.key];
-
-      if (!checker) {
-        console.log(`   ⚠️  No checker for ${featureConfig.key}`);
-        continue;
-      }
-
-      // Check vendor support
-      if (!isFeatureSupported(featureConfig, sku.vendor)) {
-        features.push({
-          feature: featureConfig.name,
-          featureKey: featureConfig.key,
-          passed: true,
-          status: "na",
-          message: `N/A para ${sku.vendor}`,
-        });
-        continue;
-      }
-
-      // Check if feature is enabled by Remote Config
-      const rcCheck = isFeatureEnabledByRemoteConfig(
-        featureConfig.key,
-        remoteConfigFlags,
-      );
-      if (rcCheck.notCaptured) {
-        // Feature only exists behind a flag that wasn't captured - can't tell if it should show
-        features.push({
-          feature: featureConfig.name,
-          featureKey: featureConfig.key,
-          passed: true,
-          status: "na",
-          message: `Flag ${rcCheck.flagKey} não capturada no Remote Config — verificação não se aplica`,
-          flagKey: rcCheck.flagKey,
-        });
-        continue;
-      }
-      if (!rcCheck.enabled && rcCheck.flagKey) {
-        // Feature is disabled by remote config - not an error
-        features.push({
-          feature: featureConfig.name,
-          featureKey: featureConfig.key,
-          passed: true,
-          status: "disabled",
-          message: `Desabilitado via Remote Config (${rcCheck.flagKey}=${JSON.stringify(rcCheck.flagValue)})`,
-          flagKey: rcCheck.flagKey,
-          flagValue: rcCheck.flagValue,
-        });
-        continue;
-      }
-
-      // Some features are also gated by a Commerce feature flag (e.g. coupons → couponCenter)
-      const commerceCheck = isFeatureEnabledByCommerceFlags(
-        featureConfig.key,
-        commerceFeatureFlags,
-      );
-      if (!commerceCheck.enabled && commerceCheck.flagKey) {
-        features.push({
-          feature: featureConfig.name,
-          featureKey: featureConfig.key,
-          passed: true,
-          status: "disabled",
-          message: `Desabilitado via Commerce Feature Flag (${commerceCheck.flagKey}=${JSON.stringify(commerceCheck.flagValue)})`,
-          flagKey: commerceCheck.flagKey,
-          flagValue: commerceCheck.flagValue,
-        });
-        continue;
-      }
-
-      runnableChecks.push({ featureConfig, checker, rcCheck });
-    }
-
-    const runCheck = async ({ featureConfig, checker, rcCheck }: RunnableCheck) => {
-      const result = await checker(page);
-      if (rcCheck.flagKey) {
-        result.flagKey = rcCheck.flagKey;
-        result.flagValue = rcCheck.flagValue;
-      }
-      return { featureConfig, result };
-    };
-
-    // Phase 2: Execute read-only checks in parallel
-    const checkResults = await Promise.all(
-      runnableChecks
-        .filter((c) => !INTERACTIVE_FEATURES.has(c.featureConfig.key))
-        .map(runCheck),
-    );
-
-    // Phase 2b: Checks that click on the page run afterwards, one at a time,
-    // so the layout doesn't change under the parallel visibility checks
-    for (const c of runnableChecks) {
-      if (INTERACTIVE_FEATURES.has(c.featureConfig.key)) {
-        checkResults.push(await runCheck(c));
-      }
-    }
-
-    // Phase 3: Collect results sequentially for failures
-    for (const { result } of checkResults) {
-      features.push(result);
-    }
-
-    // Check for untranslated i18n keys (runs on every PDP)
-    const i18nResult = await checkI18nKeys(page);
-    features.push(i18nResult);
-
-    // Structured PDP endpoint results (status + body validation)
-    if (collectEndpointResults) {
-      const endpointResults = await collectEndpointResults();
-      for (const r of endpointResults) {
-        // Skip rules that captured nothing — the endpoint may not apply to this page variant
-        if (r.message.includes("Nenhuma chamada")) {
-          continue;
-        }
-        features.push(r);
-      }
-    }
-
-    // Legacy single-pattern endpoint check
-    if (endpointMatch) {
-      const failedCalls = endpointCalls.filter((c) => c.status >= 400);
-      let endpointResult: CheckResult;
-
-      if (endpointCalls.length === 0) {
-        endpointResult = {
-          feature: "Resposta de endpoint",
-          featureKey: "endpointResponse",
-          passed: false,
-          status: "fail",
-          message: `Nenhuma chamada capturada para o endpoint contendo "${endpointMatch}"`,
-        };
-      } else if (failedCalls.length > 0) {
-        endpointResult = {
-          feature: "Resposta de endpoint",
-          featureKey: "endpointResponse",
-          passed: false,
-          status: "fail",
-          message: `${failedCalls.length}/${endpointCalls.length} chamada(s) com erro (>= 400) para "${endpointMatch}"`,
-          details: {
-            endpointMatch,
-            totalCalls: endpointCalls.length,
-            failedCalls: failedCalls.map((c) => ({
-              method: c.method,
-              status: c.status,
-              url: c.url,
-            })),
-          },
-        };
-      } else {
-        endpointResult = {
-          feature: "Resposta de endpoint",
-          featureKey: "endpointResponse",
-          passed: true,
-          status: "pass",
-          message: `${endpointCalls.length} chamada(s) ok para endpoint contendo "${endpointMatch}"`,
-          details: {
-            endpointMatch,
-            totalCalls: endpointCalls.length,
-            calls: endpointCalls
-              .slice(0, 10)
-              .map((c) => ({ method: c.method, status: c.status, url: c.url })),
-          },
-        };
-      }
-
-      features.push(endpointResult);
-    }
-
-    // Product rating vs Konfidency: a divergence up to a day old is only a warning
-    features = gradeRatingDivergence(features, sku);
-
-    // Log all features in grouped order (same as HTML report)
-    logFeaturesGrouped(features);
-
-    // Overall success: all required (non-optional) features passed
-    const requiredFeatures = features.filter((f) => {
-      const config = FEATURES.find((fc) => fc.key === f.featureKey);
-      // Endpoint monitor results also count as required
-      if (f.featureKey.startsWith("endpoint_")) {
-        return true;
-      }
-      // i18n keys check is always required
-      if (f.featureKey === "i18nKeys") {
-        return true;
-      }
-      return config && !config.optional;
-    });
-
-    if (endpointMatch) {
-      const endpointResult = features.find(
-        (f) => f.featureKey === "endpointResponse",
-      );
-      if (endpointResult) {
-        requiredFeatures.push(endpointResult);
-      }
-    }
-
-    const success = requiredFeatures.every(
-      (f) => f.passed || f.status === "na" || f.status === "disabled",
-    );
-
-    // Take full page screenshot if any failure
-    if (!success) {
-      const screenshotName = `${sku.sku}_fullpage_${Date.now()}.png`;
-      const screenshotPath = path.join(
-        outputDir,
-        "screenshots",
-        screenshotName,
-      );
-      await page
-        .screenshot({ path: screenshotPath, fullPage: true })
-        .catch(() => {});
-      pageScreenshot = path.relative(outputDir, screenshotPath);
-    }
-
-    const playwrightTracePathAbs = await finalizeBrowserTrace(
-      context,
-      traceMode,
-      traceActive,
-      success,
-      traceZipPath,
-    );
-    traceActive = false;
-    if (playwrightTracePathAbs) {
-      console.log(`   🎬 Trace salvo: ${playwrightTracePathAbs}`);
-    }
-
-    return {
-      sku: sku.sku,
-      name: sku.name,
-      url,
-      vendor: sku.vendor,
-      country: sku.country,
-      channel: sku.channel,
-      timestamp,
-      success,
-      loadTime,
-      features,
-      pageScreenshot,
-      playwrightTracePath: playwrightTracePathAbs
-        ? path.relative(outputDir, playwrightTracePathAbs)
-        : undefined,
-      remoteConfigFlags: remoteConfigFlags ?? undefined,
-      commerceFeatureFlags: commerceFeatureFlags ?? undefined,
-    };
-  } catch (error) {
-    console.log(
-      `   ❌ Error: ${error instanceof Error ? error.message : String(error)}`,
-    );
-
-    // Take screenshot of error state
-    const screenshotName = `${sku.sku}_error_${Date.now()}.png`;
-    const screenshotPath = path.join(outputDir, "screenshots", screenshotName);
-    await page
-      .screenshot({ path: screenshotPath, fullPage: true })
-      .catch(() => {});
-    pageScreenshot = path.relative(outputDir, screenshotPath);
-
-    const playwrightTracePathAbs = await finalizeBrowserTrace(
-      context,
-      traceMode,
-      traceActive,
-      false,
-      traceZipPath,
-    );
-    traceActive = false;
-    if (playwrightTracePathAbs) {
-      console.log(`   🎬 Trace salvo: ${playwrightTracePathAbs}`);
-    }
-
-    return {
-      sku: sku.sku,
-      name: sku.name,
-      url,
-      vendor: sku.vendor,
-      country: sku.country,
-      channel: sku.channel,
-      timestamp,
-      success: false,
-      loadTime,
-      features,
-      error: error instanceof Error ? error.message : String(error),
-      pageScreenshot,
-      playwrightTracePath: playwrightTracePathAbs
-        ? path.relative(outputDir, playwrightTracePathAbs)
-        : undefined,
-      remoteConfigFlags: remoteConfigFlags ?? undefined,
-      commerceFeatureFlags: commerceFeatureFlags ?? undefined,
-    };
-  } finally {
-    if (traceActive) {
-      await finalizeBrowserTrace(
-        context,
-        traceMode,
-        traceActive,
-        false,
-        traceZipPath,
-      ).catch(() => {});
-    }
-    await context.close().catch(() => {});
-  }
-}
+  SMOKE_FEATURES,
+  groupByOperation,
+  parseRunOptions,
+  selectSkus,
+  usesFirefox,
+} from "./web/runOptions.js";
 
 /**
  * Main execution function
@@ -625,86 +47,16 @@ async function main() {
   // Since when each SKU's rating diverges (Firestore, falling back to docs/reports)
   await preloadRatingStates("web");
 
-  // Parse optional env-based filters (set via workflow_dispatch inputs)
-  let featuresFilter: Set<string> | null = process.env.FEATURES_FILTER?.trim()
-    ? new Set(
-        process.env.FEATURES_FILTER.split(",")
-          .map((f) => f.trim())
-          .filter(Boolean),
-      )
-    : null;
-
-  const operationsFilter: string[] | null =
-    process.env.OPERATIONS_FILTER?.trim()
-      ? process.env.OPERATIONS_FILTER.split(",")
-          .map((o) => o.trim())
-          .filter(Boolean)
-      : null;
-
-  const endpointMatch: string | null = process.env.ENDPOINT_MATCH?.trim()
-    ? process.env.ENDPOINT_MATCH.trim()
-    : null;
-
-  // Enable structured PDP endpoint monitoring (validates status + body fields)
-  // Defaults to true. Set MONITOR_ENDPOINTS=false to disable.
-  const monitorEndpoints = process.env.MONITOR_ENDPOINTS !== "false";
-
-  // Parse optional SKU filter
-  const skuFilter: string[] | null = process.env.SKU_FILTER?.trim()
-    ? process.env.SKU_FILTER.split(",")
-        .map((s) => s.trim())
-        .filter(Boolean)
-    : null;
-
-  // Apply operations filter (format: "natura-BR", "avon-BR", "natura-BR-social", etc.)
-  let skusToCheck = operationsFilter
-    ? SKUS.filter((sku) => {
-        const key = `${sku.vendor}-${sku.country}${(sku.channel || "ecommerce") === "socialcommerce" ? "-social" : ""}`;
-        return operationsFilter.includes(key);
-      })
-    : SKUS;
-
-  // Apply SKU filter if provided
-  if (skuFilter) {
-    skusToCheck = skusToCheck.filter((sku) => skuFilter.includes(sku.sku));
-  }
-
-  // =========================================================================
-  // MODE=smoke — quick healthcheck: 1 SKU per domain, subset of features
-  // =========================================================================
-  const SMOKE_FEATURES = ["images", "addToCart"];
-  const isSmokeMode = process.env.MODE === "smoke";
-
-  if (isSmokeMode) {
-    // Override features filter to smoke subset
-    if (!featuresFilter) {
-      featuresFilter = new Set(SMOKE_FEATURES);
-    } else {
-      // Intersect user filter with smoke subset
-      featuresFilter = new Set(
-        SMOKE_FEATURES.filter((f) => featuresFilter!.has(f)),
-      );
-    }
-
-    // Limit to 1 SKU per domain
-    const seen = new Set<string>();
-    skusToCheck = skusToCheck.filter((sku) => {
-      const key = `${sku.vendor}-${sku.country}${(sku.channel || "ecommerce") === "socialcommerce" ? "-social" : ""}`;
-      if (seen.has(key)) {
-        return false;
-      }
-      seen.add(key);
-      return true;
-    });
-  }
+  // Env-based filters (set via workflow_dispatch inputs) and MODE=smoke
+  const options = parseRunOptions(process.env);
+  const { operationsFilter, endpointMatch, monitorEndpoints, isSmokeMode } = options;
+  const { skus: skusToCheck, featuresFilter } = selectSkus(SKUS, options);
 
   console.log("🚀 PDP Feature Monitor");
   console.log(`📅 Started: ${startTime.toISOString()}`);
   console.log(`📂 Output: ${outputDir}`);
   const operationsFilterNote =
-    operationsFilter && operationsFilter.length > 0
-      ? ` (filtro: ${operationsFilter.join(", ")})`
-      : "";
+    operationsFilter && operationsFilter.length > 0 ? ` (filtro: ${operationsFilter.join(", ")})` : "";
   console.log(`📦 SKUs to check: ${skusToCheck.length}${operationsFilterNote}`);
   if (isSmokeMode) {
     console.log(
@@ -718,9 +70,7 @@ async function main() {
     console.log(`🌐 Endpoint check (ENDPOINT_MATCH): ${endpointMatch}`);
   }
   if (monitorEndpoints) {
-    console.log(
-      `🌐 Monitoramento de endpoints PDP ativado (${PDP_ENDPOINT_RULES.length} regras)`,
-    );
+    console.log(`🌐 Monitoramento de endpoints PDP ativado (${PDP_ENDPOINT_RULES.length} regras)`);
   }
   const traceMode = getPlaywrightTraceMode();
   if (traceMode !== "off") {
@@ -735,74 +85,42 @@ async function main() {
   const isHeadless = process.env.HEADLESS !== "false";
   const browserChromium = await chromium.launch({
     headless: isHeadless,
-    args: [
-      "--disable-blink-features=AutomationControlled",
-      "--no-sandbox",
-      "--disable-dev-shm-usage",
-    ],
+    args: ["--disable-blink-features=AutomationControlled", "--no-sandbox", "--disable-dev-shm-usage"],
   });
   let browserFirefox: Browser | null = null;
   try {
     browserFirefox = await firefox.launch({ headless: isHeadless });
   } catch {
-    console.log(
-      "⚠️  Firefox not available, falling back to Chromium for all sites",
-    );
+    console.log("⚠️  Firefox not available, falling back to Chromium for all sites");
   }
 
   const results: PdpCheckResult[] = [];
 
   // Concurrency from CONCURRENCY env var (default 3; hard-capped at 8 to reduce WAF risk)
   const concurrency = parseConcurrency(3);
-  console.log(
-    `⚡ Concorrência: ${concurrency} worker(s) | jitter 1\u20133 s entre SKUs do mesmo domínio\n`,
-  );
+  console.log(`⚡ Concorrência: ${concurrency} worker(s) | jitter 1–3 s entre SKUs do mesmo domínio\n`);
 
   // Group SKUs by domain key so same-origin requests stay serial within each group
-  const skusByDomain = new Map<string, typeof skusToCheck>();
-  for (const sku of skusToCheck) {
-    const domainKey = `${sku.vendor}-${sku.country}${(sku.channel || "ecommerce") === "socialcommerce" ? "-social" : ""}`;
-    if (!skusByDomain.has(domainKey)) {
-      skusByDomain.set(domainKey, []);
-    }
-    skusByDomain.get(domainKey)!.push(sku);
-  }
-  console.log(
-    `🗂️  ${skusByDomain.size} grupo(s) de domínio: ${[...skusByDomain.keys()].join(", ")}\n`,
-  );
+  const skusByDomain = groupByOperation(skusToCheck);
+  console.log(`🗂️  ${skusByDomain.size} grupo(s) de domínio: ${[...skusByDomain.keys()].join(", ")}\n`);
 
   try {
     // One async task per domain group; groups run in parallel up to the concurrency limit.
-    // SKUs within each group run serially with a random 1\u20133 s jitter between requests.
-    const skuTasks = [...skusByDomain.entries()].map(
-      ([, group]) =>
-        async (): Promise<PdpCheckResult[]> => {
-          const groupResults: PdpCheckResult[] = [];
-          for (let i = 0; i < group.length; i++) {
-            if (i > 0) {
-              await jitter(1000, 2000); // 1\u20133 s between consecutive hits on the same domain
-            }
-            const sku = group[i];
-            const useFirefox =
-              browserFirefox !== null &&
-              sku.vendor === "natura" &&
-              sku.country !== "BR" &&
-              (sku.channel || "ecommerce") === "ecommerce";
-            const browser = useFirefox ? browserFirefox! : browserChromium;
-            groupResults.push(
-              await checkPdp({
-                browser,
-                sku,
-                outputDir,
-                featuresFilter,
-                endpointMatch,
-                monitorEndpoints,
-              }),
-            );
-          }
-          return groupResults;
-        },
-    );
+    // SKUs within each group run serially with a random 1–3 s jitter between requests.
+    const skuTasks = [...skusByDomain.values()].map((group) => async (): Promise<PdpCheckResult[]> => {
+      const groupResults: PdpCheckResult[] = [];
+      for (let i = 0; i < group.length; i++) {
+        if (i > 0) {
+          await jitter(1000, 2000); // 1–3 s between consecutive hits on the same domain
+        }
+        const sku = group[i];
+        const browser = browserFirefox !== null && usesFirefox(sku) ? browserFirefox : browserChromium;
+        groupResults.push(
+          await checkPdp({ browser, sku, outputDir, featuresFilter, endpointMatch, monitorEndpoints }),
+        );
+      }
+      return groupResults;
+    });
     const groupedResults = await runWithConcurrency(skuTasks, concurrency);
     results.push(...groupedResults.flat());
   } finally {
@@ -853,10 +171,7 @@ async function main() {
   // Copy to last-report files and update index
   try {
     const docsDir = path.join(process.cwd(), "docs");
-
-    // Copy to last-report
     fs.copyFileSync(jsonPath, path.join(docsDir, "last-report.json"));
-
     // Update index.json (upsert by runId, lock-protected against concurrent writers —
     // see reportIndex.ts, shared with the Android orchestrator)
     await upsertReportIndexEntry(indexEntry);

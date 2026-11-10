@@ -1,9 +1,12 @@
 import { Page } from '@playwright/test';
 import { CheckResult } from '../types.js';
 import { SELECTORS } from './configs/config.js';
+import { findSsrProduct } from './ssrProduct.js';
 
 interface CapturedVariationsData {
   variationsCount?: number;
+  /** Where variationsCount came from: the BFF product API call or the SSR payload. */
+  source?: 'api' | 'ssr';
   apiUrl?: string;
 }
 
@@ -35,15 +38,40 @@ function findVariationsInNextData(obj: unknown, depth = 0): number | undefined {
   return undefined;
 }
 
+/** Number of variations in the SSR HTML (product of `sku`, else the first product found). */
+export function countSsrVariations(html: string, sku?: string): number | undefined {
+  // App Router (RSC payload) and Pages Router (__NEXT_DATA__) sites: the product API
+  // response of this SKU, as the server rendered it
+  if (sku) {
+    const variations = findSsrProduct(html, sku)?.variations;
+    if (Array.isArray(variations)) {
+      return variations.length;
+    }
+  }
+  const nextDataMatch = html.match(
+    /<script id=["']__NEXT_DATA__["'][^>]*>([\s\S]*?)<\/script>/i,
+  );
+  if (nextDataMatch) {
+    try {
+      return findVariationsInNextData(JSON.parse(nextDataMatch[1]));
+    } catch {
+      // ignore malformed __NEXT_DATA__
+    }
+  }
+  return undefined;
+}
+
 /**
  * Must be called BEFORE page.goto() in the main orchestrator.
  * Intercepts the BFF product API response (/pages/v2/product/:sku) and stores
  * the number of variations for later use by checkProductVariations.
  *
- * Also parses __NEXT_DATA__ from the SSR HTML as a fallback for domains where
- * the API is not called client-side.
+ * Also reads the SSR HTML, for domains where the API is not called client-side (the
+ * natura/avon sites call it on the server). Without it the count came from the variation
+ * selector itself, so a selector that stopped matching made the check report "N/A"
+ * instead of failing (seen on real captures, src/tests/web-fixtures.test.ts).
  */
-export function setupProductVariationsCapture(page: Page): void {
+export function setupProductVariationsCapture(page: Page, sku?: string): void {
   page.on('response', async (response) => {
     const url = response.url();
 
@@ -57,19 +85,9 @@ export function setupProductVariationsCapture(page: Page): void {
         if (existing.variationsCount !== undefined) {
           return;
         }
-        const nextDataMatch = html.match(
-          /<script id=["']__NEXT_DATA__["'][^>]*>([\s\S]*?)<\/script>/i,
-        );
-        if (nextDataMatch) {
-          try {
-            const nextData = JSON.parse(nextDataMatch[1]) as Record<string, unknown>;
-            const variationsCount = findVariationsInNextData(nextData);
-            if (variationsCount !== undefined) {
-              variationsCache.set(page, { ...existing, variationsCount });
-            }
-          } catch {
-            // ignore malformed __NEXT_DATA__
-          }
+        const variationsCount = countSsrVariations(html, sku);
+        if (variationsCount !== undefined) {
+          variationsCache.set(page, { ...existing, variationsCount, source: 'ssr' });
         }
       } catch {
         // ignore response body read errors
@@ -89,6 +107,7 @@ export function setupProductVariationsCapture(page: Page): void {
         variationsCache.set(page, {
           ...existing,
           variationsCount: json.variations.length,
+          source: 'api',
           apiUrl: url,
         });
       }
@@ -108,7 +127,8 @@ export async function checkProductVariations(page: Page): Promise<CheckResult> {
     const domCount = await colorOptionLocator.count();
 
     const variationsCount = captured?.variationsCount ?? domCount;
-    const source = captured?.variationsCount !== undefined ? 'api' : 'dom';
+    const source =
+      captured?.variationsCount !== undefined ? (captured.source ?? 'api') : 'dom';
 
     if (variationsCount <= 1) {
       return {
