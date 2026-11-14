@@ -1,8 +1,8 @@
 {
-  "runId": "run_1794573969792",
-  "startTime": "2026-11-13T12:46:09.792Z",
-  "endTime": "2026-11-13T12:54:40.645Z",
-  "durationMs": 510853,
+  "runId": "run_1794657248890",
+  "startTime": "2026-11-14T11:54:08.890Z",
+  "endTime": "2026-11-14T12:02:54.276Z",
+  "durationMs": 525386,
   "skuSource": "firestore",
   "summary": {
     "total": 28,
@@ -18,9 +18,9 @@
       "url": "https://www.avon.com.ar/p/eau-de-toilette-musk-instinct-masculino-75-ml/AVNARG-135885",
       "vendor": "avon",
       "country": "AR",
-      "timestamp": "2026-11-13T12:46:13.036Z",
+      "timestamp": "2026-11-14T11:54:10.862Z",
       "success": true,
-      "loadTime": 1106,
+      "loadTime": 906,
       "features": [
         {
           "feature": "Vitrine \"Mais produtos da marca\"",
@@ -89,7 +89,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-13T12:46:13.150Z",
+        "capturedAt": "2026-11-14T11:54:10.953Z",
         "locale": "es-AR",
         "product_reviews": {
           "enabled": false,
@@ -280,7 +280,7 @@
           "switch_to_firebase_api": "false",
           "understand_price": "{\"es-AR\":false}",
           "url_gamification": "https://images.rede.natura.net/html/home/2020/01/home/app/game.json",
-          "wl_add_cart_recommendation": "{\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":false,\"enableSearch\":false,\"enablePdp\":false,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AVN_MX_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AVN_MX_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":false,\"enableSearch\":false,\"enablePdp\":false,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AVN_AR_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AVN_AR_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AVN_BR_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AVN_BR_MODAL_RECOMENDACAO\",\"openModalQtd\":5}}",
+          "wl_add_cart_recommendation": "{\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":false,\"enableSearch\":false,\"enablePdp\":false,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AVN_MX_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AVN_MX_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":false,\"enableSearch\":false,\"enablePdp\":false,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AVN_AR_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AVN_AR_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AVON_BR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AVON_BR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5}}",
           "wl_age_limit": "{\"maxAge\":\"100\",\"minAge\":\"18\"}",
           "wl_ask_permission_days": "{\"es-MX\":0,\"pt-BR\":0}",
           "wl_available_countries": "{}",
@@ -348,7 +348,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-13T12:46:19.728Z",
+        "capturedAt": "2026-11-14T11:54:17.154Z",
         "_raw": {
           "businessModelB2C": true,
           "businessModelB2B2C": false,
@@ -559,9 +559,9 @@
       "url": "https://www.avon.com.ar/p/perfume-de-mujer-lov-u/AVNARG-207446",
       "vendor": "avon",
       "country": "AR",
-      "timestamp": "2026-11-13T12:46:51.145Z",
+      "timestamp": "2026-11-14T11:54:49.085Z",
       "success": true,
-      "loadTime": 820,
+      "loadTime": 709,
       "features": [
         {
           "feature": "Vitrine \"Mais produtos da marca\"",
@@ -630,7 +630,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-13T12:46:51.176Z",
+        "capturedAt": "2026-11-14T11:54:49.113Z",
         "locale": "es-AR",
         "product_reviews": {
           "enabled": false,
@@ -821,7 +821,7 @@
           "switch_to_firebase_api": "false",
           "understand_price": "{\"es-AR\":false}",
           "url_gamification": "https://images.rede.natura.net/html/home/2020/01/home/app/game.json",
-          "wl_add_cart_recommendation": "{\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":false,\"enableSearch\":false,\"enablePdp\":false,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AVN_MX_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AVN_MX_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":false,\"enableSearch\":false,\"enablePdp\":false,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AVN_AR_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AVN_AR_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AVN_BR_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AVN_BR_MODAL_RECOMENDACAO\",\"openModalQtd\":5}}",
+          "wl_add_cart_recommendation": "{\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":false,\"enableSearch\":false,\"enablePdp\":false,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AVN_MX_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AVN_MX_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":false,\"enableSearch\":false,\"enablePdp\":false,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AVN_AR_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AVN_AR_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AVON_BR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AVON_BR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5}}",
           "wl_age_limit": "{\"maxAge\":\"100\",\"minAge\":\"18\"}",
           "wl_ask_permission_days": "{\"es-MX\":0,\"pt-BR\":0}",
           "wl_available_countries": "{}",
@@ -889,7 +889,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-13T12:46:57.298Z",
+        "capturedAt": "2026-11-14T11:54:54.958Z",
         "_raw": {
           "businessModelB2C": true,
           "businessModelB2B2C": false,
@@ -1100,9 +1100,9 @@
       "url": "https://www.avon.com.br/p/avon-supershock-volume-max-mascara-para-cilios-10-ml/AVNBRA-222050",
       "vendor": "avon",
       "country": "BR",
-      "timestamp": "2026-11-13T12:46:13.036Z",
+      "timestamp": "2026-11-14T11:54:10.862Z",
       "success": true,
-      "loadTime": 2455,
+      "loadTime": 2260,
       "features": [
         {
           "feature": "Avaliações do produto",
@@ -1318,7 +1318,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-13T12:46:13.137Z",
+        "capturedAt": "2026-11-14T11:54:10.984Z",
         "locale": "pt-BR",
         "product_reviews": {
           "enabled": true,
@@ -1509,7 +1509,7 @@
           "switch_to_firebase_api": "false",
           "understand_price": "{\"es-AR\":false}",
           "url_gamification": "https://images.rede.natura.net/html/home/2020/01/home/app/game.json",
-          "wl_add_cart_recommendation": "{\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":false,\"enableSearch\":false,\"enablePdp\":false,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AVN_MX_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AVN_MX_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":false,\"enableSearch\":false,\"enablePdp\":false,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AVN_AR_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AVN_AR_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AVN_BR_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AVN_BR_MODAL_RECOMENDACAO\",\"openModalQtd\":5}}",
+          "wl_add_cart_recommendation": "{\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":false,\"enableSearch\":false,\"enablePdp\":false,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AVN_MX_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AVN_MX_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":false,\"enableSearch\":false,\"enablePdp\":false,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AVN_AR_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AVN_AR_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AVON_BR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AVON_BR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5}}",
           "wl_age_limit": "{\"maxAge\":\"100\",\"minAge\":\"18\"}",
           "wl_ask_permission_days": "{\"es-MX\":0,\"pt-BR\":0}",
           "wl_available_countries": "{}",
@@ -1577,7 +1577,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-13T12:46:22.001Z",
+        "capturedAt": "2026-11-14T11:54:19.771Z",
         "_raw": {
           "businessModelB2C": true,
           "businessModelB2B2C": false,
@@ -1790,9 +1790,9 @@
       "url": "https://www.avon.com.br/p/avon-iconic-batom-labial-24-g/AVNBRA-251533",
       "vendor": "avon",
       "country": "BR",
-      "timestamp": "2026-11-13T12:46:26.441Z",
+      "timestamp": "2026-11-14T11:54:24.227Z",
       "success": true,
-      "loadTime": 1031,
+      "loadTime": 901,
       "features": [
         {
           "feature": "Avaliações do produto",
@@ -2017,7 +2017,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-13T12:46:26.503Z",
+        "capturedAt": "2026-11-14T11:54:24.263Z",
         "locale": "pt-BR",
         "product_reviews": {
           "enabled": true,
@@ -2208,7 +2208,7 @@
           "switch_to_firebase_api": "false",
           "understand_price": "{\"es-AR\":false}",
           "url_gamification": "https://images.rede.natura.net/html/home/2020/01/home/app/game.json",
-          "wl_add_cart_recommendation": "{\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":false,\"enableSearch\":false,\"enablePdp\":false,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AVN_MX_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AVN_MX_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":false,\"enableSearch\":false,\"enablePdp\":false,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AVN_AR_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AVN_AR_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AVN_BR_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AVN_BR_MODAL_RECOMENDACAO\",\"openModalQtd\":5}}",
+          "wl_add_cart_recommendation": "{\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":false,\"enableSearch\":false,\"enablePdp\":false,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AVN_MX_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AVN_MX_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":false,\"enableSearch\":false,\"enablePdp\":false,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AVN_AR_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AVN_AR_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AVON_BR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AVON_BR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5}}",
           "wl_age_limit": "{\"maxAge\":\"100\",\"minAge\":\"18\"}",
           "wl_ask_permission_days": "{\"es-MX\":0,\"pt-BR\":0}",
           "wl_available_countries": "{}",
@@ -2276,7 +2276,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-13T12:46:33.967Z",
+        "capturedAt": "2026-11-14T11:54:31.780Z",
         "_raw": {
           "businessModelB2C": true,
           "businessModelB2B2C": false,
@@ -2490,9 +2490,9 @@
       "vendor": "avon",
       "country": "BR",
       "channel": "socialcommerce",
-      "timestamp": "2026-11-13T12:46:13.036Z",
+      "timestamp": "2026-11-14T11:54:10.862Z",
       "success": true,
-      "loadTime": 5100,
+      "loadTime": 719,
       "features": [
         {
           "feature": "Avaliações do produto",
@@ -2570,12 +2570,12 @@
           "featureKey": "brandShowcase",
           "passed": true,
           "status": "pass",
-          "message": "Vitrine presente com 48 produto(s) [contentZone: CZ_OM_VITRINE_PDP_MAIS_PRODUTOS_DA_MARCA]",
+          "message": "Vitrine presente com 48 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA_AVNBRA]",
           "details": {
             "productCount": 48,
             "title": "",
-            "einsteinContentZone": "CZ_OM_VITRINE_PDP_MAIS_PRODUTOS_DA_MARCA",
-            "einsteinCampaignCount": 0
+            "einsteinContentZone": "CZ_BR_VITRINE_PDP_EXPERIENCIA_AVNBRA",
+            "einsteinCampaignCount": 1
           }
         },
         {
@@ -2583,12 +2583,12 @@
           "featureKey": "recommendationShowcase",
           "passed": true,
           "status": "pass",
-          "message": "Vitrine de recomendações presente com 39 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA_AVNBRA]",
+          "message": "Vitrine de recomendações: API ok (1 campanha(s), CZ_BR_VITRINE_PDP_EXPERIENCIA_AVNBRA) — componente não renderizou no browser headless",
           "details": {
-            "productCount": 39,
-            "title": "",
             "einsteinContentZone": "CZ_BR_VITRINE_PDP_EXPERIENCIA_AVNBRA",
-            "einsteinCampaignCount": 12
+            "einsteinCampaignCount": 1,
+            "httpStatus": 200,
+            "note": "DOM section not rendered in headless Playwright; API confirmed working"
           }
         },
         {
@@ -2740,7 +2740,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-13T12:46:13.163Z",
+        "capturedAt": "2026-11-14T11:54:10.959Z",
         "locale": "pt-BR",
         "product_reviews": {
           "enabled": true,
@@ -3033,7 +3033,7 @@
           "vse_transition": "{\"pt-BR\":{\"bag_alert\":{\"enabled\":false,\"title\":\"atualização importante!\",\"message\":\"em breve, os pedidos de Entrega Direta serão feitos exclusivamente pelo app ou site Minha Consultoria\"},\"menu_button\":true,\"cta_url\":\"https://consultoria.natura.com.br/webfv/social/direct-delivery\"}}",
           "vse_warning": "true",
           "webview_hide_button_ids": "{\"ids\":[\"footer-app-download\",\"efecty\",\"consultant-profile-contact\",\"social-login-container\"]}",
-          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE\",\"openModalQtd\":5}}",
+          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_ML_BR_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_ML_BR_MODAL_RECOMENDACAO\",\"openModalQtd\":5}}",
           "wl_age_limit": "{\"maxAge\":\"100\",\"minAge\":\"18\"}",
           "wl_app_ne_bannertop_webview": "{\"es-MX\":{\"domain\":[{\"host\":\" \",\"webView\":false}]},\"es-AR\":{\"domain\":[{\"host\":\"https://naturadermoanalyzer.com/ar/login\",\"webView\":true},{\"host\":\"https://naturadermoanalyzer.com/ar/login\",\"webView\":true}]},\"es-CL\":{\"domain\":[{\"host\":\"https://naturadermoanalyzer.com/cl/login\",\"webView\":true}]},\"es-CO\":{\"domain\":[{\"host\":\"https://naturadermoanalyzer.com/co/login\",\"webView\":true}]},\"es-PE\":{\"domain\":[{\"host\":\"https://naturadermoanalyzer.com/pe/login\",\"webView\":true}]},\"pt-BR\":{\"domain\":[{\"host\":\" \",\"webView\":false}]}}",
           "wl_ask_permission_days": "{\"es-AR\":7,\"es-CL\":7,\"es-MX\":7,\"es-CO\":0,\"es-PE\":0,\"pt-BR\":0,\"en-MY\":0}",
@@ -3124,7 +3124,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-13T12:46:24.174Z",
+        "capturedAt": "2026-11-14T11:54:17.806Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": true,
@@ -3343,9 +3343,9 @@
       "vendor": "avon",
       "country": "BR",
       "channel": "socialcommerce",
-      "timestamp": "2026-11-13T12:47:05.612Z",
+      "timestamp": "2026-11-14T11:55:08.359Z",
       "success": true,
-      "loadTime": 668,
+      "loadTime": 498,
       "features": [
         {
           "feature": "Avaliações do produto",
@@ -3437,7 +3437,7 @@
             "productCount": 48,
             "title": "",
             "einsteinContentZone": "CZ_BR_VITRINE_PDP_EXPERIENCIA_AVNBRA",
-            "einsteinCampaignCount": 12
+            "einsteinCampaignCount": 1
           }
         },
         {
@@ -3445,12 +3445,12 @@
           "featureKey": "recommendationShowcase",
           "passed": true,
           "status": "pass",
-          "message": "Vitrine de recomendações presente com 36 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA_AVNBRA]",
+          "message": "Vitrine de recomendações: API ok (1 campanha(s), CZ_BR_VITRINE_PDP_EXPERIENCIA_AVNBRA) — componente não renderizou no browser headless",
           "details": {
-            "productCount": 36,
-            "title": "",
             "einsteinContentZone": "CZ_BR_VITRINE_PDP_EXPERIENCIA_AVNBRA",
-            "einsteinCampaignCount": 12
+            "einsteinCampaignCount": 1,
+            "httpStatus": 200,
+            "note": "DOM section not rendered in headless Playwright; API confirmed working"
           }
         },
         {
@@ -3602,7 +3602,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-13T12:47:05.649Z",
+        "capturedAt": "2026-11-14T11:55:08.390Z",
         "locale": "pt-BR",
         "product_reviews": {
           "enabled": true,
@@ -3895,7 +3895,7 @@
           "vse_transition": "{\"pt-BR\":{\"bag_alert\":{\"enabled\":false,\"title\":\"atualização importante!\",\"message\":\"em breve, os pedidos de Entrega Direta serão feitos exclusivamente pelo app ou site Minha Consultoria\"},\"menu_button\":true,\"cta_url\":\"https://consultoria.natura.com.br/webfv/social/direct-delivery\"}}",
           "vse_warning": "true",
           "webview_hide_button_ids": "{\"ids\":[\"footer-app-download\",\"efecty\",\"consultant-profile-contact\",\"social-login-container\"]}",
-          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE\",\"openModalQtd\":5}}",
+          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_ML_BR_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_ML_BR_MODAL_RECOMENDACAO\",\"openModalQtd\":5}}",
           "wl_age_limit": "{\"maxAge\":\"100\",\"minAge\":\"18\"}",
           "wl_app_ne_bannertop_webview": "{\"es-MX\":{\"domain\":[{\"host\":\" \",\"webView\":false}]},\"es-AR\":{\"domain\":[{\"host\":\"https://naturadermoanalyzer.com/ar/login\",\"webView\":true},{\"host\":\"https://naturadermoanalyzer.com/ar/login\",\"webView\":true}]},\"es-CL\":{\"domain\":[{\"host\":\"https://naturadermoanalyzer.com/cl/login\",\"webView\":true}]},\"es-CO\":{\"domain\":[{\"host\":\"https://naturadermoanalyzer.com/co/login\",\"webView\":true}]},\"es-PE\":{\"domain\":[{\"host\":\"https://naturadermoanalyzer.com/pe/login\",\"webView\":true}]},\"pt-BR\":{\"domain\":[{\"host\":\" \",\"webView\":false}]}}",
           "wl_ask_permission_days": "{\"es-AR\":7,\"es-CL\":7,\"es-MX\":7,\"es-CO\":0,\"es-PE\":0,\"pt-BR\":0,\"en-MY\":0}",
@@ -3986,7 +3986,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-13T12:47:12.383Z",
+        "capturedAt": "2026-11-14T11:55:15.246Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": true,
@@ -4204,9 +4204,9 @@
       "url": "https://www.avon.mx/p/anew-serum-fac-power-renovador-30ml/AVNMEX-201619",
       "vendor": "avon",
       "country": "MX",
-      "timestamp": "2026-11-13T12:46:36.264Z",
+      "timestamp": "2026-11-14T11:54:33.643Z",
       "success": true,
-      "loadTime": 703,
+      "loadTime": 1024,
       "features": [
         {
           "feature": "Vitrine \"Mais produtos da marca\"",
@@ -4275,7 +4275,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-13T12:46:36.318Z",
+        "capturedAt": "2026-11-14T11:54:33.695Z",
         "locale": "es-MX",
         "product_reviews": {
           "enabled": false,
@@ -4466,7 +4466,7 @@
           "switch_to_firebase_api": "false",
           "understand_price": "{\"es-AR\":false}",
           "url_gamification": "https://images.rede.natura.net/html/home/2020/01/home/app/game.json",
-          "wl_add_cart_recommendation": "{\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":false,\"enableSearch\":false,\"enablePdp\":false,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AVN_MX_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AVN_MX_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":false,\"enableSearch\":false,\"enablePdp\":false,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AVN_AR_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AVN_AR_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AVN_BR_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AVN_BR_MODAL_RECOMENDACAO\",\"openModalQtd\":5}}",
+          "wl_add_cart_recommendation": "{\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":false,\"enableSearch\":false,\"enablePdp\":false,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AVN_MX_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AVN_MX_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":false,\"enableSearch\":false,\"enablePdp\":false,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AVN_AR_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AVN_AR_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AVON_BR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AVON_BR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5}}",
           "wl_age_limit": "{\"maxAge\":\"100\",\"minAge\":\"18\"}",
           "wl_ask_permission_days": "{\"es-MX\":0,\"pt-BR\":0}",
           "wl_available_countries": "{}",
@@ -4534,7 +4534,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-13T12:46:42.245Z",
+        "capturedAt": "2026-11-14T11:54:39.864Z",
         "_raw": {
           "businessModelB2C": true,
           "businessModelB2B2C": false,
@@ -4740,9 +4740,9 @@
       "url": "https://www.naturacosmeticos.com.ar/p/base-serum-nude-me/NATARG-00068",
       "vendor": "natura",
       "country": "AR",
-      "timestamp": "2026-11-13T12:47:12.291Z",
+      "timestamp": "2026-11-14T11:55:09.904Z",
       "success": true,
-      "loadTime": 1834,
+      "loadTime": 1443,
       "features": [
         {
           "feature": "Avaliações do produto",
@@ -4763,20 +4763,18 @@
           "featureKey": "aiReviewSummary",
           "passed": true,
           "status": "pass",
-          "message": "Resumo por IA exibido igual ao da API (processado em 08/11/2026; tópicos: Comodidad (positivo), Apariencia (positivo), Calidad (positivo)): \"Los clientes destacan que la base es ligera y suave al usarla, y valoran su acabado natural y aterciopelado. También mencionan la calidad del acabado.\"",
+          "message": "Resumo por IA exibido igual ao da API (processado em 13/11/2026; tópicos: Comodidad (positivo)): \"Los clientes destacan que es ligera, suave y aterciopelada al usarla, y que no deja una sensación grasosa.\"",
           "details": {
             "apiUrl": "https://www.naturacosmeticos.com.ar/bff-app-natura-argentina/reviews/v2/details?productId=NATARG-00068",
             "apiStatus": 200,
             "aiSummary": {
-              "processedDate": "2026-11-08T11:43:32.518Z",
-              "text": "Los clientes destacan que la base es ligera y suave al usarla, y valoran su acabado natural y aterciopelado. También mencionan la calidad del acabado.",
+              "processedDate": "2026-11-13T18:53:37.979Z",
+              "text": "Los clientes destacan que es ligera, suave y aterciopelada al usarla, y que no deja una sensación grasosa.",
               "topics": {
-                "Comodidad": "positive",
-                "Apariencia": "positive",
-                "Calidad": "positive"
+                "Comodidad": "positive"
               }
             },
-            "pageText": "Los clientes destacan que la base es ligera y suave al usarla, y valoran su acabado natural y aterciopelado. También mencionan la calidad del acabado."
+            "pageText": "Los clientes destacan que es ligera, suave y aterciopelada al usarla, y que no deja una sensación grasosa."
           },
           "flagKey": "product_reviews.ai_summary",
           "flagValue": true
@@ -5014,7 +5012,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-13T12:47:13.057Z",
+        "capturedAt": "2026-11-14T11:55:10.517Z",
         "locale": "es-AR",
         "product_reviews": {
           "enabled": true,
@@ -5352,7 +5350,7 @@
           "url_gamification": "https://images.rede.natura.net/html/home/2020/01/home/app/game.json",
           "webview_consultant_expiration_timestamp": "2592000",
           "webview_hide_button_ids": "{\"ids\":[\"footer-app-download\",\"efecty\",\"consultant-profile-contact\",\"social-login-container\"]}",
-          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE\",\"openModalQtd\":5},\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_MX_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_MX_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AR_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AR_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-CL\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CL_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CL_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-CO\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CO_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CO_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-PE\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_PE_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_PE_MODAL_RECOMENDACAO\",\"openModalQtd\":5}}",
+          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_MX_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_MX_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-CL\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CL_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CL_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-CO\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CO_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CO_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-PE\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_PE_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_PE_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5}}",
           "wl_age_limit": "{\"maxAge\":\"100\",\"minAge\":\"18\"}",
           "wl_algolia_setup": "{\"pt-BR\":{\"application_id\":\"AME48NG6Q4\",\"search_api_key\":\"79f9de6454ab0a2cc78b874995c53dd7\"}}",
           "wl_app_ne_bannertop_webview": "{\n  \"es-MX\": {\n    \"domain\": [\n      {\n        \"host\": \" \",\n        \"webView\": false\n      }\n    ]\n  },\n  \"es-AR\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/ar/login\",\n        \"webView\": true\n      },\n      {\n        \"host\": \"https://naturadermoanalyzer.com/ar/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-CL\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/cl/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-CO\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/co/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-PE\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/pe/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"pt-BR\": {\n    \"domain\": [\n      {\n        \"host\": \" \",\n        \"webView\": false\n      }\n    ]\n  }\n}",
@@ -5449,7 +5447,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-13T12:47:20.855Z",
+        "capturedAt": "2026-11-14T11:55:18.172Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": false,
@@ -5662,9 +5660,9 @@
       "url": "https://www.naturacosmeticos.com.ar/p/homem-potence-edp-100-ml/NATARG-81950",
       "vendor": "natura",
       "country": "AR",
-      "timestamp": "2026-11-13T12:48:04.076Z",
+      "timestamp": "2026-11-14T11:56:00.234Z",
       "success": true,
-      "loadTime": 2415,
+      "loadTime": 713,
       "features": [
         {
           "feature": "Avaliações do produto",
@@ -5762,9 +5760,9 @@
           "featureKey": "recommendationShowcase",
           "passed": true,
           "status": "pass",
-          "message": "Vitrine de recomendações presente com 36 produto(s) [contentZone: CZ_AR_VITRINE_PDP_EXPERIENCIA]",
+          "message": "Vitrine de recomendações presente com 35 produto(s) [contentZone: CZ_AR_VITRINE_PDP_EXPERIENCIA]",
           "details": {
-            "productCount": 36,
+            "productCount": 35,
             "title": "",
             "einsteinContentZone": "CZ_AR_VITRINE_PDP_EXPERIENCIA",
             "einsteinCampaignCount": 12
@@ -5920,7 +5918,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-13T12:48:04.362Z",
+        "capturedAt": "2026-11-14T11:56:00.370Z",
         "locale": "es-AR",
         "product_reviews": {
           "enabled": true,
@@ -6258,7 +6256,7 @@
           "url_gamification": "https://images.rede.natura.net/html/home/2020/01/home/app/game.json",
           "webview_consultant_expiration_timestamp": "2592000",
           "webview_hide_button_ids": "{\"ids\":[\"footer-app-download\",\"efecty\",\"consultant-profile-contact\",\"social-login-container\"]}",
-          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE\",\"openModalQtd\":5},\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_MX_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_MX_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AR_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AR_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-CL\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CL_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CL_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-CO\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CO_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CO_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-PE\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_PE_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_PE_MODAL_RECOMENDACAO\",\"openModalQtd\":5}}",
+          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_MX_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_MX_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-CL\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CL_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CL_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-CO\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CO_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CO_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-PE\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_PE_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_PE_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5}}",
           "wl_age_limit": "{\"maxAge\":\"100\",\"minAge\":\"18\"}",
           "wl_algolia_setup": "{\"pt-BR\":{\"application_id\":\"AME48NG6Q4\",\"search_api_key\":\"79f9de6454ab0a2cc78b874995c53dd7\"}}",
           "wl_app_ne_bannertop_webview": "{\n  \"es-MX\": {\n    \"domain\": [\n      {\n        \"host\": \" \",\n        \"webView\": false\n      }\n    ]\n  },\n  \"es-AR\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/ar/login\",\n        \"webView\": true\n      },\n      {\n        \"host\": \"https://naturadermoanalyzer.com/ar/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-CL\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/cl/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-CO\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/co/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-PE\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/pe/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"pt-BR\": {\n    \"domain\": [\n      {\n        \"host\": \" \",\n        \"webView\": false\n      }\n    ]\n  }\n}",
@@ -6355,7 +6353,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-13T12:48:12.819Z",
+        "capturedAt": "2026-11-14T11:56:07.075Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": false,
@@ -6568,9 +6566,9 @@
       "url": "https://www.naturacosmeticos.com.ar/p/kriska-shock-eau-de-toilette-femenino-100ml/NATARG-83323",
       "vendor": "natura",
       "country": "AR",
-      "timestamp": "2026-11-13T12:48:54.926Z",
+      "timestamp": "2026-11-14T11:56:49.140Z",
       "success": true,
-      "loadTime": 1306,
+      "loadTime": 1374,
       "features": [
         {
           "feature": "Avaliações do produto",
@@ -6833,7 +6831,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-13T12:48:55.133Z",
+        "capturedAt": "2026-11-14T11:56:49.345Z",
         "locale": "es-AR",
         "product_reviews": {
           "enabled": true,
@@ -7171,7 +7169,7 @@
           "url_gamification": "https://images.rede.natura.net/html/home/2020/01/home/app/game.json",
           "webview_consultant_expiration_timestamp": "2592000",
           "webview_hide_button_ids": "{\"ids\":[\"footer-app-download\",\"efecty\",\"consultant-profile-contact\",\"social-login-container\"]}",
-          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE\",\"openModalQtd\":5},\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_MX_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_MX_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AR_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AR_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-CL\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CL_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CL_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-CO\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CO_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CO_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-PE\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_PE_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_PE_MODAL_RECOMENDACAO\",\"openModalQtd\":5}}",
+          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_MX_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_MX_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-CL\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CL_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CL_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-CO\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CO_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CO_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-PE\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_PE_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_PE_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5}}",
           "wl_age_limit": "{\"maxAge\":\"100\",\"minAge\":\"18\"}",
           "wl_algolia_setup": "{\"pt-BR\":{\"application_id\":\"AME48NG6Q4\",\"search_api_key\":\"79f9de6454ab0a2cc78b874995c53dd7\"}}",
           "wl_app_ne_bannertop_webview": "{\n  \"es-MX\": {\n    \"domain\": [\n      {\n        \"host\": \" \",\n        \"webView\": false\n      }\n    ]\n  },\n  \"es-AR\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/ar/login\",\n        \"webView\": true\n      },\n      {\n        \"host\": \"https://naturadermoanalyzer.com/ar/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-CL\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/cl/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-CO\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/co/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-PE\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/pe/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"pt-BR\": {\n    \"domain\": [\n      {\n        \"host\": \" \",\n        \"webView\": false\n      }\n    ]\n  }\n}",
@@ -7268,7 +7266,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-13T12:49:02.596Z",
+        "capturedAt": "2026-11-14T11:56:56.554Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": false,
@@ -7482,9 +7480,9 @@
       "vendor": "natura",
       "country": "BR",
       "channel": "socialcommerce",
-      "timestamp": "2026-11-13T12:47:27.348Z",
+      "timestamp": "2026-11-14T11:55:24.993Z",
       "success": true,
-      "loadTime": 12551,
+      "loadTime": 539,
       "features": [
         {
           "feature": "Avaliações do produto",
@@ -7574,7 +7572,7 @@
             "productCount": 46,
             "title": "",
             "einsteinContentZone": "CZ_BR_VITRINE_PDP_EXPERIENCIA_NATBRA",
-            "einsteinCampaignCount": 10
+            "einsteinCampaignCount": 11
           }
         },
         {
@@ -7582,12 +7580,12 @@
           "featureKey": "recommendationShowcase",
           "passed": true,
           "status": "pass",
-          "message": "Vitrine de recomendações presente com 30 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA_NATBRA]",
+          "message": "Vitrine de recomendações presente com 33 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA_NATBRA]",
           "details": {
-            "productCount": 30,
+            "productCount": 33,
             "title": "",
             "einsteinContentZone": "CZ_BR_VITRINE_PDP_EXPERIENCIA_NATBRA",
-            "einsteinCampaignCount": 10
+            "einsteinCampaignCount": 11
           }
         },
         {
@@ -7739,7 +7737,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-13T12:47:27.412Z",
+        "capturedAt": "2026-11-14T11:55:25.075Z",
         "locale": "pt-BR",
         "product_reviews": {
           "enabled": true,
@@ -8032,7 +8030,7 @@
           "vse_transition": "{\"pt-BR\":{\"bag_alert\":{\"enabled\":false,\"title\":\"atualização importante!\",\"message\":\"em breve, os pedidos de Entrega Direta serão feitos exclusivamente pelo app ou site Minha Consultoria\"},\"menu_button\":true,\"cta_url\":\"https://consultoria.natura.com.br/webfv/social/direct-delivery\"}}",
           "vse_warning": "true",
           "webview_hide_button_ids": "{\"ids\":[\"footer-app-download\",\"efecty\",\"consultant-profile-contact\",\"social-login-container\"]}",
-          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE\",\"openModalQtd\":5}}",
+          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_ML_BR_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_ML_BR_MODAL_RECOMENDACAO\",\"openModalQtd\":5}}",
           "wl_age_limit": "{\"maxAge\":\"100\",\"minAge\":\"18\"}",
           "wl_app_ne_bannertop_webview": "{\"es-MX\":{\"domain\":[{\"host\":\" \",\"webView\":false}]},\"es-AR\":{\"domain\":[{\"host\":\"https://naturadermoanalyzer.com/ar/login\",\"webView\":true},{\"host\":\"https://naturadermoanalyzer.com/ar/login\",\"webView\":true}]},\"es-CL\":{\"domain\":[{\"host\":\"https://naturadermoanalyzer.com/cl/login\",\"webView\":true}]},\"es-CO\":{\"domain\":[{\"host\":\"https://naturadermoanalyzer.com/co/login\",\"webView\":true}]},\"es-PE\":{\"domain\":[{\"host\":\"https://naturadermoanalyzer.com/pe/login\",\"webView\":true}]},\"pt-BR\":{\"domain\":[{\"host\":\" \",\"webView\":false}]}}",
           "wl_ask_permission_days": "{\"es-AR\":7,\"es-CL\":7,\"es-MX\":7,\"es-CO\":0,\"es-PE\":0,\"pt-BR\":0,\"en-MY\":0}",
@@ -8123,7 +8121,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-13T12:47:46.161Z",
+        "capturedAt": "2026-11-14T11:55:31.657Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": true,
@@ -8342,19 +8340,19 @@
       "vendor": "natura",
       "country": "BR",
       "channel": "socialcommerce",
-      "timestamp": "2026-11-13T12:48:27.726Z",
+      "timestamp": "2026-11-14T11:56:13.123Z",
       "success": true,
-      "loadTime": 1516,
+      "loadTime": 1640,
       "features": [
         {
           "feature": "Avaliações do produto",
           "featureKey": "reviews",
           "passed": true,
           "status": "pass",
-          "message": "Seção de avaliações presente com 123 reviews",
+          "message": "Seção de avaliações presente com 124 reviews",
           "details": {
             "hasRating": true,
-            "reviewCount": 123,
+            "reviewCount": 124,
             "gtmId": null
           },
           "flagKey": "product_reviews.enabled",
@@ -8405,9 +8403,9 @@
           "featureKey": "reviewPhotos",
           "passed": true,
           "status": "pass",
-          "message": "3 foto(s) encontrada(s) nas avaliações",
+          "message": "4 foto(s) encontrada(s) nas avaliações",
           "details": {
-            "photoCount": 3
+            "photoCount": 4
           },
           "flagKey": "product_reviews.photos",
           "flagValue": true
@@ -8430,9 +8428,9 @@
           "featureKey": "brandShowcase",
           "passed": true,
           "status": "pass",
-          "message": "Vitrine presente com 42 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA_NATBRA]",
+          "message": "Vitrine presente com 41 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA_NATBRA]",
           "details": {
-            "productCount": 42,
+            "productCount": 41,
             "title": "",
             "einsteinContentZone": "CZ_BR_VITRINE_PDP_EXPERIENCIA_NATBRA",
             "einsteinCampaignCount": 12
@@ -8473,7 +8471,7 @@
           "details": {
             "ratingValue": 4.9,
             "starCount": 0,
-            "ratingText": "4.9(123) avaliações",
+            "ratingText": "4.9(124) avaliações",
             "source": "dom",
             "productRating": 4.9
           }
@@ -8592,15 +8590,15 @@
               {
                 "method": "GET",
                 "status": 200,
-                "url": "https://www.minhaloja.natura.com/bff-app-socialcommerce/reviews/v2/details?productId=NATBRA-172407&sortField=created&sortOrder=desc&page=1&pageSize=123&filterMedia=pictures"
+                "url": "https://www.minhaloja.natura.com/bff-app-socialcommerce/reviews/v2/details?productId=NATBRA-172407&sortField=created&sortOrder=desc&page=1&pageSize=124&filterMedia=pictures"
               }
             ],
-            "bodyPreview": "{\"productId\":\"NATBRA-172407\",\"aggregatedRating\":4.9,\"reviewsCount\":123,\"recommendedPercentage\":100,\"reviews\":[{\"id\":\"681c73b088aee4888c824ab5\",\"createdAt\":\"2025-04-06T13:00:07.000Z\",\"rating\":5,\"helpfu"
+            "bodyPreview": "{\"productId\":\"NATBRA-172407\",\"aggregatedRating\":4.9,\"reviewsCount\":124,\"recommendedPercentage\":100,\"reviews\":[{\"id\":\"6af73173ae4bf16f292d6e00\",\"createdAt\":\"2026-11-13T15:49:07.774Z\",\"rating\":5,\"helpfu"
           }
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-13T12:48:27.764Z",
+        "capturedAt": "2026-11-14T11:56:13.150Z",
         "locale": "pt-BR",
         "product_reviews": {
           "enabled": true,
@@ -8893,7 +8891,7 @@
           "vse_transition": "{\"pt-BR\":{\"bag_alert\":{\"enabled\":false,\"title\":\"atualização importante!\",\"message\":\"em breve, os pedidos de Entrega Direta serão feitos exclusivamente pelo app ou site Minha Consultoria\"},\"menu_button\":true,\"cta_url\":\"https://consultoria.natura.com.br/webfv/social/direct-delivery\"}}",
           "vse_warning": "true",
           "webview_hide_button_ids": "{\"ids\":[\"footer-app-download\",\"efecty\",\"consultant-profile-contact\",\"social-login-container\"]}",
-          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE\",\"openModalQtd\":5}}",
+          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_ML_BR_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_ML_BR_MODAL_RECOMENDACAO\",\"openModalQtd\":5}}",
           "wl_age_limit": "{\"maxAge\":\"100\",\"minAge\":\"18\"}",
           "wl_app_ne_bannertop_webview": "{\"es-MX\":{\"domain\":[{\"host\":\" \",\"webView\":false}]},\"es-AR\":{\"domain\":[{\"host\":\"https://naturadermoanalyzer.com/ar/login\",\"webView\":true},{\"host\":\"https://naturadermoanalyzer.com/ar/login\",\"webView\":true}]},\"es-CL\":{\"domain\":[{\"host\":\"https://naturadermoanalyzer.com/cl/login\",\"webView\":true}]},\"es-CO\":{\"domain\":[{\"host\":\"https://naturadermoanalyzer.com/co/login\",\"webView\":true}]},\"es-PE\":{\"domain\":[{\"host\":\"https://naturadermoanalyzer.com/pe/login\",\"webView\":true}]},\"pt-BR\":{\"domain\":[{\"host\":\" \",\"webView\":false}]}}",
           "wl_ask_permission_days": "{\"es-AR\":7,\"es-CL\":7,\"es-MX\":7,\"es-CO\":0,\"es-PE\":0,\"pt-BR\":0,\"en-MY\":0}",
@@ -8984,7 +8982,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-13T12:48:34.974Z",
+        "capturedAt": "2026-11-14T11:56:20.601Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": true,
@@ -9202,9 +9200,9 @@
       "url": "https://www.natura.com.br/p/base-serum-nude-me-una-30-ml/NATBRA-110181",
       "vendor": "natura",
       "country": "BR",
-      "timestamp": "2026-11-13T12:47:52.971Z",
+      "timestamp": "2026-11-14T11:56:05.038Z",
       "success": true,
-      "loadTime": 1554,
+      "loadTime": 2289,
       "features": [
         {
           "feature": "Avaliações do produto",
@@ -9304,9 +9302,9 @@
           "featureKey": "recommendationShowcase",
           "passed": true,
           "status": "pass",
-          "message": "Vitrine de recomendações presente com 43 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA]",
+          "message": "Vitrine de recomendações presente com 42 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA]",
           "details": {
-            "productCount": 43,
+            "productCount": 42,
             "title": "",
             "einsteinContentZone": "CZ_BR_VITRINE_PDP_EXPERIENCIA",
             "einsteinCampaignCount": 12
@@ -9475,7 +9473,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-13T12:47:53.038Z",
+        "capturedAt": "2026-11-14T11:56:05.142Z",
         "locale": "pt-BR",
         "product_reviews": {
           "enabled": true,
@@ -9813,7 +9811,7 @@
           "url_gamification": "https://images.rede.natura.net/html/home/2020/01/home/app/game.json",
           "webview_consultant_expiration_timestamp": "2592000",
           "webview_hide_button_ids": "{\"ids\":[\"footer-app-download\",\"efecty\",\"consultant-profile-contact\",\"social-login-container\"]}",
-          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE\",\"openModalQtd\":5},\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_MX_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_MX_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AR_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AR_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-CL\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CL_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CL_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-CO\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CO_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CO_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-PE\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_PE_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_PE_MODAL_RECOMENDACAO\",\"openModalQtd\":5}}",
+          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_MX_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_MX_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-CL\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CL_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CL_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-CO\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CO_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CO_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-PE\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_PE_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_PE_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5}}",
           "wl_age_limit": "{\"maxAge\":\"100\",\"minAge\":\"18\"}",
           "wl_algolia_setup": "{\"pt-BR\":{\"application_id\":\"AME48NG6Q4\",\"search_api_key\":\"79f9de6454ab0a2cc78b874995c53dd7\"}}",
           "wl_app_ne_bannertop_webview": "{\n  \"es-MX\": {\n    \"domain\": [\n      {\n        \"host\": \" \",\n        \"webView\": false\n      }\n    ]\n  },\n  \"es-AR\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/ar/login\",\n        \"webView\": true\n      },\n      {\n        \"host\": \"https://naturadermoanalyzer.com/ar/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-CL\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/cl/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-CO\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/co/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-PE\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/pe/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"pt-BR\": {\n    \"domain\": [\n      {\n        \"host\": \" \",\n        \"webView\": false\n      }\n    ]\n  }\n}",
@@ -9910,7 +9908,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-13T12:48:00.428Z",
+        "capturedAt": "2026-11-14T11:56:13.341Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": false,
@@ -10135,9 +10133,9 @@
       "url": "https://www.natura.com.br/p/corretivo-cobertura-extrema-24h-una-8-ml/NATBRA-122112",
       "vendor": "natura",
       "country": "BR",
-      "timestamp": "2026-11-13T12:48:41.802Z",
+      "timestamp": "2026-11-14T11:56:56.009Z",
       "success": true,
-      "loadTime": 2546,
+      "loadTime": 2451,
       "features": [
         {
           "feature": "Avaliações do produto",
@@ -10236,9 +10234,9 @@
           "featureKey": "recommendationShowcase",
           "passed": true,
           "status": "pass",
-          "message": "Vitrine de recomendações presente com 44 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA]",
+          "message": "Vitrine de recomendações presente com 42 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA]",
           "details": {
-            "productCount": 44,
+            "productCount": 42,
             "title": "",
             "einsteinContentZone": "CZ_BR_VITRINE_PDP_EXPERIENCIA",
             "einsteinCampaignCount": 12
@@ -10400,7 +10398,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-13T12:48:41.836Z",
+        "capturedAt": "2026-11-14T11:56:56.039Z",
         "locale": "pt-BR",
         "product_reviews": {
           "enabled": true,
@@ -10738,7 +10736,7 @@
           "url_gamification": "https://images.rede.natura.net/html/home/2020/01/home/app/game.json",
           "webview_consultant_expiration_timestamp": "2592000",
           "webview_hide_button_ids": "{\"ids\":[\"footer-app-download\",\"efecty\",\"consultant-profile-contact\",\"social-login-container\"]}",
-          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE\",\"openModalQtd\":5},\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_MX_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_MX_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AR_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AR_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-CL\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CL_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CL_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-CO\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CO_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CO_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-PE\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_PE_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_PE_MODAL_RECOMENDACAO\",\"openModalQtd\":5}}",
+          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_MX_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_MX_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-CL\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CL_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CL_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-CO\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CO_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CO_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-PE\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_PE_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_PE_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5}}",
           "wl_age_limit": "{\"maxAge\":\"100\",\"minAge\":\"18\"}",
           "wl_algolia_setup": "{\"pt-BR\":{\"application_id\":\"AME48NG6Q4\",\"search_api_key\":\"79f9de6454ab0a2cc78b874995c53dd7\"}}",
           "wl_app_ne_bannertop_webview": "{\n  \"es-MX\": {\n    \"domain\": [\n      {\n        \"host\": \" \",\n        \"webView\": false\n      }\n    ]\n  },\n  \"es-AR\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/ar/login\",\n        \"webView\": true\n      },\n      {\n        \"host\": \"https://naturadermoanalyzer.com/ar/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-CL\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/cl/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-CO\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/co/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-PE\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/pe/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"pt-BR\": {\n    \"domain\": [\n      {\n        \"host\": \" \",\n        \"webView\": false\n      }\n    ]\n  }\n}",
@@ -10835,7 +10833,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-13T12:48:50.192Z",
+        "capturedAt": "2026-11-14T11:57:04.781Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": false,
@@ -11060,9 +11058,9 @@
       "url": "https://www.natura.com.br/p/deo-colonia-kaiak-ultra-masculino-100ml/NATBRA-169786",
       "vendor": "natura",
       "country": "BR",
-      "timestamp": "2026-11-13T12:49:33.667Z",
+      "timestamp": "2026-11-14T11:57:48.550Z",
       "success": true,
-      "loadTime": 2731,
+      "loadTime": 2248,
       "features": [
         {
           "feature": "Avaliações do produto",
@@ -11324,7 +11322,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-13T12:49:33.703Z",
+        "capturedAt": "2026-11-14T11:57:48.587Z",
         "locale": "pt-BR",
         "product_reviews": {
           "enabled": true,
@@ -11662,7 +11660,7 @@
           "url_gamification": "https://images.rede.natura.net/html/home/2020/01/home/app/game.json",
           "webview_consultant_expiration_timestamp": "2592000",
           "webview_hide_button_ids": "{\"ids\":[\"footer-app-download\",\"efecty\",\"consultant-profile-contact\",\"social-login-container\"]}",
-          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE\",\"openModalQtd\":5},\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_MX_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_MX_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AR_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AR_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-CL\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CL_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CL_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-CO\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CO_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CO_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-PE\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_PE_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_PE_MODAL_RECOMENDACAO\",\"openModalQtd\":5}}",
+          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_MX_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_MX_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-CL\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CL_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CL_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-CO\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CO_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CO_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-PE\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_PE_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_PE_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5}}",
           "wl_age_limit": "{\"maxAge\":\"100\",\"minAge\":\"18\"}",
           "wl_algolia_setup": "{\"pt-BR\":{\"application_id\":\"AME48NG6Q4\",\"search_api_key\":\"79f9de6454ab0a2cc78b874995c53dd7\"}}",
           "wl_app_ne_bannertop_webview": "{\n  \"es-MX\": {\n    \"domain\": [\n      {\n        \"host\": \" \",\n        \"webView\": false\n      }\n    ]\n  },\n  \"es-AR\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/ar/login\",\n        \"webView\": true\n      },\n      {\n        \"host\": \"https://naturadermoanalyzer.com/ar/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-CL\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/cl/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-CO\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/co/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-PE\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/pe/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"pt-BR\": {\n    \"domain\": [\n      {\n        \"host\": \" \",\n        \"webView\": false\n      }\n    ]\n  }\n}",
@@ -11759,7 +11757,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-13T12:49:42.194Z",
+        "capturedAt": "2026-11-14T11:57:56.684Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": false,
@@ -11984,19 +11982,19 @@
       "url": "https://www.natura.com.br/p/oleo-em-creme-ultranutritivo-restaurador-tododia-jambo-rosa-e-flor-de-caju-200-ml/NATBRA-172407",
       "vendor": "natura",
       "country": "BR",
-      "timestamp": "2026-11-13T12:50:25.943Z",
+      "timestamp": "2026-11-14T11:58:41.575Z",
       "success": true,
-      "loadTime": 3240,
+      "loadTime": 5326,
       "features": [
         {
           "feature": "Avaliações do produto",
           "featureKey": "reviews",
           "passed": true,
           "status": "pass",
-          "message": "Seção de avaliações presente com 123 reviews",
+          "message": "Seção de avaliações presente com 124 reviews",
           "details": {
             "hasRating": true,
-            "reviewCount": 123,
+            "reviewCount": 124,
             "gtmId": null
           },
           "flagKey": "product_reviews.enabled",
@@ -12047,9 +12045,9 @@
           "featureKey": "reviewPhotos",
           "passed": true,
           "status": "pass",
-          "message": "3 foto(s) encontrada(s) nas avaliações",
+          "message": "4 foto(s) encontrada(s) nas avaliações",
           "details": {
-            "photoCount": 3
+            "photoCount": 4
           },
           "flagKey": "product_reviews.photos",
           "flagValue": true
@@ -12077,7 +12075,7 @@
             "productCount": 55,
             "title": "",
             "einsteinContentZone": "CZ_BR_VITRINE_PDP_EXPERIENCIA",
-            "einsteinCampaignCount": 12
+            "einsteinCampaignCount": 11
           }
         },
         {
@@ -12085,12 +12083,12 @@
           "featureKey": "recommendationShowcase",
           "passed": true,
           "status": "pass",
-          "message": "Vitrine de recomendações presente com 36 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA]",
+          "message": "Vitrine de recomendações presente com 33 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA]",
           "details": {
-            "productCount": 36,
+            "productCount": 33,
             "title": "",
             "einsteinContentZone": "CZ_BR_VITRINE_PDP_EXPERIENCIA",
-            "einsteinCampaignCount": 12
+            "einsteinCampaignCount": 11
           }
         },
         {
@@ -12127,7 +12125,7 @@
           "details": {
             "ratingValue": 4.9,
             "starCount": 0,
-            "ratingText": "4.9(123) avaliações",
+            "ratingText": "4.9(124) avaliações",
             "source": "dom",
             "productRating": 4.9
           }
@@ -12247,15 +12245,15 @@
               {
                 "method": "GET",
                 "status": 200,
-                "url": "https://www.natura.com.br/bff-app-natura-brazil/reviews/v2/details?productId=NATBRA-172407&sortField=created&sortOrder=desc&page=1&pageSize=123&filterMedia=pictures"
+                "url": "https://www.natura.com.br/bff-app-natura-brazil/reviews/v2/details?productId=NATBRA-172407&sortField=created&sortOrder=desc&page=1&pageSize=124&filterMedia=pictures"
               }
             ],
-            "bodyPreview": "{\"productId\":\"NATBRA-172407\",\"aggregatedRating\":4.9,\"reviewsCount\":123,\"recommendedPercentage\":100,\"reviews\":[{\"id\":\"681c73b088aee4888c824ab5\",\"createdAt\":\"2025-04-06T13:00:07.000Z\",\"rating\":5,\"helpfu"
+            "bodyPreview": "{\"productId\":\"NATBRA-172407\",\"aggregatedRating\":4.9,\"reviewsCount\":124,\"recommendedPercentage\":100,\"reviews\":[{\"id\":\"6af73173ae4bf16f292d6e00\",\"createdAt\":\"2026-11-13T15:49:07.774Z\",\"rating\":5,\"helpfu"
           }
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-13T12:50:25.981Z",
+        "capturedAt": "2026-11-14T11:58:41.674Z",
         "locale": "pt-BR",
         "product_reviews": {
           "enabled": true,
@@ -12376,7 +12374,7 @@
           "enable_conversational_search_app": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":false}",
           "enable_coupon_compatible_current_cart": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":false}",
           "enable_coupons_pdp": "{\"es-MX\":true,\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true,\"pt-BR-ML\":true}",
-          "enable_crmbonus_cashback": "{\"pt-BR\":true,\"es-AR\":false,\"es-CO\":false,\"es-CL\":false,\"es-PE\":false,\"es-MX\":false}",
+          "enable_crmbonus_cashback": "{   \"pt-BR\": false,   \"es-AR\": false,   \"es-CO\": false,   \"es-CL\": false,   \"es-PE\": false,   \"es-MX\": false }",
           "enable_descount_amount_tag_pdp": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":true}",
           "enable_fetch_pages_onserver": "{\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"es-MX\":false,\"pt-BR\":false}",
           "enable_floating_button_liveshopping": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":false,\"pt-BR-ML\":false}",
@@ -12593,7 +12591,7 @@
           "url_gamification": "https://images.rede.natura.net/html/home/2020/01/home/app/game.json",
           "webview_consultant_expiration_timestamp": "2592000",
           "webview_hide_button_ids": "{\"ids\":[\"footer-app-download\",\"efecty\",\"consultant-profile-contact\",\"social-login-container\"]}",
-          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE\",\"openModalQtd\":5},\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_MX_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_MX_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AR_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AR_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-CL\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CL_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CL_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-CO\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CO_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CO_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-PE\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_PE_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_PE_MODAL_RECOMENDACAO\",\"openModalQtd\":5}}",
+          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_MX_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_MX_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-CL\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CL_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CL_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-CO\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CO_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CO_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-PE\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_PE_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_PE_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5}}",
           "wl_age_limit": "{\"maxAge\":\"100\",\"minAge\":\"18\"}",
           "wl_algolia_setup": "{\"pt-BR\":{\"application_id\":\"AME48NG6Q4\",\"search_api_key\":\"79f9de6454ab0a2cc78b874995c53dd7\"}}",
           "wl_app_ne_bannertop_webview": "{\n  \"es-MX\": {\n    \"domain\": [\n      {\n        \"host\": \" \",\n        \"webView\": false\n      }\n    ]\n  },\n  \"es-AR\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/ar/login\",\n        \"webView\": true\n      },\n      {\n        \"host\": \"https://naturadermoanalyzer.com/ar/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-CL\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/cl/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-CO\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/co/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-PE\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/pe/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"pt-BR\": {\n    \"domain\": [\n      {\n        \"host\": \" \",\n        \"webView\": false\n      }\n    ]\n  }\n}",
@@ -12690,7 +12688,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-13T12:50:34.672Z",
+        "capturedAt": "2026-11-14T11:58:52.499Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": false,
@@ -12915,19 +12913,19 @@
       "url": "https://www.natura.com.br/p/sabonete-em-barra-puro-vegetal-tododia-algodao-5-un-de-90-g-cada/NATBRA-2830",
       "vendor": "natura",
       "country": "BR",
-      "timestamp": "2026-11-13T12:51:18.789Z",
+      "timestamp": "2026-11-14T11:59:33.639Z",
       "success": true,
-      "loadTime": 1087,
+      "loadTime": 2593,
       "features": [
         {
           "feature": "Avaliações do produto",
           "featureKey": "reviews",
           "passed": true,
           "status": "pass",
-          "message": "Seção de avaliações presente com 1256 reviews",
+          "message": "Seção de avaliações presente com 1257 reviews",
           "details": {
             "hasRating": true,
-            "reviewCount": 1256,
+            "reviewCount": 1257,
             "gtmId": null
           },
           "flagKey": "product_reviews.enabled",
@@ -12938,18 +12936,19 @@
           "featureKey": "aiReviewSummary",
           "passed": true,
           "status": "pass",
-          "message": "Resumo por IA exibido igual ao da API (processado em 08/11/2026; tópicos: Aroma (positivo)): \"Os clientes destacam o aroma suave e agradável, descrito também como maravilhoso e duradouro na pele.\"",
+          "message": "Resumo por IA exibido igual ao da API (processado em 13/11/2026; tópicos: Aroma (positivo), Conforto (positivo)): \"Os clientes destacam a fragrância agradável, suave e duradoura. Também mencionam a espuma cremosa e a sensação de pele macia e hidratada.\"",
           "details": {
             "apiUrl": "https://www.natura.com.br/bff-app-natura-brazil/reviews/v2/details?productId=NATBRA-2830",
             "apiStatus": 200,
             "aiSummary": {
-              "processedDate": "2026-11-08T20:28:39.070Z",
-              "text": "Os clientes destacam o aroma suave e agradável, descrito também como maravilhoso e duradouro na pele.",
+              "processedDate": "2026-11-13T21:53:32.774Z",
+              "text": "Os clientes destacam a fragrância agradável, suave e duradoura. Também mencionam a espuma cremosa e a sensação de pele macia e hidratada.",
               "topics": {
-                "Aroma": "positive"
+                "Aroma": "positive",
+                "Conforto": "positive"
               }
             },
-            "pageText": "Os clientes destacam o aroma suave e agradável, descrito também como maravilhoso e duradouro na pele."
+            "pageText": "Os clientes destacam a fragrância agradável, suave e duradoura. Também mencionam a espuma cremosa e a sensação de pele macia e hidratada."
           },
           "flagKey": "product_reviews.ai_summary",
           "flagValue": true
@@ -13007,7 +13006,7 @@
             "productCount": 55,
             "title": "",
             "einsteinContentZone": "CZ_BR_VITRINE_PDP_EXPERIENCIA",
-            "einsteinCampaignCount": 11
+            "einsteinCampaignCount": 12
           }
         },
         {
@@ -13015,12 +13014,12 @@
           "featureKey": "recommendationShowcase",
           "passed": true,
           "status": "pass",
-          "message": "Vitrine de recomendações presente com 33 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA]",
+          "message": "Vitrine de recomendações presente com 36 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA]",
           "details": {
-            "productCount": 33,
+            "productCount": 36,
             "title": "",
             "einsteinContentZone": "CZ_BR_VITRINE_PDP_EXPERIENCIA",
-            "einsteinCampaignCount": 11
+            "einsteinCampaignCount": 12
           }
         },
         {
@@ -13045,7 +13044,7 @@
           "details": {
             "ratingValue": 4.9,
             "starCount": 0,
-            "ratingText": "4.9(1256) avaliações",
+            "ratingText": "4.9(1257) avaliações",
             "source": "dom",
             "productRating": 4.9
           }
@@ -13171,15 +13170,15 @@
               {
                 "method": "GET",
                 "status": 200,
-                "url": "https://www.natura.com.br/bff-app-natura-brazil/reviews/v2/details?productId=NATBRA-2830&sortField=created&sortOrder=desc&page=1&pageSize=1256&filterMedia=pictures"
+                "url": "https://www.natura.com.br/bff-app-natura-brazil/reviews/v2/details?productId=NATBRA-2830&sortField=created&sortOrder=desc&page=1&pageSize=1257&filterMedia=pictures"
               }
             ],
-            "bodyPreview": "{\"productId\":\"NATBRA-2830\",\"aggregatedRating\":4.9,\"reviewsCount\":1256,\"recommendedPercentage\":99.52229299363057,\"reviews\":[{\"id\":\"6aa862ef6d6d4c7330851ca5\",\"createdAt\":\"2026-09-14T21:11:11.491Z\",\"rati"
+            "bodyPreview": "{\"productId\":\"NATBRA-2830\",\"aggregatedRating\":4.9,\"reviewsCount\":1257,\"recommendedPercentage\":99.52267303102626,\"reviews\":[{\"id\":\"6aa862ef6d6d4c7330851ca5\",\"createdAt\":\"2026-09-14T21:11:11.491Z\",\"rati"
           }
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-13T12:51:18.824Z",
+        "capturedAt": "2026-11-14T11:59:33.678Z",
         "locale": "pt-BR",
         "product_reviews": {
           "enabled": true,
@@ -13517,7 +13516,7 @@
           "url_gamification": "https://images.rede.natura.net/html/home/2020/01/home/app/game.json",
           "webview_consultant_expiration_timestamp": "2592000",
           "webview_hide_button_ids": "{\"ids\":[\"footer-app-download\",\"efecty\",\"consultant-profile-contact\",\"social-login-container\"]}",
-          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE\",\"openModalQtd\":5},\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_MX_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_MX_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AR_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AR_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-CL\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CL_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CL_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-CO\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CO_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CO_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-PE\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_PE_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_PE_MODAL_RECOMENDACAO\",\"openModalQtd\":5}}",
+          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_MX_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_MX_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-CL\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CL_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CL_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-CO\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CO_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CO_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-PE\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_PE_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_PE_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5}}",
           "wl_age_limit": "{\"maxAge\":\"100\",\"minAge\":\"18\"}",
           "wl_algolia_setup": "{\"pt-BR\":{\"application_id\":\"AME48NG6Q4\",\"search_api_key\":\"79f9de6454ab0a2cc78b874995c53dd7\"}}",
           "wl_app_ne_bannertop_webview": "{\n  \"es-MX\": {\n    \"domain\": [\n      {\n        \"host\": \" \",\n        \"webView\": false\n      }\n    ]\n  },\n  \"es-AR\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/ar/login\",\n        \"webView\": true\n      },\n      {\n        \"host\": \"https://naturadermoanalyzer.com/ar/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-CL\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/cl/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-CO\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/co/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-PE\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/pe/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"pt-BR\": {\n    \"domain\": [\n      {\n        \"host\": \" \",\n        \"webView\": false\n      }\n    ]\n  }\n}",
@@ -13614,7 +13613,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-13T12:51:26.624Z",
+        "capturedAt": "2026-11-14T11:59:42.905Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": false,
@@ -13839,9 +13838,9 @@
       "url": "https://www.natura.com.br/p/creme-hidratante-para-as-maos-ekos-castanha-75-g/NATBRA-70983",
       "vendor": "natura",
       "country": "BR",
-      "timestamp": "2026-11-13T12:52:10.976Z",
+      "timestamp": "2026-11-14T12:00:26.076Z",
       "success": true,
-      "loadTime": 805,
+      "loadTime": 856,
       "features": [
         {
           "feature": "Avaliações do produto",
@@ -13932,7 +13931,7 @@
             "productCount": 60,
             "title": "",
             "einsteinContentZone": "CZ_BR_VITRINE_PDP_EXPERIENCIA",
-            "einsteinCampaignCount": 11
+            "einsteinCampaignCount": 12
           }
         },
         {
@@ -13940,12 +13939,12 @@
           "featureKey": "recommendationShowcase",
           "passed": true,
           "status": "pass",
-          "message": "Vitrine de recomendações presente com 33 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA]",
+          "message": "Vitrine de recomendações presente com 36 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA]",
           "details": {
-            "productCount": 33,
+            "productCount": 36,
             "title": "",
             "einsteinContentZone": "CZ_BR_VITRINE_PDP_EXPERIENCIA",
-            "einsteinCampaignCount": 11
+            "einsteinCampaignCount": 12
           }
         },
         {
@@ -14104,7 +14103,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-13T12:52:11.010Z",
+        "capturedAt": "2026-11-14T12:00:26.116Z",
         "locale": "pt-BR",
         "product_reviews": {
           "enabled": true,
@@ -14442,7 +14441,7 @@
           "url_gamification": "https://images.rede.natura.net/html/home/2020/01/home/app/game.json",
           "webview_consultant_expiration_timestamp": "2592000",
           "webview_hide_button_ids": "{\"ids\":[\"footer-app-download\",\"efecty\",\"consultant-profile-contact\",\"social-login-container\"]}",
-          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE\",\"openModalQtd\":5},\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_MX_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_MX_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AR_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AR_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-CL\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CL_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CL_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-CO\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CO_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CO_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-PE\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_PE_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_PE_MODAL_RECOMENDACAO\",\"openModalQtd\":5}}",
+          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_MX_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_MX_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-CL\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CL_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CL_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-CO\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CO_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CO_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-PE\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_PE_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_PE_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5}}",
           "wl_age_limit": "{\"maxAge\":\"100\",\"minAge\":\"18\"}",
           "wl_algolia_setup": "{\"pt-BR\":{\"application_id\":\"AME48NG6Q4\",\"search_api_key\":\"79f9de6454ab0a2cc78b874995c53dd7\"}}",
           "wl_app_ne_bannertop_webview": "{\n  \"es-MX\": {\n    \"domain\": [\n      {\n        \"host\": \" \",\n        \"webView\": false\n      }\n    ]\n  },\n  \"es-AR\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/ar/login\",\n        \"webView\": true\n      },\n      {\n        \"host\": \"https://naturadermoanalyzer.com/ar/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-CL\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/cl/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-CO\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/co/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-PE\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/pe/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"pt-BR\": {\n    \"domain\": [\n      {\n        \"host\": \" \",\n        \"webView\": false\n      }\n    ]\n  }\n}",
@@ -14539,7 +14538,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-13T12:52:17.958Z",
+        "capturedAt": "2026-11-14T12:00:32.671Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": false,
@@ -14764,19 +14763,19 @@
       "url": "https://www.natura.com.br/p/desodorante-perfume-essencial-masculino-100-ml/NATBRA-76420",
       "vendor": "natura",
       "country": "BR",
-      "timestamp": "2026-11-13T12:53:03.451Z",
+      "timestamp": "2026-11-14T12:01:16.775Z",
       "success": true,
-      "loadTime": 840,
+      "loadTime": 1138,
       "features": [
         {
           "feature": "Avaliações do produto",
           "featureKey": "reviews",
           "passed": true,
           "status": "pass",
-          "message": "Seção de avaliações presente com 1070 reviews",
+          "message": "Seção de avaliações presente com 1071 reviews",
           "details": {
             "hasRating": true,
-            "reviewCount": 1070,
+            "reviewCount": 1071,
             "gtmId": null
           },
           "flagKey": "product_reviews.enabled",
@@ -14895,7 +14894,7 @@
           "details": {
             "ratingValue": 4,
             "starCount": 0,
-            "ratingText": "4.0(1070) avaliações",
+            "ratingText": "4.0(1071) avaliações",
             "source": "dom",
             "productRating": 4
           }
@@ -15021,15 +15020,15 @@
               {
                 "method": "GET",
                 "status": 200,
-                "url": "https://www.natura.com.br/bff-app-natura-brazil/reviews/v2/details?productId=NATBRA-76420&sortField=created&sortOrder=desc&page=1&pageSize=1070&filterMedia=pictures"
+                "url": "https://www.natura.com.br/bff-app-natura-brazil/reviews/v2/details?productId=NATBRA-76420&sortField=created&sortOrder=desc&page=1&pageSize=1071&filterMedia=pictures"
               }
             ],
-            "bodyPreview": "{\"productId\":\"NATBRA-76420\",\"aggregatedRating\":4,\"reviewsCount\":1070,\"recommendedPercentage\":75.88785046728972,\"reviews\":[{\"id\":\"6a8c9f4e40b989e278402fbf\",\"createdAt\":\"2026-08-24T19:45:18.280Z\",\"ratin"
+            "bodyPreview": "{\"productId\":\"NATBRA-76420\",\"aggregatedRating\":4,\"reviewsCount\":1071,\"recommendedPercentage\":75.91036414565826,\"reviews\":[{\"id\":\"6af66d10e040db0dfad9f5c2\",\"createdAt\":\"2026-11-13T01:51:12.328Z\",\"ratin"
           }
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-13T12:53:03.501Z",
+        "capturedAt": "2026-11-14T12:01:16.806Z",
         "locale": "pt-BR",
         "product_reviews": {
           "enabled": true,
@@ -15367,7 +15366,7 @@
           "url_gamification": "https://images.rede.natura.net/html/home/2020/01/home/app/game.json",
           "webview_consultant_expiration_timestamp": "2592000",
           "webview_hide_button_ids": "{\"ids\":[\"footer-app-download\",\"efecty\",\"consultant-profile-contact\",\"social-login-container\"]}",
-          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE\",\"openModalQtd\":5},\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_MX_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_MX_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AR_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AR_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-CL\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CL_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CL_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-CO\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CO_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CO_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-PE\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_PE_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_PE_MODAL_RECOMENDACAO\",\"openModalQtd\":5}}",
+          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_MX_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_MX_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-CL\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CL_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CL_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-CO\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CO_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CO_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-PE\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_PE_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_PE_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5}}",
           "wl_age_limit": "{\"maxAge\":\"100\",\"minAge\":\"18\"}",
           "wl_algolia_setup": "{\"pt-BR\":{\"application_id\":\"AME48NG6Q4\",\"search_api_key\":\"79f9de6454ab0a2cc78b874995c53dd7\"}}",
           "wl_app_ne_bannertop_webview": "{\n  \"es-MX\": {\n    \"domain\": [\n      {\n        \"host\": \" \",\n        \"webView\": false\n      }\n    ]\n  },\n  \"es-AR\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/ar/login\",\n        \"webView\": true\n      },\n      {\n        \"host\": \"https://naturadermoanalyzer.com/ar/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-CL\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/cl/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-CO\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/co/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-PE\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/pe/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"pt-BR\": {\n    \"domain\": [\n      {\n        \"host\": \" \",\n        \"webView\": false\n      }\n    ]\n  }\n}",
@@ -15464,7 +15463,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-13T12:53:10.845Z",
+        "capturedAt": "2026-11-14T12:01:24.183Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": false,
@@ -15689,19 +15688,19 @@
       "url": "https://www.natura.com.br/p/mamae-e-bebe-agua-de-colonia-100-ml/NATBRA-92786",
       "vendor": "natura",
       "country": "BR",
-      "timestamp": "2026-11-13T12:53:54.102Z",
+      "timestamp": "2026-11-14T12:02:06.427Z",
       "success": true,
-      "loadTime": 719,
+      "loadTime": 2126,
       "features": [
         {
           "feature": "Avaliações do produto",
           "featureKey": "reviews",
           "passed": true,
           "status": "pass",
-          "message": "Seção de avaliações presente com 1083 reviews",
+          "message": "Seção de avaliações presente com 1084 reviews",
           "details": {
             "hasRating": true,
-            "reviewCount": 1083,
+            "reviewCount": 1084,
             "gtmId": null
           },
           "flagKey": "product_reviews.enabled",
@@ -15712,18 +15711,18 @@
           "featureKey": "aiReviewSummary",
           "passed": true,
           "status": "pass",
-          "message": "Resumo por IA exibido igual ao da API (processado em 08/11/2026; tópicos: Aroma (positivo)): \"Muitos clientes elogiam o aroma, descrevendo-o como cheiroso, suave, agradável e com cheirinho de bebê.\"",
+          "message": "Resumo por IA exibido igual ao da API (processado em 13/11/2026; tópicos: Aroma (positivo)): \"Muitos clientes elogiam o aroma suave e agradável, descrito como um cheirinho gostoso de bebê e de limpinho.\"",
           "details": {
             "apiUrl": "https://www.natura.com.br/bff-app-natura-brazil/reviews/v2/details?productId=NATBRA-92786",
             "apiStatus": 200,
             "aiSummary": {
-              "processedDate": "2026-11-08T13:18:35.620Z",
-              "text": "Muitos clientes elogiam o aroma, descrevendo-o como cheiroso, suave, agradável e com cheirinho de bebê.",
+              "processedDate": "2026-11-13T14:28:29.666Z",
+              "text": "Muitos clientes elogiam o aroma suave e agradável, descrito como um cheirinho gostoso de bebê e de limpinho.",
               "topics": {
                 "Aroma": "positive"
               }
             },
-            "pageText": "Muitos clientes elogiam o aroma, descrevendo-o como cheiroso, suave, agradável e com cheirinho de bebê."
+            "pageText": "Muitos clientes elogiam o aroma suave e agradável, descrito como um cheirinho gostoso de bebê e de limpinho."
           },
           "flagKey": "product_reviews.ai_summary",
           "flagValue": true
@@ -15781,7 +15780,7 @@
             "productCount": 59,
             "title": "",
             "einsteinContentZone": "CZ_BR_VITRINE_PDP_EXPERIENCIA",
-            "einsteinCampaignCount": 11
+            "einsteinCampaignCount": 9
           }
         },
         {
@@ -15789,12 +15788,12 @@
           "featureKey": "recommendationShowcase",
           "passed": true,
           "status": "pass",
-          "message": "Vitrine de recomendações presente com 33 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA]",
+          "message": "Vitrine de recomendações presente com 27 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA]",
           "details": {
-            "productCount": 33,
+            "productCount": 27,
             "title": "",
             "einsteinContentZone": "CZ_BR_VITRINE_PDP_EXPERIENCIA",
-            "einsteinCampaignCount": 11
+            "einsteinCampaignCount": 9
           }
         },
         {
@@ -15819,7 +15818,7 @@
           "details": {
             "ratingValue": 4,
             "starCount": 0,
-            "ratingText": "4.0(1083) avaliações",
+            "ratingText": "4.0(1084) avaliações",
             "source": "dom",
             "productRating": 4
           }
@@ -15939,15 +15938,15 @@
               {
                 "method": "GET",
                 "status": 200,
-                "url": "https://www.natura.com.br/bff-app-natura-brazil/reviews/v2/details?productId=NATBRA-92786&sortField=created&sortOrder=desc&page=1&pageSize=1083&filterMedia=pictures"
+                "url": "https://www.natura.com.br/bff-app-natura-brazil/reviews/v2/details?productId=NATBRA-92786&sortField=created&sortOrder=desc&page=1&pageSize=1084&filterMedia=pictures"
               }
             ],
-            "bodyPreview": "{\"productId\":\"NATBRA-92786\",\"aggregatedRating\":4,\"reviewsCount\":1083,\"recommendedPercentage\":74.69990766389658,\"reviews\":[{\"id\":\"6aa938f28663eb4f8dc0dbf0\",\"createdAt\":\"2026-09-15T12:24:18.594Z\",\"ratin"
+            "bodyPreview": "{\"productId\":\"NATBRA-92786\",\"aggregatedRating\":4,\"reviewsCount\":1084,\"recommendedPercentage\":74.72324723247232,\"reviews\":[{\"id\":\"6aa938f28663eb4f8dc0dbf0\",\"createdAt\":\"2026-09-15T12:24:18.594Z\",\"ratin"
           }
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-13T12:53:54.138Z",
+        "capturedAt": "2026-11-14T12:02:06.458Z",
         "locale": "pt-BR",
         "product_reviews": {
           "enabled": true,
@@ -16285,7 +16284,7 @@
           "url_gamification": "https://images.rede.natura.net/html/home/2020/01/home/app/game.json",
           "webview_consultant_expiration_timestamp": "2592000",
           "webview_hide_button_ids": "{\"ids\":[\"footer-app-download\",\"efecty\",\"consultant-profile-contact\",\"social-login-container\"]}",
-          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE\",\"openModalQtd\":5},\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_MX_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_MX_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AR_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AR_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-CL\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CL_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CL_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-CO\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CO_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CO_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-PE\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_PE_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_PE_MODAL_RECOMENDACAO\",\"openModalQtd\":5}}",
+          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_MX_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_MX_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-CL\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CL_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CL_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-CO\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CO_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CO_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-PE\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_PE_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_PE_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5}}",
           "wl_age_limit": "{\"maxAge\":\"100\",\"minAge\":\"18\"}",
           "wl_algolia_setup": "{\"pt-BR\":{\"application_id\":\"AME48NG6Q4\",\"search_api_key\":\"79f9de6454ab0a2cc78b874995c53dd7\"}}",
           "wl_app_ne_bannertop_webview": "{\n  \"es-MX\": {\n    \"domain\": [\n      {\n        \"host\": \" \",\n        \"webView\": false\n      }\n    ]\n  },\n  \"es-AR\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/ar/login\",\n        \"webView\": true\n      },\n      {\n        \"host\": \"https://naturadermoanalyzer.com/ar/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-CL\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/cl/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-CO\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/co/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-PE\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/pe/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"pt-BR\": {\n    \"domain\": [\n      {\n        \"host\": \" \",\n        \"webView\": false\n      }\n    ]\n  }\n}",
@@ -16382,7 +16381,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-13T12:54:00.565Z",
+        "capturedAt": "2026-11-14T12:02:14.281Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": false,
@@ -16607,9 +16606,9 @@
       "url": "https://www.natura.cl/p/kaiak-urbe-eau-de-toilette-masculino-100-ml/NATCHL-111172",
       "vendor": "natura",
       "country": "CL",
-      "timestamp": "2026-11-13T12:49:14.825Z",
+      "timestamp": "2026-11-14T11:57:00.469Z",
       "success": true,
-      "loadTime": 1199,
+      "loadTime": 1031,
       "features": [
         {
           "feature": "Avaliações do produto",
@@ -16695,9 +16694,9 @@
           "featureKey": "brandShowcase",
           "passed": true,
           "status": "pass",
-          "message": "Vitrine presente com 51 produto(s) [contentZone: CZ_CL_VITRINE_PDP_EXPERIENCIA]",
+          "message": "Vitrine presente com 60 produto(s) [contentZone: CZ_CL_VITRINE_PDP_EXPERIENCIA]",
           "details": {
-            "productCount": 51,
+            "productCount": 60,
             "title": "",
             "einsteinContentZone": "CZ_CL_VITRINE_PDP_EXPERIENCIA",
             "einsteinCampaignCount": 12
@@ -16816,11 +16815,11 @@
           "featureKey": "contentBanners",
           "passed": true,
           "status": "pass",
-          "message": "3 banner(s) de conteúdo carregado(s) corretamente (3 seção/seções)",
+          "message": "4 banner(s) de conteúdo carregado(s) corretamente (4 seção/seções)",
           "details": {
-            "sectionCount": 3,
-            "totalBanners": 3,
-            "loadedCount": 3,
+            "sectionCount": 4,
+            "totalBanners": 4,
+            "loadedCount": 4,
             "brokenCount": 0
           }
         },
@@ -16879,7 +16878,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-13T12:49:15.075Z",
+        "capturedAt": "2026-11-14T11:57:00.760Z",
         "locale": "es-CL",
         "product_reviews": {
           "enabled": true,
@@ -17217,7 +17216,7 @@
           "url_gamification": "https://images.rede.natura.net/html/home/2020/01/home/app/game.json",
           "webview_consultant_expiration_timestamp": "2592000",
           "webview_hide_button_ids": "{\"ids\":[\"footer-app-download\",\"efecty\",\"consultant-profile-contact\",\"social-login-container\"]}",
-          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE\",\"openModalQtd\":5},\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_MX_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_MX_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AR_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AR_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-CL\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CL_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CL_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-CO\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CO_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CO_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-PE\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_PE_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_PE_MODAL_RECOMENDACAO\",\"openModalQtd\":5}}",
+          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_MX_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_MX_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-CL\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CL_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CL_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-CO\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CO_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CO_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-PE\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_PE_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_PE_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5}}",
           "wl_age_limit": "{\"maxAge\":\"100\",\"minAge\":\"18\"}",
           "wl_algolia_setup": "{\"pt-BR\":{\"application_id\":\"AME48NG6Q4\",\"search_api_key\":\"79f9de6454ab0a2cc78b874995c53dd7\"}}",
           "wl_app_ne_bannertop_webview": "{\n  \"es-MX\": {\n    \"domain\": [\n      {\n        \"host\": \" \",\n        \"webView\": false\n      }\n    ]\n  },\n  \"es-AR\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/ar/login\",\n        \"webView\": true\n      },\n      {\n        \"host\": \"https://naturadermoanalyzer.com/ar/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-CL\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/cl/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-CO\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/co/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-PE\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/pe/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"pt-BR\": {\n    \"domain\": [\n      {\n        \"host\": \" \",\n        \"webView\": false\n      }\n    ]\n  }\n}",
@@ -17314,7 +17313,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-13T12:49:22.368Z",
+        "capturedAt": "2026-11-14T11:57:08.288Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": false,
@@ -17528,9 +17527,9 @@
       "url": "https://www.natura.cl/p/homem-potence-edp-masculino-homem-100ml/NATCHL-81950",
       "vendor": "natura",
       "country": "CL",
-      "timestamp": "2026-11-13T12:50:05.243Z",
+      "timestamp": "2026-11-14T11:57:53.397Z",
       "success": true,
-      "loadTime": 1057,
+      "loadTime": 868,
       "features": [
         {
           "feature": "Avaliações do produto",
@@ -17615,9 +17614,9 @@
           "featureKey": "brandShowcase",
           "passed": true,
           "status": "pass",
-          "message": "Vitrine presente com 54 produto(s) [contentZone: CZ_CL_VITRINE_PDP_EXPERIENCIA]",
+          "message": "Vitrine presente com 60 produto(s) [contentZone: CZ_CL_VITRINE_PDP_EXPERIENCIA]",
           "details": {
-            "productCount": 54,
+            "productCount": 60,
             "title": "",
             "einsteinContentZone": "CZ_CL_VITRINE_PDP_EXPERIENCIA",
             "einsteinCampaignCount": 12
@@ -17786,7 +17785,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-13T12:50:05.449Z",
+        "capturedAt": "2026-11-14T11:57:53.617Z",
         "locale": "es-CL",
         "product_reviews": {
           "enabled": true,
@@ -18124,7 +18123,7 @@
           "url_gamification": "https://images.rede.natura.net/html/home/2020/01/home/app/game.json",
           "webview_consultant_expiration_timestamp": "2592000",
           "webview_hide_button_ids": "{\"ids\":[\"footer-app-download\",\"efecty\",\"consultant-profile-contact\",\"social-login-container\"]}",
-          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE\",\"openModalQtd\":5},\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_MX_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_MX_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AR_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AR_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-CL\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CL_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CL_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-CO\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CO_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CO_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-PE\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_PE_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_PE_MODAL_RECOMENDACAO\",\"openModalQtd\":5}}",
+          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_MX_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_MX_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-CL\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CL_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CL_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-CO\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CO_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CO_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-PE\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_PE_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_PE_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5}}",
           "wl_age_limit": "{\"maxAge\":\"100\",\"minAge\":\"18\"}",
           "wl_algolia_setup": "{\"pt-BR\":{\"application_id\":\"AME48NG6Q4\",\"search_api_key\":\"79f9de6454ab0a2cc78b874995c53dd7\"}}",
           "wl_app_ne_bannertop_webview": "{\n  \"es-MX\": {\n    \"domain\": [\n      {\n        \"host\": \" \",\n        \"webView\": false\n      }\n    ]\n  },\n  \"es-AR\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/ar/login\",\n        \"webView\": true\n      },\n      {\n        \"host\": \"https://naturadermoanalyzer.com/ar/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-CL\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/cl/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-CO\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/co/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-PE\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/pe/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"pt-BR\": {\n    \"domain\": [\n      {\n        \"host\": \" \",\n        \"webView\": false\n      }\n    ]\n  }\n}",
@@ -18221,7 +18220,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-13T12:50:12.390Z",
+        "capturedAt": "2026-11-14T11:58:00.796Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": false,
@@ -18435,19 +18434,19 @@
       "url": "https://www.natura.com.co/p/eau-de-toilette-kaiak-aero-masculino-100-ml/NATCOL-111174",
       "vendor": "natura",
       "country": "CO",
-      "timestamp": "2026-11-13T12:49:44.371Z",
+      "timestamp": "2026-11-14T11:57:37.502Z",
       "success": true,
-      "loadTime": 1292,
+      "loadTime": 1190,
       "features": [
         {
           "feature": "Avaliações do produto",
           "featureKey": "reviews",
           "passed": true,
           "status": "pass",
-          "message": "Seção de avaliações presente com 32 reviews",
+          "message": "Seção de avaliações presente com 33 reviews",
           "details": {
             "hasRating": true,
-            "reviewCount": 32,
+            "reviewCount": 33,
             "gtmId": null
           },
           "flagKey": "product_reviews.enabled",
@@ -18523,12 +18522,12 @@
           "featureKey": "brandShowcase",
           "passed": true,
           "status": "pass",
-          "message": "Vitrine presente com 60 produto(s) [contentZone: CZ_CO_VITRINE_PDP_MAIS_PRODUTOS_DA_MARCA]",
+          "message": "Vitrine presente com 60 produto(s) [contentZone: CZ_CO_VITRINE_PDP_EXPERIENCIA]",
           "details": {
             "productCount": 60,
             "title": "",
-            "einsteinContentZone": "CZ_CO_VITRINE_PDP_MAIS_PRODUTOS_DA_MARCA",
-            "einsteinCampaignCount": 0
+            "einsteinContentZone": "CZ_CO_VITRINE_PDP_EXPERIENCIA",
+            "einsteinCampaignCount": 12
           }
         },
         {
@@ -18566,7 +18565,7 @@
           "details": {
             "ratingValue": 4.8,
             "starCount": 0,
-            "ratingText": "4.8(32) evaluaciones",
+            "ratingText": "4.8(33) evaluaciones",
             "source": "dom",
             "productRating": 4.8
           }
@@ -18575,14 +18574,17 @@
           "feature": "Consistência da Nota (Rating)",
           "featureKey": "ratingConsistency",
           "passed": true,
-          "status": "pass",
-          "message": "Notas consistentes: produto=4.8 (API do produto (SSR)) | reviews=4.8.",
+          "status": "warning",
+          "message": "Nota do produto (SFCC) diferente da Konfidency: produto=4.8 (API do produto (SSR)) vs reviews=4.7. Divergência vista pela 1ª vez: aguardando o SFCC atualizar com a nota da Konfidency (até 1 dia).",
           "details": {
             "productRating": 4.8,
             "productRatingSource": "ssr",
-            "aggregatedRating": 4.8,
-            "roundedAggregatedRating": 4.8,
-            "reviewsApiUrl": "https://www.natura.com.co/bff-app-natura-colombia/reviews/v2/details?productId=NATCOL-111174"
+            "aggregatedRating": 4.7,
+            "roundedAggregatedRating": 4.7,
+            "reviewsApiUrl": "https://www.natura.com.co/bff-app-natura-colombia/reviews/v2/details?productId=NATCOL-111174",
+            "divergent": true,
+            "divergentSince": "2026-11-14T11:58:24.590Z",
+            "divergentForMs": 0
           }
         },
         {
@@ -18693,15 +18695,15 @@
               {
                 "method": "GET",
                 "status": 200,
-                "url": "https://www.natura.com.co/bff-app-natura-colombia/reviews/v2/details?productId=NATCOL-111174&sortField=created&sortOrder=desc&page=1&pageSize=32&filterMedia=pictures"
+                "url": "https://www.natura.com.co/bff-app-natura-colombia/reviews/v2/details?productId=NATCOL-111174&sortField=created&sortOrder=desc&page=1&pageSize=33&filterMedia=pictures"
               }
             ],
-            "bodyPreview": "{\"productId\":\"NATCOL-111174\",\"aggregatedRating\":4.8,\"reviewsCount\":32,\"recommendedPercentage\":96.875,\"reviews\":[{\"id\":\"6ad78c9cee9920e97baa1695\",\"createdAt\":\"2026-10-19T12:56:06.309Z\",\"rating\":5,\"help"
+            "bodyPreview": "{\"productId\":\"NATCOL-111174\",\"aggregatedRating\":4.7,\"reviewsCount\":33,\"recommendedPercentage\":96.96969696969697,\"reviews\":[{\"id\":\"6af7d6f6e3c56d2dc49936d2\",\"createdAt\":\"2026-11-13T03:11:09.821Z\",\"rati"
           }
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-13T12:49:44.779Z",
+        "capturedAt": "2026-11-14T11:57:37.710Z",
         "locale": "es-CO",
         "product_reviews": {
           "enabled": true,
@@ -19039,7 +19041,7 @@
           "url_gamification": "https://images.rede.natura.net/html/home/2020/01/home/app/game.json",
           "webview_consultant_expiration_timestamp": "2592000",
           "webview_hide_button_ids": "{\"ids\":[\"footer-app-download\",\"efecty\",\"consultant-profile-contact\",\"social-login-container\"]}",
-          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE\",\"openModalQtd\":5},\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_MX_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_MX_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AR_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AR_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-CL\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CL_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CL_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-CO\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CO_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CO_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-PE\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_PE_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_PE_MODAL_RECOMENDACAO\",\"openModalQtd\":5}}",
+          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_MX_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_MX_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-CL\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CL_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CL_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-CO\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CO_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CO_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-PE\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_PE_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_PE_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5}}",
           "wl_age_limit": "{\"maxAge\":\"100\",\"minAge\":\"18\"}",
           "wl_algolia_setup": "{\"pt-BR\":{\"application_id\":\"AME48NG6Q4\",\"search_api_key\":\"79f9de6454ab0a2cc78b874995c53dd7\"}}",
           "wl_app_ne_bannertop_webview": "{\n  \"es-MX\": {\n    \"domain\": [\n      {\n        \"host\": \" \",\n        \"webView\": false\n      }\n    ]\n  },\n  \"es-AR\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/ar/login\",\n        \"webView\": true\n      },\n      {\n        \"host\": \"https://naturadermoanalyzer.com/ar/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-CL\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/cl/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-CO\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/co/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-PE\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/pe/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"pt-BR\": {\n    \"domain\": [\n      {\n        \"host\": \" \",\n        \"webView\": false\n      }\n    ]\n  }\n}",
@@ -19136,7 +19138,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-13T12:49:51.921Z",
+        "capturedAt": "2026-11-14T11:57:45.019Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": false,
@@ -19349,9 +19351,9 @@
       "url": "https://www.natura.com.co/p/eau-de-toilette-ekos-pitanga-femenino-150ml/NATCOL-73573",
       "vendor": "natura",
       "country": "CO",
-      "timestamp": "2026-11-13T12:50:33.260Z",
+      "timestamp": "2026-11-14T11:58:25.628Z",
       "success": true,
-      "loadTime": 861,
+      "loadTime": 842,
       "features": [
         {
           "feature": "Avaliações do produto",
@@ -19529,9 +19531,16 @@
           "featureKey": "minStockBadge",
           "passed": true,
           "status": "pass",
-          "message": "API do produto não retorna minStockBadge do tipo minStockAlert para NATCOL-73573 e o selo \"últimas unidades\" corretamente não é exibido (via ssr).",
+          "message": "API do produto retorna minStockBadge do tipo minStockAlert para NATCOL-73573 e o selo \"últimas unidades\" está visível (via ssr).",
           "details": {
             "displayedProductId": "NATCOL-73573",
+            "minStockBadge": {
+              "type": "minStockAlert",
+              "text": "ultimas unidades",
+              "color": "#68408A",
+              "background": "#F3EEFA",
+              "icon": "https://staging-na01.natura.com/on/demandware.static/-/Sites/default/dw9f493dfa/badgeIcons/outlined-action-runningclock.png"
+            },
             "source": "ssr"
           }
         },
@@ -19614,7 +19623,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-13T12:50:33.491Z",
+        "capturedAt": "2026-11-14T11:58:25.792Z",
         "locale": "es-CO",
         "product_reviews": {
           "enabled": true,
@@ -19952,7 +19961,7 @@
           "url_gamification": "https://images.rede.natura.net/html/home/2020/01/home/app/game.json",
           "webview_consultant_expiration_timestamp": "2592000",
           "webview_hide_button_ids": "{\"ids\":[\"footer-app-download\",\"efecty\",\"consultant-profile-contact\",\"social-login-container\"]}",
-          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE\",\"openModalQtd\":5},\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_MX_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_MX_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AR_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AR_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-CL\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CL_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CL_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-CO\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CO_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CO_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-PE\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_PE_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_PE_MODAL_RECOMENDACAO\",\"openModalQtd\":5}}",
+          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_MX_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_MX_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-CL\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CL_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CL_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-CO\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CO_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CO_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-PE\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_PE_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_PE_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5}}",
           "wl_age_limit": "{\"maxAge\":\"100\",\"minAge\":\"18\"}",
           "wl_algolia_setup": "{\"pt-BR\":{\"application_id\":\"AME48NG6Q4\",\"search_api_key\":\"79f9de6454ab0a2cc78b874995c53dd7\"}}",
           "wl_app_ne_bannertop_webview": "{\n  \"es-MX\": {\n    \"domain\": [\n      {\n        \"host\": \" \",\n        \"webView\": false\n      }\n    ]\n  },\n  \"es-AR\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/ar/login\",\n        \"webView\": true\n      },\n      {\n        \"host\": \"https://naturadermoanalyzer.com/ar/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-CL\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/cl/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-CO\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/co/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-PE\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/pe/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"pt-BR\": {\n    \"domain\": [\n      {\n        \"host\": \" \",\n        \"webView\": false\n      }\n    ]\n  }\n}",
@@ -20049,7 +20058,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-13T12:50:41.150Z",
+        "capturedAt": "2026-11-14T11:58:33.326Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": false,
@@ -20262,9 +20271,9 @@
       "url": "https://www.natura.com.mx/p/kaiak-urbe-eau-de-toilette-masculino/NATMEX-111172",
       "vendor": "natura",
       "country": "MX",
-      "timestamp": "2026-11-13T12:50:52.543Z",
+      "timestamp": "2026-11-14T11:58:40.678Z",
       "success": true,
-      "loadTime": 908,
+      "loadTime": 982,
       "features": [
         {
           "feature": "Avaliações do produto",
@@ -20350,9 +20359,9 @@
           "featureKey": "brandShowcase",
           "passed": true,
           "status": "pass",
-          "message": "Vitrine presente com 58 produto(s) [contentZone: CZ_MX_VITRINE_PDP_EXPERIENCIA]",
+          "message": "Vitrine presente com 57 produto(s) [contentZone: CZ_MX_VITRINE_PDP_EXPERIENCIA]",
           "details": {
-            "productCount": 58,
+            "productCount": 57,
             "title": "",
             "einsteinContentZone": "CZ_MX_VITRINE_PDP_EXPERIENCIA",
             "einsteinCampaignCount": 12
@@ -20389,27 +20398,30 @@
           "featureKey": "rating",
           "passed": true,
           "status": "pass",
-          "message": "Nota 4.8 exibida (igual à API do produto)",
+          "message": "Nota 5.0 exibida (igual à API do produto)",
           "details": {
-            "ratingValue": 4.8,
+            "ratingValue": 5,
             "starCount": 0,
-            "ratingText": "4.8(112) reseñas",
+            "ratingText": "5.0(112) reseñas",
             "source": "dom",
-            "productRating": 4.8
+            "productRating": 5
           }
         },
         {
           "feature": "Consistência da Nota (Rating)",
           "featureKey": "ratingConsistency",
           "passed": true,
-          "status": "pass",
-          "message": "Notas consistentes: produto=4.8 (API do produto (SSR)) | reviews=4.8.",
+          "status": "warning",
+          "message": "Nota do produto (SFCC) diferente da Konfidency: produto=5 (API do produto (SSR)) vs reviews=4.8. Divergência vista pela 1ª vez: aguardando o SFCC atualizar com a nota da Konfidency (até 1 dia).",
           "details": {
-            "productRating": 4.8,
+            "productRating": 5,
             "productRatingSource": "ssr",
             "aggregatedRating": 4.8,
             "roundedAggregatedRating": 4.8,
-            "reviewsApiUrl": "https://www.natura.com.mx/bff-app-natura-mexico-v2/reviews/v2/details?productId=NATMEX-111172"
+            "reviewsApiUrl": "https://www.natura.com.mx/bff-app-natura-mexico-v2/reviews/v2/details?productId=NATMEX-111172",
+            "divergent": true,
+            "divergentSince": "2026-11-14T11:59:31.882Z",
+            "divergentForMs": 0
           }
         },
         {
@@ -20471,11 +20483,11 @@
           "featureKey": "contentBanners",
           "passed": true,
           "status": "pass",
-          "message": "3 banner(s) de conteúdo carregado(s) corretamente (3 seção/seções)",
+          "message": "4 banner(s) de conteúdo carregado(s) corretamente (4 seção/seções)",
           "details": {
-            "sectionCount": 3,
-            "totalBanners": 3,
-            "loadedCount": 3,
+            "sectionCount": 4,
+            "totalBanners": 4,
+            "loadedCount": 4,
             "brokenCount": 0
           }
         },
@@ -20534,7 +20546,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-13T12:50:52.860Z",
+        "capturedAt": "2026-11-14T11:58:40.919Z",
         "locale": "es-MX",
         "product_reviews": {
           "enabled": true,
@@ -20872,7 +20884,7 @@
           "url_gamification": "https://images.rede.natura.net/html/home/2020/01/home/app/game.json",
           "webview_consultant_expiration_timestamp": "2592000",
           "webview_hide_button_ids": "{\"ids\":[\"footer-app-download\",\"efecty\",\"consultant-profile-contact\",\"social-login-container\"]}",
-          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE\",\"openModalQtd\":5},\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_MX_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_MX_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AR_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AR_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-CL\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CL_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CL_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-CO\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CO_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CO_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-PE\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_PE_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_PE_MODAL_RECOMENDACAO\",\"openModalQtd\":5}}",
+          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_MX_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_MX_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-CL\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CL_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CL_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-CO\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CO_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CO_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-PE\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_PE_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_PE_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5}}",
           "wl_age_limit": "{\"maxAge\":\"100\",\"minAge\":\"18\"}",
           "wl_algolia_setup": "{\"pt-BR\":{\"application_id\":\"AME48NG6Q4\",\"search_api_key\":\"79f9de6454ab0a2cc78b874995c53dd7\"}}",
           "wl_app_ne_bannertop_webview": "{\n  \"es-MX\": {\n    \"domain\": [\n      {\n        \"host\": \" \",\n        \"webView\": false\n      }\n    ]\n  },\n  \"es-AR\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/ar/login\",\n        \"webView\": true\n      },\n      {\n        \"host\": \"https://naturadermoanalyzer.com/ar/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-CL\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/cl/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-CO\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/co/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-PE\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/pe/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"pt-BR\": {\n    \"domain\": [\n      {\n        \"host\": \" \",\n        \"webView\": false\n      }\n    ]\n  }\n}",
@@ -20969,7 +20981,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-13T12:51:00.060Z",
+        "capturedAt": "2026-11-14T11:58:48.256Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": false,
@@ -21183,9 +21195,9 @@
       "url": "https://www.natura.com.mx/p/natura-homem-eau-de-parfum-masculino-potence/NATMEX-81950",
       "vendor": "natura",
       "country": "MX",
-      "timestamp": "2026-11-13T12:51:42.623Z",
+      "timestamp": "2026-11-14T11:59:32.933Z",
       "success": false,
-      "loadTime": 857,
+      "loadTime": 1010,
       "features": [
         {
           "feature": "Avaliações do produto",
@@ -21324,7 +21336,7 @@
           "featureKey": "ratingConsistency",
           "passed": false,
           "status": "fail",
-          "message": "Nota do produto (SFCC) diferente da Konfidency: produto=5 (API do produto (SSR)) vs reviews=4.9. Divergente desde 05/11, 09:59 (7 dias): a nota da Konfidency não chegou ao SFCC em 1 dia.",
+          "message": "Nota do produto (SFCC) diferente da Konfidency: produto=5 (API do produto (SSR)) vs reviews=4.9. Divergente desde 05/11, 09:59 (8 dias): a nota da Konfidency não chegou ao SFCC em 1 dia.",
           "details": {
             "productRating": 5,
             "productRatingSource": "ssr",
@@ -21333,7 +21345,7 @@
             "reviewsApiUrl": "https://www.natura.com.mx/bff-app-natura-mexico-v2/reviews/v2/details?productId=NATMEX-81950",
             "divergent": true,
             "divergentSince": "2026-11-05T12:59:06.052Z",
-            "divergentForMs": 690802838
+            "divergentForMs": 774072487
           },
           "newFailure": false,
           "failingSince": "2026-11-06T16:38:56.936Z"
@@ -21453,9 +21465,9 @@
           }
         }
       ],
-      "pageScreenshot": "screenshots/NATMEX-81950_fullpage_1794574348891.png",
+      "pageScreenshot": "screenshots/NATMEX-81950_fullpage_1794657618540.png",
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-13T12:51:42.809Z",
+        "capturedAt": "2026-11-14T11:59:33.107Z",
         "locale": "es-MX",
         "product_reviews": {
           "enabled": true,
@@ -21576,7 +21588,7 @@
           "enable_conversational_search_app": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":false}",
           "enable_coupon_compatible_current_cart": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":false}",
           "enable_coupons_pdp": "{\"es-MX\":true,\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true,\"pt-BR-ML\":true}",
-          "enable_crmbonus_cashback": "{\"pt-BR\":true,\"es-AR\":false,\"es-CO\":false,\"es-CL\":false,\"es-PE\":false,\"es-MX\":false}",
+          "enable_crmbonus_cashback": "{   \"pt-BR\": false,   \"es-AR\": false,   \"es-CO\": false,   \"es-CL\": false,   \"es-PE\": false,   \"es-MX\": false }",
           "enable_descount_amount_tag_pdp": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":true}",
           "enable_fetch_pages_onserver": "{\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"es-MX\":false,\"pt-BR\":false}",
           "enable_floating_button_liveshopping": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":false,\"pt-BR-ML\":false}",
@@ -21793,7 +21805,7 @@
           "url_gamification": "https://images.rede.natura.net/html/home/2020/01/home/app/game.json",
           "webview_consultant_expiration_timestamp": "2592000",
           "webview_hide_button_ids": "{\"ids\":[\"footer-app-download\",\"efecty\",\"consultant-profile-contact\",\"social-login-container\"]}",
-          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE\",\"openModalQtd\":5},\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_MX_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_MX_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AR_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AR_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-CL\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CL_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CL_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-CO\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CO_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CO_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-PE\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_PE_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_PE_MODAL_RECOMENDACAO\",\"openModalQtd\":5}}",
+          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_MX_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_MX_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-CL\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CL_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CL_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-CO\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CO_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CO_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-PE\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_PE_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_PE_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5}}",
           "wl_age_limit": "{\"maxAge\":\"100\",\"minAge\":\"18\"}",
           "wl_algolia_setup": "{\"pt-BR\":{\"application_id\":\"AME48NG6Q4\",\"search_api_key\":\"79f9de6454ab0a2cc78b874995c53dd7\"}}",
           "wl_app_ne_bannertop_webview": "{\n  \"es-MX\": {\n    \"domain\": [\n      {\n        \"host\": \" \",\n        \"webView\": false\n      }\n    ]\n  },\n  \"es-AR\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/ar/login\",\n        \"webView\": true\n      },\n      {\n        \"host\": \"https://naturadermoanalyzer.com/ar/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-CL\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/cl/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-CO\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/co/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-PE\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/pe/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"pt-BR\": {\n    \"domain\": [\n      {\n        \"host\": \" \",\n        \"webView\": false\n      }\n    ]\n  }\n}",
@@ -21890,7 +21902,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-13T12:51:49.650Z",
+        "capturedAt": "2026-11-14T11:59:39.927Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": false,
@@ -22104,9 +22116,9 @@
       "url": "https://www.natura.com.pe/p/kaiak-eau-de-toilette-masculino-urbe-100-ml/NATPER-111172",
       "vendor": "natura",
       "country": "PE",
-      "timestamp": "2026-11-13T12:51:22.999Z",
+      "timestamp": "2026-11-14T11:59:15.133Z",
       "success": true,
-      "loadTime": 1361,
+      "loadTime": 1196,
       "features": [
         {
           "feature": "Avaliações do produto",
@@ -22369,7 +22381,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-13T12:51:23.273Z",
+        "capturedAt": "2026-11-14T11:59:15.364Z",
         "locale": "es-PE",
         "product_reviews": {
           "enabled": true,
@@ -22707,7 +22719,7 @@
           "url_gamification": "https://images.rede.natura.net/html/home/2020/01/home/app/game.json",
           "webview_consultant_expiration_timestamp": "2592000",
           "webview_hide_button_ids": "{\"ids\":[\"footer-app-download\",\"efecty\",\"consultant-profile-contact\",\"social-login-container\"]}",
-          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE\",\"openModalQtd\":5},\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_MX_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_MX_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AR_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AR_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-CL\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CL_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CL_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-CO\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CO_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CO_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-PE\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_PE_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_PE_MODAL_RECOMENDACAO\",\"openModalQtd\":5}}",
+          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_MX_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_MX_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-CL\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CL_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CL_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-CO\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CO_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CO_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-PE\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_PE_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_PE_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5}}",
           "wl_age_limit": "{\"maxAge\":\"100\",\"minAge\":\"18\"}",
           "wl_algolia_setup": "{\"pt-BR\":{\"application_id\":\"AME48NG6Q4\",\"search_api_key\":\"79f9de6454ab0a2cc78b874995c53dd7\"}}",
           "wl_app_ne_bannertop_webview": "{\n  \"es-MX\": {\n    \"domain\": [\n      {\n        \"host\": \" \",\n        \"webView\": false\n      }\n    ]\n  },\n  \"es-AR\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/ar/login\",\n        \"webView\": true\n      },\n      {\n        \"host\": \"https://naturadermoanalyzer.com/ar/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-CL\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/cl/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-CO\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/co/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-PE\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/pe/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"pt-BR\": {\n    \"domain\": [\n      {\n        \"host\": \" \",\n        \"webView\": false\n      }\n    ]\n  }\n}",
@@ -22804,7 +22816,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-13T12:51:31.338Z",
+        "capturedAt": "2026-11-14T11:59:22.517Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": false,
@@ -23016,9 +23028,9 @@
       "url": "https://www.natura.com.pe/p/humor-eau-de-toilette-femenina-meu-primeiro-humor-75-ml/NATPER-64746",
       "vendor": "natura",
       "country": "PE",
-      "timestamp": "2026-11-13T12:52:13.426Z",
+      "timestamp": "2026-11-14T12:00:06.264Z",
       "success": true,
-      "loadTime": 1323,
+      "loadTime": 1184,
       "features": [
         {
           "feature": "Avaliações do produto",
@@ -23290,7 +23302,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-13T12:52:13.887Z",
+        "capturedAt": "2026-11-14T12:00:06.426Z",
         "locale": "es-PE",
         "product_reviews": {
           "enabled": true,
@@ -23628,7 +23640,7 @@
           "url_gamification": "https://images.rede.natura.net/html/home/2020/01/home/app/game.json",
           "webview_consultant_expiration_timestamp": "2592000",
           "webview_hide_button_ids": "{\"ids\":[\"footer-app-download\",\"efecty\",\"consultant-profile-contact\",\"social-login-container\"]}",
-          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE\",\"openModalQtd\":5},\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_MX_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_MX_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AR_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AR_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-CL\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CL_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CL_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-CO\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CO_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CO_MODAL_RECOMENDACAO\",\"openModalQtd\":5},\"es-PE\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_PE_MODAL_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_PE_MODAL_RECOMENDACAO\",\"openModalQtd\":5}}",
+          "wl_add_cart_recommendation": "{\"pt-BR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_BR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_BR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-MX\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_MX_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_MX_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-AR\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_AR_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_AR_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-CL\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CL_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CL_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-CO\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_CO_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_CO_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5},\"es-PE\":{\"enableRecommendedModal\":{\"enableHome\":false,\"enableCategories\":true,\"enableSearch\":false,\"enablePdp\":true,\"enableBag\":false,\"enableCheckout\":false},\"contentZoneGuest\":\"CZ_PE_MODAL_VITRINE_RECOMENDACAO\",\"contentZoneRegistered\":\"CZ_PE_MODAL_VITRINE_RECOMENDACAO\",\"openModalQtd\":5}}",
           "wl_age_limit": "{\"maxAge\":\"100\",\"minAge\":\"18\"}",
           "wl_algolia_setup": "{\"pt-BR\":{\"application_id\":\"AME48NG6Q4\",\"search_api_key\":\"79f9de6454ab0a2cc78b874995c53dd7\"}}",
           "wl_app_ne_bannertop_webview": "{\n  \"es-MX\": {\n    \"domain\": [\n      {\n        \"host\": \" \",\n        \"webView\": false\n      }\n    ]\n  },\n  \"es-AR\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/ar/login\",\n        \"webView\": true\n      },\n      {\n        \"host\": \"https://naturadermoanalyzer.com/ar/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-CL\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/cl/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-CO\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/co/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"es-PE\": {\n    \"domain\": [\n      {\n        \"host\": \"https://naturadermoanalyzer.com/pe/login\",\n        \"webView\": true\n      }\n    ]\n  },\n  \"pt-BR\": {\n    \"domain\": [\n      {\n        \"host\": \" \",\n        \"webView\": false\n      }\n    ]\n  }\n}",
@@ -23725,7 +23737,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-13T12:52:22.723Z",
+        "capturedAt": "2026-11-14T12:00:13.737Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": false,
