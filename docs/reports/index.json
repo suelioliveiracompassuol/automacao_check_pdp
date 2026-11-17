@@ -2,6 +2,111 @@
   "generatedAt": "2026-05-21T12:25:05Z",
   "reports": [
     {
+      "runId": "run_1794835078689",
+      "startTime": "2026-11-16T13:17:58.689Z",
+      "endTime": "2026-11-16T13:26:44.841Z",
+      "durationMs": 526152,
+      "summary": {
+        "total": 28,
+        "passed": 23,
+        "failed": 3,
+        "errors": 2,
+        "newFailures": 0
+      },
+      "skuSource": "firestore",
+      "jsonPath": "reports/run_1794835078689/report.json"
+    },
+    {
+      "runId": "run_1794745525339",
+      "startTime": "2026-11-15T12:25:25.339Z",
+      "endTime": "2026-11-15T12:34:12.625Z",
+      "durationMs": 527286,
+      "summary": {
+        "total": 28,
+        "passed": 25,
+        "failed": 3,
+        "errors": 0,
+        "newFailures": 2
+      },
+      "skuSource": "firestore",
+      "jsonPath": "reports/run_1794745525339/report.json"
+    },
+    {
+      "runId": "run_1794657248890",
+      "startTime": "2026-11-14T11:54:08.890Z",
+      "endTime": "2026-11-14T12:02:54.276Z",
+      "durationMs": 525386,
+      "summary": {
+        "total": 28,
+        "passed": 27,
+        "failed": 1,
+        "errors": 0,
+        "newFailures": 0
+      },
+      "skuSource": "firestore",
+      "jsonPath": "reports/run_1794657248890/report.json"
+    },
+    {
+      "runId": "run_1794573969792",
+      "startTime": "2026-11-13T12:46:09.792Z",
+      "endTime": "2026-11-13T12:54:40.645Z",
+      "durationMs": 510853,
+      "summary": {
+        "total": 28,
+        "passed": 27,
+        "failed": 1,
+        "errors": 0,
+        "newFailures": 0
+      },
+      "skuSource": "firestore",
+      "jsonPath": "reports/run_1794573969792/report.json"
+    },
+    {
+      "runId": "run_1794490170875",
+      "startTime": "2026-11-12T13:29:30.875Z",
+      "endTime": "2026-11-12T13:38:08.975Z",
+      "durationMs": 518100,
+      "summary": {
+        "total": 28,
+        "passed": 26,
+        "failed": 2,
+        "errors": 0,
+        "newFailures": 0
+      },
+      "skuSource": "firestore",
+      "jsonPath": "reports/run_1794490170875/report.json"
+    },
+    {
+      "runId": "run_1794399649612",
+      "startTime": "2026-11-11T12:20:49.612Z",
+      "endTime": "2026-11-11T12:29:17.133Z",
+      "durationMs": 507521,
+      "summary": {
+        "total": 28,
+        "passed": 26,
+        "failed": 2,
+        "errors": 0,
+        "newFailures": 0
+      },
+      "skuSource": "firestore",
+      "jsonPath": "reports/run_1794399649612/report.json"
+    },
+    {
+      "runId": "run_1794316254588",
+      "startTime": "2026-11-10T13:10:54.588Z",
+      "endTime": "2026-11-10T13:19:39.523Z",
+      "durationMs": 524935,
+      "summary": {
+        "total": 28,
+        "passed": 26,
+        "failed": 2,
+        "errors": 0,
+        "newFailures": 0
+      },
+      "skuSource": "firestore",
+      "jsonPath": "reports/run_1794316254588/report.json"
+    },
+    {
       "runId": "run_1794231072759",
       "startTime": "2026-11-09T13:31:12.759Z",
       "endTime": "2026-11-09T13:39:56.894Z",
@@ -1301,104 +1406,6 @@
       },
       "htmlPath": "reports/run_1786264815861/report.html",
       "jsonPath": "reports/run_1786264815861/report.json"
-    },
-    {
-      "runId": "run_1786178343380",
-      "startTime": "2026-08-08T08:39:03.380Z",
-      "endTime": "2026-08-08T08:43:04.668Z",
-      "durationMs": 241288,
-      "summary": {
-        "total": 27,
-        "passed": 21,
-        "failed": 6,
-        "errors": 0
-      },
-      "htmlPath": "reports/run_1786178343380/report.html",
-      "jsonPath": "reports/run_1786178343380/report.json"
-    },
-    {
-      "runId": "run_1786093109965",
-      "startTime": "2026-08-07T08:58:29.965Z",
-      "endTime": "2026-08-07T09:02:48.534Z",
-      "durationMs": 258569,
-      "summary": {
-        "total": 27,
-        "passed": 21,
-        "failed": 6,
-        "errors": 0
-      },
-      "htmlPath": "reports/run_1786093109965/report.html",
-      "jsonPath": "reports/run_1786093109965/report.json"
-    },
-    {
-      "runId": "run_1786012647321",
-      "startTime": "2026-08-06T10:37:27.321Z",
-      "endTime": "2026-08-06T10:41:28.418Z",
-      "durationMs": 241097,
-      "summary": {
-        "total": 27,
-        "passed": 20,
-        "failed": 7,
-        "errors": 0
-      },
-      "htmlPath": "reports/run_1786012647321/report.html",
-      "jsonPath": "reports/run_1786012647321/report.json"
-    },
-    {
-      "runId": "run_1785926157812",
-      "startTime": "2026-08-05T10:35:57.812Z",
-      "endTime": "2026-08-05T10:39:51.010Z",
-      "durationMs": 233198,
-      "summary": {
-        "total": 27,
-        "passed": 19,
-        "failed": 7,
-        "errors": 1
-      },
-      "htmlPath": "reports/run_1785926157812/report.html",
-      "jsonPath": "reports/run_1785926157812/report.json"
-    },
-    {
-      "runId": "run_1785839842311",
-      "startTime": "2026-08-04T10:37:22.311Z",
-      "endTime": "2026-08-04T10:41:23.905Z",
-      "durationMs": 241594,
-      "summary": {
-        "total": 27,
-        "passed": 16,
-        "failed": 10,
-        "errors": 1
-      },
-      "htmlPath": "reports/run_1785839842311/report.html",
-      "jsonPath": "reports/run_1785839842311/report.json"
-    },
-    {
-      "runId": "run_1785756049153",
-      "startTime": "2026-08-03T11:20:49.153Z",
-      "endTime": "2026-08-03T11:24:45.614Z",
-      "durationMs": 236461,
-      "summary": {
-        "total": 27,
-        "passed": 19,
-        "failed": 7,
-        "errors": 1
-      },
-      "htmlPath": "reports/run_1785756049153/report.html",
-      "jsonPath": "reports/run_1785756049153/report.json"
-    },
-    {
-      "runId": "run_1785664534480",
-      "startTime": "2026-08-02T09:55:34.480Z",
-      "endTime": "2026-08-02T09:59:30.260Z",
-      "durationMs": 235780,
-      "summary": {
-        "total": 27,
-        "passed": 19,
-        "failed": 7,
-        "errors": 1
-      },
-      "htmlPath": "reports/run_1785664534480/report.html",
-      "jsonPath": "reports/run_1785664534480/report.json"
     }
   ]
 }
