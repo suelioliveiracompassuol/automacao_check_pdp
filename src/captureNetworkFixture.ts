@@ -22,50 +22,12 @@ import {
   fetchLambdaTestNetworkLog,
 } from "./checks-android/appNetworkFlags.js";
 import type { PdpCheckResult } from "./types.js";
+import { redactReviews, sanitizeUrl } from "./fixtureRedaction.js";
 
 const FIXTURES_DIR = path.join(process.cwd(), "src", "tests", "fixtures", "android");
-const REDACTED = "[removido]";
-const PERSONAL_REVIEW_FIELDS = ["customerName", "comment", "originalComment", "title", "nickname", "email"];
 
 const PDP_API = /\/pages\/v2\/product\/([^/?]+)/;
 const withoutQuery = (url: string) => url.split("?")[0];
-
-/** Query params with the logged-in test account's data (the app sends ?email= on the PDP API). */
-const PERSONAL_QUERY_PARAMS = ["email", "cpf", "phone", "customerId", "token", "access_token"];
-
-function sanitizeUrl(url: string): string {
-  try {
-    const u = new URL(url);
-    for (const param of PERSONAL_QUERY_PARAMS) {
-      if (u.searchParams.has(param)) {
-        u.searchParams.set(param, REDACTED);
-      }
-    }
-    return u.toString();
-  } catch {
-    return url.replace(/([?&](?:email|cpf|phone|token)=)[^&]*/gi, `$1${REDACTED}`);
-  }
-}
-
-function redactReviews(body: string): string {
-  try {
-    const json = JSON.parse(body) as Record<string, unknown>;
-    const data = (json.reviews ? json : (json.data as Record<string, unknown>)) ?? json;
-    for (const review of Array.isArray(data.reviews) ? data.reviews : []) {
-      for (const field of PERSONAL_REVIEW_FIELDS) {
-        if (review && typeof review === "object" && field in review) {
-          (review as Record<string, unknown>)[field] = REDACTED;
-        }
-      }
-    }
-    if ("aiSummary" in data) {
-      data.aiSummary = REDACTED;
-    }
-    return JSON.stringify(json);
-  } catch {
-    return body;
-  }
-}
 
 function screenFacts(result: PdpCheckResult) {
   const byKey = new Map(result.features.map((f) => [f.featureKey, f]));
