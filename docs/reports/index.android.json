@@ -1,6 +1,22 @@
 {
   "reports": [
     {
+      "runId": "run_android_1795018303377",
+      "startTime": "2026-11-18T16:11:43.377Z",
+      "endTime": "2026-11-18T16:39:00.461Z",
+      "durationMs": 1637084,
+      "summary": {
+        "total": 11,
+        "passed": 10,
+        "failed": 1,
+        "errors": 0,
+        "newFailures": 0
+      },
+      "skuSource": "firestore",
+      "jsonPath": "reports/run_android_1795018303377/report.json",
+      "platform": "android"
+    },
+    {
       "runId": "run_android_1794933693982",
       "startTime": "2026-11-17T16:41:33.982Z",
       "endTime": "2026-11-17T17:12:29.041Z",
