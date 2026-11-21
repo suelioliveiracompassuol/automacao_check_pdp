@@ -2,6 +2,21 @@
   "generatedAt": "2026-05-21T12:25:05Z",
   "reports": [
     {
+      "runId": "run_1795266693253",
+      "startTime": "2026-11-21T13:11:33.253Z",
+      "endTime": "2026-11-21T13:20:30.870Z",
+      "durationMs": 537617,
+      "summary": {
+        "total": 28,
+        "passed": 24,
+        "failed": 4,
+        "errors": 0,
+        "newFailures": 2
+      },
+      "skuSource": "firestore",
+      "jsonPath": "reports/run_1795266693253/report.json"
+    },
+    {
       "runId": "run_1795182426620",
       "startTime": "2026-11-20T13:47:06.620Z",
       "endTime": "2026-11-20T13:55:52.144Z",
@@ -1396,20 +1411,6 @@
       },
       "htmlPath": "reports/run_1786698363703/report.html",
       "jsonPath": "reports/run_1786698363703/report.json"
-    },
-    {
-      "runId": "run_1786612251344",
-      "startTime": "2026-08-13T09:10:51.344Z",
-      "endTime": "2026-08-13T09:15:00.935Z",
-      "durationMs": 249591,
-      "summary": {
-        "total": 27,
-        "passed": 21,
-        "failed": 6,
-        "errors": 0
-      },
-      "htmlPath": "reports/run_1786612251344/report.html",
-      "jsonPath": "reports/run_1786612251344/report.json"
     }
   ]
 }
