@@ -1,8 +1,8 @@
 {
-  "runId": "run_1795534120800",
-  "startTime": "2026-11-24T15:28:40.800Z",
-  "endTime": "2026-11-24T15:37:11.578Z",
-  "durationMs": 510778,
+  "runId": "run_1795619663122",
+  "startTime": "2026-11-25T15:14:23.122Z",
+  "endTime": "2026-11-25T15:22:56.440Z",
+  "durationMs": 513318,
   "skuSource": "firestore",
   "summary": {
     "total": 28,
@@ -18,9 +18,9 @@
       "url": "https://www.avon.com.ar/p/eau-de-toilette-musk-instinct-masculino-75-ml/AVNARG-135885",
       "vendor": "avon",
       "country": "AR",
-      "timestamp": "2026-11-24T15:28:45.285Z",
+      "timestamp": "2026-11-25T15:14:27.581Z",
       "success": true,
-      "loadTime": 1349,
+      "loadTime": 1479,
       "features": [
         {
           "feature": "Vitrine \"Mais produtos da marca\"",
@@ -89,7 +89,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-24T15:28:45.392Z",
+        "capturedAt": "2026-11-25T15:14:27.695Z",
         "locale": "es-AR",
         "product_reviews": {
           "enabled": false,
@@ -348,7 +348,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-24T15:28:51.964Z",
+        "capturedAt": "2026-11-25T15:14:34.772Z",
         "_raw": {
           "businessModelB2C": true,
           "businessModelB2B2C": false,
@@ -559,9 +559,9 @@
       "url": "https://www.avon.com.ar/p/perfume-de-mujer-lov-u/AVNARG-207446",
       "vendor": "avon",
       "country": "AR",
-      "timestamp": "2026-11-24T15:29:23.301Z",
+      "timestamp": "2026-11-25T15:15:06.749Z",
       "success": true,
-      "loadTime": 1247,
+      "loadTime": 761,
       "features": [
         {
           "feature": "Vitrine \"Mais produtos da marca\"",
@@ -630,7 +630,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-24T15:29:23.325Z",
+        "capturedAt": "2026-11-25T15:15:06.783Z",
         "locale": "es-AR",
         "product_reviews": {
           "enabled": false,
@@ -889,7 +889,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-24T15:29:29.685Z",
+        "capturedAt": "2026-11-25T15:15:12.744Z",
         "_raw": {
           "businessModelB2C": true,
           "businessModelB2B2C": false,
@@ -1100,9 +1100,9 @@
       "url": "https://www.avon.com.br/p/avon-supershock-volume-max-mascara-para-cilios-10-ml/AVNBRA-222050",
       "vendor": "avon",
       "country": "BR",
-      "timestamp": "2026-11-24T15:28:45.286Z",
+      "timestamp": "2026-11-25T15:14:27.581Z",
       "success": true,
-      "loadTime": 1737,
+      "loadTime": 1510,
       "features": [
         {
           "feature": "Avaliações do produto",
@@ -1318,7 +1318,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-24T15:28:45.400Z",
+        "capturedAt": "2026-11-25T15:14:27.683Z",
         "locale": "pt-BR",
         "product_reviews": {
           "enabled": true,
@@ -1577,7 +1577,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-24T15:28:53.752Z",
+        "capturedAt": "2026-11-25T15:14:36.196Z",
         "_raw": {
           "businessModelB2C": true,
           "businessModelB2B2C": false,
@@ -1790,9 +1790,9 @@
       "url": "https://www.avon.com.br/p/avon-iconic-batom-labial-24-g/AVNBRA-251533",
       "vendor": "avon",
       "country": "BR",
-      "timestamp": "2026-11-24T15:28:58.281Z",
+      "timestamp": "2026-11-25T15:14:41.962Z",
       "success": true,
-      "loadTime": 1066,
+      "loadTime": 893,
       "features": [
         {
           "feature": "Avaliações do produto",
@@ -2017,7 +2017,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-24T15:28:58.308Z",
+        "capturedAt": "2026-11-25T15:14:41.999Z",
         "locale": "pt-BR",
         "product_reviews": {
           "enabled": true,
@@ -2276,7 +2276,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-24T15:29:05.415Z",
+        "capturedAt": "2026-11-25T15:14:49.520Z",
         "_raw": {
           "businessModelB2C": true,
           "businessModelB2B2C": false,
@@ -2490,9 +2490,9 @@
       "vendor": "avon",
       "country": "BR",
       "channel": "socialcommerce",
-      "timestamp": "2026-11-24T15:28:45.286Z",
+      "timestamp": "2026-11-25T15:14:27.581Z",
       "success": true,
-      "loadTime": 2405,
+      "loadTime": 795,
       "features": [
         {
           "feature": "Avaliações do produto",
@@ -2570,12 +2570,12 @@
           "featureKey": "brandShowcase",
           "passed": true,
           "status": "pass",
-          "message": "Vitrine presente com 50 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA_AVNBRA]",
+          "message": "Vitrine presente com 50 produto(s) [contentZone: CZ_OM_VITRINE_PDP_MAIS_PRODUTOS_DA_MARCA]",
           "details": {
             "productCount": 50,
             "title": "",
-            "einsteinContentZone": "CZ_BR_VITRINE_PDP_EXPERIENCIA_AVNBRA",
-            "einsteinCampaignCount": 12
+            "einsteinContentZone": "CZ_OM_VITRINE_PDP_MAIS_PRODUTOS_DA_MARCA",
+            "einsteinCampaignCount": 0
           }
         },
         {
@@ -2740,7 +2740,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-24T15:28:45.346Z",
+        "capturedAt": "2026-11-25T15:14:27.706Z",
         "locale": "pt-BR",
         "product_reviews": {
           "enabled": true,
@@ -3124,7 +3124,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-24T15:28:53.618Z",
+        "capturedAt": "2026-11-25T15:14:35.150Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": true,
@@ -3343,9 +3343,9 @@
       "vendor": "avon",
       "country": "BR",
       "channel": "socialcommerce",
-      "timestamp": "2026-11-24T15:29:35.523Z",
+      "timestamp": "2026-11-25T15:15:17.359Z",
       "success": true,
-      "loadTime": 1836,
+      "loadTime": 1665,
       "features": [
         {
           "feature": "Avaliações do produto",
@@ -3602,7 +3602,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-24T15:29:35.547Z",
+        "capturedAt": "2026-11-25T15:15:17.393Z",
         "locale": "pt-BR",
         "product_reviews": {
           "enabled": true,
@@ -3986,7 +3986,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-24T15:29:43.353Z",
+        "capturedAt": "2026-11-25T15:15:25.425Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": true,
@@ -4204,9 +4204,9 @@
       "url": "https://www.avon.mx/p/anew-serum-fac-power-renovador-30ml/AVNMEX-201619",
       "vendor": "avon",
       "country": "MX",
-      "timestamp": "2026-11-24T15:29:06.664Z",
+      "timestamp": "2026-11-25T15:14:51.105Z",
       "success": true,
-      "loadTime": 1806,
+      "loadTime": 2701,
       "features": [
         {
           "feature": "Vitrine \"Mais produtos da marca\"",
@@ -4275,7 +4275,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-24T15:29:06.690Z",
+        "capturedAt": "2026-11-25T15:14:51.150Z",
         "locale": "es-MX",
         "product_reviews": {
           "enabled": false,
@@ -4534,7 +4534,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-24T15:29:13.597Z",
+        "capturedAt": "2026-11-25T15:14:59.057Z",
         "_raw": {
           "businessModelB2C": true,
           "businessModelB2B2C": false,
@@ -4740,9 +4740,9 @@
       "url": "https://www.naturacosmeticos.com.ar/p/base-serum-nude-me/NATARG-00068",
       "vendor": "natura",
       "country": "AR",
-      "timestamp": "2026-11-24T15:29:43.645Z",
+      "timestamp": "2026-11-25T15:15:29.168Z",
       "success": true,
-      "loadTime": 1274,
+      "loadTime": 2797,
       "features": [
         {
           "feature": "Avaliações do produto",
@@ -4763,19 +4763,18 @@
           "featureKey": "aiReviewSummary",
           "passed": true,
           "status": "pass",
-          "message": "Resumo por IA exibido igual ao da API (processado em 19/11/2026; tópicos: Comodidad (positivo), Apariencia (positivo)): \"Los clientes destacan que es una base ligera, suave y de sensación aterciopelada, que no deja la piel grasosa. También valoran su acabado natural y la cobertura, que ayuda a unificar el tono de la piel.\"",
+          "message": "Resumo por IA exibido igual ao da API (processado em 24/11/2026; tópicos: Comodidad (positivo)): \"Los clientes destacan que la base es ligera y deja la piel suave y aterciopelada.\"",
           "details": {
             "apiUrl": "https://www.naturacosmeticos.com.ar/bff-app-natura-argentina/reviews/v2/details?productId=NATARG-00068",
             "apiStatus": 200,
             "aiSummary": {
-              "processedDate": "2026-11-19T03:48:31.810Z",
-              "text": "Los clientes destacan que es una base ligera, suave y de sensación aterciopelada, que no deja la piel grasosa. También valoran su acabado natural y la cobertura, que ayuda a unificar el tono de la piel.",
+              "processedDate": "2026-11-24T16:13:21.571Z",
+              "text": "Los clientes destacan que la base es ligera y deja la piel suave y aterciopelada.",
               "topics": {
-                "Comodidad": "positive",
-                "Apariencia": "positive"
+                "Comodidad": "positive"
               }
             },
-            "pageText": "Los clientes destacan que es una base ligera, suave y de sensación aterciopelada, que no deja la piel grasosa. También valoran su acabado natural y la cobertura, que ayuda a unificar el tono de la piel."
+            "pageText": "Los clientes destacan que la base es ligera y deja la piel suave y aterciopelada."
           },
           "flagKey": "product_reviews.ai_summary",
           "flagValue": true
@@ -4834,7 +4833,7 @@
             "productCount": 61,
             "title": "",
             "einsteinContentZone": "CZ_AR_VITRINE_PDP_EXPERIENCIA",
-            "einsteinCampaignCount": 12
+            "einsteinCampaignCount": 11
           }
         },
         {
@@ -4842,12 +4841,12 @@
           "featureKey": "recommendationShowcase",
           "passed": true,
           "status": "pass",
-          "message": "Vitrine de recomendações presente com 43 produto(s) [contentZone: CZ_AR_VITRINE_PDP_EXPERIENCIA]",
+          "message": "Vitrine de recomendações presente com 42 produto(s) [contentZone: CZ_AR_VITRINE_PDP_EXPERIENCIA]",
           "details": {
-            "productCount": 43,
+            "productCount": 42,
             "title": "",
             "einsteinContentZone": "CZ_AR_VITRINE_PDP_EXPERIENCIA",
-            "einsteinCampaignCount": 12
+            "einsteinCampaignCount": 11
           }
         },
         {
@@ -5013,7 +5012,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-24T15:29:44.088Z",
+        "capturedAt": "2026-11-25T15:15:29.685Z",
         "locale": "es-AR",
         "product_reviews": {
           "enabled": true,
@@ -5094,7 +5093,6 @@
           "category_ne_tabshowcase": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":false}",
           "category_new_experience": "{\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true}",
           "chat": "{\"es-MX\":{},\"es-AR\":{},\"es-CL\":{},\"es-CO\":{},\"es-PE\":{},\"pt-BR\":{\"enabled\":true,\"defaultProvider\":\"data2\",\"providers\":{\"data2\":{\"enabled\":true,\"url\":\"https://webchat.natura-br-cf.data2.app\"},\"agentforce\":{\"enabled\":false}},\"routeProviders\":{\"HELP\":\"data2\",\"HELP_CATEGORY\":\"data2\",\"MY_REQUESTS\":\"data2\",\"ORDERS\":\"data2\"},\"widget\":{\"enabled\":true,\"enabledRoutes\":[\"HELP\",\"HELP_CATEGORY\",\"MY_REQUESTS\",\"ORDERS\"],\"avatar\":\"\"}}}",
-          "chat_agent_hair_pdp": "{\"pt-BR\":{\"enabled\":true,\"orgId\":\"00D3h0000069qZj\",\"deploymentName\":\"RecomendacaoProdutos_EspCategorias\",\"url\":\"https://naturanatura.my.site.com/ESWRecomendacaoProdutosE1790026434229\",\"bootstrapUrl\":\"https://naturanatura.my.site.com/ESWRecomendacaoProdutosE1790026434229/assets/js/bootstrap.min.js\",\"scrt2URL\":\"https://naturanatura.my.salesforce-scrt.com\",\"contentZoneTrigger\":\"CZ_BR_CAMPANHA_AGENTFORCE_POC_CABELOS\"}}",
           "chatbot_env_url": "https://webchat.natura-br-cf.data2.app/",
           "checkout_complete_new_experience": "{\"es-MX\":false,\"es-AR\":true,\"es-CL\":true,\"es-CO\":false,\"es-PE\":true,\"pt-BR\":true}",
           "checkout_new_experience": "{\"es-MX\":true,\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true}",
@@ -5448,7 +5446,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-24T15:29:51.509Z",
+        "capturedAt": "2026-11-25T15:15:38.480Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": false,
@@ -5661,9 +5659,9 @@
       "url": "https://www.naturacosmeticos.com.ar/p/homem-potence-edp-100-ml/NATARG-81950",
       "vendor": "natura",
       "country": "AR",
-      "timestamp": "2026-11-24T15:30:33.503Z",
+      "timestamp": "2026-11-25T15:16:22.000Z",
       "success": true,
-      "loadTime": 1482,
+      "loadTime": 1758,
       "features": [
         {
           "feature": "Avaliações do produto",
@@ -5684,18 +5682,18 @@
           "featureKey": "aiReviewSummary",
           "passed": true,
           "status": "pass",
-          "message": "Resumo por IA exibido igual ao da API (processado em 17/11/2026; tópicos: Aroma (positivo)): \"Los clientes destacan su aroma agradable, dulce y amaderado, y describen la fragancia como atractiva y elegante. También valoran su duración y fijación, aunque algunas reseñas señalan que en su piel dura poco.\"",
+          "message": "Resumo por IA exibido igual ao da API (processado em 24/11/2026; tópicos: Aroma (positivo)): \"Los clientes destacan su aroma agradable, dulce y amaderado, y comentan que la fragancia suele durar varias horas y recibir cumplidos.\"",
           "details": {
             "apiUrl": "https://www.naturacosmeticos.com.ar/bff-app-natura-argentina/reviews/v2/details?productId=NATARG-81950",
             "apiStatus": 200,
             "aiSummary": {
-              "processedDate": "2026-11-17T22:53:30.065Z",
-              "text": "Los clientes destacan su aroma agradable, dulce y amaderado, y describen la fragancia como atractiva y elegante. También valoran su duración y fijación, aunque algunas reseñas señalan que en su piel dura poco.",
+              "processedDate": "2026-11-24T15:59:02.202Z",
+              "text": "Los clientes destacan su aroma agradable, dulce y amaderado, y comentan que la fragancia suele durar varias horas y recibir cumplidos.",
               "topics": {
                 "Aroma": "positive"
               }
             },
-            "pageText": "Los clientes destacan su aroma agradable, dulce y amaderado, y describen la fragancia como atractiva y elegante. También valoran su duración y fijación, aunque algunas reseñas señalan que en su piel dura poco."
+            "pageText": "Los clientes destacan su aroma agradable, dulce y amaderado, y comentan que la fragancia suele durar varias horas y recibir cumplidos."
           },
           "flagKey": "product_reviews.ai_summary",
           "flagValue": true
@@ -5748,12 +5746,12 @@
           "featureKey": "brandShowcase",
           "passed": true,
           "status": "pass",
-          "message": "Vitrine presente com 59 produto(s) [contentZone: CZ_AR_VITRINE_PDP_EXPERIENCIA]",
+          "message": "Vitrine presente com 59 produto(s) [contentZone: CZ_AR_VITRINE_PDP_MAIS_PRODUTOS_DA_MARCA]",
           "details": {
             "productCount": 59,
             "title": "",
-            "einsteinContentZone": "CZ_AR_VITRINE_PDP_EXPERIENCIA",
-            "einsteinCampaignCount": 12
+            "einsteinContentZone": "CZ_AR_VITRINE_PDP_MAIS_PRODUTOS_DA_MARCA",
+            "einsteinCampaignCount": 0
           }
         },
         {
@@ -5761,9 +5759,9 @@
           "featureKey": "recommendationShowcase",
           "passed": true,
           "status": "pass",
-          "message": "Vitrine de recomendações presente com 35 produto(s) [contentZone: CZ_AR_VITRINE_PDP_EXPERIENCIA]",
+          "message": "Vitrine de recomendações presente com 36 produto(s) [contentZone: CZ_AR_VITRINE_PDP_EXPERIENCIA]",
           "details": {
-            "productCount": 35,
+            "productCount": 36,
             "title": "",
             "einsteinContentZone": "CZ_AR_VITRINE_PDP_EXPERIENCIA",
             "einsteinCampaignCount": 12
@@ -5919,7 +5917,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-24T15:30:33.632Z",
+        "capturedAt": "2026-11-25T15:16:22.240Z",
         "locale": "es-AR",
         "product_reviews": {
           "enabled": true,
@@ -6000,7 +5998,6 @@
           "category_ne_tabshowcase": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":false}",
           "category_new_experience": "{\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true}",
           "chat": "{\"es-MX\":{},\"es-AR\":{},\"es-CL\":{},\"es-CO\":{},\"es-PE\":{},\"pt-BR\":{\"enabled\":true,\"defaultProvider\":\"data2\",\"providers\":{\"data2\":{\"enabled\":true,\"url\":\"https://webchat.natura-br-cf.data2.app\"},\"agentforce\":{\"enabled\":false}},\"routeProviders\":{\"HELP\":\"data2\",\"HELP_CATEGORY\":\"data2\",\"MY_REQUESTS\":\"data2\",\"ORDERS\":\"data2\"},\"widget\":{\"enabled\":true,\"enabledRoutes\":[\"HELP\",\"HELP_CATEGORY\",\"MY_REQUESTS\",\"ORDERS\"],\"avatar\":\"\"}}}",
-          "chat_agent_hair_pdp": "{\"pt-BR\":{\"enabled\":true,\"orgId\":\"00D3h0000069qZj\",\"deploymentName\":\"RecomendacaoProdutos_EspCategorias\",\"url\":\"https://naturanatura.my.site.com/ESWRecomendacaoProdutosE1790026434229\",\"bootstrapUrl\":\"https://naturanatura.my.site.com/ESWRecomendacaoProdutosE1790026434229/assets/js/bootstrap.min.js\",\"scrt2URL\":\"https://naturanatura.my.salesforce-scrt.com\",\"contentZoneTrigger\":\"CZ_BR_CAMPANHA_AGENTFORCE_POC_CABELOS\"}}",
           "chatbot_env_url": "https://webchat.natura-br-cf.data2.app/",
           "checkout_complete_new_experience": "{\"es-MX\":false,\"es-AR\":true,\"es-CL\":true,\"es-CO\":false,\"es-PE\":true,\"pt-BR\":true}",
           "checkout_new_experience": "{\"es-MX\":true,\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true}",
@@ -6040,7 +6037,7 @@
           "enable_conversational_search_app": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":false}",
           "enable_coupon_compatible_current_cart": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":false}",
           "enable_coupons_pdp": "{\"es-MX\":true,\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true,\"pt-BR-ML\":true}",
-          "enable_crmbonus_cashback": "{   \"pt-BR\": false,   \"es-AR\": false,   \"es-CO\": false,   \"es-CL\": false,   \"es-PE\": false,   \"es-MX\": false }",
+          "enable_crmbonus_cashback": "{\"pt-BR\":true,\"es-AR\":false,\"es-CO\":false,\"es-CL\":false,\"es-PE\":false,\"es-MX\":false}",
           "enable_descount_amount_tag_pdp": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":true}",
           "enable_fetch_pages_onserver": "{\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"es-MX\":false,\"pt-BR\":false}",
           "enable_floating_button_liveshopping": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":false,\"pt-BR-ML\":false}",
@@ -6354,7 +6351,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-24T15:30:40.886Z",
+        "capturedAt": "2026-11-25T15:16:29.642Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": false,
@@ -6567,9 +6564,9 @@
       "url": "https://www.naturacosmeticos.com.ar/p/kriska-shock-eau-de-toilette-femenino-100ml/NATARG-83323",
       "vendor": "natura",
       "country": "AR",
-      "timestamp": "2026-11-24T15:31:22.415Z",
+      "timestamp": "2026-11-25T15:17:10.830Z",
       "success": true,
-      "loadTime": 983,
+      "loadTime": 2379,
       "features": [
         {
           "feature": "Avaliações do produto",
@@ -6590,19 +6587,19 @@
           "featureKey": "aiReviewSummary",
           "passed": true,
           "status": "pass",
-          "message": "Resumo por IA exibido igual ao da API (processado em 19/11/2026; tópicos: Aroma (positivo), Calidad (positivo)): \"Los clientes destacan su aroma dulce, con notas que recuerdan a vainilla, algodón de azúcar y caramelo, y lo describen como agradable. También valoran su duración y fijación, especialmente en la ropa y, para muchos, en la piel.\"",
+          "message": "Resumo por IA exibido igual ao da API (processado em 24/11/2026; tópicos: Aroma (positivo), Calidad (positivo)): \"Los clientes destacan su aroma dulce, con notas de vainilla y algodón de azúcar, que describen como agradable y duradero. También valoran la calidad mantenida a lo largo de los años.\"",
           "details": {
             "apiUrl": "https://www.naturacosmeticos.com.ar/bff-app-natura-argentina/reviews/v2/details?productId=NATARG-83323",
             "apiStatus": 200,
             "aiSummary": {
-              "processedDate": "2026-11-19T20:53:34.122Z",
-              "text": "Los clientes destacan su aroma dulce, con notas que recuerdan a vainilla, algodón de azúcar y caramelo, y lo describen como agradable. También valoran su duración y fijación, especialmente en la ropa y, para muchos, en la piel.",
+              "processedDate": "2026-11-24T22:18:29.230Z",
+              "text": "Los clientes destacan su aroma dulce, con notas de vainilla y algodón de azúcar, que describen como agradable y duradero. También valoran la calidad mantenida a lo largo de los años.",
               "topics": {
                 "Aroma": "positive",
                 "Calidad": "positive"
               }
             },
-            "pageText": "Los clientes destacan su aroma dulce, con notas que recuerdan a vainilla, algodón de azúcar y caramelo, y lo describen como agradable. También valoran su duración y fijación, especialmente en la ropa y, para muchos, en la piel."
+            "pageText": "Los clientes destacan su aroma dulce, con notas de vainilla y algodón de azúcar, que describen como agradable y duradero. También valoran la calidad mantenida a lo largo de los años."
           },
           "flagKey": "product_reviews.ai_summary",
           "flagValue": true
@@ -6833,7 +6830,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-24T15:31:22.541Z",
+        "capturedAt": "2026-11-25T15:17:11.013Z",
         "locale": "es-AR",
         "product_reviews": {
           "enabled": true,
@@ -6914,7 +6911,6 @@
           "category_ne_tabshowcase": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":false}",
           "category_new_experience": "{\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true}",
           "chat": "{\"es-MX\":{},\"es-AR\":{},\"es-CL\":{},\"es-CO\":{},\"es-PE\":{},\"pt-BR\":{\"enabled\":true,\"defaultProvider\":\"data2\",\"providers\":{\"data2\":{\"enabled\":true,\"url\":\"https://webchat.natura-br-cf.data2.app\"},\"agentforce\":{\"enabled\":false}},\"routeProviders\":{\"HELP\":\"data2\",\"HELP_CATEGORY\":\"data2\",\"MY_REQUESTS\":\"data2\",\"ORDERS\":\"data2\"},\"widget\":{\"enabled\":true,\"enabledRoutes\":[\"HELP\",\"HELP_CATEGORY\",\"MY_REQUESTS\",\"ORDERS\"],\"avatar\":\"\"}}}",
-          "chat_agent_hair_pdp": "{\"pt-BR\":{\"enabled\":true,\"orgId\":\"00D3h0000069qZj\",\"deploymentName\":\"RecomendacaoProdutos_EspCategorias\",\"url\":\"https://naturanatura.my.site.com/ESWRecomendacaoProdutosE1790026434229\",\"bootstrapUrl\":\"https://naturanatura.my.site.com/ESWRecomendacaoProdutosE1790026434229/assets/js/bootstrap.min.js\",\"scrt2URL\":\"https://naturanatura.my.salesforce-scrt.com\",\"contentZoneTrigger\":\"CZ_BR_CAMPANHA_AGENTFORCE_POC_CABELOS\"}}",
           "chatbot_env_url": "https://webchat.natura-br-cf.data2.app/",
           "checkout_complete_new_experience": "{\"es-MX\":false,\"es-AR\":true,\"es-CL\":true,\"es-CO\":false,\"es-PE\":true,\"pt-BR\":true}",
           "checkout_new_experience": "{\"es-MX\":true,\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true}",
@@ -7268,7 +7264,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-24T15:31:29.298Z",
+        "capturedAt": "2026-11-25T15:17:19.553Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": false,
@@ -7482,19 +7478,19 @@
       "vendor": "natura",
       "country": "BR",
       "channel": "socialcommerce",
-      "timestamp": "2026-11-24T15:29:59.722Z",
+      "timestamp": "2026-11-25T15:15:42.787Z",
       "success": true,
-      "loadTime": 1899,
+      "loadTime": 1787,
       "features": [
         {
           "feature": "Avaliações do produto",
           "featureKey": "reviews",
           "passed": true,
           "status": "pass",
-          "message": "Seção de avaliações presente com 1049 reviews",
+          "message": "Seção de avaliações presente com 1051 reviews",
           "details": {
             "hasRating": true,
-            "reviewCount": 1049,
+            "reviewCount": 1051,
             "gtmId": null
           },
           "flagKey": "product_reviews.enabled",
@@ -7505,19 +7501,19 @@
           "featureKey": "aiReviewSummary",
           "passed": true,
           "status": "pass",
-          "message": "Resumo por IA exibido igual ao da API (processado em 19/11/2026; tópicos: Aroma (positivo), Preço (positivo)): \"Os clientes elogiam a fragrância, descrita como agradável, fresca e marcante, além da boa fixação e projeção. Também destacam o bom custo-benefício, especialmente em promoção.\"",
+          "message": "Resumo por IA exibido igual ao da API (processado em 24/11/2026; tópicos: Aroma (positivo), Preço (positivo)): \"Os clientes destacam a fragrância fresca e agradável, além da boa fixação e projeção. Também há elogios ao custo-benefício e ao valor em promoção.\"",
           "details": {
             "apiUrl": "https://www.minhaloja.natura.com/bff-app-socialcommerce/reviews/v2/details?productId=NATBRA-108404",
             "apiStatus": 200,
             "aiSummary": {
-              "processedDate": "2026-11-19T18:48:28.978Z",
-              "text": "Os clientes elogiam a fragrância, descrita como agradável, fresca e marcante, além da boa fixação e projeção. Também destacam o bom custo-benefício, especialmente em promoção.",
+              "processedDate": "2026-11-24T18:53:30.939Z",
+              "text": "Os clientes destacam a fragrância fresca e agradável, além da boa fixação e projeção. Também há elogios ao custo-benefício e ao valor em promoção.",
               "topics": {
                 "Aroma": "positive",
                 "Preço": "positive"
               }
             },
-            "pageText": "Os clientes elogiam a fragrância, descrita como agradável, fresca e marcante, além da boa fixação e projeção. Também destacam o bom custo-benefício, especialmente em promoção."
+            "pageText": "Os clientes destacam a fragrância fresca e agradável, além da boa fixação e projeção. Também há elogios ao custo-benefício e ao valor em promoção."
           },
           "flagKey": "product_reviews.ai_summary",
           "flagValue": true
@@ -7570,9 +7566,9 @@
           "featureKey": "brandShowcase",
           "passed": true,
           "status": "pass",
-          "message": "Vitrine presente com 46 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA_NATBRA]",
+          "message": "Vitrine presente com 45 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA_NATBRA]",
           "details": {
-            "productCount": 46,
+            "productCount": 45,
             "title": "",
             "einsteinContentZone": "CZ_BR_VITRINE_PDP_EXPERIENCIA_NATBRA",
             "einsteinCampaignCount": 11
@@ -7613,7 +7609,7 @@
           "details": {
             "ratingValue": 4.8,
             "starCount": 0,
-            "ratingText": "4.8(1049) avaliações",
+            "ratingText": "4.8(1051) avaliações",
             "source": "dom",
             "productRating": 4.8
           }
@@ -7732,15 +7728,15 @@
               {
                 "method": "GET",
                 "status": 200,
-                "url": "https://www.minhaloja.natura.com/bff-app-socialcommerce/reviews/v2/details?productId=NATBRA-108404&sortField=created&sortOrder=desc&page=1&pageSize=1049&filterMedia=pictures"
+                "url": "https://www.minhaloja.natura.com/bff-app-socialcommerce/reviews/v2/details?productId=NATBRA-108404&sortField=created&sortOrder=desc&page=1&pageSize=1051&filterMedia=pictures"
               }
             ],
-            "bodyPreview": "{\"productId\":\"NATBRA-108404\",\"aggregatedRating\":4.8,\"reviewsCount\":1049,\"recommendedPercentage\":97.61677788369876,\"reviews\":[{\"id\":\"6abd234798f71c19d8631963\",\"createdAt\":\"2026-09-30T14:57:11.419Z\",\"ra"
+            "bodyPreview": "{\"productId\":\"NATBRA-108404\",\"aggregatedRating\":4.8,\"reviewsCount\":1051,\"recommendedPercentage\":97.62131303520457,\"reviews\":[{\"id\":\"6abd234798f71c19d8631963\",\"createdAt\":\"2026-09-30T14:57:11.419Z\",\"ra"
           }
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-24T15:29:59.754Z",
+        "capturedAt": "2026-11-25T15:15:42.864Z",
         "locale": "pt-BR",
         "product_reviews": {
           "enabled": true,
@@ -8124,7 +8120,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-24T15:30:09.260Z",
+        "capturedAt": "2026-11-25T15:15:50.934Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": true,
@@ -8343,19 +8339,19 @@
       "vendor": "natura",
       "country": "BR",
       "channel": "socialcommerce",
-      "timestamp": "2026-11-24T15:30:51.701Z",
+      "timestamp": "2026-11-25T15:16:32.184Z",
       "success": true,
-      "loadTime": 449,
+      "loadTime": 1082,
       "features": [
         {
           "feature": "Avaliações do produto",
           "featureKey": "reviews",
           "passed": true,
           "status": "pass",
-          "message": "Seção de avaliações presente com 131 reviews",
+          "message": "Seção de avaliações presente com 132 reviews",
           "details": {
             "hasRating": true,
-            "reviewCount": 131,
+            "reviewCount": 132,
             "gtmId": null
           },
           "flagKey": "product_reviews.enabled",
@@ -8431,9 +8427,9 @@
           "featureKey": "brandShowcase",
           "passed": true,
           "status": "pass",
-          "message": "Vitrine presente com 43 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA_NATBRA]",
+          "message": "Vitrine presente com 41 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA_NATBRA]",
           "details": {
-            "productCount": 43,
+            "productCount": 41,
             "title": "",
             "einsteinContentZone": "CZ_BR_VITRINE_PDP_EXPERIENCIA_NATBRA",
             "einsteinCampaignCount": 11
@@ -8474,7 +8470,7 @@
           "details": {
             "ratingValue": 4.9,
             "starCount": 0,
-            "ratingText": "4.9(131) avaliações",
+            "ratingText": "4.9(132) avaliações",
             "source": "dom",
             "productRating": 4.9
           }
@@ -8593,15 +8589,15 @@
               {
                 "method": "GET",
                 "status": 200,
-                "url": "https://www.minhaloja.natura.com/bff-app-socialcommerce/reviews/v2/details?productId=NATBRA-172407&sortField=created&sortOrder=desc&page=1&pageSize=131&filterMedia=pictures"
+                "url": "https://www.minhaloja.natura.com/bff-app-socialcommerce/reviews/v2/details?productId=NATBRA-172407&sortField=created&sortOrder=desc&page=1&pageSize=132&filterMedia=pictures"
               }
             ],
-            "bodyPreview": "{\"productId\":\"NATBRA-172407\",\"aggregatedRating\":4.9,\"reviewsCount\":131,\"recommendedPercentage\":100,\"reviews\":[{\"id\":\"6af73173ae4bf16f292d6e00\",\"createdAt\":\"2026-11-13T15:49:07.774Z\",\"rating\":5,\"helpfu"
+            "bodyPreview": "{\"productId\":\"NATBRA-172407\",\"aggregatedRating\":4.9,\"reviewsCount\":132,\"recommendedPercentage\":100,\"reviews\":[{\"id\":\"6af73173ae4bf16f292d6e00\",\"createdAt\":\"2026-11-13T15:49:07.774Z\",\"rating\":5,\"helpfu"
           }
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-24T15:30:51.725Z",
+        "capturedAt": "2026-11-25T15:16:32.231Z",
         "locale": "pt-BR",
         "product_reviews": {
           "enabled": true,
@@ -8985,7 +8981,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-24T15:30:59.254Z",
+        "capturedAt": "2026-11-25T15:16:39.313Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": true,
@@ -9203,9 +9199,9 @@
       "url": "https://www.natura.com.br/p/base-serum-nude-me-una-30-ml/NATBRA-110181",
       "vendor": "natura",
       "country": "BR",
-      "timestamp": "2026-11-24T15:30:33.039Z",
+      "timestamp": "2026-11-25T15:16:15.212Z",
       "success": true,
-      "loadTime": 3206,
+      "loadTime": 873,
       "features": [
         {
           "feature": "Avaliações do produto",
@@ -9291,12 +9287,12 @@
           "featureKey": "brandShowcase",
           "passed": true,
           "status": "pass",
-          "message": "Vitrine presente com 58 produto(s) [contentZone: CZ_BR_VITRINE_PDP_MAIS_PRODUTOS_DA_MARCA]",
+          "message": "Vitrine presente com 59 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA]",
           "details": {
-            "productCount": 58,
+            "productCount": 59,
             "title": "",
-            "einsteinContentZone": "CZ_BR_VITRINE_PDP_MAIS_PRODUTOS_DA_MARCA",
-            "einsteinCampaignCount": 0
+            "einsteinContentZone": "CZ_BR_VITRINE_PDP_EXPERIENCIA",
+            "einsteinCampaignCount": 12
           }
         },
         {
@@ -9304,9 +9300,9 @@
           "featureKey": "recommendationShowcase",
           "passed": true,
           "status": "pass",
-          "message": "Vitrine de recomendações presente com 42 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA]",
+          "message": "Vitrine de recomendações presente com 43 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA]",
           "details": {
-            "productCount": 42,
+            "productCount": 43,
             "title": "",
             "einsteinContentZone": "CZ_BR_VITRINE_PDP_EXPERIENCIA",
             "einsteinCampaignCount": 12
@@ -9468,7 +9464,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-24T15:30:33.067Z",
+        "capturedAt": "2026-11-25T15:16:15.276Z",
         "locale": "pt-BR",
         "product_reviews": {
           "enabled": true,
@@ -9549,7 +9545,6 @@
           "category_ne_tabshowcase": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":false}",
           "category_new_experience": "{\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true}",
           "chat": "{\"es-MX\":{},\"es-AR\":{},\"es-CL\":{},\"es-CO\":{},\"es-PE\":{},\"pt-BR\":{\"enabled\":true,\"defaultProvider\":\"data2\",\"providers\":{\"data2\":{\"enabled\":true,\"url\":\"https://webchat.natura-br-cf.data2.app\"},\"agentforce\":{\"enabled\":false}},\"routeProviders\":{\"HELP\":\"data2\",\"HELP_CATEGORY\":\"data2\",\"MY_REQUESTS\":\"data2\",\"ORDERS\":\"data2\"},\"widget\":{\"enabled\":true,\"enabledRoutes\":[\"HELP\",\"HELP_CATEGORY\",\"MY_REQUESTS\",\"ORDERS\"],\"avatar\":\"\"}}}",
-          "chat_agent_hair_pdp": "{\"pt-BR\":{\"enabled\":true,\"orgId\":\"00D3h0000069qZj\",\"deploymentName\":\"RecomendacaoProdutos_EspCategorias\",\"url\":\"https://naturanatura.my.site.com/ESWRecomendacaoProdutosE1790026434229\",\"bootstrapUrl\":\"https://naturanatura.my.site.com/ESWRecomendacaoProdutosE1790026434229/assets/js/bootstrap.min.js\",\"scrt2URL\":\"https://naturanatura.my.salesforce-scrt.com\",\"contentZoneTrigger\":\"CZ_BR_CAMPANHA_AGENTFORCE_POC_CABELOS\"}}",
           "chatbot_env_url": "https://webchat.natura-br-cf.data2.app/",
           "checkout_complete_new_experience": "{\"es-MX\":false,\"es-AR\":true,\"es-CL\":true,\"es-CO\":false,\"es-PE\":true,\"pt-BR\":true}",
           "checkout_new_experience": "{\"es-MX\":true,\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true}",
@@ -9589,7 +9584,7 @@
           "enable_conversational_search_app": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":false}",
           "enable_coupon_compatible_current_cart": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":false}",
           "enable_coupons_pdp": "{\"es-MX\":true,\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true,\"pt-BR-ML\":true}",
-          "enable_crmbonus_cashback": "{   \"pt-BR\": false,   \"es-AR\": false,   \"es-CO\": false,   \"es-CL\": false,   \"es-PE\": false,   \"es-MX\": false }",
+          "enable_crmbonus_cashback": "{\"pt-BR\":true,\"es-AR\":false,\"es-CO\":false,\"es-CL\":false,\"es-PE\":false,\"es-MX\":false}",
           "enable_descount_amount_tag_pdp": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":true}",
           "enable_fetch_pages_onserver": "{\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"es-MX\":false,\"pt-BR\":false}",
           "enable_floating_button_liveshopping": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":false,\"pt-BR-ML\":false}",
@@ -9903,7 +9898,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-24T15:30:42.159Z",
+        "capturedAt": "2026-11-25T15:16:21.933Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": false,
@@ -10128,9 +10123,9 @@
       "url": "https://www.natura.com.br/p/corretivo-cobertura-extrema-24h-una-8-ml/NATBRA-122112",
       "vendor": "natura",
       "country": "BR",
-      "timestamp": "2026-11-24T15:31:23.467Z",
+      "timestamp": "2026-11-25T15:17:04.546Z",
       "success": true,
-      "loadTime": 2674,
+      "loadTime": 1426,
       "features": [
         {
           "feature": "Avaliações do produto",
@@ -10220,7 +10215,7 @@
             "productCount": 58,
             "title": "",
             "einsteinContentZone": "CZ_BR_VITRINE_PDP_EXPERIENCIA",
-            "einsteinCampaignCount": 11
+            "einsteinCampaignCount": 12
           }
         },
         {
@@ -10228,12 +10223,12 @@
           "featureKey": "recommendationShowcase",
           "passed": true,
           "status": "pass",
-          "message": "Vitrine de recomendações presente com 41 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA]",
+          "message": "Vitrine de recomendações presente com 45 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA]",
           "details": {
-            "productCount": 41,
+            "productCount": 45,
             "title": "",
             "einsteinContentZone": "CZ_BR_VITRINE_PDP_EXPERIENCIA",
-            "einsteinCampaignCount": 11
+            "einsteinCampaignCount": 12
           }
         },
         {
@@ -10392,7 +10387,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-24T15:31:23.504Z",
+        "capturedAt": "2026-11-25T15:17:04.580Z",
         "locale": "pt-BR",
         "product_reviews": {
           "enabled": true,
@@ -10473,7 +10468,6 @@
           "category_ne_tabshowcase": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":false}",
           "category_new_experience": "{\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true}",
           "chat": "{\"es-MX\":{},\"es-AR\":{},\"es-CL\":{},\"es-CO\":{},\"es-PE\":{},\"pt-BR\":{\"enabled\":true,\"defaultProvider\":\"data2\",\"providers\":{\"data2\":{\"enabled\":true,\"url\":\"https://webchat.natura-br-cf.data2.app\"},\"agentforce\":{\"enabled\":false}},\"routeProviders\":{\"HELP\":\"data2\",\"HELP_CATEGORY\":\"data2\",\"MY_REQUESTS\":\"data2\",\"ORDERS\":\"data2\"},\"widget\":{\"enabled\":true,\"enabledRoutes\":[\"HELP\",\"HELP_CATEGORY\",\"MY_REQUESTS\",\"ORDERS\"],\"avatar\":\"\"}}}",
-          "chat_agent_hair_pdp": "{\"pt-BR\":{\"enabled\":true,\"orgId\":\"00D3h0000069qZj\",\"deploymentName\":\"RecomendacaoProdutos_EspCategorias\",\"url\":\"https://naturanatura.my.site.com/ESWRecomendacaoProdutosE1790026434229\",\"bootstrapUrl\":\"https://naturanatura.my.site.com/ESWRecomendacaoProdutosE1790026434229/assets/js/bootstrap.min.js\",\"scrt2URL\":\"https://naturanatura.my.salesforce-scrt.com\",\"contentZoneTrigger\":\"CZ_BR_CAMPANHA_AGENTFORCE_POC_CABELOS\"}}",
           "chatbot_env_url": "https://webchat.natura-br-cf.data2.app/",
           "checkout_complete_new_experience": "{\"es-MX\":false,\"es-AR\":true,\"es-CL\":true,\"es-CO\":false,\"es-PE\":true,\"pt-BR\":true}",
           "checkout_new_experience": "{\"es-MX\":true,\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true}",
@@ -10827,7 +10821,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-24T15:31:31.870Z",
+        "capturedAt": "2026-11-25T15:17:14.567Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": false,
@@ -11052,9 +11046,9 @@
       "url": "https://www.natura.com.br/p/deo-colonia-kaiak-ultra-masculino-100ml/NATBRA-169786",
       "vendor": "natura",
       "country": "BR",
-      "timestamp": "2026-11-24T15:32:13.978Z",
+      "timestamp": "2026-11-25T15:17:58.400Z",
       "success": true,
-      "loadTime": 2587,
+      "loadTime": 2183,
       "features": [
         {
           "feature": "Avaliações do produto",
@@ -11075,18 +11069,18 @@
           "featureKey": "aiReviewSummary",
           "passed": true,
           "status": "pass",
-          "message": "Resumo por IA exibido igual ao da API (processado em 19/11/2026; tópicos: Aroma (positivo)): \"Os clientes elogiam a fragrância, descrita como muito cheirosa, refrescante e com toques amadeirados. Muitos também destacam a boa fixação e a duração do aroma na pele e na roupa.\"",
+          "message": "Resumo por IA exibido igual ao da API (processado em 24/11/2026; tópicos: Aroma (positivo)): \"Os clientes elogiam a fragrância, descrita como refrescante, cítrica, aquática e com toques amadeirados; muitos a consideram agradável e marcante.\"",
           "details": {
             "apiUrl": "https://www.natura.com.br/bff-app-natura-brazil/reviews/v2/details?productId=NATBRA-169786",
             "apiStatus": 200,
             "aiSummary": {
-              "processedDate": "2026-11-19T16:53:30.158Z",
-              "text": "Os clientes elogiam a fragrância, descrita como muito cheirosa, refrescante e com toques amadeirados. Muitos também destacam a boa fixação e a duração do aroma na pele e na roupa.",
+              "processedDate": "2026-11-24T16:57:41.460Z",
+              "text": "Os clientes elogiam a fragrância, descrita como refrescante, cítrica, aquática e com toques amadeirados; muitos a consideram agradável e marcante.",
               "topics": {
                 "Aroma": "positive"
               }
             },
-            "pageText": "Os clientes elogiam a fragrância, descrita como muito cheirosa, refrescante e com toques amadeirados. Muitos também destacam a boa fixação e a duração do aroma na pele e na roupa."
+            "pageText": "Os clientes elogiam a fragrância, descrita como refrescante, cítrica, aquática e com toques amadeirados; muitos a consideram agradável e marcante."
           },
           "flagKey": "product_reviews.ai_summary",
           "flagValue": true
@@ -11139,9 +11133,9 @@
           "featureKey": "brandShowcase",
           "passed": true,
           "status": "pass",
-          "message": "Vitrine presente com 58 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA]",
+          "message": "Vitrine presente com 59 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA]",
           "details": {
-            "productCount": 58,
+            "productCount": 59,
             "title": "",
             "einsteinContentZone": "CZ_BR_VITRINE_PDP_EXPERIENCIA",
             "einsteinCampaignCount": 10
@@ -11316,7 +11310,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-24T15:32:14.014Z",
+        "capturedAt": "2026-11-25T15:17:58.436Z",
         "locale": "pt-BR",
         "product_reviews": {
           "enabled": true,
@@ -11397,7 +11391,6 @@
           "category_ne_tabshowcase": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":false}",
           "category_new_experience": "{\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true}",
           "chat": "{\"es-MX\":{},\"es-AR\":{},\"es-CL\":{},\"es-CO\":{},\"es-PE\":{},\"pt-BR\":{\"enabled\":true,\"defaultProvider\":\"data2\",\"providers\":{\"data2\":{\"enabled\":true,\"url\":\"https://webchat.natura-br-cf.data2.app\"},\"agentforce\":{\"enabled\":false}},\"routeProviders\":{\"HELP\":\"data2\",\"HELP_CATEGORY\":\"data2\",\"MY_REQUESTS\":\"data2\",\"ORDERS\":\"data2\"},\"widget\":{\"enabled\":true,\"enabledRoutes\":[\"HELP\",\"HELP_CATEGORY\",\"MY_REQUESTS\",\"ORDERS\"],\"avatar\":\"\"}}}",
-          "chat_agent_hair_pdp": "{\"pt-BR\":{\"enabled\":true,\"orgId\":\"00D3h0000069qZj\",\"deploymentName\":\"RecomendacaoProdutos_EspCategorias\",\"url\":\"https://naturanatura.my.site.com/ESWRecomendacaoProdutosE1790026434229\",\"bootstrapUrl\":\"https://naturanatura.my.site.com/ESWRecomendacaoProdutosE1790026434229/assets/js/bootstrap.min.js\",\"scrt2URL\":\"https://naturanatura.my.salesforce-scrt.com\",\"contentZoneTrigger\":\"CZ_BR_CAMPANHA_AGENTFORCE_POC_CABELOS\"}}",
           "chatbot_env_url": "https://webchat.natura-br-cf.data2.app/",
           "checkout_complete_new_experience": "{\"es-MX\":false,\"es-AR\":true,\"es-CL\":true,\"es-CO\":false,\"es-PE\":true,\"pt-BR\":true}",
           "checkout_new_experience": "{\"es-MX\":true,\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true}",
@@ -11751,7 +11744,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-24T15:32:22.385Z",
+        "capturedAt": "2026-11-25T15:18:06.606Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": false,
@@ -11976,19 +11969,19 @@
       "url": "https://www.natura.com.br/p/oleo-em-creme-ultranutritivo-restaurador-tododia-jambo-rosa-e-flor-de-caju-200-ml/NATBRA-172407",
       "vendor": "natura",
       "country": "BR",
-      "timestamp": "2026-11-24T15:33:04.385Z",
+      "timestamp": "2026-11-25T15:18:50.861Z",
       "success": true,
-      "loadTime": 2424,
+      "loadTime": 928,
       "features": [
         {
           "feature": "Avaliações do produto",
           "featureKey": "reviews",
           "passed": true,
           "status": "pass",
-          "message": "Seção de avaliações presente com 131 reviews",
+          "message": "Seção de avaliações presente com 132 reviews",
           "details": {
             "hasRating": true,
-            "reviewCount": 131,
+            "reviewCount": 132,
             "gtmId": null
           },
           "flagKey": "product_reviews.enabled",
@@ -12069,7 +12062,7 @@
             "productCount": 54,
             "title": "",
             "einsteinContentZone": "CZ_BR_VITRINE_PDP_EXPERIENCIA",
-            "einsteinCampaignCount": 12
+            "einsteinCampaignCount": 11
           }
         },
         {
@@ -12077,12 +12070,12 @@
           "featureKey": "recommendationShowcase",
           "passed": true,
           "status": "pass",
-          "message": "Vitrine de recomendações presente com 36 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA]",
+          "message": "Vitrine de recomendações presente com 33 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA]",
           "details": {
-            "productCount": 36,
+            "productCount": 33,
             "title": "",
             "einsteinContentZone": "CZ_BR_VITRINE_PDP_EXPERIENCIA",
-            "einsteinCampaignCount": 12
+            "einsteinCampaignCount": 11
           }
         },
         {
@@ -12119,7 +12112,7 @@
           "details": {
             "ratingValue": 4.9,
             "starCount": 0,
-            "ratingText": "4.9(131) avaliações",
+            "ratingText": "4.9(132) avaliações",
             "source": "dom",
             "productRating": 4.9
           }
@@ -12239,15 +12232,15 @@
               {
                 "method": "GET",
                 "status": 200,
-                "url": "https://www.natura.com.br/bff-app-natura-brazil/reviews/v2/details?productId=NATBRA-172407&sortField=created&sortOrder=desc&page=1&pageSize=131&filterMedia=pictures"
+                "url": "https://www.natura.com.br/bff-app-natura-brazil/reviews/v2/details?productId=NATBRA-172407&sortField=created&sortOrder=desc&page=1&pageSize=132&filterMedia=pictures"
               }
             ],
-            "bodyPreview": "{\"productId\":\"NATBRA-172407\",\"aggregatedRating\":4.9,\"reviewsCount\":131,\"recommendedPercentage\":100,\"reviews\":[{\"id\":\"6af73173ae4bf16f292d6e00\",\"createdAt\":\"2026-11-13T15:49:07.774Z\",\"rating\":5,\"helpfu"
+            "bodyPreview": "{\"productId\":\"NATBRA-172407\",\"aggregatedRating\":4.9,\"reviewsCount\":132,\"recommendedPercentage\":100,\"reviews\":[{\"id\":\"6af73173ae4bf16f292d6e00\",\"createdAt\":\"2026-11-13T15:49:07.774Z\",\"rating\":5,\"helpfu"
           }
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-24T15:33:04.499Z",
+        "capturedAt": "2026-11-25T15:18:50.894Z",
         "locale": "pt-BR",
         "product_reviews": {
           "enabled": true,
@@ -12328,7 +12321,6 @@
           "category_ne_tabshowcase": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":false}",
           "category_new_experience": "{\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true}",
           "chat": "{\"es-MX\":{},\"es-AR\":{},\"es-CL\":{},\"es-CO\":{},\"es-PE\":{},\"pt-BR\":{\"enabled\":true,\"defaultProvider\":\"data2\",\"providers\":{\"data2\":{\"enabled\":true,\"url\":\"https://webchat.natura-br-cf.data2.app\"},\"agentforce\":{\"enabled\":false}},\"routeProviders\":{\"HELP\":\"data2\",\"HELP_CATEGORY\":\"data2\",\"MY_REQUESTS\":\"data2\",\"ORDERS\":\"data2\"},\"widget\":{\"enabled\":true,\"enabledRoutes\":[\"HELP\",\"HELP_CATEGORY\",\"MY_REQUESTS\",\"ORDERS\"],\"avatar\":\"\"}}}",
-          "chat_agent_hair_pdp": "{\"pt-BR\":{\"enabled\":true,\"orgId\":\"00D3h0000069qZj\",\"deploymentName\":\"RecomendacaoProdutos_EspCategorias\",\"url\":\"https://naturanatura.my.site.com/ESWRecomendacaoProdutosE1790026434229\",\"bootstrapUrl\":\"https://naturanatura.my.site.com/ESWRecomendacaoProdutosE1790026434229/assets/js/bootstrap.min.js\",\"scrt2URL\":\"https://naturanatura.my.salesforce-scrt.com\",\"contentZoneTrigger\":\"CZ_BR_CAMPANHA_AGENTFORCE_POC_CABELOS\"}}",
           "chatbot_env_url": "https://webchat.natura-br-cf.data2.app/",
           "checkout_complete_new_experience": "{\"es-MX\":false,\"es-AR\":true,\"es-CL\":true,\"es-CO\":false,\"es-PE\":true,\"pt-BR\":true}",
           "checkout_new_experience": "{\"es-MX\":true,\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true}",
@@ -12682,7 +12674,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-24T15:33:12.219Z",
+        "capturedAt": "2026-11-25T15:18:57.090Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": false,
@@ -12907,19 +12899,19 @@
       "url": "https://www.natura.com.br/p/sabonete-em-barra-puro-vegetal-tododia-algodao-5-un-de-90-g-cada/NATBRA-2830",
       "vendor": "natura",
       "country": "BR",
-      "timestamp": "2026-11-24T15:33:53.121Z",
+      "timestamp": "2026-11-25T15:19:37.620Z",
       "success": true,
-      "loadTime": 818,
+      "loadTime": 811,
       "features": [
         {
           "feature": "Avaliações do produto",
           "featureKey": "reviews",
           "passed": true,
           "status": "pass",
-          "message": "Seção de avaliações presente com 1301 reviews",
+          "message": "Seção de avaliações presente com 1307 reviews",
           "details": {
             "hasRating": true,
-            "reviewCount": 1301,
+            "reviewCount": 1307,
             "gtmId": null
           },
           "flagKey": "product_reviews.enabled",
@@ -12930,19 +12922,19 @@
           "featureKey": "aiReviewSummary",
           "passed": true,
           "status": "pass",
-          "message": "Resumo por IA exibido igual ao da API (processado em 18/11/2026; tópicos: Aroma (positivo), Conforto (positivo)): \"Os clientes destacam o aroma agradável e suave, que deixa perfume na pele. Também mencionam a sensação de pele macia e hidratada.\"",
+          "message": "Resumo por IA exibido igual ao da API (processado em 24/11/2026; tópicos: Aroma (positivo), Conforto (positivo)): \"A fragrância é frequentemente elogiada como suave e agradável. Clientes também destacam a espuma cremosa e a sensação de pele macia e hidratada.\"",
           "details": {
             "apiUrl": "https://www.natura.com.br/bff-app-natura-brazil/reviews/v2/details?productId=NATBRA-2830",
             "apiStatus": 200,
             "aiSummary": {
-              "processedDate": "2026-11-18T22:03:29.376Z",
-              "text": "Os clientes destacam o aroma agradável e suave, que deixa perfume na pele. Também mencionam a sensação de pele macia e hidratada.",
+              "processedDate": "2026-11-24T15:36:14.456Z",
+              "text": "A fragrância é frequentemente elogiada como suave e agradável. Clientes também destacam a espuma cremosa e a sensação de pele macia e hidratada.",
               "topics": {
                 "Aroma": "positive",
                 "Conforto": "positive"
               }
             },
-            "pageText": "Os clientes destacam o aroma agradável e suave, que deixa perfume na pele. Também mencionam a sensação de pele macia e hidratada."
+            "pageText": "A fragrância é frequentemente elogiada como suave e agradável. Clientes também destacam a espuma cremosa e a sensação de pele macia e hidratada."
           },
           "flagKey": "product_reviews.ai_summary",
           "flagValue": true
@@ -12995,12 +12987,12 @@
           "featureKey": "brandShowcase",
           "passed": true,
           "status": "pass",
-          "message": "Vitrine presente com 53 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA]",
+          "message": "Vitrine presente com 54 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA]",
           "details": {
-            "productCount": 53,
+            "productCount": 54,
             "title": "",
             "einsteinContentZone": "CZ_BR_VITRINE_PDP_EXPERIENCIA",
-            "einsteinCampaignCount": 11
+            "einsteinCampaignCount": 12
           }
         },
         {
@@ -13008,12 +13000,12 @@
           "featureKey": "recommendationShowcase",
           "passed": true,
           "status": "pass",
-          "message": "Vitrine de recomendações presente com 33 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA]",
+          "message": "Vitrine de recomendações presente com 36 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA]",
           "details": {
-            "productCount": 33,
+            "productCount": 36,
             "title": "",
             "einsteinContentZone": "CZ_BR_VITRINE_PDP_EXPERIENCIA",
-            "einsteinCampaignCount": 11
+            "einsteinCampaignCount": 12
           }
         },
         {
@@ -13038,7 +13030,7 @@
           "details": {
             "ratingValue": 4.9,
             "starCount": 0,
-            "ratingText": "4.9(1301) avaliações",
+            "ratingText": "4.9(1307) avaliações",
             "source": "dom",
             "productRating": 4.9
           }
@@ -13164,15 +13156,15 @@
               {
                 "method": "GET",
                 "status": 200,
-                "url": "https://www.natura.com.br/bff-app-natura-brazil/reviews/v2/details?productId=NATBRA-2830&sortField=created&sortOrder=desc&page=1&pageSize=1301&filterMedia=pictures"
+                "url": "https://www.natura.com.br/bff-app-natura-brazil/reviews/v2/details?productId=NATBRA-2830&sortField=created&sortOrder=desc&page=1&pageSize=1307&filterMedia=pictures"
               }
             ],
-            "bodyPreview": "{\"productId\":\"NATBRA-2830\",\"aggregatedRating\":4.9,\"reviewsCount\":1301,\"recommendedPercentage\":99.53881629515757,\"reviews\":[{\"id\":\"6aa862ef6d6d4c7330851ca5\",\"createdAt\":\"2026-09-14T21:11:11.491Z\",\"rati"
+            "bodyPreview": "{\"productId\":\"NATBRA-2830\",\"aggregatedRating\":4.9,\"reviewsCount\":1307,\"recommendedPercentage\":99.54093343534812,\"reviews\":[{\"id\":\"6aa862ef6d6d4c7330851ca5\",\"createdAt\":\"2026-09-14T21:11:11.491Z\",\"rati"
           }
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-24T15:33:53.155Z",
+        "capturedAt": "2026-11-25T15:19:37.671Z",
         "locale": "pt-BR",
         "product_reviews": {
           "enabled": true,
@@ -13253,7 +13245,6 @@
           "category_ne_tabshowcase": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":false}",
           "category_new_experience": "{\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true}",
           "chat": "{\"es-MX\":{},\"es-AR\":{},\"es-CL\":{},\"es-CO\":{},\"es-PE\":{},\"pt-BR\":{\"enabled\":true,\"defaultProvider\":\"data2\",\"providers\":{\"data2\":{\"enabled\":true,\"url\":\"https://webchat.natura-br-cf.data2.app\"},\"agentforce\":{\"enabled\":false}},\"routeProviders\":{\"HELP\":\"data2\",\"HELP_CATEGORY\":\"data2\",\"MY_REQUESTS\":\"data2\",\"ORDERS\":\"data2\"},\"widget\":{\"enabled\":true,\"enabledRoutes\":[\"HELP\",\"HELP_CATEGORY\",\"MY_REQUESTS\",\"ORDERS\"],\"avatar\":\"\"}}}",
-          "chat_agent_hair_pdp": "{\"pt-BR\":{\"enabled\":true,\"orgId\":\"00D3h0000069qZj\",\"deploymentName\":\"RecomendacaoProdutos_EspCategorias\",\"url\":\"https://naturanatura.my.site.com/ESWRecomendacaoProdutosE1790026434229\",\"bootstrapUrl\":\"https://naturanatura.my.site.com/ESWRecomendacaoProdutosE1790026434229/assets/js/bootstrap.min.js\",\"scrt2URL\":\"https://naturanatura.my.salesforce-scrt.com\",\"contentZoneTrigger\":\"CZ_BR_CAMPANHA_AGENTFORCE_POC_CABELOS\"}}",
           "chatbot_env_url": "https://webchat.natura-br-cf.data2.app/",
           "checkout_complete_new_experience": "{\"es-MX\":false,\"es-AR\":true,\"es-CL\":true,\"es-CO\":false,\"es-PE\":true,\"pt-BR\":true}",
           "checkout_new_experience": "{\"es-MX\":true,\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true}",
@@ -13607,7 +13598,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-24T15:34:00.412Z",
+        "capturedAt": "2026-11-25T15:19:44.717Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": false,
@@ -13832,19 +13823,19 @@
       "url": "https://www.natura.com.br/p/creme-hidratante-para-as-maos-ekos-castanha-75-g/NATBRA-70983",
       "vendor": "natura",
       "country": "BR",
-      "timestamp": "2026-11-24T15:34:43.817Z",
+      "timestamp": "2026-11-25T15:20:28.300Z",
       "success": true,
-      "loadTime": 2397,
+      "loadTime": 1302,
       "features": [
         {
           "feature": "Avaliações do produto",
           "featureKey": "reviews",
           "passed": true,
           "status": "pass",
-          "message": "Seção de avaliações presente com 474 reviews",
+          "message": "Seção de avaliações presente com 475 reviews",
           "details": {
             "hasRating": true,
-            "reviewCount": 474,
+            "reviewCount": 475,
             "gtmId": null
           },
           "flagKey": "product_reviews.enabled",
@@ -13963,7 +13954,7 @@
           "details": {
             "ratingValue": 5,
             "starCount": 0,
-            "ratingText": "5.0(474) avaliações",
+            "ratingText": "5.0(475) avaliações",
             "source": "dom",
             "productRating": 5
           }
@@ -14089,15 +14080,15 @@
               {
                 "method": "GET",
                 "status": 200,
-                "url": "https://www.natura.com.br/bff-app-natura-brazil/reviews/v2/details?productId=NATBRA-70983&sortField=created&sortOrder=desc&page=1&pageSize=474&filterMedia=pictures"
+                "url": "https://www.natura.com.br/bff-app-natura-brazil/reviews/v2/details?productId=NATBRA-70983&sortField=created&sortOrder=desc&page=1&pageSize=475&filterMedia=pictures"
               }
             ],
-            "bodyPreview": "{\"productId\":\"NATBRA-70983\",\"aggregatedRating\":5,\"reviewsCount\":474,\"recommendedPercentage\":99.15611814345992,\"reviews\":[{\"id\":\"6aebc675f9e97453def0a020\",\"createdAt\":\"2026-11-04T23:57:41.763Z\",\"rating"
+            "bodyPreview": "{\"productId\":\"NATBRA-70983\",\"aggregatedRating\":5,\"reviewsCount\":475,\"recommendedPercentage\":99.1578947368421,\"reviews\":[{\"id\":\"6aebc675f9e97453def0a020\",\"createdAt\":\"2026-11-04T23:57:41.763Z\",\"rating\""
           }
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-24T15:34:43.839Z",
+        "capturedAt": "2026-11-25T15:20:28.388Z",
         "locale": "pt-BR",
         "product_reviews": {
           "enabled": true,
@@ -14178,7 +14169,6 @@
           "category_ne_tabshowcase": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":false}",
           "category_new_experience": "{\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true}",
           "chat": "{\"es-MX\":{},\"es-AR\":{},\"es-CL\":{},\"es-CO\":{},\"es-PE\":{},\"pt-BR\":{\"enabled\":true,\"defaultProvider\":\"data2\",\"providers\":{\"data2\":{\"enabled\":true,\"url\":\"https://webchat.natura-br-cf.data2.app\"},\"agentforce\":{\"enabled\":false}},\"routeProviders\":{\"HELP\":\"data2\",\"HELP_CATEGORY\":\"data2\",\"MY_REQUESTS\":\"data2\",\"ORDERS\":\"data2\"},\"widget\":{\"enabled\":true,\"enabledRoutes\":[\"HELP\",\"HELP_CATEGORY\",\"MY_REQUESTS\",\"ORDERS\"],\"avatar\":\"\"}}}",
-          "chat_agent_hair_pdp": "{\"pt-BR\":{\"enabled\":true,\"orgId\":\"00D3h0000069qZj\",\"deploymentName\":\"RecomendacaoProdutos_EspCategorias\",\"url\":\"https://naturanatura.my.site.com/ESWRecomendacaoProdutosE1790026434229\",\"bootstrapUrl\":\"https://naturanatura.my.site.com/ESWRecomendacaoProdutosE1790026434229/assets/js/bootstrap.min.js\",\"scrt2URL\":\"https://naturanatura.my.salesforce-scrt.com\",\"contentZoneTrigger\":\"CZ_BR_CAMPANHA_AGENTFORCE_POC_CABELOS\"}}",
           "chatbot_env_url": "https://webchat.natura-br-cf.data2.app/",
           "checkout_complete_new_experience": "{\"es-MX\":false,\"es-AR\":true,\"es-CL\":true,\"es-CO\":false,\"es-PE\":true,\"pt-BR\":true}",
           "checkout_new_experience": "{\"es-MX\":true,\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true}",
@@ -14532,7 +14522,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-24T15:34:52.073Z",
+        "capturedAt": "2026-11-25T15:20:35.482Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": false,
@@ -14757,9 +14747,9 @@
       "url": "https://www.natura.com.br/p/desodorante-perfume-essencial-masculino-100-ml/NATBRA-76420",
       "vendor": "natura",
       "country": "BR",
-      "timestamp": "2026-11-24T15:35:35.731Z",
+      "timestamp": "2026-11-25T15:21:19.089Z",
       "success": true,
-      "loadTime": 1437,
+      "loadTime": 657,
       "features": [
         {
           "feature": "Avaliações do produto",
@@ -14845,9 +14835,9 @@
           "featureKey": "brandShowcase",
           "passed": true,
           "status": "pass",
-          "message": "Vitrine presente com 58 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA]",
+          "message": "Vitrine presente com 59 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA]",
           "details": {
-            "productCount": 58,
+            "productCount": 59,
             "title": "",
             "einsteinContentZone": "CZ_BR_VITRINE_PDP_EXPERIENCIA",
             "einsteinCampaignCount": 12
@@ -15022,7 +15012,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-24T15:35:35.754Z",
+        "capturedAt": "2026-11-25T15:21:19.128Z",
         "locale": "pt-BR",
         "product_reviews": {
           "enabled": true,
@@ -15103,7 +15093,6 @@
           "category_ne_tabshowcase": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":false}",
           "category_new_experience": "{\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true}",
           "chat": "{\"es-MX\":{},\"es-AR\":{},\"es-CL\":{},\"es-CO\":{},\"es-PE\":{},\"pt-BR\":{\"enabled\":true,\"defaultProvider\":\"data2\",\"providers\":{\"data2\":{\"enabled\":true,\"url\":\"https://webchat.natura-br-cf.data2.app\"},\"agentforce\":{\"enabled\":false}},\"routeProviders\":{\"HELP\":\"data2\",\"HELP_CATEGORY\":\"data2\",\"MY_REQUESTS\":\"data2\",\"ORDERS\":\"data2\"},\"widget\":{\"enabled\":true,\"enabledRoutes\":[\"HELP\",\"HELP_CATEGORY\",\"MY_REQUESTS\",\"ORDERS\"],\"avatar\":\"\"}}}",
-          "chat_agent_hair_pdp": "{\"pt-BR\":{\"enabled\":true,\"orgId\":\"00D3h0000069qZj\",\"deploymentName\":\"RecomendacaoProdutos_EspCategorias\",\"url\":\"https://naturanatura.my.site.com/ESWRecomendacaoProdutosE1790026434229\",\"bootstrapUrl\":\"https://naturanatura.my.site.com/ESWRecomendacaoProdutosE1790026434229/assets/js/bootstrap.min.js\",\"scrt2URL\":\"https://naturanatura.my.salesforce-scrt.com\",\"contentZoneTrigger\":\"CZ_BR_CAMPANHA_AGENTFORCE_POC_CABELOS\"}}",
           "chatbot_env_url": "https://webchat.natura-br-cf.data2.app/",
           "checkout_complete_new_experience": "{\"es-MX\":false,\"es-AR\":true,\"es-CL\":true,\"es-CO\":false,\"es-PE\":true,\"pt-BR\":true}",
           "checkout_new_experience": "{\"es-MX\":true,\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true}",
@@ -15457,7 +15446,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-24T15:35:43.303Z",
+        "capturedAt": "2026-11-25T15:21:26.365Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": false,
@@ -15682,19 +15671,19 @@
       "url": "https://www.natura.com.br/p/mamae-e-bebe-agua-de-colonia-100-ml/NATBRA-92786",
       "vendor": "natura",
       "country": "BR",
-      "timestamp": "2026-11-24T15:36:25.960Z",
+      "timestamp": "2026-11-25T15:22:09.917Z",
       "success": true,
-      "loadTime": 527,
+      "loadTime": 760,
       "features": [
         {
           "feature": "Avaliações do produto",
           "featureKey": "reviews",
           "passed": true,
           "status": "pass",
-          "message": "Seção de avaliações presente com 1112 reviews",
+          "message": "Seção de avaliações presente com 1114 reviews",
           "details": {
             "hasRating": true,
-            "reviewCount": 1112,
+            "reviewCount": 1114,
             "gtmId": null
           },
           "flagKey": "product_reviews.enabled",
@@ -15705,18 +15694,19 @@
           "featureKey": "aiReviewSummary",
           "passed": true,
           "status": "pass",
-          "message": "Resumo por IA exibido igual ao da API (processado em 18/11/2026; tópicos: Aroma (positivo)): \"Muitos clientes elogiam o aroma, descrito como cheiroso, gostoso, suave e agradável, com aquele cheirinho de bebê. Alguns dizem que a fragrância atual está mais fraca e não dura muito.\"",
+          "message": "Resumo por IA exibido igual ao da API (processado em 24/11/2026; tópicos: Aroma (positivo), Qualidade (positivo)): \"Os clientes elogiam o aroma, descrito como suave, agradável e com cheirinho de bebê. Também destacam a qualidade do produto.\"",
           "details": {
             "apiUrl": "https://www.natura.com.br/bff-app-natura-brazil/reviews/v2/details?productId=NATBRA-92786",
             "apiStatus": 200,
             "aiSummary": {
-              "processedDate": "2026-11-18T15:53:30.091Z",
-              "text": "Muitos clientes elogiam o aroma, descrito como cheiroso, gostoso, suave e agradável, com aquele cheirinho de bebê. Alguns dizem que a fragrância atual está mais fraca e não dura muito.",
+              "processedDate": "2026-11-24T15:21:11.206Z",
+              "text": "Os clientes elogiam o aroma, descrito como suave, agradável e com cheirinho de bebê. Também destacam a qualidade do produto.",
               "topics": {
-                "Aroma": "positive"
+                "Aroma": "positive",
+                "Qualidade": "positive"
               }
             },
-            "pageText": "Muitos clientes elogiam o aroma, descrito como cheiroso, gostoso, suave e agradável, com aquele cheirinho de bebê. Alguns dizem que a fragrância atual está mais fraca e não dura muito."
+            "pageText": "Os clientes elogiam o aroma, descrito como suave, agradável e com cheirinho de bebê. Também destacam a qualidade do produto."
           },
           "flagKey": "product_reviews.ai_summary",
           "flagValue": true
@@ -15774,7 +15764,7 @@
             "productCount": 59,
             "title": "",
             "einsteinContentZone": "CZ_BR_VITRINE_PDP_EXPERIENCIA",
-            "einsteinCampaignCount": 10
+            "einsteinCampaignCount": 11
           }
         },
         {
@@ -15782,12 +15772,12 @@
           "featureKey": "recommendationShowcase",
           "passed": true,
           "status": "pass",
-          "message": "Vitrine de recomendações presente com 30 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA]",
+          "message": "Vitrine de recomendações presente com 33 produto(s) [contentZone: CZ_BR_VITRINE_PDP_EXPERIENCIA]",
           "details": {
-            "productCount": 30,
+            "productCount": 33,
             "title": "",
             "einsteinContentZone": "CZ_BR_VITRINE_PDP_EXPERIENCIA",
-            "einsteinCampaignCount": 10
+            "einsteinCampaignCount": 11
           }
         },
         {
@@ -15812,7 +15802,7 @@
           "details": {
             "ratingValue": 4,
             "starCount": 0,
-            "ratingText": "4.0(1112) avaliações",
+            "ratingText": "4.0(1114) avaliações",
             "source": "dom",
             "productRating": 4
           }
@@ -15932,15 +15922,15 @@
               {
                 "method": "GET",
                 "status": 200,
-                "url": "https://www.natura.com.br/bff-app-natura-brazil/reviews/v2/details?productId=NATBRA-92786&sortField=created&sortOrder=desc&page=1&pageSize=1112&filterMedia=pictures"
+                "url": "https://www.natura.com.br/bff-app-natura-brazil/reviews/v2/details?productId=NATBRA-92786&sortField=created&sortOrder=desc&page=1&pageSize=1114&filterMedia=pictures"
               }
             ],
-            "bodyPreview": "{\"productId\":\"NATBRA-92786\",\"aggregatedRating\":4,\"reviewsCount\":1112,\"recommendedPercentage\":75.35971223021582,\"reviews\":[{\"id\":\"6af8fff61909647d7c524aab\",\"createdAt\":\"2026-11-15T00:42:30.485Z\",\"ratin"
+            "bodyPreview": "{\"productId\":\"NATBRA-92786\",\"aggregatedRating\":4,\"reviewsCount\":1114,\"recommendedPercentage\":75.40394973070018,\"reviews\":[{\"id\":\"6af8fff61909647d7c524aab\",\"createdAt\":\"2026-11-15T00:42:30.485Z\",\"ratin"
           }
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-24T15:36:25.986Z",
+        "capturedAt": "2026-11-25T15:22:09.949Z",
         "locale": "pt-BR",
         "product_reviews": {
           "enabled": true,
@@ -16021,7 +16011,6 @@
           "category_ne_tabshowcase": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":false}",
           "category_new_experience": "{\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true}",
           "chat": "{\"es-MX\":{},\"es-AR\":{},\"es-CL\":{},\"es-CO\":{},\"es-PE\":{},\"pt-BR\":{\"enabled\":true,\"defaultProvider\":\"data2\",\"providers\":{\"data2\":{\"enabled\":true,\"url\":\"https://webchat.natura-br-cf.data2.app\"},\"agentforce\":{\"enabled\":false}},\"routeProviders\":{\"HELP\":\"data2\",\"HELP_CATEGORY\":\"data2\",\"MY_REQUESTS\":\"data2\",\"ORDERS\":\"data2\"},\"widget\":{\"enabled\":true,\"enabledRoutes\":[\"HELP\",\"HELP_CATEGORY\",\"MY_REQUESTS\",\"ORDERS\"],\"avatar\":\"\"}}}",
-          "chat_agent_hair_pdp": "{\"pt-BR\":{\"enabled\":true,\"orgId\":\"00D3h0000069qZj\",\"deploymentName\":\"RecomendacaoProdutos_EspCategorias\",\"url\":\"https://naturanatura.my.site.com/ESWRecomendacaoProdutosE1790026434229\",\"bootstrapUrl\":\"https://naturanatura.my.site.com/ESWRecomendacaoProdutosE1790026434229/assets/js/bootstrap.min.js\",\"scrt2URL\":\"https://naturanatura.my.salesforce-scrt.com\",\"contentZoneTrigger\":\"CZ_BR_CAMPANHA_AGENTFORCE_POC_CABELOS\"}}",
           "chatbot_env_url": "https://webchat.natura-br-cf.data2.app/",
           "checkout_complete_new_experience": "{\"es-MX\":false,\"es-AR\":true,\"es-CL\":true,\"es-CO\":false,\"es-PE\":true,\"pt-BR\":true}",
           "checkout_new_experience": "{\"es-MX\":true,\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true}",
@@ -16375,7 +16364,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-24T15:36:32.238Z",
+        "capturedAt": "2026-11-25T15:22:16.360Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": false,
@@ -16600,9 +16589,9 @@
       "url": "https://www.natura.cl/p/kaiak-urbe-eau-de-toilette-masculino-100-ml/NATCHL-111172",
       "vendor": "natura",
       "country": "CL",
-      "timestamp": "2026-11-24T15:31:38.879Z",
+      "timestamp": "2026-11-25T15:17:19.322Z",
       "success": true,
-      "loadTime": 1596,
+      "loadTime": 1748,
       "features": [
         {
           "feature": "Avaliações do produto",
@@ -16780,16 +16769,9 @@
           "featureKey": "minStockBadge",
           "passed": true,
           "status": "pass",
-          "message": "API do produto retorna minStockBadge do tipo minStockAlert para NATCHL-111172 e o selo \"últimas unidades\" está visível (via ssr).",
+          "message": "API do produto não retorna minStockBadge do tipo minStockAlert para NATCHL-111172 e o selo \"últimas unidades\" corretamente não é exibido (via ssr).",
           "details": {
             "displayedProductId": "NATCHL-111172",
-            "minStockBadge": {
-              "type": "minStockAlert",
-              "text": "ultimas unidades",
-              "color": "#68408A",
-              "background": "#F3EEFA",
-              "icon": "https://staging-na01.natura.com/on/demandware.static/-/Sites/default/dw9f493dfa/badgeIcons/outlined-action-runningclock.png"
-            },
             "source": "ssr"
           }
         },
@@ -16809,11 +16791,11 @@
           "featureKey": "contentBanners",
           "passed": true,
           "status": "pass",
-          "message": "4 banner(s) de conteúdo carregado(s) corretamente (4 seção/seções)",
+          "message": "3 banner(s) de conteúdo carregado(s) corretamente (3 seção/seções)",
           "details": {
-            "sectionCount": 4,
-            "totalBanners": 4,
-            "loadedCount": 4,
+            "sectionCount": 3,
+            "totalBanners": 3,
+            "loadedCount": 3,
             "brokenCount": 0
           }
         },
@@ -16872,7 +16854,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-24T15:31:39.033Z",
+        "capturedAt": "2026-11-25T15:17:19.626Z",
         "locale": "es-CL",
         "product_reviews": {
           "enabled": true,
@@ -16953,7 +16935,6 @@
           "category_ne_tabshowcase": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":false}",
           "category_new_experience": "{\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true}",
           "chat": "{\"es-MX\":{},\"es-AR\":{},\"es-CL\":{},\"es-CO\":{},\"es-PE\":{},\"pt-BR\":{\"enabled\":true,\"defaultProvider\":\"data2\",\"providers\":{\"data2\":{\"enabled\":true,\"url\":\"https://webchat.natura-br-cf.data2.app\"},\"agentforce\":{\"enabled\":false}},\"routeProviders\":{\"HELP\":\"data2\",\"HELP_CATEGORY\":\"data2\",\"MY_REQUESTS\":\"data2\",\"ORDERS\":\"data2\"},\"widget\":{\"enabled\":true,\"enabledRoutes\":[\"HELP\",\"HELP_CATEGORY\",\"MY_REQUESTS\",\"ORDERS\"],\"avatar\":\"\"}}}",
-          "chat_agent_hair_pdp": "{\"pt-BR\":{\"enabled\":true,\"orgId\":\"00D3h0000069qZj\",\"deploymentName\":\"RecomendacaoProdutos_EspCategorias\",\"url\":\"https://naturanatura.my.site.com/ESWRecomendacaoProdutosE1790026434229\",\"bootstrapUrl\":\"https://naturanatura.my.site.com/ESWRecomendacaoProdutosE1790026434229/assets/js/bootstrap.min.js\",\"scrt2URL\":\"https://naturanatura.my.salesforce-scrt.com\",\"contentZoneTrigger\":\"CZ_BR_CAMPANHA_AGENTFORCE_POC_CABELOS\"}}",
           "chatbot_env_url": "https://webchat.natura-br-cf.data2.app/",
           "checkout_complete_new_experience": "{\"es-MX\":false,\"es-AR\":true,\"es-CL\":true,\"es-CO\":false,\"es-PE\":true,\"pt-BR\":true}",
           "checkout_new_experience": "{\"es-MX\":true,\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true}",
@@ -16993,7 +16974,7 @@
           "enable_conversational_search_app": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":false}",
           "enable_coupon_compatible_current_cart": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":false}",
           "enable_coupons_pdp": "{\"es-MX\":true,\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true,\"pt-BR-ML\":true}",
-          "enable_crmbonus_cashback": "{   \"pt-BR\": false,   \"es-AR\": false,   \"es-CO\": false,   \"es-CL\": false,   \"es-PE\": false,   \"es-MX\": false }",
+          "enable_crmbonus_cashback": "{\"pt-BR\":true,\"es-AR\":false,\"es-CO\":false,\"es-CL\":false,\"es-PE\":false,\"es-MX\":false}",
           "enable_descount_amount_tag_pdp": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":true}",
           "enable_fetch_pages_onserver": "{\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"es-MX\":false,\"pt-BR\":false}",
           "enable_floating_button_liveshopping": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":false,\"pt-BR-ML\":false}",
@@ -17307,7 +17288,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-24T15:31:46.427Z",
+        "capturedAt": "2026-11-25T15:17:27.804Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": false,
@@ -17521,9 +17502,9 @@
       "url": "https://www.natura.cl/p/homem-potence-edp-masculino-homem-100ml/NATCHL-81950",
       "vendor": "natura",
       "country": "CL",
-      "timestamp": "2026-11-24T15:32:30.072Z",
+      "timestamp": "2026-11-25T15:18:11.993Z",
       "success": true,
-      "loadTime": 790,
+      "loadTime": 1405,
       "features": [
         {
           "feature": "Avaliações do produto",
@@ -17779,7 +17760,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-24T15:32:30.211Z",
+        "capturedAt": "2026-11-25T15:18:12.260Z",
         "locale": "es-CL",
         "product_reviews": {
           "enabled": true,
@@ -17860,7 +17841,6 @@
           "category_ne_tabshowcase": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":false}",
           "category_new_experience": "{\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true}",
           "chat": "{\"es-MX\":{},\"es-AR\":{},\"es-CL\":{},\"es-CO\":{},\"es-PE\":{},\"pt-BR\":{\"enabled\":true,\"defaultProvider\":\"data2\",\"providers\":{\"data2\":{\"enabled\":true,\"url\":\"https://webchat.natura-br-cf.data2.app\"},\"agentforce\":{\"enabled\":false}},\"routeProviders\":{\"HELP\":\"data2\",\"HELP_CATEGORY\":\"data2\",\"MY_REQUESTS\":\"data2\",\"ORDERS\":\"data2\"},\"widget\":{\"enabled\":true,\"enabledRoutes\":[\"HELP\",\"HELP_CATEGORY\",\"MY_REQUESTS\",\"ORDERS\"],\"avatar\":\"\"}}}",
-          "chat_agent_hair_pdp": "{\"pt-BR\":{\"enabled\":true,\"orgId\":\"00D3h0000069qZj\",\"deploymentName\":\"RecomendacaoProdutos_EspCategorias\",\"url\":\"https://naturanatura.my.site.com/ESWRecomendacaoProdutosE1790026434229\",\"bootstrapUrl\":\"https://naturanatura.my.site.com/ESWRecomendacaoProdutosE1790026434229/assets/js/bootstrap.min.js\",\"scrt2URL\":\"https://naturanatura.my.salesforce-scrt.com\",\"contentZoneTrigger\":\"CZ_BR_CAMPANHA_AGENTFORCE_POC_CABELOS\"}}",
           "chatbot_env_url": "https://webchat.natura-br-cf.data2.app/",
           "checkout_complete_new_experience": "{\"es-MX\":false,\"es-AR\":true,\"es-CL\":true,\"es-CO\":false,\"es-PE\":true,\"pt-BR\":true}",
           "checkout_new_experience": "{\"es-MX\":true,\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true}",
@@ -17900,7 +17880,7 @@
           "enable_conversational_search_app": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":false}",
           "enable_coupon_compatible_current_cart": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":false}",
           "enable_coupons_pdp": "{\"es-MX\":true,\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true,\"pt-BR-ML\":true}",
-          "enable_crmbonus_cashback": "{\"pt-BR\":true,\"es-AR\":false,\"es-CO\":false,\"es-CL\":false,\"es-PE\":false,\"es-MX\":false}",
+          "enable_crmbonus_cashback": "{   \"pt-BR\": false,   \"es-AR\": false,   \"es-CO\": false,   \"es-CL\": false,   \"es-PE\": false,   \"es-MX\": false }",
           "enable_descount_amount_tag_pdp": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":true}",
           "enable_fetch_pages_onserver": "{\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"es-MX\":false,\"pt-BR\":false}",
           "enable_floating_button_liveshopping": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":false,\"pt-BR-ML\":false}",
@@ -18214,7 +18194,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-24T15:32:36.552Z",
+        "capturedAt": "2026-11-25T15:18:19.735Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": false,
@@ -18428,9 +18408,9 @@
       "url": "https://www.natura.com.co/p/eau-de-toilette-kaiak-aero-masculino-100-ml/NATCOL-111174",
       "vendor": "natura",
       "country": "CO",
-      "timestamp": "2026-11-24T15:32:09.758Z",
+      "timestamp": "2026-11-25T15:18:02.183Z",
       "success": true,
-      "loadTime": 3359,
+      "loadTime": 8368,
       "features": [
         {
           "feature": "Avaliações do produto",
@@ -18516,9 +18496,9 @@
           "featureKey": "brandShowcase",
           "passed": true,
           "status": "pass",
-          "message": "Vitrine presente com 58 produto(s) [contentZone: CZ_CO_VITRINE_PDP_EXPERIENCIA]",
+          "message": "Vitrine presente com 56 produto(s) [contentZone: CZ_CO_VITRINE_PDP_EXPERIENCIA]",
           "details": {
-            "productCount": 58,
+            "productCount": 56,
             "title": "",
             "einsteinContentZone": "CZ_CO_VITRINE_PDP_EXPERIENCIA",
             "einsteinCampaignCount": 12
@@ -18656,7 +18636,8 @@
           "message": "Módulo de presente exibido com 1 opção(ões): \"você entrega\"",
           "details": {
             "cardMessage": false,
-            "searchBag": true
+            "searchBag": true,
+            "clickFallback": true
           },
           "flagKey": "gift_module_pdp.enabled",
           "flagValue": true
@@ -18694,7 +18675,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-24T15:32:09.937Z",
+        "capturedAt": "2026-11-25T15:18:02.520Z",
         "locale": "es-CO",
         "product_reviews": {
           "enabled": true,
@@ -18775,7 +18756,6 @@
           "category_ne_tabshowcase": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":false}",
           "category_new_experience": "{\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true}",
           "chat": "{\"es-MX\":{},\"es-AR\":{},\"es-CL\":{},\"es-CO\":{},\"es-PE\":{},\"pt-BR\":{\"enabled\":true,\"defaultProvider\":\"data2\",\"providers\":{\"data2\":{\"enabled\":true,\"url\":\"https://webchat.natura-br-cf.data2.app\"},\"agentforce\":{\"enabled\":false}},\"routeProviders\":{\"HELP\":\"data2\",\"HELP_CATEGORY\":\"data2\",\"MY_REQUESTS\":\"data2\",\"ORDERS\":\"data2\"},\"widget\":{\"enabled\":true,\"enabledRoutes\":[\"HELP\",\"HELP_CATEGORY\",\"MY_REQUESTS\",\"ORDERS\"],\"avatar\":\"\"}}}",
-          "chat_agent_hair_pdp": "{\"pt-BR\":{\"enabled\":true,\"orgId\":\"00D3h0000069qZj\",\"deploymentName\":\"RecomendacaoProdutos_EspCategorias\",\"url\":\"https://naturanatura.my.site.com/ESWRecomendacaoProdutosE1790026434229\",\"bootstrapUrl\":\"https://naturanatura.my.site.com/ESWRecomendacaoProdutosE1790026434229/assets/js/bootstrap.min.js\",\"scrt2URL\":\"https://naturanatura.my.salesforce-scrt.com\",\"contentZoneTrigger\":\"CZ_BR_CAMPANHA_AGENTFORCE_POC_CABELOS\"}}",
           "chatbot_env_url": "https://webchat.natura-br-cf.data2.app/",
           "checkout_complete_new_experience": "{\"es-MX\":false,\"es-AR\":true,\"es-CL\":true,\"es-CO\":false,\"es-PE\":true,\"pt-BR\":true}",
           "checkout_new_experience": "{\"es-MX\":true,\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true}",
@@ -19129,7 +19109,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-24T15:32:18.902Z",
+        "capturedAt": "2026-11-25T15:18:17.202Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": false,
@@ -19244,7 +19224,7 @@
           "internalShippingCalculation": true,
           "konfidencyProductReviewLink": true,
           "latLong": false,
-          "liveShopping": false,
+          "liveShopping": true,
           "location": false,
           "maxAllowedCoupons": 1,
           "messageLateDeliveryOrder": false,
@@ -19342,9 +19322,9 @@
       "url": "https://www.natura.com.co/p/eau-de-toilette-ekos-pitanga-femenino-150ml/NATCOL-73573",
       "vendor": "natura",
       "country": "CO",
-      "timestamp": "2026-11-24T15:32:59.577Z",
+      "timestamp": "2026-11-25T15:19:12.239Z",
       "success": true,
-      "loadTime": 2941,
+      "loadTime": 1354,
       "features": [
         {
           "feature": "Avaliações do produto",
@@ -19365,19 +19345,18 @@
           "featureKey": "aiReviewSummary",
           "passed": true,
           "status": "pass",
-          "message": "Resumo por IA exibido igual ao da API (processado em 18/11/2026; tópicos: Aroma (positivo), Calidad (positivo)): \"Los clientes destacan su aroma cítrico, frutal y dulce, además de fresco y agradable para el día a día y el verano. También valoran que la fragancia dure y tenga buena fijación en la piel.\"",
+          "message": "Resumo por IA exibido igual ao da API (processado em 24/11/2026; tópicos: Aroma (positivo)): \"A los clientes les gusta su aroma cítrico, frutal y dulce, que describen como fresco y apropiado para el verano y el uso diario. También destacan que la fragancia dura muchas horas en la piel.\"",
           "details": {
             "apiUrl": "https://www.natura.com.co/bff-app-natura-colombia/reviews/v2/details?productId=NATCOL-73573",
             "apiStatus": 200,
             "aiSummary": {
-              "processedDate": "2026-11-18T06:43:29.774Z",
-              "text": "Los clientes destacan su aroma cítrico, frutal y dulce, además de fresco y agradable para el día a día y el verano. También valoran que la fragancia dure y tenga buena fijación en la piel.",
+              "processedDate": "2026-11-24T16:20:57.201Z",
+              "text": "A los clientes les gusta su aroma cítrico, frutal y dulce, que describen como fresco y apropiado para el verano y el uso diario. También destacan que la fragancia dura muchas horas en la piel.",
               "topics": {
-                "Aroma": "positive",
-                "Calidad": "positive"
+                "Aroma": "positive"
               }
             },
-            "pageText": "Los clientes destacan su aroma cítrico, frutal y dulce, además de fresco y agradable para el día a día y el verano. También valoran que la fragancia dure y tenga buena fijación en la piel."
+            "pageText": "A los clientes les gusta su aroma cítrico, frutal y dulce, que describen como fresco y apropiado para el verano y el uso diario. También destacan que la fragancia dura muchas horas en la piel."
           },
           "flagKey": "product_reviews.ai_summary",
           "flagValue": true
@@ -19431,9 +19410,9 @@
           "featureKey": "brandShowcase",
           "passed": true,
           "status": "pass",
-          "message": "Vitrine presente com 58 produto(s) [contentZone: CZ_CO_VITRINE_PDP_EXPERIENCIA]",
+          "message": "Vitrine presente com 55 produto(s) [contentZone: CZ_CO_VITRINE_PDP_EXPERIENCIA]",
           "details": {
-            "productCount": 58,
+            "productCount": 55,
             "title": "",
             "einsteinContentZone": "CZ_CO_VITRINE_PDP_EXPERIENCIA",
             "einsteinCampaignCount": 12
@@ -19552,11 +19531,11 @@
           "featureKey": "contentBanners",
           "passed": true,
           "status": "pass",
-          "message": "4 banner(s) de conteúdo carregado(s) corretamente (4 seção/seções)",
+          "message": "3 banner(s) de conteúdo carregado(s) corretamente (3 seção/seções)",
           "details": {
-            "sectionCount": 4,
-            "totalBanners": 4,
-            "loadedCount": 4,
+            "sectionCount": 3,
+            "totalBanners": 3,
+            "loadedCount": 3,
             "brokenCount": 0
           }
         },
@@ -19577,7 +19556,8 @@
           "message": "Módulo de presente exibido com 1 opção(ões): \"você entrega\"",
           "details": {
             "cardMessage": false,
-            "searchBag": true
+            "searchBag": true,
+            "clickFallback": true
           },
           "flagKey": "gift_module_pdp.enabled",
           "flagValue": true
@@ -19615,7 +19595,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-24T15:32:59.692Z",
+        "capturedAt": "2026-11-25T15:19:12.609Z",
         "locale": "es-CO",
         "product_reviews": {
           "enabled": true,
@@ -19696,7 +19676,6 @@
           "category_ne_tabshowcase": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":false}",
           "category_new_experience": "{\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true}",
           "chat": "{\"es-MX\":{},\"es-AR\":{},\"es-CL\":{},\"es-CO\":{},\"es-PE\":{},\"pt-BR\":{\"enabled\":true,\"defaultProvider\":\"data2\",\"providers\":{\"data2\":{\"enabled\":true,\"url\":\"https://webchat.natura-br-cf.data2.app\"},\"agentforce\":{\"enabled\":false}},\"routeProviders\":{\"HELP\":\"data2\",\"HELP_CATEGORY\":\"data2\",\"MY_REQUESTS\":\"data2\",\"ORDERS\":\"data2\"},\"widget\":{\"enabled\":true,\"enabledRoutes\":[\"HELP\",\"HELP_CATEGORY\",\"MY_REQUESTS\",\"ORDERS\"],\"avatar\":\"\"}}}",
-          "chat_agent_hair_pdp": "{\"pt-BR\":{\"enabled\":true,\"orgId\":\"00D3h0000069qZj\",\"deploymentName\":\"RecomendacaoProdutos_EspCategorias\",\"url\":\"https://naturanatura.my.site.com/ESWRecomendacaoProdutosE1790026434229\",\"bootstrapUrl\":\"https://naturanatura.my.site.com/ESWRecomendacaoProdutosE1790026434229/assets/js/bootstrap.min.js\",\"scrt2URL\":\"https://naturanatura.my.salesforce-scrt.com\",\"contentZoneTrigger\":\"CZ_BR_CAMPANHA_AGENTFORCE_POC_CABELOS\"}}",
           "chatbot_env_url": "https://webchat.natura-br-cf.data2.app/",
           "checkout_complete_new_experience": "{\"es-MX\":false,\"es-AR\":true,\"es-CL\":true,\"es-CO\":false,\"es-PE\":true,\"pt-BR\":true}",
           "checkout_new_experience": "{\"es-MX\":true,\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true}",
@@ -20050,7 +20029,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-24T15:33:09.791Z",
+        "capturedAt": "2026-11-25T15:19:20.627Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": false,
@@ -20165,7 +20144,7 @@
           "internalShippingCalculation": true,
           "konfidencyProductReviewLink": true,
           "latLong": false,
-          "liveShopping": false,
+          "liveShopping": true,
           "location": false,
           "maxAllowedCoupons": 1,
           "messageLateDeliveryOrder": false,
@@ -20263,9 +20242,9 @@
       "url": "https://www.natura.com.mx/p/kaiak-urbe-eau-de-toilette-masculino/NATMEX-111172",
       "vendor": "natura",
       "country": "MX",
-      "timestamp": "2026-11-24T15:33:15.795Z",
+      "timestamp": "2026-11-25T15:19:01.197Z",
       "success": false,
-      "loadTime": 1262,
+      "loadTime": 1049,
       "features": [
         {
           "feature": "Avaliações do produto",
@@ -20404,7 +20383,7 @@
           "featureKey": "ratingConsistency",
           "passed": false,
           "status": "fail",
-          "message": "Nota do produto (SFCC) diferente da Konfidency: produto=5 (API do produto (SSR)) vs reviews=4.8. Divergente desde 14/11, 08:59 (10 dias): a nota da Konfidency não chegou ao SFCC em 1 dia.",
+          "message": "Nota do produto (SFCC) diferente da Konfidency: produto=5 (API do produto (SSR)) vs reviews=4.8. Divergente desde 14/11, 08:59 (11 dias): a nota da Konfidency não chegou ao SFCC em 1 dia.",
           "details": {
             "productRating": 5,
             "productRatingSource": "ssr",
@@ -20413,7 +20392,7 @@
             "reviewsApiUrl": "https://www.natura.com.mx/bff-app-natura-mexico-v2/reviews/v2/details?productId=NATMEX-111172",
             "divergent": true,
             "divergentSince": "2026-11-14T11:59:31.882Z",
-            "divergentForMs": 876872068
+            "divergentForMs": 962417358
           },
           "newFailure": false,
           "failingSince": "2026-11-15T12:30:00.261Z"
@@ -20539,9 +20518,9 @@
           }
         }
       ],
-      "pageScreenshot": "screenshots/NATMEX-111172_fullpage_1795534443951.png",
+      "pageScreenshot": "screenshots/NATMEX-111172_fullpage_1795619989241.png",
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-24T15:33:16.075Z",
+        "capturedAt": "2026-11-25T15:19:01.549Z",
         "locale": "es-MX",
         "product_reviews": {
           "enabled": true,
@@ -20622,7 +20601,6 @@
           "category_ne_tabshowcase": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":false}",
           "category_new_experience": "{\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true}",
           "chat": "{\"es-MX\":{},\"es-AR\":{},\"es-CL\":{},\"es-CO\":{},\"es-PE\":{},\"pt-BR\":{\"enabled\":true,\"defaultProvider\":\"data2\",\"providers\":{\"data2\":{\"enabled\":true,\"url\":\"https://webchat.natura-br-cf.data2.app\"},\"agentforce\":{\"enabled\":false}},\"routeProviders\":{\"HELP\":\"data2\",\"HELP_CATEGORY\":\"data2\",\"MY_REQUESTS\":\"data2\",\"ORDERS\":\"data2\"},\"widget\":{\"enabled\":true,\"enabledRoutes\":[\"HELP\",\"HELP_CATEGORY\",\"MY_REQUESTS\",\"ORDERS\"],\"avatar\":\"\"}}}",
-          "chat_agent_hair_pdp": "{\"pt-BR\":{\"enabled\":true,\"orgId\":\"00D3h0000069qZj\",\"deploymentName\":\"RecomendacaoProdutos_EspCategorias\",\"url\":\"https://naturanatura.my.site.com/ESWRecomendacaoProdutosE1790026434229\",\"bootstrapUrl\":\"https://naturanatura.my.site.com/ESWRecomendacaoProdutosE1790026434229/assets/js/bootstrap.min.js\",\"scrt2URL\":\"https://naturanatura.my.salesforce-scrt.com\",\"contentZoneTrigger\":\"CZ_BR_CAMPANHA_AGENTFORCE_POC_CABELOS\"}}",
           "chatbot_env_url": "https://webchat.natura-br-cf.data2.app/",
           "checkout_complete_new_experience": "{\"es-MX\":false,\"es-AR\":true,\"es-CL\":true,\"es-CO\":false,\"es-PE\":true,\"pt-BR\":true}",
           "checkout_new_experience": "{\"es-MX\":true,\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true}",
@@ -20976,7 +20954,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-24T15:33:23.369Z",
+        "capturedAt": "2026-11-25T15:19:08.384Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": false,
@@ -21190,9 +21168,9 @@
       "url": "https://www.natura.com.mx/p/natura-homem-eau-de-parfum-masculino-potence/NATMEX-81950",
       "vendor": "natura",
       "country": "MX",
-      "timestamp": "2026-11-24T15:34:06.504Z",
+      "timestamp": "2026-11-25T15:19:52.316Z",
       "success": false,
-      "loadTime": 2080,
+      "loadTime": 730,
       "features": [
         {
           "feature": "Avaliações do produto",
@@ -21213,19 +21191,19 @@
           "featureKey": "aiReviewSummary",
           "passed": true,
           "status": "pass",
-          "message": "Resumo por IA exibido igual ao da API (processado em 18/11/2026; tópicos: Aroma (positivo), Calidad (positivo)): \"Los clientes destacan su aroma dulce y amaderado, agradable y con personalidad. También valoran su duración y fijación, que varias reseñas describen como prolongadas.\"",
+          "message": "Resumo por IA exibido igual ao da API (processado em 24/11/2026; tópicos: Aroma (positivo), Calidad (positivo)): \"Los clientes destacan su aroma agradable, dulce y amaderado, y muchos valoran su duración y fijación prolongadas en la piel y la ropa.\"",
           "details": {
             "apiUrl": "https://www.natura.com.mx/bff-app-natura-mexico-v2/reviews/v2/details?productId=NATMEX-81950",
             "apiStatus": 200,
             "aiSummary": {
-              "processedDate": "2026-11-18T10:38:29.700Z",
-              "text": "Los clientes destacan su aroma dulce y amaderado, agradable y con personalidad. También valoran su duración y fijación, que varias reseñas describen como prolongadas.",
+              "processedDate": "2026-11-24T15:51:33.666Z",
+              "text": "Los clientes destacan su aroma agradable, dulce y amaderado, y muchos valoran su duración y fijación prolongadas en la piel y la ropa.",
               "topics": {
                 "Aroma": "positive",
                 "Calidad": "positive"
               }
             },
-            "pageText": "Los clientes destacan su aroma dulce y amaderado, agradable y con personalidad. También valoran su duración y fijación, que varias reseñas describen como prolongadas."
+            "pageText": "Los clientes destacan su aroma agradable, dulce y amaderado, y muchos valoran su duración y fijación prolongadas en la piel y la ropa."
           },
           "flagKey": "product_reviews.ai_summary",
           "flagValue": true
@@ -21332,7 +21310,7 @@
           "featureKey": "ratingConsistency",
           "passed": false,
           "status": "fail",
-          "message": "Nota do produto (SFCC) diferente da Konfidency: produto=5 (API do produto (SSR)) vs reviews=4.9. Divergente desde 05/11, 09:59 (19 dias): a nota da Konfidency não chegou ao SFCC em 1 dia.",
+          "message": "Nota do produto (SFCC) diferente da Konfidency: produto=5 (API do produto (SSR)) vs reviews=4.9. Divergente desde 05/11, 09:59 (20 dias): a nota da Konfidency não chegou ao SFCC em 1 dia.",
           "details": {
             "productRating": 5,
             "productRatingSource": "ssr",
@@ -21341,10 +21319,10 @@
             "reviewsApiUrl": "https://www.natura.com.mx/bff-app-natura-mexico-v2/reviews/v2/details?productId=NATMEX-81950",
             "divergent": true,
             "divergentSince": "2026-11-05T12:59:06.052Z",
-            "divergentForMs": 1650947260
+            "divergentForMs": 1736492500
           },
           "newFailure": false,
-          "failingSince": "2026-11-09T13:36:34.993Z"
+          "failingSince": "2026-11-10T13:16:16.358Z"
         },
         {
           "feature": "Selo \"Melhor avaliado\"",
@@ -21461,9 +21439,9 @@
           }
         }
       ],
-      "pageScreenshot": "screenshots/NATMEX-81950_fullpage_1795534493312.png",
+      "pageScreenshot": "screenshots/NATMEX-81950_fullpage_1795620038553.png",
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-24T15:34:06.628Z",
+        "capturedAt": "2026-11-25T15:19:52.476Z",
         "locale": "es-MX",
         "product_reviews": {
           "enabled": true,
@@ -21544,7 +21522,6 @@
           "category_ne_tabshowcase": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":false}",
           "category_new_experience": "{\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true}",
           "chat": "{\"es-MX\":{},\"es-AR\":{},\"es-CL\":{},\"es-CO\":{},\"es-PE\":{},\"pt-BR\":{\"enabled\":true,\"defaultProvider\":\"data2\",\"providers\":{\"data2\":{\"enabled\":true,\"url\":\"https://webchat.natura-br-cf.data2.app\"},\"agentforce\":{\"enabled\":false}},\"routeProviders\":{\"HELP\":\"data2\",\"HELP_CATEGORY\":\"data2\",\"MY_REQUESTS\":\"data2\",\"ORDERS\":\"data2\"},\"widget\":{\"enabled\":true,\"enabledRoutes\":[\"HELP\",\"HELP_CATEGORY\",\"MY_REQUESTS\",\"ORDERS\"],\"avatar\":\"\"}}}",
-          "chat_agent_hair_pdp": "{\"pt-BR\":{\"enabled\":true,\"orgId\":\"00D3h0000069qZj\",\"deploymentName\":\"RecomendacaoProdutos_EspCategorias\",\"url\":\"https://naturanatura.my.site.com/ESWRecomendacaoProdutosE1790026434229\",\"bootstrapUrl\":\"https://naturanatura.my.site.com/ESWRecomendacaoProdutosE1790026434229/assets/js/bootstrap.min.js\",\"scrt2URL\":\"https://naturanatura.my.salesforce-scrt.com\",\"contentZoneTrigger\":\"CZ_BR_CAMPANHA_AGENTFORCE_POC_CABELOS\"}}",
           "chatbot_env_url": "https://webchat.natura-br-cf.data2.app/",
           "checkout_complete_new_experience": "{\"es-MX\":false,\"es-AR\":true,\"es-CL\":true,\"es-CO\":false,\"es-PE\":true,\"pt-BR\":true}",
           "checkout_new_experience": "{\"es-MX\":true,\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true}",
@@ -21898,7 +21875,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-24T15:34:14.630Z",
+        "capturedAt": "2026-11-25T15:19:59.735Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": false,
@@ -22112,9 +22089,9 @@
       "url": "https://www.natura.com.pe/p/kaiak-eau-de-toilette-masculino-urbe-100-ml/NATPER-111172",
       "vendor": "natura",
       "country": "PE",
-      "timestamp": "2026-11-24T15:33:52.775Z",
+      "timestamp": "2026-11-25T15:20:12.909Z",
       "success": true,
-      "loadTime": 1968,
+      "loadTime": 2323,
       "features": [
         {
           "feature": "Avaliações do produto",
@@ -22200,12 +22177,12 @@
           "featureKey": "brandShowcase",
           "passed": true,
           "status": "pass",
-          "message": "Vitrine presente com 57 produto(s) [contentZone: CZ_PE_VITRINE_PDP_EXPERIENCIA]",
+          "message": "Vitrine presente com 57 produto(s) [contentZone: CZ_PE_VITRINE_PDP_MAIS_PRODUTOS_DA_MARCA]",
           "details": {
             "productCount": 57,
             "title": "",
-            "einsteinContentZone": "CZ_PE_VITRINE_PDP_EXPERIENCIA",
-            "einsteinCampaignCount": 12
+            "einsteinContentZone": "CZ_PE_VITRINE_PDP_MAIS_PRODUTOS_DA_MARCA",
+            "einsteinCampaignCount": 0
           }
         },
         {
@@ -22377,7 +22354,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-24T15:33:52.940Z",
+        "capturedAt": "2026-11-25T15:20:13.169Z",
         "locale": "es-PE",
         "product_reviews": {
           "enabled": true,
@@ -22458,7 +22435,6 @@
           "category_ne_tabshowcase": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":false}",
           "category_new_experience": "{\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true}",
           "chat": "{\"es-MX\":{},\"es-AR\":{},\"es-CL\":{},\"es-CO\":{},\"es-PE\":{},\"pt-BR\":{\"enabled\":true,\"defaultProvider\":\"data2\",\"providers\":{\"data2\":{\"enabled\":true,\"url\":\"https://webchat.natura-br-cf.data2.app\"},\"agentforce\":{\"enabled\":false}},\"routeProviders\":{\"HELP\":\"data2\",\"HELP_CATEGORY\":\"data2\",\"MY_REQUESTS\":\"data2\",\"ORDERS\":\"data2\"},\"widget\":{\"enabled\":true,\"enabledRoutes\":[\"HELP\",\"HELP_CATEGORY\",\"MY_REQUESTS\",\"ORDERS\"],\"avatar\":\"\"}}}",
-          "chat_agent_hair_pdp": "{\"pt-BR\":{\"enabled\":true,\"orgId\":\"00D3h0000069qZj\",\"deploymentName\":\"RecomendacaoProdutos_EspCategorias\",\"url\":\"https://naturanatura.my.site.com/ESWRecomendacaoProdutosE1790026434229\",\"bootstrapUrl\":\"https://naturanatura.my.site.com/ESWRecomendacaoProdutosE1790026434229/assets/js/bootstrap.min.js\",\"scrt2URL\":\"https://naturanatura.my.salesforce-scrt.com\",\"contentZoneTrigger\":\"CZ_BR_CAMPANHA_AGENTFORCE_POC_CABELOS\"}}",
           "chatbot_env_url": "https://webchat.natura-br-cf.data2.app/",
           "checkout_complete_new_experience": "{\"es-MX\":false,\"es-AR\":true,\"es-CL\":true,\"es-CO\":false,\"es-PE\":true,\"pt-BR\":true}",
           "checkout_new_experience": "{\"es-MX\":true,\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true}",
@@ -22812,7 +22788,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-24T15:34:00.866Z",
+        "capturedAt": "2026-11-25T15:20:21.340Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": false,
@@ -23024,9 +23000,9 @@
       "url": "https://www.natura.com.pe/p/humor-eau-de-toilette-femenina-meu-primeiro-humor-75-ml/NATPER-64746",
       "vendor": "natura",
       "country": "PE",
-      "timestamp": "2026-11-24T15:34:43.873Z",
+      "timestamp": "2026-11-25T15:21:05.559Z",
       "success": true,
-      "loadTime": 1404,
+      "loadTime": 1760,
       "features": [
         {
           "feature": "Avaliações do produto",
@@ -23047,19 +23023,18 @@
           "featureKey": "aiReviewSummary",
           "passed": true,
           "status": "pass",
-          "message": "Resumo por IA exibido igual ao da API (processado em 18/11/2026; tópicos: Aroma (positivo), Apariencia (positivo)): \"Los clientes destacan una fragancia deliciosa, dulce, frutal y fresca, que muchos describen como duradera. También valoran el envase y su presentación.\"",
+          "message": "Resumo por IA exibido igual ao da API (processado em 24/11/2026; tópicos: Aroma (positivo)): \"A los clientes les gusta su aroma dulce, frutal, fresco y delicado; varios destacan que es duradero y no empalaga.\"",
           "details": {
             "apiUrl": "https://www.natura.com.pe/bff-app-natura-peru/reviews/v2/details?productId=NATPER-64746",
             "apiStatus": 200,
             "aiSummary": {
-              "processedDate": "2026-11-18T19:03:35.530Z",
-              "text": "Los clientes destacan una fragancia deliciosa, dulce, frutal y fresca, que muchos describen como duradera. También valoran el envase y su presentación.",
+              "processedDate": "2026-11-24T15:52:36.054Z",
+              "text": "A los clientes les gusta su aroma dulce, frutal, fresco y delicado; varios destacan que es duradero y no empalaga.",
               "topics": {
-                "Aroma": "positive",
-                "Apariencia": "positive"
+                "Aroma": "positive"
               }
             },
-            "pageText": "Los clientes destacan una fragancia deliciosa, dulce, frutal y fresca, que muchos describen como duradera. También valoran el envase y su presentación."
+            "pageText": "A los clientes les gusta su aroma dulce, frutal, fresco y delicado; varios destacan que es duradero y no empalaga."
           },
           "flagKey": "product_reviews.ai_summary",
           "flagValue": true
@@ -23156,7 +23131,7 @@
           "details": {
             "ratingValue": 4.8,
             "starCount": 0,
-            "ratingText": "4.8",
+            "ratingText": "4.8(260) comentarios",
             "source": "dom",
             "productRating": 4.8
           }
@@ -23297,7 +23272,7 @@
         }
       ],
       "remoteConfigFlags": {
-        "capturedAt": "2026-11-24T15:34:43.985Z",
+        "capturedAt": "2026-11-25T15:21:05.743Z",
         "locale": "es-PE",
         "product_reviews": {
           "enabled": true,
@@ -23378,7 +23353,6 @@
           "category_ne_tabshowcase": "{\"es-MX\":false,\"es-AR\":false,\"es-CL\":false,\"es-CO\":false,\"es-PE\":false,\"pt-BR\":false}",
           "category_new_experience": "{\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true}",
           "chat": "{\"es-MX\":{},\"es-AR\":{},\"es-CL\":{},\"es-CO\":{},\"es-PE\":{},\"pt-BR\":{\"enabled\":true,\"defaultProvider\":\"data2\",\"providers\":{\"data2\":{\"enabled\":true,\"url\":\"https://webchat.natura-br-cf.data2.app\"},\"agentforce\":{\"enabled\":false}},\"routeProviders\":{\"HELP\":\"data2\",\"HELP_CATEGORY\":\"data2\",\"MY_REQUESTS\":\"data2\",\"ORDERS\":\"data2\"},\"widget\":{\"enabled\":true,\"enabledRoutes\":[\"HELP\",\"HELP_CATEGORY\",\"MY_REQUESTS\",\"ORDERS\"],\"avatar\":\"\"}}}",
-          "chat_agent_hair_pdp": "{\"pt-BR\":{\"enabled\":true,\"orgId\":\"00D3h0000069qZj\",\"deploymentName\":\"RecomendacaoProdutos_EspCategorias\",\"url\":\"https://naturanatura.my.site.com/ESWRecomendacaoProdutosE1790026434229\",\"bootstrapUrl\":\"https://naturanatura.my.site.com/ESWRecomendacaoProdutosE1790026434229/assets/js/bootstrap.min.js\",\"scrt2URL\":\"https://naturanatura.my.salesforce-scrt.com\",\"contentZoneTrigger\":\"CZ_BR_CAMPANHA_AGENTFORCE_POC_CABELOS\"}}",
           "chatbot_env_url": "https://webchat.natura-br-cf.data2.app/",
           "checkout_complete_new_experience": "{\"es-MX\":false,\"es-AR\":true,\"es-CL\":true,\"es-CO\":false,\"es-PE\":true,\"pt-BR\":true}",
           "checkout_new_experience": "{\"es-MX\":true,\"es-AR\":true,\"es-CL\":true,\"es-CO\":true,\"es-PE\":true,\"pt-BR\":true}",
@@ -23732,7 +23706,7 @@
         }
       },
       "commerceFeatureFlags": {
-        "capturedAt": "2026-11-24T15:34:52.599Z",
+        "capturedAt": "2026-11-25T15:21:13.882Z",
         "_raw": {
           "businessModelB2C": false,
           "businessModelB2B2C": false,
