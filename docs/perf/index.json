@@ -1,6 +1,48 @@
 {
   "runs": [
     {
+      "runId": "run_1795624566885",
+      "timestamp": "2026-11-25T16:36:06.885Z",
+      "skus": [
+        {
+          "sku": "NATBRA-108403",
+          "name": "Desodorante Colônia Kaiak Pulso Masculino 100 ml",
+          "pageType": "PDPFull",
+          "success": true,
+          "metrics": {
+            "performanceScore": 47,
+            "startRender": 2302,
+            "lcp": 1937,
+            "cls": 0.049,
+            "tbt": 2602,
+            "fcp": 1777,
+            "speedIndex": 3490,
+            "ttfb": 90,
+            "totalByteWeight": 5655138,
+            "requestCount": 569
+          }
+        },
+        {
+          "sku": "NATBRA-56948",
+          "name": "Refil Desodorante Corporal Kaiak Masculino 100 ml",
+          "pageType": "PDPLow",
+          "success": true,
+          "metrics": {
+            "performanceScore": 49,
+            "startRender": 2098,
+            "lcp": 1686,
+            "cls": 0.057,
+            "tbt": 2613,
+            "fcp": 1587,
+            "speedIndex": 3993,
+            "ttfb": 192,
+            "totalByteWeight": 5607286,
+            "requestCount": 582
+          }
+        }
+      ]
+    },
+    {
       "runId": "run_1795538942975",
       "timestamp": "2026-11-24T16:49:02.974Z",
       "skus": [
