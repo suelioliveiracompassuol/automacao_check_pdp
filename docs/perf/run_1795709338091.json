@@ -1,0 +1,157 @@
+{
+  "runId": "run_1795709338091",
+  "timestamp": "2026-11-26T16:08:58.090Z",
+  "formFactor": "desktop",
+  "runsPerSku": 3,
+  "conditions": {
+    "connectivity": "4G",
+    "downKbps": 9000,
+    "upKbps": 9000,
+    "rttMs": 170,
+    "viewport": "1920x1200",
+    "consentCookie": false
+  },
+  "results": [
+    {
+      "sku": "NATBRA-108403",
+      "name": "Desodorante Colônia Kaiak Pulso Masculino 100 ml",
+      "pageType": "PDPFull",
+      "url": "https://www.natura.com.br/p/desodorante-colonia-kaiak-pulso-masculino-100-ml/NATBRA-108403",
+      "success": true,
+      "median": {
+        "performanceScore": 51,
+        "startRender": 2035,
+        "lcp": 1684,
+        "cls": 0.072,
+        "tbt": 1302,
+        "fcp": 1566,
+        "speedIndex": 3017,
+        "ttfb": 87,
+        "totalByteWeight": 5892999,
+        "requestCount": 567
+      },
+      "runs": [
+        {
+          "performanceScore": 50,
+          "startRender": 2103,
+          "lcp": 1765,
+          "cls": 0.072,
+          "tbt": 1324,
+          "fcp": 1616,
+          "speedIndex": 3084,
+          "ttfb": 595,
+          "totalByteWeight": 5891149,
+          "requestCount": 578
+        },
+        {
+          "performanceScore": 51,
+          "startRender": 2035,
+          "lcp": 1684,
+          "cls": 0.072,
+          "tbt": 1302,
+          "fcp": 1566,
+          "speedIndex": 3017,
+          "ttfb": 87,
+          "totalByteWeight": 5892999,
+          "requestCount": 567
+        },
+        {
+          "performanceScore": 51,
+          "startRender": 2048,
+          "lcp": 1695,
+          "cls": 0.072,
+          "tbt": 1214,
+          "fcp": 1567,
+          "speedIndex": 3032,
+          "ttfb": 185,
+          "totalByteWeight": 5891542,
+          "requestCount": 570
+        }
+      ],
+      "lcpElement": {
+        "nodeLabel": "Deo Colônia Masculino Kaiak Pulso 100 ml",
+        "selector": "section.bg-white > div.relative > div.fixed > img.pointer-events-auto",
+        "snippet": "<img alt=\"Deo Colônia Masculino Kaiak Pulso 100 ml\" loading=\"eager\" fetchpriority=\"high\" decoding=\"sync\" class=\"pointer-events-auto object-cover size-full\" style=\"position: absolute; height: 100%; width: 100%; inset: 0px;\" src=\"https://production.na01.natura.com/dw/image/v2/BFKR_PRD/on/demandware.stat…\">"
+      },
+      "opportunities": [],
+      "reportJsonPath": "run_1795709338091/NATBRA-108403.json",
+      "lighthouseVersion": "12.8.2"
+    },
+    {
+      "sku": "NATBRA-56948",
+      "name": "Refil Desodorante Corporal Kaiak Masculino 100 ml",
+      "pageType": "PDPLow",
+      "url": "https://www.natura.com.br/p/refil-desodorante-corporal-kaiak-masculino-100-ml/NATBRA-56948",
+      "success": true,
+      "median": {
+        "performanceScore": 47,
+        "startRender": 2057,
+        "lcp": 1636,
+        "cls": 0.115,
+        "tbt": 1459,
+        "fcp": 1564,
+        "speedIndex": 3922,
+        "ttfb": 171,
+        "totalByteWeight": 5866148,
+        "requestCount": 593
+      },
+      "runs": [
+        {
+          "performanceScore": 47,
+          "startRender": 2162,
+          "lcp": 1749,
+          "cls": 0.095,
+          "tbt": 1323,
+          "fcp": 1667,
+          "speedIndex": 4003,
+          "ttfb": 735,
+          "totalByteWeight": 5870057,
+          "requestCount": 578
+        },
+        {
+          "performanceScore": 49,
+          "startRender": 2059,
+          "lcp": 1637,
+          "cls": 0.084,
+          "tbt": 1360,
+          "fcp": 1568,
+          "speedIndex": 4026,
+          "ttfb": 225,
+          "totalByteWeight": 5857720,
+          "requestCount": 579
+        },
+        {
+          "performanceScore": 47,
+          "startRender": 2057,
+          "lcp": 1636,
+          "cls": 0.115,
+          "tbt": 1459,
+          "fcp": 1564,
+          "speedIndex": 3922,
+          "ttfb": 171,
+          "totalByteWeight": 5866148,
+          "requestCount": 593
+        }
+      ],
+      "lcpElement": {
+        "nodeLabel": "Refil Desodorante Corporal Masculino Kaiak 100 ml",
+        "selector": "section.bg-white > div.relative > div.fixed > img.pointer-events-auto",
+        "snippet": "<img alt=\"Refil Desodorante Corporal Masculino Kaiak 100 ml\" loading=\"eager\" fetchpriority=\"high\" decoding=\"sync\" class=\"pointer-events-auto object-cover size-full\" style=\"position: absolute; height: 100%; width: 100%; inset: 0px;\" src=\"https://production.na01.natura.com/dw/image/v2/BFKR_PRD/on/demandware.stat…\">"
+      },
+      "opportunities": [
+        {
+          "id": "server-response-time",
+          "title": "O tempo de resposta inicial do servidor foi curto",
+          "savingsMs": 71
+        },
+        {
+          "id": "uses-responsive-images",
+          "title": "Defina um tamanho adequado para as imagens",
+          "savingsMs": 10
+        }
+      ],
+      "reportJsonPath": "run_1795709338091/NATBRA-56948.json",
+      "lighthouseVersion": "12.8.2"
+    }
+  ]
+}
